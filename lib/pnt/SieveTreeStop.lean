@@ -18,11 +18,11 @@ parts `{p ∈ P | t ≤ p}` stops (`alive`).
   every `P'` with `E ≤ c∏P' < Ez₀`, for `0 ≤ c < E`. A set `P` of integers in `[1, z₀)` is alive iff `c∏P < E`; and
   then, for `p ∈ [1, z₀)` not in `P`, `P ∪ {p}` stops iff `E ≤ c∏P·p`.
 
-The threshold tree `SieveTree.tree_pt` is the rule `X < r∏P'`. The proof of `tree_pt_stop` is `tree_pt`'s: at an `n`
-with `r ∣ n` and no prime factor below `w`, the leaves that count `n` are the alive `P ⊆ Q`, `Q` the primes of
-`[w, z₀)` that divide `n`, and the stops those with `p = min Q`; `alt_cancel_stop` leaves `[Q = ∅]`. The proof of
-`alive_iff_lt`: the products of the upper parts of `P` grow from `c` to `c∏P` by factors below `z₀`, so if `c∏P ≥ E`
-the first upper part with `c∏ ≥ E` has `c∏ < Ez₀` and stops.
+The rule `X < r∏P'` gives the threshold tree, each branch stopped once its product would pass `X`. The proof of
+`tree_pt_stop`: at an `n` with `r ∣ n` and no prime factor below `w`, the leaves that count `n` are the alive
+`P ⊆ Q`, `Q` the primes of `[w, z₀)` that divide `n`, and the stops those with `p = min Q`; `alt_cancel_stop` leaves
+`[Q = ∅]`. The proof of `alive_iff_lt`: the products of the upper parts of `P` grow from `c` to `c∏P` by factors
+below `z₀`, so if `c∏P ≥ E` the first upper part with `c∏ ≥ E` has `c∏ < Ez₀` and stops.
 
 The file imports `SieveDiff.lean`.
 -/

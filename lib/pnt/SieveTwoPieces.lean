@@ -6,7 +6,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 `SieveTwoTypeII.ZoneOK g L d e R` asks, for every `β ∈ [1/2, 11/12]`, `(m₁, m₂)` in the region `R` and
 `w ∈ [0, 4·10⁻⁶]`, for exponents `M₁`, `M₂` of the two mean squares with
 `(L − m₁ − m₂)(β + w) + (m₁ + M₁)/2 + (m₂ + M₂)/2 ≤ L − 1/25000`. This file proves it piece by piece in `β`, as
-`SieveCurveGlue` and `SieveHMWindow` do for the window. On a piece each variable takes one of two modes:
+`SieveCurveGlue` does for the window. On a piece each variable takes one of two modes:
 
 * `O`, orthogonality: `M = max(m, 1)`;
 * `H`, Halász–Montgomery, on a piece where the curve is `A(1 − β)`: `M = max(m, A(1 − β) + b(m))`,

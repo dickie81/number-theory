@@ -77,7 +77,7 @@ The formalisation is in `lib/pnt`, in the modules whose names begin with `Linnik
   only on `[0.7, 0.8]`. The Lean statement covers only `[5/7, 16/21]`, which lies inside `[0.7, 0.8]`. The Linnik
   paper uses Proposition 3.1 on `[5/7, 131/168]`, also inside `[0.7, 0.8]`, through its steps (below).
 - **Their Theorem 1.1 is not formalised.** The step needs the large-values count only at `V = N^σ/Z` with
-  `5/7 ≤ σ ≤ 16/21`. That lies inside Proposition 3.1's range `[N^{7/10}, N^{4/5}]`, where the paper's reduction is
+  `5/7 ≤ σ ≤ 16/21`. That lies inside Proposition 3.1's range `7/10 ≤ σ ≤ 4/5`, where the paper's reduction is
   the three-part split of the polynomial alone (`LinnikCGLLV.lv_range`). The subdivision in `T`, the mean value
   theorem and Huxley's estimate, which their proof of Theorem 1.1 uses, are not needed.
 - **Explicit constants and extra factors.** Several of the paper's `≪` and `⪅` bounds are stated in Lean with
@@ -602,13 +602,26 @@ it, and no paper in this repository claims it.
 
 ## Where the Linnik paper uses it
 
-The Linnik paper's theorem, at `43/20` (`Linnik21500.linnik_21500`), does not use this estimate: its Type II estimate
-in two variables counts characters only from `7789/10000` on, where Huxley's exponent is below theirs, by the curve
-`ghx` (`SieveCurveHx.counts_hx`); no module of this formalisation is in its import cone. The paper's earlier version,
-at `11/5`, used it, and the library keeps that theorem (`Linnik22000E.linnik_22000e`) and those at `219/100` and
-`218/100`, whose Type II estimate in one variable, on a window, takes the curve `g7d` (`SieveCurve7D.counts_7d`). That
-curve takes their Proposition 3.1 directly, on 30 steps of `[5/7, 131/168]` (next section), and not `CGLDensity`. An earlier curve, `g7c`
-(`SieveTypeIIU226C.counts_7c`, now in the git history), used `CGLDensity`; it was built from these pieces:
+Their Proposition 3.1 (`LinnikCGLHB101.prop31`) is Input 2 of the Linnik paper. The paper's two theorems use it as
+follows.
+
+- **Theorem 1.2, at `43/20`** (`Linnik21500.linnik_21500`), does not use it: its Type II estimate in two variables
+  counts characters only from `7789/10000` on, where Huxley's exponent is below theirs, by the curve `ghx`
+  (`SieveCurveHx.counts_hx`). Its tests are those of the namespace `SieveAd.Plain` (`lib/pnt/SieveAdPlain*.lean`),
+  the paper's conditions on the leaves alone, and no module of this formalisation is in its import cone
+  (`scripts/import_cone.py`: 482 modules). Between pull request 115 (15 November 2026) and that change the shared
+  tests had brought `SieveCurve7D`, and with it this formalisation, into the cone.
+- **Theorem 1.1, at `21/10`** (`Linnik21000.linnik_21000`), uses Proposition 3.1 twice. In the resonant window
+  (`SieveTypeIIHM.typeII_res`) it counts the characters at which a power of a prime sum of the rest is large
+  (`SieveTypeIIHM.card_Sp_large_lv`, with the exponent `SieveTypeIIHM.lvExp`). In the estimate in two variables with
+  the fourth moment on the leaves' region (`SieveLeafTwo.typeIITwoAt_leafX`), which evaluates the leaves cut in
+  three, it enters through the curve `g7d` (`SieveCurve7D.counts_7d`): the thirty steps
+  `LinnikCGLSteps.charDensity_s0` … `charDensity_s29` on `[5/7, 131/168]` (next section).
+- Neither theorem uses their Theorem 1.2 or `CGLDensity`: `LinnikCGLDensity` is in neither import cone.
+
+The curve `g7d` (`SieveCurve7D.counts_7d`), which Theorem 1.1 and the classical deduction `LinnikG7.linnik_g7d` take,
+takes their Proposition 3.1 directly, on 30 steps of `[5/7, 131/168]` (next section), and not `CGLDensity`. An earlier
+curve, `g7c` (`SieveTypeIIU226C.counts_7c`, now in the git history), used `CGLDensity`; it was built from these pieces:
 
 - the trivial count below `4/7`;
 - twenty steps from Ingham's estimate;
@@ -617,10 +630,9 @@ curve takes their Proposition 3.1 directly, on 30 steps of `[5/7, 131/168]` (nex
 - twenty steps from Huxley's estimate up to `5/6`;
 - the library's `(101/50)(1 − σ)` from `5/6` on (`LinnikStep.charDensity_step`).
 
-The theorem of the proof built on `g7c`, at an earlier exponent (`899/400`), was superseded too. `cglDensity` stays
-and is printed by `lib/check/CheckAll.lean`.
+`cglDensity` stays and is printed by `lib/check/CheckAll.lean`.
 
-## Proposition 3.1 on `[5/7, 131/168]`: the window route's steps
+## Proposition 3.1 on `[5/7, 131/168]`: the steps of `g7d`
 
 `LinnikCGLSteps` uses the same step (`LinnikCGLStep.charDensity_cglGen`, from Proposition 3.1,
 `LinnikCGLHB101.prop31`) at other parameters, 30 steps of `[5/7, 131/168]`: fourteen of width `1/1680` from `5/7`, then
@@ -634,22 +646,14 @@ the parameters and checks every field of `ParC.Good` in exact rationals). For `�
 
 From `7/9` on Huxley's exponent `3/(3σ − 1)` is below `4/(1 + σ)`. On the last step, `[163/210, 131/168]`, his
 exponent at the step's left end, plus the slack `1/2000` of his steps, is `2.2586`, above the step's `2.25207`;
-pointwise, `3/(3σ − 1)` is below the step's exponent from `σ ≈ 0.7774` on, by up to `1.2·10⁻²` at `131/168`. At
-`11/5` taking it there would not change the window, whose corners on that step have a slack of at least
-`3.9·10⁻³`. Between the exponents `11161/5000` and `89/40` the library took Huxley's bound on `[1307/1680, 131/168]`,
-in a file `LinnikHuxJunction.lean` (in the git history); at `11161/5000` the window's lower end was set near `7/9`.
+pointwise, `3/(3σ − 1)` is below the step's exponent from `σ ≈ 0.7774` on, by up to `1.2·10⁻²` at `131/168`.
 
 The curve is `g7d` (`SieveCurve7D.lean`): `g7c` with the Chen–Gupta–Li steps on `[5/7, 131/168]`, in place of the
 plateau and Huxley's steps `hx7_0` … `hx7_4`, and with Ingham's last step
 `[99/140, 5/7]` at `ε = 1/400000` (`LinnikCGLSteps.charDensity_inT`: `LinnikInghamC.charDensity_ingham_c` has exponent `2 + 4c + 4ε`, so the slack is `4ε`, and the exponent is `7/3 + 1/100000` in place of `7/3 + 1/2000` at `ε = 1/8000`). Huxley's steps
-`hx7_5` … `hx7_19` stay, since their exponents are smaller than the Chen–Gupta–Li step's from `131/168` on. The first
-steps are narrow because both ends of the window are set where a step's exponent most exceeds the curve it bounds, on
-the first step `[5/7, 1201/1680]`, at its right end; its exponent `2.3334` is the curve's largest, `7/3` at `5/7`, where
-Ingham's and Chen–Gupta–Li's exponents meet. The corners' slack grows along the steps, and from `5/7 + 14/1680` on
-steps of `1/280` leave the window as it is (steps of `1/140` would too at `11/5`, but moved its lower end at `278/125`). `Linnik22000E.linnik_22000e`, the theorem of the Linnik paper's earlier version, is Linnik's theorem with exponent `11/5` on `g7d` (the earlier theorem at `278/125`, `Linnik22240R.linnik_22240r`, is in the git history);
-the classical deduction from the same curve gives `2.3334 + ε` (`LinnikG7.linnik_g7d`, with
+`hx7_5` … `hx7_19` stay, since their exponents are smaller than the Chen–Gupta–Li step's from `131/168` on. The
+exponent `2.3334` of the first step, `[5/7, 1201/1680]`, is the curve's largest, `7/3` at `5/7`, where Ingham's and
+Chen–Gupta–Li's exponents meet. The steps' widths were set for the Type II estimate in one variable of the theorems at
+`11/5`, `219/100` and `218/100`; those theorems are no longer in the tree, they are in the git history (commit
+`76abe3c`). The classical deduction from `g7d` gives `2.3334 + ε` (`LinnikG7.linnik_g7d`, with
 `SieveCurve7D.g7d_le_lin`: `g7d σ ≤ 2.3334(1 − σ)`).
-What lets the certificate close at `11/5` is the bilinear Type I estimate, which lets the decomposition go on past the
-Type I level for the boxes that pass its test, together with the decomposition's levels seven and eight: on the same
-grid the total would be `2.43K` without the bilinear test and `1.56K` with the decomposition stopped at depth six,
-against `0.93K` (Section 5 of the Linnik paper's version at `11/5`, in the git history).

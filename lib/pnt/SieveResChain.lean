@@ -11,11 +11,12 @@ polynomial `dp` of the block with coefficients of modulus at most `1`, and the r
 
 * `box_res`: the hypothesis `hbox` of `unw_gen_lo` with `A₀ = 1`, for the smooth weight `SieveDyadic.bump`, given
   `ResCond` at each block and each family of scales `Q_i ≥ q^{lo i}` with `∏Q_i ≤ 2^{K₀+1}q^L/P_b`.
-* `typeII_gcmp_res`: `SieveChain.typeII_gcmp` by the resonant window: a family `Σ_m Σ_x 1[comparisons]c_m·dw(m∏x)`
-  with `m` in `(P₁, P₂]`, cut into the dyadic blocks `(P₁2^b, P₁2^{b+1}]`, is evaluated by `unw_gen_lo` and `box_res`.
-* `chainTU_res`: `SieveChain.chainTU_bound` by the resonant window: the chains of primes `rt` times a rough cofactor,
-  with the cofactor as the variable and all of `rt` as the rest, each prime of `rt` at least `2q^{lo i}`, evaluated
-  when `ResCond` holds at the cofactor's blocks and the primes' scales.
+* `typeII_gcmp_res`, Type II with comparisons by the resonant window: for `m` in `(P₁, P₂]` and `x` over tuples of
+  primes with comparisons `l`, `|Σ_m Σ_x 1[l holds]c_m(1[m∏x ≡ a] − 1[(m∏x, q) = 1]/φ(q))| ≤ q^{L−δ}/φ(q)`; `m` is
+  cut into the dyadic blocks `(P₁2^b, P₁2^{b+1}]`, and `unw_gen_lo` applies with `box_res`.
+* `chainTU_res`, by the resonant window: the chains of primes `rt` times a rough cofactor, with the cofactor as the
+  variable and all of `rt` as the rest, each prime of `rt` at least `2q^{lo i}`, evaluated when `ResCond` holds at the
+  cofactor's blocks and the primes' scales.
 
 The file imports `SieveResTypeII.lean`, `SieveUnwLo.lean` and `SieveChain.lean`.
 -/
@@ -118,16 +119,15 @@ theorem box_res {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 : g 
     _ = 1 * (q : ℝ) ^ (L - 1 / 50000) := by ring
 
 open Classical in
-/-- **Type II with comparisons, for the resonant window.** `SieveChain.typeII_gcmp` with the resonant window's
-estimate in place of the route's: for a curve `g ≤ 1` with `g(1/2) = 1` and its counts, `0 < L ≤ 5/2`, `K₀`, `J₀`,
-`e₁ > 0` and `Λ₁ ≥ 0`, there are `δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a`: let `m` run over
-`S ⊆ (P₁, P₂]` with `1 ≤ P₁`, `P₂ ≤ ⌊2q^L⌋`, with coefficients `|c_m| ≤ 1`, and `x` over the `(n + 1)`-tuples of
-primes up to `⌊2q^L⌋` with at most `J₀` comparisons `l` (`m`-parts at most `Λ₁ log q`), such that wherever they hold
-each `x_i ≥ 2q^{e₁}`, `x_i ≥ 2q^{lo i}` and `m∏x_i ≤ 2q^L`; and let `ResCond` hold at `log_q P′` for `P′ ≥ P₁` and the
-exponents of scales `Q_i ≥ q^{e₁}`, `Q_i ≥ q^{lo i}` with `∏Q_i ≤ 2^{K₀+1}q^L/P′`. Then
-`|Σ_m Σ_x 1[l holds]c_m(1[m∏x ≡ a] − 1[(m∏x, q) = 1]/φ(q))| ≤ q^{L−δ}/φ(q)`. The comparisons with no prime become
-conditions on `m`; the others are pivoted (`SieveChain.pivoted`); `m` is cut into the dyadic blocks
-`(P₁2^b, P₁2^{b+1}]` (`SieveTypeIIU.blk_spec`); and `SieveUnwGen.unw_gen_lo` applies with `box_res`. -/
+/-- **Type II with comparisons, for the resonant window.** By the resonant window's estimate: for a curve `g ≤ 1` with
+`g(1/2) = 1` and its counts, `0 < L ≤ 5/2`, `K₀`, `J₀`, `e₁ > 0` and `Λ₁ ≥ 0`, there are `δ > 0` and `q₀` such that for
+`q ≥ q₀` and a unit `a`: let `m` run over `S ⊆ (P₁, P₂]` with `1 ≤ P₁`, `P₂ ≤ ⌊2q^L⌋`, with coefficients `|c_m| ≤ 1`,
+and `x` over the `(n + 1)`-tuples of primes up to `⌊2q^L⌋` with at most `J₀` comparisons `l` (`m`-parts at most
+`Λ₁ log q`), such that wherever they hold each `x_i ≥ 2q^{e₁}`, `x_i ≥ 2q^{lo i}` and `m∏x_i ≤ 2q^L`; and let `ResCond`
+hold at `log_q P′` for `P′ ≥ P₁` and the exponents of scales `Q_i ≥ q^{e₁}`, `Q_i ≥ q^{lo i}` with
+`∏Q_i ≤ 2^{K₀+1}q^L/P′`. Then `|Σ_m Σ_x 1[l holds]c_m(1[m∏x ≡ a] − 1[(m∏x, q) = 1]/φ(q))| ≤ q^{L−δ}/φ(q)`. The
+comparisons with no prime become conditions on `m`; the others are pivoted (`SieveChain.pivoted`); `m` is cut into the
+dyadic blocks `(P₁2^b, P₁2^{b+1}]` (`SieveTypeIIU.blk_spec`); and `SieveUnwGen.unw_gen_lo` applies with `box_res`. -/
 theorem typeII_gcmp_res {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 : g (1 / 2) = 1) (hcnt : CurveCounts g)
     (hL0 : 0 < L) (hL : L ≤ 5 / 2) (K₀ J₀ : ℕ) {e₁ Λ₁ : ℝ} (he₁ : 0 < e₁) (hΛ₁ : 0 ≤ Λ₁) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
@@ -278,14 +278,14 @@ section Chain
 
 open SieveChain SieveRoute SieveTree SieveFamily SieveCmp Classical
 
-/-- **Chains times a rough cofactor, by the resonant window.** `SieveChain.chainTU_bound` with the resonant window's
-estimate: the cofactor `n/∏rt` is the variable, and all the chain's primes are the rest. For a curve `g ≤ 1` with
-`g(1/2) = 1` and its counts, `e₀ > 0`, `k′`, `J₀` and `Λ₁ ≥ 0`, there are `δ > 0` and `q₀` such that for `q ≥ q₀` and
-a unit `a`: let `rt` run over the `(k′ + 1)`-tuples of primes up to `⌊2q^L⌋` satisfying at most `J₀` comparisons `Ω`,
-each with its entries at least `q^{e₀}` and `2q^{lo i}`, its last entry least, and `W₀ < ∏rt ≤ W₁ ≤ ⌊q^L⌋` with
-`⌊q^L⌋/W₁ ≥ 1`; and let `ResCond` hold at `log_q P′` for every `P′ ≥ ⌊q^L⌋/W₁` and the exponents of scales
-`Q_i ≥ q^{e₀/2}`, `Q_i ≥ q^{lo i}` with `∏Q_i ≤ 2^{k′+3}q^L/P′`. Then the multiples `n ∈ (⌊q^L⌋, ⌊2q^L⌋]` of `∏rt`
-with no prime factor below `rt`'s last entry, summed over `rt`, have `|A − B/φ(q)|` at most `q^{L−δ}/φ(q)`. -/
+/-- **Chains times a rough cofactor, by the resonant window.** By the resonant window's estimate, with the cofactor
+`n/∏rt` as the variable and all the chain's primes as the rest. For a curve `g ≤ 1` with `g(1/2) = 1` and its counts,
+`e₀ > 0`, `k′`, `J₀` and `Λ₁ ≥ 0`, there are `δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a`: let `rt` run over
+the `(k′ + 1)`-tuples of primes up to `⌊2q^L⌋` satisfying at most `J₀` comparisons `Ω`, each with its entries at least
+`q^{e₀}` and `2q^{lo i}`, its last entry least, and `W₀ < ∏rt ≤ W₁ ≤ ⌊q^L⌋` with `⌊q^L⌋/W₁ ≥ 1`; and let `ResCond` hold
+at `log_q P′` for every `P′ ≥ ⌊q^L⌋/W₁` and the exponents of scales `Q_i ≥ q^{e₀/2}`, `Q_i ≥ q^{lo i}` with
+`∏Q_i ≤ 2^{k′+3}q^L/P′`. Then the multiples `n ∈ (⌊q^L⌋, ⌊2q^L⌋]` of `∏rt` with no prime factor below `rt`'s last entry,
+summed over `rt`, have `|A − B/φ(q)|` at most `q^{L−δ}/φ(q)`. -/
 theorem chainTU_res [Route] [RouteOK] {g : ℝ → ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 : g (1 / 2) = 1)
     (hcnt : CurveCounts g) {e₀ : ℝ} (he₀ : 0 < e₀) (k' J₀ : ℕ) {Λ₁ : ℝ} (hΛ₁ : 0 ≤ Λ₁) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →

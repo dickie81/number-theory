@@ -1,35 +1,37 @@
 /-
-# A search for a tree of Buchstab steps, without Mathlib
+# The parts of a search for a tree of Buchstab steps, without Mathlib
 
-`SieveAdDefs.lean` checks a tree that it is given. A tree for an exponent below `11/5` has several hundred thousand
-nodes, too many to write out; so the kernel runs the search itself. `solveF` is a search for a tree on a box that
-returns a cost and no tree: `SieveAdSearch.lean` proves that when the cost it returns is below the limit it was
-given, a tree exists that passes `SieveAd.ok` on the box at that cost (`SieveAd.solveF_sound`). The search uses a
-node only after the check of `SieveAd.ok` for it has passed, so what proposes the nodes needs no proof:
+`SieveAdDefs.lean` checks a tree that it is given. A search instead runs in the kernel and returns a cost and no
+tree; it uses a node only after the check of `SieveAd.ok` for it has passed, so what proposes the nodes needs no
+proof. This file defines its parts:
 
 * a **strategy** (`Strat`) proposes the configurations to try for a box (`propI`), the floors of Buchstab's
   identity with theirs (`propJ`), and the cuts of the new prime's range into cells (`cuts`);
-* `step` treats a box: one with no term, or that a proposed configuration evaluates, costs `0`; otherwise the box
-  is dropped, if its sign allows (`dropC`), or decomposed at the first proposed floor that passes (`buchC`, the
-  cells of the new prime by `kids`), whichever is cheaper; a box that can be neither dropped nor decomposed is cut
-  in two (`splitC`);
+* the steps of a search on a box: a proposed configuration that evaluates it (`anyI`), its drop, if its sign
+  allows (`dropC`), Buchstab's identity at the first proposed floor that passes (`buchC`, the cells of the new
+  prime by `kids`), and its cut in two (`splitC`);
 * a **limit** stops the search of a subtree whose cost reaches it: a value at least the limit says nothing;
 * a search is checked in parts: `kids` on a range of the new prime's cells is one part.
 
-`mixStrat` is a strategy for the tests `SieveAd.mixTests`: the window's configuration first; for the estimate in
-two variables the rest is one prime, the first variable the set of the others with the largest lower sum that stays
-below the window's top (`bestSub`), and the leaves are split by a set with its sum in range (`findSub1`). The
-window's floor is proposed only where a copy of the bilinear rule's test without its lists passes (`ibFast`).
+`SieveAdRevDefs.lean`'s search `solveG` treats a box with `anyI`, `buchC` and `splitC`.
 
-These are arithmetic on natural numbers, lists and booleans, and the file imports only `SieveAdMixDefs.lean`.
+The second part is written for the kernel's speed: searches over the sets of a box's cells (`findSub2`, `bestSub`,
+`findSub1`, `tstarF`, the last over the window cost `cIBF` of a set), each with a twin by structural recursion for
+compiled code; the route's constants and `uOf`, `vOf` by them (`restLo`, `uC0`, …, `uOfF`, `vOfF`); and the side
+of a prime's cells (`stepOf`).
+
+These are arithmetic on natural numbers, lists and booleans, and the file imports `SieveAdDefs.lean`,
+`SieveRuleDefs.lean` and `SieveAdTwoDefs.lean`.
 -/
-import SieveAdMixDefs
+import SieveAdDefs
+import SieveRuleDefs
+import SieveAdTwoDefs
 
 namespace SieveAd
 
-open SieveCert (DEN cdiv V)
+open SieveCert (DEN cdiv)
 
-/-! ### The search, for any tests and any strategy -/
+/-! ### The parts of the search, for any tests and any strategy -/
 
 /-- What proposes the nodes of a tree. -/
 structure Strat where
@@ -88,41 +90,13 @@ def splitC (S : Strat) (rec : List Cell → Bool → ℕ → ℕ) (x : Cell) (b 
         (rec ((x.1, mid) :: b) par lim))
       (Nat.add lim BIG)) (Nat.div (Nat.add x.1 x.2) 2)
 
-/-- A box that nothing evaluates: dropped or decomposed, whichever is cheaper, or cut in two. -/
-def node (τ : Tests) (S : Strat) (rec : List Cell → Bool → ℕ → ℕ) (x : Cell) (b : List Cell) (par : Bool)
-    (lim : ℕ) : ℕ :=
-  match dropC (x :: b) par with
-  | some dc => (fun bc => cond (Nat.ble dc bc) dc bc) (buchC τ S rec x b par (cond (Nat.ble dc lim) dc lim))
-  | none => (fun bc => cond (Nat.blt bc BIG) bc (splitC S rec x b par lim)) (buchC τ S rec x b par lim)
+/-! ### Searches over the sets of a box's cells, and the route's constants
 
-/-- One step of the search on a box, the boxes below it by `rec`. -/
-def step (τ : Tests) (S : Strat) (rec : List Cell → Bool → ℕ → ℕ) (bl : List Cell) (par : Bool) (lim : ℕ) : ℕ :=
-  match bl with
-  | [] => lim
-  | x :: b => cond (vanishOK (x :: b) || anyI τ (x :: b) (S.propI (x :: b))) 0 (node τ S rec x b par lim)
-
-/-- **The search**, to a depth of recursion `n`: a cost for the term of the box `bl` with the sign `par`; a value
-at least `lim` says nothing. -/
-def solveF (τ : Tests) (S : Strat) : ℕ → List Cell → Bool → ℕ → ℕ
-  | 0 => fun _ _ lim => lim
-  | n + 1 => step τ S (solveF τ S n)
-
-/-! ### A strategy for the window's tests and the estimate's
-
-What follows proposes nodes, and is written for the kernel's speed: arithmetic by `Nat.add`, `Nat.mul`, `Nat.sub`,
-`Nat.div` and `Nat.ble`, with no instance to unfold, and the route's constants as definitions, which the kernel
-evaluates once. -/
-
-/-- The window's configuration. -/
-def cfgW : Cfg := ⟨0, 0, 0, 0, false⟩
+What follows is written for the kernel's speed: arithmetic by `Nat.add`, `Nat.mul`, `Nat.sub`, `Nat.div` and
+`Nat.ble`, with no instance to unfold, and the route's constants as definitions, which the kernel evaluates once. -/
 
 /-- The larger of two numbers (the smaller, `minN`, is `SieveAdLeafDefs.lean`'s). -/
 def maxN (a b : ℕ) : ℕ := cond (Nat.ble a b) b a
-
-/-- The least lower end of the cells (`DEN` for no cell). -/
-def lominOf : List Cell → ℕ
-  | [] => DEN
-  | c :: b => minN c.1 (lominOf b)
 
 /-! The four searches over the sets of a box's cells are by the recursor of lists, which the kernel evaluates
 about three times faster than a definition by structural recursion; each has a twin by structural recursion, equal
@@ -242,13 +216,8 @@ open SieveCert.IBPar (Lnum Lden)
 
 /-- The least lower end of a prime that may be the rest. -/
 def restLo : ℕ := cdiv (Lden * DEN + 2000 * Lnum) (2000 * Lnum)
-/-- The largest upper end of a prime that may be the rest. -/
-def restHi : ℕ := (62500 * Lnum * DEN - 125005 * Lden * DEN) / (34863 * Lnum) - 1
 
-/-- A prime may be the rest: the region's two inequalities on the rest alone. -/
-def restOK (c : Cell) : Bool := Nat.ble restLo c.1 && Nat.ble c.2 restHi
-
-/-- The constants of `uOf`, `vOf` and of the least lower sum that `chkI2` passes. -/
+/-- The constants of `uOf` and `vOf`. -/
 def uC0 : ℕ := cdiv (2 * Lden * DEN) (3 * Lnum)
 @[inherit_doc uC0] def uA : ℕ := 62505 * Lden * DEN + 27637 * Lnum
 @[inherit_doc uC0] def uB : ℕ := 27637 * Lnum
@@ -256,64 +225,15 @@ def uC0 : ℕ := cdiv (2 * Lden * DEN) (3 * Lnum)
 @[inherit_doc uC0] def vA : ℕ := (3 * Lnum * DEN - 2 * Lden * DEN) / (3 * Lnum)
 @[inherit_doc uC0] def vB : ℕ := 62500 * Lnum * DEN - 62505 * Lden * DEN
 @[inherit_doc uC0] def vC : ℕ := 34863 * Lnum
-@[inherit_doc uC0] def umC0 : ℕ := cdiv (2 * Lden * DEN + 3 * Lnum) (3 * Lnum)
-@[inherit_doc uC0] def umA : ℕ := 62505 * Lden * DEN + 90137 * Lnum
 
 /-- `uOf`, by the constants. -/
 def uOfF (ρ₁ : ℕ) : ℕ := maxN uC0 (Nat.div (Nat.sub (Nat.add (Nat.sub uA (Nat.mul uB ρ₁)) uC) 1) uC)
 /-- `vOf`, by the constants. -/
 def vOfF (ρ₂ : ℕ) : ℕ :=
   minN (Nat.sub vA (Nat.succ ρ₂)) (Nat.div (Nat.sub vB (Nat.mul vC (Nat.succ ρ₂))) uC)
-/-- The least lower sum of a first variable that `chkI2` passes, for a rest of lower end `ρ₁`. -/
-def uminOf (ρ₁ : ℕ) : ℕ := maxN umC0 (Nat.div (Nat.sub (Nat.add (Nat.sub umA (Nat.mul uB ρ₁)) uC) 1) uC)
 
-/-- A configuration of the estimate in two variables that may evaluate the box: the first prime that may be the
-rest and leaves a set of the others in the window it gives. -/
-def propI2 (bl : List Cell) (ls : ℕ) : List Cell → ℕ → List Cfg
-  | [], _ => []
-  | c :: cs, bit =>
-    cond (restOK c)
-      (match findSub2 (uminOf c.1) (vOfF c.2) bit bl 1 0 0 0 (Nat.sub ls c.1) with
-        | some m => [⟨1, m, bit, 0, false⟩]
-        | none => propI2 bl ls cs (Nat.mul 2 bit))
-      (propI2 bl ls cs (Nat.mul 2 bit))
-
-/-- The largest sizes of the leaves: `D₁ ≤ D1max`, `D₁ + D₂ ≤ T5` and `D₁ + 2D₂ ≤ T6`. -/
-def D1max : ℕ := ((Lnum - Lden) * DEN - 1) / Lnum
-@[inherit_doc D1max] def T5 : ℕ := (2 * Lnum * DEN - (Lden * DEN + 1)) / (2 * Lnum)
-@[inherit_doc D1max] def T6 : ℕ := (2 * Lnum * DEN - (2 * Lden * DEN + 1)) / Lnum
-
-/-- A split of the leaves for a box of upper sum `hs` and a growth `t`: a set `s1` and the side `e` of the growth. -/
-def leavesOf (bl : List Cell) (hs t : ℕ) : Option (ℕ × Bool) :=
-  cond (Nat.blt T5 (Nat.add hs t)) none
-    ((fun lo =>
-      match cond (Nat.ble t D1max) (findSub1 (Nat.sub lo t) (Nat.sub D1max t) bl 1 0 0 hs) none with
-      | some m => some (m, true)
-      | none =>
-        match findSub1 lo D1max bl 1 0 0 hs with
-        | some m => some (m, false)
-        | none => none) (Nat.sub (Nat.mul 2 (Nat.add hs t)) T6))
-
-/-- The largest floor at which the comparison in two variables may pass, with its configuration, over the primes
-that may be the rest: `acc` is the best so far. A floor is at most `lomin`, and the leaves' sizes sum to at least
-`hs` plus the growth, which is at least `u` less the others' lower sum. -/
-def propJ2 (bl : List Cell) (lomin ls hs : ℕ) : List Cell → ℕ → ℕ × Option Cfg → ℕ × Option Cfg
-  | [], _, acc => acc
-  | c :: cs, bit, acc =>
-    cond (Nat.ble lomin acc.1) acc
-      (propJ2 bl lomin ls hs cs (Nat.mul 2 bit)
-        (cond (restOK c)
-          ((fun u v =>
-            (fun f =>
-              cond (Nat.blt acc.1 f && Nat.ble (Nat.add hs (Nat.sub u (Nat.sub ls c.1))) T5)
-                ((fun b =>
-                  match leavesOf bl hs (Nat.sub u b.1) with
-                  | some sp => (f, some ⟨1, b.2, bit, sp.1, sp.2⟩)
-                  | none => acc) (bestSub v bit bl 1 0 0 0 (Nat.sub ls c.1) (0, 0)))
-                acc) (minN lomin (Nat.sub v (Nat.succ u)))) (uOfF c.1) (vOfF c.2))
-          acc))
-
-/-- `cIB` of the sums `slo`, `shi` of a set. -/
+/-- For a set with lower sum `slo` and upper sum `shi`: the larger of `U1 − slo` and, if `U2 ≤ shi`,
+`DEN − U2 − max(slo, U2)`. -/
 def cIBF (slo shi : ℕ) : ℕ :=
   maxN (Nat.sub U1 slo) (cond (Nat.ble U2 shi) (Nat.sub (Nat.sub DEN U2) (maxN slo U2)) 0)
 
@@ -349,56 +269,8 @@ omit [SieveCert.Grid] [SieveCert.IBPar] in
     rw [ih]
     rfl
 
-/-- What `ibOK` computes, without its lists: the growth `T` by `tstarF`, and a split of the leaves by `findSub1`.
-No split has its size in range if `D1max < 2hs + 1 − DEN`. -/
-def ibFast (bl : List Cell) (ls hs : ℕ) : Bool :=
-  Nat.ble (Nat.sub (Nat.succ (Nat.mul 2 hs)) DEN) D1max &&
-  (fun T =>
-    (match cond (Nat.ble T D1max)
-        (findSub1 (Nat.sub (Nat.succ (Nat.add (Nat.mul 2 hs) T)) DEN) (Nat.sub D1max T) bl 1 0 0 hs) none with
-      | some _ => true
-      | none =>
-        match findSub1 (Nat.sub (Nat.succ (Nat.mul 2 (Nat.add hs T))) DEN) D1max bl 1 0 0 hs with
-        | some _ => true
-        | none => false)) (tstarF (Nat.sub DEN U1) bl 0 0 ls DEN)
-
-/-- The floors to try: the window's width, if the estimate's floor is below it and the bilinear rule may pass;
-then the estimate's. -/
-def propJ (bl : List Cell) : List (ℕ × Cfg) :=
-  (fun lomin ls hs =>
-    (fun r =>
-      cond (Nat.blt r.1 V && Nat.ble V lomin && ibFast bl ls hs) [(V, cfgW)] [] ++
-        (match r.2 with
-          | some cfg => [(r.1, cfg)]
-          | none => [])) (cond (Nat.blt T5 hs) (0, none) (propJ2 bl lomin ls hs bl 1 (0, none))))
-    (lominOf bl) (loSum bl) (hiSum bl)
-
 /-- The side of the cells of the `d`-th prime: `hI` for the first four, then coarser. -/
 def stepOf (hI d : ℕ) : ℕ := cond (Nat.ble d 4) hI (Nat.mul hI (Nat.succ (Nat.div (Nat.sub d 3) 2)))
-
-/-- The cuts `f + w·j/n` for `j = 1, …, m`, before `acc`. -/
-def cutList (f w n : ℕ) : ℕ → List ℕ → List ℕ
-  | 0, acc => acc
-  | j + 1, acc => cutList f w n j (Nat.add f (Nat.div (Nat.mul w (Nat.succ j)) n) :: acc)
-
-/-- The cuts of the new prime's range above the floor `f`: cells of side at most `stepOf` up to where the new
-prime's square is too large for a term with a cofactor, and a cut where the product of all the primes reaches `x`. -/
-def cutsOf (hI : ℕ) (bl : List Cell) (f : ℕ) : List ℕ :=
-  match bl with
-  | [] => []
-  | x :: b =>
-    (fun reg last =>
-      cond (Nat.blt f reg)
-        ((fun n => cutList f (Nat.sub reg f) n n [last])
-          (maxN 1 (Nat.div (Nat.sub (Nat.add (Nat.sub reg f) (stepOf hI (Nat.add b.length 2))) 1)
-            (stepOf hI (Nat.add b.length 2)))))
-        [last])
-      (minN x.2 (Nat.add (Nat.div (Nat.sub DEN (loSum (x :: b))) 2) 2)) (Nat.sub (Nat.sub DEN 1) (hiSum (x :: b)))
-
-/-- **A strategy for `mixTests`**, with cells of side `hI`, boxes of fewer than `depth` primes decomposed, and
-cells wider than `wmin` cut for want of a test. -/
-def mixStrat (hI depth wmin : ℕ) : Strat :=
-  ⟨depth, wmin, fun bl => cfgW :: propI2 bl (loSum bl) bl 1, propJ, cutsOf hI⟩
 
 end SieveAd
 

@@ -3,12 +3,11 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveP6ib.prop6ib_core` evaluates `Σ_r S(A_r, z₀)` over a family of chains by Buchstab's tree over the primes below
-`z₀`, stopped when the product `c∏P` of some of the chain's primes and the tree's enters a window of the Type II
-estimate in one variable; it takes the bound for chains with a product in the window as a hypothesis (`ChainOK`).
-This file is the same with a hypothesis that fits the estimate in two variables, whose zone for the first variable
-depends on the rest: the bound for chains with one product in a window and the product of other primes, the rest,
-in a second one.
+Harman's comparison with stops evaluates `Σ_r S(A_r, z₀)` over a family of chains by Buchstab's tree over the primes
+below `z₀`, stopped when the product `c∏P` of some of the chain's primes and the tree's enters a window of the Type II
+estimate. This file takes the bound for the stops as a hypothesis that fits the estimate in two variables, whose zone
+for the first variable depends on the rest: the bound for chains with one product in a window and the product of
+other primes, the rest, in a second one (`ChainOK2`).
 
 Plain statements. `GCmp`, `RTg` are `SieveChain`'s; `gUp`, `gDown` `SieveP6Chain`'s; `LeavesOK`
 `SieveP6TreeLeaves`'s; `rough z n` and `primesIco w z` `SieveTree`'s; `zeta`, `rem` and `Jw` `SieveProp6`'s. `L` is a
@@ -21,7 +20,8 @@ route's (`SieveRoute.Route`), `N₁ = ⌊q^L⌋`, `N₂ = ⌊2q^L⌋` and `w = �
   identity and `ChainOK2` give `2q^{L−δ}/φ(q)`.
 * `stops_bound2`: the stops of the tree at `E = A + 1`, with `(A + 1)z₀ ≤ B`: a stop's first product, the chain's on
   `S₀` times the tree's primes, lies in `(A, (A + 1)z₀)`, and its rest is the chain's.
-* `tree_pattern2_le`, `tree_pattern2_ib`: a family below the window, by the tree; its leaves by `LeavesOK`.
+* `tree_pattern2_le`, `tree_pattern2_ib`: a family below the window, by the tree; its leaves by `LeavesOK`, its
+  stops by `ChainOK2`.
 * `prop6_two_core`: **the comparison at one `q`.** For a family in boxes `q^{lo_i} ≤ rt_i ≤ q^{hi_i}`, strictly
   decreasing with entries at least `z₀`, whose rest on `Sr` lies in `(Ar, Br]`, with
   `(P₁ + 1)z₀ ≤ P₂`, `q^{Σ_{S₀} hi} ≤ P₂` and `P₁ + 1 ≤ 4q^t·q^{Σ_{S₀} lo}`: the family splits by
@@ -29,8 +29,7 @@ route's (`SieveRoute.Route`), `N₁ = ⌊q^L⌋`, `N₂ = ⌊2q^L⌋` and `w = �
   `|Σ_r (S(A_r, z₀) − S(B_r, z₀)/φ(q))|` is at most the leaves' main term and remainder plus
   `s_max·q^{L−δ₃}/φ(q) + (s_max + 2)q^{L−δ₁}/φ(q)`.
 
-The proofs are those of `SieveP6Tree.root_bound`, `stops_bound`, `SieveP6ib.tree_pattern_le` and `tree_pattern_ib`
-with the rest carried along: its indices keep their places in every extension of a chain, by one prime
+The proofs carry the rest along: its indices keep their places in every extension of a chain, by one prime
 (`Fin.castSuccEmb`) or by a block (`Fin.castAddEmb`).
 
 The file imports `SieveP6ib.lean`.
@@ -279,8 +278,11 @@ theorem stops_bound2 {q : ℕ} (hq : 1 ≤ q) (a : ZMod q) {e₀ Λ₁ δ : ℝ}
 
 /-! ### A tree pattern -/
 
-/-- **A tree pattern.** `SieveP6ib.tree_pattern_le` with `ChainOK2` for the stops: the family's products
-`c = ∏_{i∈S₀} rt_i` are below `E = A + 1`, and its rests `∏_{i∈Sr} rt_i` in `(Ar, Br]`. -/
+/-- **A tree pattern.** A family whose products `c = ∏_{i∈S₀} rt_i` are below `E = A + 1` and whose rests
+`∏_{i∈Sr} rt_i` lie in `(Ar, Br]`, sifted at `z₀`: Buchstab's tree (`SieveP6Tree.tree_chains`) splits it into leaves
+and stops, `LeavesOK` bounds the leaves (`SieveP6TreeLeaves.tree_leaves_le`) and `ChainOK2` the stops
+(`stops_bound2`). The family's sum is at most the leaves' main term and remainder plus
+`s_max·q^{L−δl}/φ(q) + s_max·q^{L−δc}/φ(q)`. -/
 theorem tree_pattern2_le {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {a b δ' εw Λ₀ Λ₁ C₀ δl δc : ℝ}
     {k J₀ J₀' K₀ Kmax A B Ar Br : ℕ} (hokL : SieveP6TreeLeaves.LeavesOK q a' L a b δ' εw Λ₀ C₀ δl k J₀ Kmax)
     (hokC : ChainOK2 q a' εw Λ₁ δc J₀' K₀ A B Ar Br) {j : ℕ} (Ω : List (GCmp j)) (S₀ Sr : Finset (Fin j))
@@ -329,7 +331,9 @@ theorem tree_pattern2_le {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {a
     hlz hlE hreg ((primesIco ⌈(q : ℝ) ^ εw⌉₊ z₀).card + 1)
   linarith
 
-/-- **A tree pattern, with the sizes from the boxes.** `SieveP6ib.tree_pattern_ib` with `ChainOK2` for the stops. -/
+/-- **A tree pattern, with the sizes from the boxes.** `tree_pattern2_le` for a family with `rt_i ≤ q^{hi_i}` and
+`A + 1 ≤ 4q^t∏_{i∈S₀} rt_i`: the sizes of the leaves' blocks (`Isplit S₁ eIn₁`) follow from `hsz₁` and `hsz₂`, the
+sizes from the boxes, with `w^{2k+4} ≤ 2^{2k+4}q^c`. -/
 theorem tree_pattern2_ib {q : ℕ} [NeZero q] {a' : ZMod q} (ha' : IsUnit a') {a b δ' εw Λ₀ Λ₁ C₀ δl δc t c : ℝ}
     {k J₀ J₀' K₀ Kmax A B Ar Br : ℕ} (hokL : SieveP6TreeLeaves.LeavesOK q a' L a b δ' εw Λ₀ C₀ δl k J₀ Kmax)
     (hokC : ChainOK2 q a' εw Λ₁ δc J₀' K₀ A B Ar Br) {j : ℕ} (Ω : List (GCmp j)) (S₀ Sr : Finset (Fin j))

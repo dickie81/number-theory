@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""flip_cert.py --try H DEPTH KAPPA DEPTHR HR HQ HF DEPTHF MAXLEN [a/b] [--loose] | --box L1 H1 L2 H2: the search
-with the reversal of a box through its largest prime, searched as the kernel searches it.
+"""flip_cert.py --try H DEPTH KAPPA DEPTHR HR HQ HF DEPTHF MAXLEN [a/b] [--loose]: the search with the reversal of a
+box through its largest prime, searched as the kernel searches it.
 
 The search is `fill_cert.py`'s with one more bound for a box of the sign − (`SieveAd.opsF`,
 `lib/pnt/SieveAdFlipDefs.lean`): the box `β ++ [ctx]` of two to MAXLEN primes, the cell `ctx = (l₁, h₁)` of its
@@ -8,16 +8,22 @@ largest prime at least one unit above the next prime's cell, is reversed through
 the numbers `R = ∏a·m`, `a` in the cells `β` and `m` rough at the least prime of `a`, with `R` between
 `x^{(DEN−h₁)/DEN}` and `x^{(DEN−l₁+1)/DEN}`; the term of the box is at most the terms of `n/R` at the level
 `t = ⌈h₁/2⌉` over it, and those are a tree of Buchstab steps on the chain of primes of `n/R` from a floor to `t`,
-searched with the tests `SieveAd.frozTests` (`lib/pnt/SieveAdFrozDefs.lean`) by the strategy `SieveAd.stratFF`
-(`lib/pnt/SieveAdFlipStratDefs.lean`). With the tree's cost `c`, the cost of the box is
-`⌈(c·(h₁·D₀ + E) + bdK·E)/(DEN·K)⌉` (`SieveAd.flipCost`), and the tree is searched with the limit past which that
-is not below the box's other bound. The main strategy is `SieveAd.stratGFF`: `stratGF` with one more cut, one unit
-below the largest prime's cell. This script is that search in Python, definition by definition, on top of
-`fill_cert.py`:
+searched with the tests `SieveAd.frozTests` (`lib/pnt/SieveAdFrozDefs.lean`) by a strategy of its own, `stratFF`.
+With the tree's cost `c`, the cost of the box is `⌈(c·(h₁·D₀ + E) + bdK·E)/(DEN·K)⌉` (`SieveAd.flipCost`), and the
+tree is searched with the limit past which that is not below the box's other bound. The main strategy, `stratGFF`,
+is `fill_cert.py`'s with one more cut, one unit below the largest prime's cell. This script is that search in
+Python, on top of `fill_cert.py`; the tests and the nodes are the Lean definitions, definition by definition:
 
   * `loR`, `hiR`, `hiRc`, `coreI2`, `coreJ3`, `coreJ2`, `okIF`, `okJF3`, `okJF2`: `frozTests`;
   * `vboxF`, `widen`, `anyI`, `propJFl`, `propJ`, `stratF`, `cutsKh`: `stratFF`; `insCut`, `cutsOfG`: `stratGFF`;
   * `flipT`, `flipOK`, `flipTree`, `flipCost`, `altF`: `opsF`.
+
+The two strategies were Lean definitions too (`SieveAd.stratFF`, `SieveAd.stratGFF`,
+`lib/pnt/SieveAdFlipStratDefs.lean`), for the one part of this search that the kernel checked as a search, a box
+of two primes at 2165/1000 (`Linnik21650.flip_box_21650`); they were removed with the theorem at 2165/1000 on
+16 November 2026 and are in the git history, at commit `faaa2d1`, with the mode `--box` of this script that
+printed the part. The search that the kernel follows now is led by hints (`hint_cert.py`): its plan carries the
+strategy's choices, and the strategies are this script's.
 
 A box of the sign − has an odd number of primes, so MAXLEN = 4 reverses the boxes of three primes, and 6 those of
 five too.
@@ -26,15 +32,11 @@ With `--try`, the search is run with the given parameters (cells of side H, boxe
 decomposed, cells at most the exponent over KAPPA; the three-prime reversal of `rev_cert.py`: chains below DEPTHR
 primes in cells HR, its cofactor's cells HQ; the reversal through the largest prime: chains below DEPTHF primes in
 cells HF, on boxes of at most MAXLEN primes), and its cost is printed; `--loose` searches every tree with the
-limit `CAPK` (the same cost, more boxes). With `--box`, the search at 2165/1000 with the parameters of the theorem
-there (`fill_cert.py`'s) and `0.012 3 4` for the new reversal is run on the box of the second prime in
-`(L2, H2)` under the first in `(L1, H1)` (integers, in units of 1/DEN), of the sign +, and the part's statement is
-printed, with the cost of the theorem's search on the box: `lib/pnt/SieveFlipPart21650.lean` has the part
-`--box 465911610850 471409168989 295487308541 300984866680`, which the kernel checks in nineteen seconds
-(`Linnik21650.flip_box_21650`).
+limit `CAPK` (the same cost, more boxes).
 
 Checked against the kernel (12 November 2026): four values of `flipCost` and a row of the first prime with
-`0.02 6 10 3 0.012 0.02 0.012 3 4`, as equalities by `decide +kernel`, and that part. The kernel takes about
+`0.02 6 10 3 0.012 0.02 0.012 3 4`, as equalities by `decide +kernel`, and the part of the box of two primes
+above, which the kernel checked in nineteen seconds. The kernel takes about
 13 ms a box over a frozen part and 4 ms a box elsewhere (`fill_cert.pred` is right for both), and its memory
 grows with a part's time (13 GB for a part of two minutes). `--try 0.02 6 10 3 0.012 0.02 0.012 3 4`: 1.71328 K on
 468212 boxes, 218818 of them over frozen parts (356628 with `--loose`), in twenty seconds.
@@ -316,21 +318,6 @@ def main():
               f'the largest prime: boxes of at most {a[8]} primes, chains below {a[7]}, cells {a[6]}: '
               f'cost/K = {c / K:.5f}; {W["calls"]} boxes searched ({W["fcalls"]} over frozen parts), predicted '
               f'{fc.pred(W):.0f} s of the kernel; {st}; {time.time() - t0:.0f} s', flush=True)
-        return 0
-    if '--box' in sys.argv:
-        a = [int(x) for x in sys.argv[sys.argv.index('--box') + 1:][:4]]
-        S = FlipSearch(fc.TestsF(fc.LNUM, fc.LDEN), fc.HI, fc.DEPTH, fc.WMIN, fc.KAPPA, fc.HR, fc.DEPTHR, fc.HQ,
-                       fc.FUEL, round(0.012 * DEN), 3, 4)
-        S0 = fc.FillSearch(fc.TestsF(fc.LNUM, fc.LDEN), fc.HI, fc.DEPTH, fc.WMIN, fc.KAPPA, fc.HR, fc.DEPTHR,
-                           fc.HQ, fc.FUEL)
-        sys.setrecursionlimit(100000)
-        bl = [(a[2], a[3]), (a[0], a[1])]
-        c, w = S.work(lambda: S.solveR(bl, True, K))
-        c0 = S0.solveR(bl, True, K)
-        print(f'theorem flipPart{fc.TAG} : kids (solveG opsFl{fc.TAG} fillTests stratFl{fc.TAG} {fc.FUEL}) {a[3]} '
-              f'[({a[0]}, {a[1]})] true [] {a[2]} K ≤ {c} := by decide +kernel')
-        print(f'cost/K = {c / K:.6f}; the search of the theorem: {c0} ({c0 / K:.6f} K); {S.stat}; '
-              f'{w["calls"]} boxes ({w["fcalls"]} over frozen parts), predicted {fc.pred(w):.0f} s of the kernel')
         return 0
     print(__doc__)
     return 2

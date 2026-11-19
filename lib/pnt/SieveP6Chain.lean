@@ -1,5 +1,5 @@
 /-
-# Proposition 6 with the bilinear estimate: the branches as chains
+# The branches as chains
 
 Plain statements. `GCmp`, `RTg` and `liftChain` are `SieveChain`'s; `primesIco w z` is `SieveTree`'s; `desc s P` is the
 `s`-set `P` in decreasing order (`SieveStops2.desc`).
@@ -15,7 +15,7 @@ Plain statements. `GCmp`, `RTg` and `liftChain` are `SieveChain`'s; `primesIco w
   `y` of primes of `[w, z₀)` is a sum over the chains `x = (rt, y)` of the region `Ω` on the first block and `Pblock`.
 
 These put the branches of Buchstab's tree (`SieveTreeStop.tree_weighted_stop`), a tuple `rt` and a set of primes below
-`z₀`, in the form of `SieveChain.chainTL_bound`, `SieveChainR.chainTR_bound` and `SieveTypeIBAsym.leaves_ib`.
+`z₀`, in the form of a family of chains `RTg`, for `SieveP6Tree.tree_chains`.
 
 The file imports `SieveChainR.lean` and `SieveTreeStop.lean`.
 -/

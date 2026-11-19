@@ -1,5 +1,5 @@
 /-
-# A bilinear Type I estimate by Parseval's identity
+# The bilinear form of a Type I sum, and Parseval's identity
 
 Plain statements. `e(x) = e^{2πix/q}` is Mathlib's `ZMod.stdAddChar`, `dw q a n = 1[n ≡ a] − 1[(n, q) = 1]/φ(q)`
 (`SieveFamily.dw`), and for a weight `w` on a finite set `S` of naturals, `ŵ(h) = Σ_{k∈S} w(k)e(hk)` (`what`) and
@@ -10,28 +10,23 @@ naturals prime to `q`, `B(h) = Σ_{d₁,d₂} α(d₁)β(d₂)e(−had̄₁d̄�
 * `sum_w_dw`: for `d` prime to `q`, `Σ_{k∈S} w(k)dw(dk) = q⁻¹Σ_{h≠0} ŵ(h)e(−had̄) − E_w/φ(q)`.
 * `sum_bilinear`: `Σ_{d₁,d₂} α(d₁)β(d₂)Σ_{k∈S} w(k)dw(d₁d₂k) = q⁻¹Σ_{h≠0} ŵ(h)B(h) − (Σα)(Σβ)E_w/φ(q)`.
 * `sum_norm_sq_le` (Parseval): `Σ_r |Σ_{j∈J} c_je(rs_j)|² ≤ qΣ_{j,j′∈J, s_j = s_j′} |c_j||c_j′|`.
-* `typeIB_bound`, **the bilinear Type I estimate**: let `a` be a unit mod `q`, `D₂ ⊆ [1, Dm]` with `Dm ≥ 1` and
-  `2HDm < q`, every residue the inverse of at most `m` elements of `D₁`, every `|t|d` with `0 < |t| ≤ H` and `d ∈ D₂`
-  with at most `F` divisors, and `|ŵ(h)| ≤ W` at the frequencies `h ≠ 0` off the image of `[−H, H]`. Then
-  `|Σ_{d₁,d₂} α(d₁)β(d₂)Σ_{k∈S} w(k)dw(d₁d₂k)|` is at most
-  `(Σ|α|²)^{1/2}(mF(Σ|β|²)·q⁻¹Σ_h|ŵ(h)|²)^{1/2} + W(Σ|α|)(Σ|β|) + |(Σα)(Σβ)E_w/φ(q)|`.
+* `norm_sum_B_le`: if every residue is the inverse of at most `m` elements of `D₁`, then for frequencies `f_j` with
+  weights `c_j`, `|Σ_j c_jB(f_j)| ≤ (Σ|α|²)^{1/2}(m·qΣ_{x,y}|c_{x₁}β(x₂)||c_{y₁}β(y₂)|)^{1/2}`, the sum over the pairs
+  `x, y ∈ J × D₂` with `f_{x₁}d̄_{x₂} = f_{y₁}d̄_{y₂}`.
+* `card_fiber_le`: for `t ≠ 0`, `d′ ≥ 1` and `D₂` of positive naturals, the pairs `(t′, d)` of `J × D₂` with
+  `t′d = td′` number at most the divisors of `|t|d′`; `sum_swap4` reindexes a sum over `(J × D₂)²`.
+* `Jset H`, the frequencies `0 < |t| ≤ H`; for `2H < q` their casts to `ℤ/qℤ` are distinct and not `0`
+  (`cast_injOn`, `cast_ne_zero`). `norm_Bh_le`: `|B(h)| ≤ (Σ|α|)(Σ|β|)`.
 
 The proof:
 
 * `sum_w_dw`, `sum_bilinear`: expand `1[d₁d₂k ≡ a]` by `ind_eq`; the frequency `h = 0` cancels the units' term up to
   `E_w`.
-* `norm_sum_B_le`: for frequencies `f_j` with weights `c_j`, Cauchy–Schwarz over `d₁` extends `d̄₁` to every residue,
-  counted at most `m` times, and Parseval (`sum_norm_sq_le`) leaves the pairs `(j, d₂)`, `(j′, d₂′)` with
-  `f_jd̄₂ = f_j′d̄₂′`.
-* `diag_le`: on the integer frequencies `0 < |t| ≤ H`, with `2HDm < q`, that congruence is the equation `td₂′ = t′d₂`
-  (`int_eq_of_cong`); `|c_t||β_{d₂}||c_{t′}||β_{d₂′}| ≤ ½(|c_t|²|β_{d₂′}|² + |c_{t′}|²|β_{d₂}|²)`, and for each
-  `(t, d₂′)` the pairs `(t′, d₂)` number at most `F` (`card_fiber_le`). So the diagonal is at most
-  `F(Σ|c|²)(Σ|β|²)`.
-* `typeIB_bound`: the frequencies `0 < |t| ≤ H` by `norm_sum_B_le` and `diag_le`, with `c_t = ŵ(t)` and
-  `Σ_t |ŵ(t)|² ≤ Σ_h |ŵ(h)|²` (the casts are distinct, `cast_injOn`); the others by `|B(h)| ≤ (Σ|α|)(Σ|β|)`
-  (`norm_Bh_le`).
+* `norm_sum_B_le`: Cauchy–Schwarz over `d₁` extends `d̄₁` to every residue, counted at most `m` times, and Parseval
+  (`sum_norm_sq_le`) leaves the pairs `(j, d₂)`, `(j′, d₂′)` with `f_jd̄₂ = f_j′d̄₂′`.
 
-The weights themselves, intervals and splines, are in `SieveSpline.lean`.
+The bilinear Type I estimate built from these, `typeIB_bound_wide`, and its form with a spline weight are in
+`SieveTypeIBWide.lean`; the weights themselves, intervals and splines, are in `SieveSpline.lean`.
 
 The file imports `SieveFamily.lean` (for `dw`).
 -/
@@ -333,39 +328,6 @@ theorem card_fiber_le (J : Finset ℤ) (D₂ : Finset ℕ) {t : ℤ} {d' : ℕ} 
     have h2 : y.1 = z.1 := mul_right_cancel₀ hy2.ne' h1
     exact Prod.ext h2 hyz
 
-omit [NeZero q] in
-/-- On the frequencies `0 < |t| ≤ H` and `D₂ ⊆ [1, Dm]` prime to `q`, with `2HDm < q`, the congruence
-`t·d̄ = t′·d̄′` is the equation `td′ = t′d` in the integers. -/
-theorem int_eq_of_cong {H Dm : ℕ} (hq : 2 * H * Dm < q) {t t' : ℤ} {d d' : ℕ} (ht : t.natAbs ≤ H)
-    (ht' : t'.natAbs ≤ H) (hd : d ≤ Dm) (hd' : d' ≤ Dm) (hu : IsUnit (d : ZMod q)) (hu' : IsUnit (d' : ZMod q))
-    (h : (t : ZMod q) * (d : ZMod q)⁻¹ = (t' : ZMod q) * (d' : ZMod q)⁻¹) : t * d' = t' * d := by
-  have h1 : ((t * d' - t' * d : ℤ) : ZMod q) = 0 := by
-    push_cast
-    calc (t : ZMod q) * d' - t' * d
-        = ((t : ZMod q) * (d : ZMod q)⁻¹ - (t' : ZMod q) * (d' : ZMod q)⁻¹) * (d * d') := by
-          rw [sub_mul]
-          congr 1
-          · rw [show (t : ZMod q) * (d : ZMod q)⁻¹ * (d * d') = t * d' * ((d : ZMod q)⁻¹ * d) by ring,
-              ZMod.inv_mul_of_unit _ hu, mul_one]
-          · rw [show (t' : ZMod q) * (d' : ZMod q)⁻¹ * (d * d') = t' * d * ((d' : ZMod q)⁻¹ * d') by ring,
-              ZMod.inv_mul_of_unit _ hu', mul_one]
-      _ = 0 := by rw [h, sub_self, zero_mul]
-  rw [ZMod.intCast_zmod_eq_zero_iff_dvd] at h1
-  have hlt : |t * d' - t' * d| < q := by
-    have e1 : |t * (d' : ℤ)| ≤ (H : ℤ) * Dm := by
-      rw [abs_mul, Int.abs_natCast]
-      have : |t| ≤ (H : ℤ) := by rw [Int.abs_eq_natAbs]; exact_mod_cast ht
-      exact mul_le_mul this (by exact_mod_cast hd') (Nat.cast_nonneg _) (Nat.cast_nonneg _)
-    have e2 : |t' * (d : ℤ)| ≤ (H : ℤ) * Dm := by
-      rw [abs_mul, Int.abs_natCast]
-      have : |t'| ≤ (H : ℤ) := by rw [Int.abs_eq_natAbs]; exact_mod_cast ht'
-      exact mul_le_mul this (by exact_mod_cast hd) (Nat.cast_nonneg _) (Nat.cast_nonneg _)
-    have hq' : (2 * H * Dm : ℤ) < q := by exact_mod_cast hq
-    calc |t * d' - t' * d| ≤ |t * (d' : ℤ)| + |t' * (d : ℤ)| := abs_sub _ _
-      _ < q := by linarith
-  have := Int.eq_zero_of_abs_lt_dvd h1 hlt
-  linarith
-
 /-- Reindexing `(x, y) ↦ ((x₁, y₂), (y₁, x₂))` of a sum over `(J × D₂)²`. -/
 theorem sum_swap4 (J : Finset ℤ) (D₂ : Finset ℕ) (φ : ℤ → ℕ → ℤ → ℕ → ℝ) :
     ∑ x ∈ J ×ˢ D₂, ∑ y ∈ J ×ˢ D₂, φ x.1 x.2 y.1 y.2 =
@@ -377,82 +339,7 @@ theorem sum_swap4 (J : Finset ℤ) (D₂ : Finset ℕ) (φ : ℤ → ℕ → ℤ
   rw [Finset.sum_congr rfl fun t' _ => Finset.sum_comm]
   rw [Finset.sum_comm]
 
-omit [NeZero q] in
-/-- **The diagonal.** For integer frequencies `t ∈ J` with `0 < |t| ≤ H`, and `D₂ ⊆ [1, Dm]` prime to `q` with
-`2HDm < q`, if every `|t|d` (`t ∈ J`, `d ∈ D₂`) has at most `F` divisors, the diagonal sum of `norm_sum_B_le` at
-`f = (·)` is at most `F(Σ_{t∈J}|c_t|²)(Σ_{d∈D₂}|β(d)|²)`. By `int_eq_of_cong` the congruence is `td′ = t′d`; then
-`|c_t||β_d||c_{t′}||β_{d′}| ≤ ½(|c_t|²|β_{d′}|² + |c_{t′}|²|β_d|²)`, the two halves are equal by the symmetry of the
-equation, and for each `(t, d′)` the pairs `(t′, d)` with `t′d = td′` number at most `F` (`card_fiber_le`). -/
-theorem diag_le (J : Finset ℤ) (c : ℤ → ℂ) (D₂ : Finset ℕ) (β : ℕ → ℂ) {H Dm F : ℕ}
-    (hD₂ : ∀ d ∈ D₂, IsUnit (d : ZMod q)) (hD₂0 : ∀ d ∈ D₂, 0 < d) (hDm : ∀ d ∈ D₂, d ≤ Dm)
-    (hJ : ∀ t ∈ J, t ≠ 0 ∧ t.natAbs ≤ H) (hq : 2 * H * Dm < q)
-    (hF : ∀ t ∈ J, ∀ d ∈ D₂, (t.natAbs * d).divisors.card ≤ F) :
-    ∑ x ∈ J ×ˢ D₂, ∑ y ∈ J ×ˢ D₂,
-        (if ((x.1 : ZMod q)) * (x.2 : ZMod q)⁻¹ = ((y.1 : ZMod q)) * (y.2 : ZMod q)⁻¹ then
-          ‖c x.1 * β x.2‖ * ‖c y.1 * β y.2‖ else 0) ≤
-      F * ((∑ t ∈ J, ‖c t‖ ^ 2) * (∑ d ∈ D₂, ‖β d‖ ^ 2)) := by
-  set g : ℤ → ℕ → ℝ := fun t d => ‖c t‖ ^ 2 * ‖β d‖ ^ 2 with hg
-  have hg0 : ∀ t d, 0 ≤ g t d := fun t d => by rw [hg]; positivity
-  -- each term is at most half the two squares, on the integer equation
-  have hterm : ∀ x ∈ J ×ˢ D₂, ∀ y ∈ J ×ˢ D₂,
-      (if ((x.1 : ZMod q)) * (x.2 : ZMod q)⁻¹ = ((y.1 : ZMod q)) * (y.2 : ZMod q)⁻¹ then
-        ‖c x.1 * β x.2‖ * ‖c y.1 * β y.2‖ else 0) ≤
-      (if x.1 * (y.2 : ℤ) = y.1 * x.2 then g x.1 y.2 / 2 else 0) +
-        (if x.1 * (y.2 : ℤ) = y.1 * x.2 then g y.1 x.2 / 2 else 0) := by
-    intro x hx y hy
-    rw [Finset.mem_product] at hx hy
-    by_cases h1 : ((x.1 : ZMod q)) * (x.2 : ZMod q)⁻¹ = ((y.1 : ZMod q)) * (y.2 : ZMod q)⁻¹
-    · have h2 : x.1 * (y.2 : ℤ) = y.1 * x.2 := int_eq_of_cong hq (hJ _ hx.1).2 (hJ _ hy.1).2 (hDm _ hx.2)
-        (hDm _ hy.2) (hD₂ _ hx.2) (hD₂ _ hy.2) h1
-      rw [ite_eq_left h1, ite_eq_left h2, ite_eq_left h2]
-      have e : ‖c x.1 * β x.2‖ * ‖c y.1 * β y.2‖ = (‖c x.1‖ * ‖β y.2‖) * (‖c y.1‖ * ‖β x.2‖) := by
-        rw [norm_mul, norm_mul]; ring
-      rw [e, hg]
-      nlinarith [sq_nonneg (‖c x.1‖ * ‖β y.2‖ - ‖c y.1‖ * ‖β x.2‖)]
-    · rw [ite_eq_right h1]
-      have := hg0 x.1 y.2
-      have := hg0 y.1 x.2
-      split_ifs <;> linarith
-  -- the second half equals the first, by symmetry
-  have hsym : ∑ x ∈ J ×ˢ D₂, ∑ y ∈ J ×ˢ D₂, (if x.1 * (y.2 : ℤ) = y.1 * x.2 then g y.1 x.2 / 2 else 0) =
-      ∑ x ∈ J ×ˢ D₂, ∑ y ∈ J ×ˢ D₂, (if x.1 * (y.2 : ℤ) = y.1 * x.2 then g x.1 y.2 / 2 else 0) := by
-    rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => ?_
-    exact if_congr ⟨fun h => h.symm, fun h => h.symm⟩ rfl rfl
-  -- the fibres
-  have hfib : ∀ t ∈ J, ∀ d' ∈ D₂, ∑ y ∈ J ×ˢ D₂, (if t * (d' : ℤ) = y.1 * y.2 then g t d' else 0) ≤ F * g t d' := by
-    intro t ht d' hd'
-    have hcard := card_fiber_le J D₂ (t := t) (d' := d') (hJ t ht).1 (hD₂0 d' hd') hD₂0
-    rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
-    refine mul_le_mul_of_nonneg_right ?_ (hg0 t d')
-    have hsame : (J ×ˢ D₂).filter (fun y => t * (d' : ℤ) = y.1 * y.2) =
-        (J ×ˢ D₂).filter (fun y => y.1 * (y.2 : ℤ) = t * d') := by
-      ext y; simp only [Finset.mem_filter]; exact ⟨fun h => ⟨h.1, h.2.symm⟩, fun h => ⟨h.1, h.2.symm⟩⟩
-    rw [hsame]
-    exact_mod_cast hcard.trans (hF t ht d' hd')
-  calc ∑ x ∈ J ×ˢ D₂, ∑ y ∈ J ×ˢ D₂,
-        (if ((x.1 : ZMod q)) * (x.2 : ZMod q)⁻¹ = ((y.1 : ZMod q)) * (y.2 : ZMod q)⁻¹ then
-          ‖c x.1 * β x.2‖ * ‖c y.1 * β y.2‖ else 0)
-      ≤ ∑ x ∈ J ×ˢ D₂, ∑ y ∈ J ×ˢ D₂, ((if x.1 * (y.2 : ℤ) = y.1 * x.2 then g x.1 y.2 / 2 else 0) +
-          (if x.1 * (y.2 : ℤ) = y.1 * x.2 then g y.1 x.2 / 2 else 0)) :=
-        Finset.sum_le_sum fun x hx => Finset.sum_le_sum fun y hy => hterm x hx y hy
-    _ = ∑ x ∈ J ×ˢ D₂, ∑ y ∈ J ×ˢ D₂, (if x.1 * (y.2 : ℤ) = y.1 * x.2 then g x.1 y.2 else 0) := by
-        simp only [Finset.sum_add_distrib]
-        rw [hsym, ← Finset.sum_add_distrib]
-        refine Finset.sum_congr rfl fun x _ => ?_
-        rw [← Finset.sum_add_distrib]
-        refine Finset.sum_congr rfl fun y _ => ?_
-        split_ifs <;> ring
-    _ = ∑ t ∈ J, ∑ d' ∈ D₂, ∑ y ∈ J ×ˢ D₂, (if t * (d' : ℤ) = y.1 * y.2 then g t d' else 0) :=
-        sum_swap4 J D₂ (fun t d t' d' => if t * (d' : ℤ) = t' * d then g t d' else 0)
-    _ ≤ ∑ t ∈ J, ∑ d' ∈ D₂, F * g t d' :=
-        Finset.sum_le_sum fun t ht => Finset.sum_le_sum fun d' hd' => hfib t ht d' hd'
-    _ = F * ((∑ t ∈ J, ‖c t‖ ^ 2) * (∑ d ∈ D₂, ‖β d‖ ^ 2)) := by
-        rw [Finset.sum_mul_sum, Finset.mul_sum]
-        refine Finset.sum_congr rfl fun t _ => ?_
-        rw [Finset.mul_sum]
-
-/-! ### The estimate -/
+/-! ### The small frequencies -/
 
 /-- The small frequencies, `0 < |t| ≤ H`. -/
 def Jset (H : ℕ) : Finset ℤ := (Finset.Icc (-(H : ℤ)) H).filter (· ≠ 0)
@@ -501,91 +388,5 @@ theorem norm_Bh_le (a : ZMod q) (D₁ D₂ : Finset ℕ) (α β : ℕ → ℂ) (
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun d₁ _ => (norm_sum_le _ _).trans
     (Finset.sum_le_sum fun d₂ _ => ?_))
   rw [norm_mul, norm_mul, norm_eq, mul_one]
-
-/-- **The bilinear Type I estimate.** Let `a` be a unit mod `q`, `D₁` and `D₂` sets of naturals prime to `q`, `D₂ ⊆
-[1, Dm]` with `Dm ≥ 1` and `2HDm < q`, every residue the inverse of at most `m` elements of `D₁`, every `|t|d` with
-`0 < |t| ≤ H` and `d ∈ D₂` with at most `F` divisors, and `|ŵ(h)| ≤ W` at the other frequencies `h ≠ 0`. Then
-`|Σ_{d₁,d₂} α(d₁)β(d₂)Σ_{k∈S} w(k)dw(d₁d₂k)|` is at most
-`(Σ|α|²)^{1/2}(mF(Σ|β|²)·q⁻¹Σ_h|ŵ(h)|²)^{1/2} + W(Σ|α|)(Σ|β|) + |(Σα)(Σβ)E_w/φ(q)|`.
-
-The proof: `sum_bilinear`; the frequencies `0 < |t| ≤ H` by `norm_sum_B_le` and `diag_le`, the others by
-`norm_Bh_le`. -/
-theorem typeIB_bound (a : ZMod q) (ha : IsUnit a) (D₁ D₂ : Finset ℕ) (α β : ℕ → ℂ)
-    (hD₁ : ∀ d ∈ D₁, IsUnit (d : ZMod q)) (hD₂ : ∀ d ∈ D₂, IsUnit (d : ZMod q)) (hD₂0 : ∀ d ∈ D₂, 0 < d)
-    (S : Finset ℕ) (w : ℕ → ℂ) {H Dm F m : ℕ} {W : ℝ} (hW0 : 0 ≤ W)
-    (hDm : ∀ d ∈ D₂, d ≤ Dm) (hDm1 : 1 ≤ Dm) (hq : 2 * H * Dm < q)
-    (hm : ∀ r : ZMod q, #(D₁.filter (fun d : ℕ => ((d : ZMod q))⁻¹ = r)) ≤ m)
-    (hF : ∀ t : ℤ, t ≠ 0 → t.natAbs ≤ H → ∀ d ∈ D₂, (t.natAbs * d).divisors.card ≤ F)
-    (hW : ∀ h : ZMod q, h ≠ 0 → h ∉ (Jset H).image (fun t : ℤ => (t : ZMod q)) → ‖what S w h‖ ≤ W) :
-    ‖∑ d₁ ∈ D₁, ∑ d₂ ∈ D₂, α d₁ * β d₂ * ∑ k ∈ S, w k * SieveFamily.dw q a (d₁ * d₂ * k)‖ ≤
-      √(∑ d ∈ D₁, ‖α d‖ ^ 2) * √(m * F * (∑ d ∈ D₂, ‖β d‖ ^ 2) * ((q : ℝ)⁻¹ * ∑ h : ZMod q, ‖what S w h‖ ^ 2)) +
-        W * ((∑ d ∈ D₁, ‖α d‖) * (∑ d ∈ D₂, ‖β d‖)) +
-        ‖(∑ d ∈ D₁, α d) * (∑ d ∈ D₂, β d) * (Ew (q := q) S w / q.totient)‖ := by
-  have hq0 : (0 : ℝ) < q := by exact_mod_cast NeZero.pos q
-  have hq2 : 2 * H < q := lt_of_le_of_lt (Nat.le_mul_of_pos_right _ hDm1) hq
-  set Fz := univ.filter (· ≠ (0 : ZMod q)) with hFz
-  set I := (Jset H).image (fun t : ℤ => (t : ZMod q)) with hI
-  set Y := ∑ h : ZMod q, ‖what S w h‖ ^ 2 with hY
-  set Z := ∑ d ∈ D₂, ‖β d‖ ^ 2 with hZ
-  rw [sum_bilinear a D₁ D₂ α β hD₁ hD₂ S w]
-  refine (norm_sub_le _ _).trans (add_le_add ?_ le_rfl)
-  -- split the frequencies
-  rw [← Finset.sum_filter_add_sum_filter_not Fz (· ∈ I), mul_add]
-  refine (norm_add_le _ _).trans (add_le_add ?_ ?_)
-  · -- the small frequencies, as the integers of `Jset H`
-    have hsub : Fz.filter (· ∈ I) = I := by
-      ext h
-      simp only [hFz, Finset.mem_filter, Finset.mem_univ, true_and]
-      constructor
-      · exact fun hh => hh.2
-      · intro hh
-        refine ⟨?_, hh⟩
-        rw [hI, Finset.mem_image] at hh
-        obtain ⟨t, ht, rfl⟩ := hh
-        exact cast_ne_zero hq2 ht
-    rw [hsub, hI, Finset.sum_image (cast_injOn hq2)]
-    have hB := norm_sum_B_le a ha D₁ D₂ α β (Jset H) (fun t : ℤ => (t : ZMod q))
-      (fun t : ℤ => what S w (t : ZMod q)) hm
-    have hD := diag_le (q := q) (Jset H) (fun t : ℤ => what S w (t : ZMod q)) D₂ β hD₂ hD₂0 hDm
-      (fun t ht => mem_Jset.1 ht) hq (fun t ht d hd => hF t (mem_Jset.1 ht).1 (mem_Jset.1 ht).2 d hd)
-    have hJY : ∑ t ∈ Jset H, ‖what S w (t : ZMod q)‖ ^ 2 ≤ Y := by
-      rw [hY, ← Finset.sum_image (f := fun h : ZMod q => ‖what S w h‖ ^ 2) (cast_injOn hq2)]
-      exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _) fun h _ _ => by positivity
-    have hY0 : 0 ≤ Y := Finset.sum_nonneg fun h _ => by positivity
-    have hZ0 : 0 ≤ Z := Finset.sum_nonneg fun d _ => by positivity
-    rw [norm_mul, norm_inv, Complex.norm_natCast]
-    calc (q : ℝ)⁻¹ * ‖∑ t ∈ Jset H, what S w (t : ZMod q) * Bh a D₁ D₂ α β (t : ZMod q)‖
-        ≤ (q : ℝ)⁻¹ * (√(∑ d ∈ D₁, ‖α d‖ ^ 2) * √(m * (q * (F * (Y * Z))))) := by
-          refine mul_le_mul_of_nonneg_left (hB.trans (mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt ?_)
-            (Real.sqrt_nonneg _))) (by positivity)
-          refine mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left (hD.trans ?_) hq0.le) (Nat.cast_nonneg _)
-          exact mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hJY hZ0) (Nat.cast_nonneg _)
-      _ = √(∑ d ∈ D₁, ‖α d‖ ^ 2) * √(m * F * Z * ((q : ℝ)⁻¹ * Y)) := by
-          rw [mul_left_comm]
-          congr 1
-          rw [show (m : ℝ) * (q * (F * (Y * Z))) = q ^ 2 * (m * F * Z * ((q : ℝ)⁻¹ * Y)) by
-            field_simp]
-          rw [Real.sqrt_mul (by positivity), Real.sqrt_sq hq0.le]
-          field_simp
-  · -- the other frequencies
-    rw [norm_mul, norm_inv, Complex.norm_natCast]
-    have hcard : (#(Fz.filter (· ∉ I)) : ℝ) ≤ q := by
-      have : #(Fz.filter (· ∉ I)) ≤ q := (Finset.card_le_univ _).trans (by rw [ZMod.card])
-      exact_mod_cast this
-    calc (q : ℝ)⁻¹ * ‖∑ h ∈ Fz.filter (· ∉ I), what S w h * Bh a D₁ D₂ α β h‖
-        ≤ (q : ℝ)⁻¹ * ∑ h ∈ Fz.filter (· ∉ I), W * ((∑ d ∈ D₁, ‖α d‖) * (∑ d ∈ D₂, ‖β d‖)) := by
-          refine mul_le_mul_of_nonneg_left ((norm_sum_le _ _).trans (Finset.sum_le_sum fun h hh => ?_))
-            (by positivity)
-          rw [Finset.mem_filter, hFz, Finset.mem_filter] at hh
-          rw [norm_mul]
-          exact mul_le_mul (hW h hh.1.2 hh.2) (norm_Bh_le a D₁ D₂ α β h) (norm_nonneg _) hW0
-      _ ≤ W * ((∑ d ∈ D₁, ‖α d‖) * (∑ d ∈ D₂, ‖β d‖)) := by
-          rw [Finset.sum_const, nsmul_eq_mul, ← mul_assoc]
-          have hX : 0 ≤ W * ((∑ d ∈ D₁, ‖α d‖) * (∑ d ∈ D₂, ‖β d‖)) := by positivity
-          calc (q : ℝ)⁻¹ * #(Fz.filter (· ∉ I)) * (W * ((∑ d ∈ D₁, ‖α d‖) * (∑ d ∈ D₂, ‖β d‖)))
-              ≤ 1 * (W * ((∑ d ∈ D₁, ‖α d‖) * (∑ d ∈ D₂, ‖β d‖))) := by
-                refine mul_le_mul_of_nonneg_right ?_ hX
-                rw [inv_mul_le_iff₀ hq0, mul_one]; exact hcard
-            _ = W * ((∑ d ∈ D₁, ‖α d‖) * (∑ d ∈ D₂, ‖β d‖)) := one_mul _
 
 end SieveTypeIB

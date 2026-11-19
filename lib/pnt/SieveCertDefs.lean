@@ -1,27 +1,28 @@
 /-
 # The certificate's definitions, without Mathlib
 
-The definitions that the certificate builds on: its grid of cells (`Grid`, `cell`, `cellC`), the bound `ω*` for
-Buchstab's `ω` on a box (`omKw`, with its table `lnT` and `omF`), the test of evaluability (`surelyEval`), the bound
-`bound2`, the cells' tests (`cand`, `inKK`, `ne3`, `counted4`, `inKK5`, `ne5`, `counted6`) and the classes `GridOK` and
-`GridOKC`; the certificate, the total `totalD`, is in `SieveDeepDefs.lean`. They are arithmetic on natural numbers, lists
-and booleans, and the file imports only `Mathlib.Data.Nat.Notation` (the notation `ℕ`), whose closure is `Mathlib.Init`'s:
-1,339 modules, loaded in about 0.9 GiB, not the whole of Mathlib. So a file that imports no more than this one, such as a
-certificate's part files (`SieveCert22000EP1.lean` … `SieveCert22000EP114.lean`), runs its kernel checks without the
-environment of `import Mathlib`, which loads about 6.3 GiB into every process. The lemmas about these definitions, in the
-reals and over `Finset`, are in `SieveCert.lean` and `SieveOmegaB.lean`, which import this file and Mathlib.
+The definitions that the certificates build on: the grid of cells (`Grid`) and the bound `ω*`
+for Buchstab's `ω` on a box (`omKw`, with its table `lnT` and `omF`). They are arithmetic on natural numbers, and the
+file imports only `Mathlib.Data.Nat.Notation` (the notation `ℕ`), whose closure is `Mathlib.Init`'s: 1,339 modules,
+loaded in about 0.9 GiB, not the whole of Mathlib. So a file that imports no more than this one and the other
+Mathlib-free definitions, such as the certificate's parts `SieveHint21500P1.lean` … `SieveHint21500P17.lean`, runs its
+kernel checks without the environment of `import Mathlib`, which loads about 6.3 GiB into every process. The lemmas
+about these definitions, in the reals, are in `SieveCert.lean` and `SieveOmegaB.lean`, which import this file and
+Mathlib.
+
+* The grid. Coordinates are multiples of `1/DEN`, `DEN = 2^40`. A grid (`Grid`) has the window's ends `U1 < U2`, in
+  units of `1/DEN`, the number `n` of cells a side and the cells' multiplier `μ`.
 -/
 import Mathlib.Data.Nat.Notation
 
 namespace SieveCert
 
-/-! ### The grid and the certificate, in natural numbers -/
+/-! ### The grid, in natural numbers -/
 
 /-- The denominator of the coordinates. -/
 def DEN : ℕ := 2 ^ 40
 /-- **A grid of the certificate**: the window's ends `U1 < U2`, in units of `1/DEN`, the number `n` of cells a side,
-and the cells' multiplier `μ`: a cell is `μ` consecutive cells of the grid of `μn` cells (`μ = 1` for a certificate's
-grid; its coarse grid `Gc` has `n/4` cells of four). -/
+and the cells' multiplier `μ`: a cell is `μ` consecutive cells of the grid of `μn` cells. -/
 class Grid where
   /-- The window's left end. -/
   U1 : ℕ
@@ -42,17 +43,8 @@ def topK : ℕ := (K * 565073 + 999999) / 1000000
 (`Ω e^Ω = 1`), at `u = 1 + 1/Ω`. -/
 def w1K : ℕ := (K * 5671433 + 9999999) / 10000000
 
-/-- The ranges of the subset sums of a box, the empty subset included. -/
-def subsetSums : List (ℕ × ℕ) → List (ℕ × ℕ)
-  | [] => [(0, 0)]
-  | p :: rest => subsetSums rest ++ (subsetSums rest).map (fun s => (s.1 + p.1, s.2 + p.2))
-
 /-- Division rounded up. -/
 def cdiv (a b : ℕ) : ℕ := (a + b - 1) / b
-
-/-- `f 0 + ⋯ + f (m − 1)`, by the recursor of `ℕ`, which the kernel evaluates faster than a list's fold
-(`SieveCert.sumTo_eq`). -/
-def sumTo (m : ℕ) (f : ℕ → ℕ) : ℕ := Nat.rec (motive := fun _ => ℕ) 0 (fun k acc => acc + f k) m
 
 /-! ### Buchstab's `ω` on the arguments of a box -/
 
@@ -103,158 +95,5 @@ def omKw (s t W w : ℕ) : ℕ :=
       (if 100 * (DEN + 1 - s - t) ≤ 276 * t then omF (DEN + 1 - s - t) t
         else if 277 * (t + w) ≤ 100 * (DEN - s - t - W) then omF (DEN - s - t - W) (t + w) else w1K))
     (if s + 4 * t ≤ DEN then topK else 0)
-
-variable [Grid]
-
-/-- The window's width, the least exponent of a sifted prime. -/
-def V : ℕ := U2 - U1
-/-- The cells' side, `μ⌈(DEN/2 − V)/(μn)⌉`: for `μ = 1`, `⌈(DEN/2 − V)/n⌉`. -/
-def H : ℕ := Grid.mult * ((DEN / 2 - V + n * Grid.mult - 1) / (n * Grid.mult))
-/-- The lower end of cell `k`. -/
-def e (k : ℕ) : ℕ := V + H * k
-/-- `DEN − U1`, the right end of the complement window. -/
-def lim : ℕ := DEN - U1
-
-/-- A range `[lo, hi]` of sums lies inside `U`. -/
-def inside (lo hi : ℕ) : Bool :=
-  (decide (U1 < lo) && decide (hi < U2)) || (decide (DEN - U2 < lo) && decide (hi < DEN - U1))
-
-/-- Some subset sum of the box lies inside `U`, by the list of all of them (the specification of `surelyEval`). -/
-def surelyEvalSpec (xs : List (ℕ × ℕ)) : Bool := (subsetSums xs).any (fun s => inside s.1 s.2)
-
-/-- `inside` by the kernel's primitive `Nat.blt` (`SieveCert.insideF_eq`). -/
-def insideF (lo hi : ℕ) : Bool :=
-  (Nat.blt U1 lo && Nat.blt hi U2) || (Nat.blt (DEN - U2) lo && Nat.blt hi (DEN - U1))
-
-/-- Some subset of the boxes `xs`, added to the range `[a, b]`, has its sum inside `U`: a search with no list of sums
-(`SieveCert.anySub_eq`). -/
-def anySub : List (ℕ × ℕ) → ℕ → ℕ → Bool
-  | [], a, b => insideF a b
-  | p :: rest, a, b => anySub rest a b || anySub rest (a + p.1) (b + p.2)
-
-/-! The search of `anySub` unrolled for `k ≤ 6` boxes, `sub k`: the same tree of `||`, with `Nat.add` and no recursion,
-which the kernel evaluates several times faster than the recursion; `SieveCert.surelyEval_eq` proves `surelyEval` equal to
-`surelyEvalSpec`. -/
-
-/-- The search on no box. -/
-def sub0 (a b : ℕ) : Bool := insideF a b
-/-- The search on one box. -/
-def sub1 (p : ℕ × ℕ) (a b : ℕ) : Bool := sub0 a b || sub0 (Nat.add a p.1) (Nat.add b p.2)
-/-- The search on two boxes. -/
-def sub2' (p q : ℕ × ℕ) (a b : ℕ) : Bool := sub1 q a b || sub1 q (Nat.add a p.1) (Nat.add b p.2)
-/-- The search on three boxes. -/
-def sub3 (p q r : ℕ × ℕ) (a b : ℕ) : Bool := sub2' q r a b || sub2' q r (Nat.add a p.1) (Nat.add b p.2)
-/-- The search on four boxes. -/
-def sub4 (p q r s : ℕ × ℕ) (a b : ℕ) : Bool := sub3 q r s a b || sub3 q r s (Nat.add a p.1) (Nat.add b p.2)
-/-- The search on five boxes. -/
-def sub5 (p q r s t : ℕ × ℕ) (a b : ℕ) : Bool :=
-  sub4 q r s t a b || sub4 q r s t (Nat.add a p.1) (Nat.add b p.2)
-/-- The search on six boxes. -/
-def sub6 (p q r s t u : ℕ × ℕ) (a b : ℕ) : Bool :=
-  sub5 q r s t u a b || sub5 q r s t u (Nat.add a p.1) (Nat.add b p.2)
-
-/-- Some subset sum of the box lies inside `U` on the whole box: `surelyEvalSpec` by the unrolled search, for up to six
-boxes (`SieveCert.surelyEval_eq`). -/
-def surelyEval (xs : List (ℕ × ℕ)) : Bool :=
-  match xs with
-  | [] => sub0 0 0
-  | p :: xs1 =>
-    match xs1 with
-    | [] => sub1 p 0 0
-    | q :: xs2 =>
-      match xs2 with
-      | [] => sub2' p q 0 0
-      | r :: xs3 =>
-        match xs3 with
-        | [] => sub3 p q r 0 0
-        | s :: xs4 =>
-          match xs4 with
-          | [] => sub4 p q r s 0 0
-          | t :: xs5 =>
-            match xs5 with
-            | [] => sub5 p q r s t 0 0
-            | u :: xs6 =>
-              match xs6 with
-              | [] => sub6 p q r s t u 0 0
-              | _ :: _ => surelyEvalSpec xs
-
-/-- `omKw` for a cell of `m` variables, all of width `H`. -/
-def omK (s t m : ℕ) : ℕ := omKw s t (m * H) H
-
-/-- The bound of a cell of depth 2 with lower corner `(a, b)`, in units of `1/K`: `omK` times `H(2a + H)/(2a(a + H))`,
-the trapezoid bound of the first cell's `Σ 1/p`, times `DEN·H/(b(b + H))`, the last cell's `log x · Σ 1/(p log p)`,
-rounded up. -/
-def bound2 (a b : ℕ) : ℕ := cdiv (H * H * (2 * a + H) * DEN * omK a b 2) (2 * a * (a + H) * (b * (b + H)))
-
-/-- The range of cell `k`. -/
-def cell (k : ℕ) : ℕ × ℕ := (e k, e k + H)
-
-/-! ### The coarse grid of the primes `p₅` and `p₆`, and the cells of depths 5 and 6 -/
-
-/-- The **coarse grid**: the same window and `n / 4` cells a side, each four consecutive cells of the grid: for `4 ∣ n`
-and `μ = 1` its side is `HC = 4H` and its cell `b` is the cells `4b, …, 4b + 3`. Its cells hold the primes `p₅` and `p₆`
-of the deepest levels. -/
-@[instance_reducible] def Gc : Grid := ⟨U1, U2, n / 4, 4 * Grid.mult⟩
-
-/-- The number of cells of the coarse grid. -/
-def nC : ℕ := n / 4
-/-- The side of a coarse cell, `4μ⌈(DEN/2 − V)/(4μ·nC)⌉`: `4H` for `4 ∣ n`. -/
-def HC : ℕ := @H Gc
-/-- The lower end of the coarse cell `b`. -/
-def eC (b : ℕ) : ℕ := @e Gc b
-/-- The range of the coarse cell `b`. -/
-def cellC (b : ℕ) : ℕ × ℕ := (eC b, eC b + HC)
-
-/-- The cell `(i, j)` may meet the region of depth 2 and may be non-evaluable. -/
-def cand (i j : ℕ) : Bool :=
-  decide (e j < e i + H) && decide (2 * e i < DEN) && decide (e i + 2 * e j ≤ DEN) &&
-    !(decide (U1 < e i) && decide (e i + H < U2)) && !surelyEval [cell i, cell j]
-
-/-- The cell `k` of `α₃` may meet the region of depth 3 over the cell `(i, j)`. -/
-def inKK (i j k : ℕ) : Bool := decide (e k < e j + H) && decide (e i + e j + 2 * e k ≤ DEN)
-
-/-- The cell `(i, j, k)` may be non-evaluable. -/
-def ne3 (i j k : ℕ) : Bool := !surelyEval [cell i, cell j, cell k]
-
-/-- The cell `(i, j, k, l)` may be non-evaluable, and for `l ≤ k`, which `row` imposes, it may meet the region of
-depth 4. -/
-def counted4 (i j k l : ℕ) : Bool :=
-  decide (e i + e j + e k + 2 * e l ≤ DEN) && !surelyEval [cell i, cell j, cell k, cell l]
-
-/-- The cell `f` of the coarse grid for `p₅` may meet the region of depth 5 over the cell `(i, j, k, l)`. -/
-def inKK5 (i j k l b : ℕ) : Bool :=
-  decide (eC b < e l + H) && decide (e i + e j + e k + e l + 2 * eC b ≤ DEN)
-
-/-- The cell `(i, j, k, l, b)` may be non-evaluable. -/
-def ne5 (i j k l b : ℕ) : Bool := !surelyEval [cell i, cell j, cell k, cell l, cellC b]
-
-/-- The cell `(i, j, k, l, b, c)` may be non-evaluable, and for `c ≤ b` it may meet the region of depth 6. -/
-def counted6 (i j k l b c : ℕ) : Bool :=
-  decide (e i + e j + e k + e l + eC b + 2 * eC c ≤ DEN) &&
-    !surelyEval [cell i, cell j, cell k, cell l, cellC b, cellC c]
-
-/-! ### Facts about the grid -/
-
-/-- **The facts about a grid** that the lemmas of `SieveCert.lean` and the route's proofs use. For a given grid each
-is checked by `decide`. -/
-class GridOK : Prop where
-  H_pos : 0 < H
-  U1_lt_U2 : U1 < U2
-  two_U2_lt : 2 * U2 < DEN
-  two_e_lt : 2 * e (n - 1) < DEN
-  four_H_le_V : 4 * H ≤ V
-  DEN_lt_top : DEN < 2 * (V + n * H)
-
-/-- **The facts about the coarse grid** (`Gc`, with its cells `eC`, `HC`) that the deepest levels use: its own `GridOK`,
-`4H + 2HC ≤ V`, which keeps the boxes of depth 6 inside `DEN`, and `nH ≤ nC·HC`, which makes the coarse cells cover the
-range of the fine ones (with equality for `4 ∣ n` and multiplier `1`, where a coarse cell is four fine ones). For a given
-grid each is checked by `decide`. -/
-class GridOKC : Prop where
-  /-- The coarse grid's own facts. -/
-  ok : @GridOK Gc
-  /-- The boxes of depth 6 fit. -/
-  fit : 4 * H + 2 * HC ≤ V
-  /-- The coarse cells cover the range of the fine ones: `nH ≤ nC·HC`. -/
-  cover : n * H ≤ nC * HC
 
 end SieveCert

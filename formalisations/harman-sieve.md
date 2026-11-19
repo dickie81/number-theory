@@ -1,29 +1,45 @@
 # Harman's sieve in the form used, with Brun's fundamental lemma and Buchstab's identity
 
-**Lean:** `SieveProp6.prop6` (`lib/pnt/SieveProp6.lean`), the comparison theorem of Harman's sieve for the Linnik
-problem:
+**Lean:** `SieveTwoComp.prop6_two_at` (`lib/pnt/SieveTwoComp.lean`), the comparison theorem of Harman's sieve for the
+Linnik problem, with its stops in two variables (`SieveTwoComp.prop6_two` is the same at the exponent of a route
+with `RouteOK`):
 
 ```lean
-theorem prop6 [Route] [RouteOK] (hII : TypeIIAt) (j J₀ : ℕ) {Λ₁ a₀ b₀ : ℝ} (hΛ₁ : 0 ≤ Λ₁) (ha₀ : 0 < a₀)
-    (hab : a₀ + b₀ < (1 - w₁) * (L)) (hb₁ : (1 - w₂) * (L) < b₀)
-    (hb₂ : b₀ < L - 1) {η : ℝ} (hη : 0 < η) :
+theorem prop6_two_at {L : ℝ} (hL2 : 2 < L) (hL : L ≤ 5 / 2) {Rg : ℝ → ℝ → Prop} (hII : TypeIITwoAt L Rg) (j J₀ : ℕ)
+    {Λ₁ a₀ : ℝ} (hΛ₁ : 0 ≤ Λ₁) (ha₀ : 0 < a₀) (lo hi : Fin j → ℝ) (S₀ Sr S₁ : Finset (Fin j))
+    (hdisj : Disjoint S₀ Sr) (hSr : Sr.Nonempty) (eIn₁ : Bool) {t u v ρ₁ ρ₂ ε : ℝ} (hu : 0 < u) (huv : u + a₀ < v)
+    (hρ₁0 : 0 ≤ ρ₁) (hρ : ρ₁ ≤ ρ₂) (hvρ : v + ρ₂ < L) (hρlo : ρ₁ ≤ ∑ i ∈ Sr, lo i) (hρhi : ∑ i ∈ Sr, hi i ≤ ρ₂)
+    (hε : 0 < ε)
+    (hzone : ∀ m₁ m₂ : ℝ, u ≤ m₁ → m₁ ≤ v → L - ρ₂ - ε ≤ m₁ + m₂ → m₁ + m₂ ≤ L - ρ₁ + ε → Rg m₁ m₂)
+    (hlo : u - ∑ i ∈ S₀, lo i ≤ t) (hhi : ∑ i ∈ S₀, hi i < v)
+    (hD₁ : ∑ i ∈ S₁, hi i + (if eIn₁ then t else 0) < L - 1)
+    (hD₂ : max (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) 1 + (∑ i ∈ S₁, hi i + (if eIn₁ then t else 0)) +
+      2 * (∑ i ∈ S₁ᶜ, hi i + (if eIn₁ then 0 else t)) < 2 * L - 1)
+    {η : ℝ} (hη : 0 < η) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
-      ∀ Ω : List (Cmp j), Ω.length ≤ J₀ → (∀ C ∈ Ω, C.c 0 ≤ Λ₁ * Real.log q) →
+      ∀ Ω : List (GCmp j), Ω.length ≤ J₀ → (∀ C ∈ Ω, C.c 0 ≤ Λ₁ * Real.log q) →
       (∀ rt : Fin j → ℕ, (∀ i, (rt i).Prime) → (∀ C ∈ Ω, C.holds 0 rt) →
-        (∀ i, ⌈(q : ℝ) ^ a₀⌉₊ ≤ rt i) ∧ ∏ i, rt i ≤ ⌊(q : ℝ) ^ b₀⌋₊) →
-      ‖∑ rt ∈ SieveStops2.RT j ⌊2 * (q : ℝ) ^ L⌋₊ Ω,
-          ∑ n ∈ Finset.Ioc ⌊(q : ℝ) ^ L⌋₊ ⌊2 * (q : ℝ) ^ L⌋₊,
-            dw q a n * (if (∏ i, rt i) ∣ n ∧ rough ⌈(q : ℝ) ^ a₀⌉₊ n then 1 else 0)‖ ≤
-        η * (q : ℝ) ^ L / (q.totient * Real.log q) +
-          (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ)
+        StrictAnti rt ∧ (∀ i, ⌈(q : ℝ) ^ a₀⌉₊ ≤ rt i) ∧ ∀ i, (q : ℝ) ^ lo i ≤ rt i ∧ (rt i : ℝ) ≤ (q : ℝ) ^ hi i) →
+      ‖∑ rt ∈ RTg j ⌊2 * (q : ℝ) ^ L⌋₊ Ω, ∑ n ∈ Finset.Ioc ⌊(q : ℝ) ^ L⌋₊ ⌊2 * (q : ℝ) ^ L⌋₊,
+          dw q a n * (if (∏ i, rt i) ∣ n ∧ rough ⌈(q : ℝ) ^ a₀⌉₊ n then 1 else 0)‖ ≤
+        η * (q : ℝ) ^ L / (q.totient * Real.log q) + (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ)
 ```
 
-In words: let `L`, `w₁` and `w₂` be the parameters of a route of the Linnik paper's sieve that satisfy `RouteOK`, and
-assume the route's Type II estimate (`hII`). Fix `j`, `J₀`, `Λ₁ ≥ 0`, `η > 0`, and exponents `a₀ > 0` and `b₀` with
-`a₀ + b₀ < (1 − w₁)L` and `(1 − w₂)L < b₀ < L − 1`. Then there are `δ > 0` and `q₀` such that for `q ≥ q₀` and every
-unit `a` mod `q` the following holds. Let the tuple `rt` run over the `j`-tuples of primes up to `2q^L` that satisfy
-at most `J₀` comparisons `Ω`, where `Ω` forces every prime to be at least `z₀ = ⌈q^{a₀}⌉` and the product `r` to be at
-most `q^{b₀}`. Then
+In words: let `2 < L ≤ 5/2`, and assume the Type II estimate in two variables at `L` on a region `Rg` (`hII`, with
+`SieveFamilyTwo.TypeIITwoAt`). Fix `j`, `J₀`, `Λ₁ ≥ 0`, `η > 0`, the exponent `a₀ > 0` of `z₀ = ⌈q^{a₀}⌉`, boxes
+`[q^{lo_i}, q^{hi_i}]` for the tuples' entries, disjoint sets `S₀` and `Sr ≠ ∅` of indices, a leaf split `(S₁, eIn₁)`
+and a growth `t`, with:
+
+- the window `(u, v)` of the first variable, the product over `S₀` times the primes of the tree: `0 < u`,
+  `u + a₀ < v`, `u − Σ_{S₀} lo ≤ t` and `Σ_{S₀} hi < v`;
+- the rest, the product of the primes of `Sr`: `0 ≤ ρ₁ ≤ Σ_{Sr} lo`, `Σ_{Sr} hi ≤ ρ₂` and `v + ρ₂ < L`;
+- the zone: `Rg m₁ m₂` for `u ≤ m₁ ≤ v` and `L − ρ₂ − ε ≤ m₁ + m₂ ≤ L − ρ₁ + ε`, for some `ε > 0`;
+- the leaves: `D₁ < L − 1` and `max(D₁, 1) + D₁ + 2D₂ < 2L − 1`, where `D₁ = Σ_{S₁} hi + t·[eIn₁]` and
+  `D₂ = Σ_{S₁ᶜ} hi + t·[¬eIn₁]`.
+
+Then there are `δ > 0` and `q₀` such that for `q ≥ q₀` and every unit `a` mod `q` the following holds. Let the tuple
+`rt` run over the `j`-tuples of primes up to `2q^L` that satisfy at most `J₀` comparisons `Ω`, where `Ω` forces `rt`
+to decrease strictly, every prime to be at least `z₀` and `rt_i` to lie in `[q^{lo_i}, q^{hi_i}]`. Then
 
 `|Σ_{rt} (S(A_r, z₀) − S(B_r, z₀)/φ(q))| ≤ ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)`,
 
@@ -80,16 +96,15 @@ Its main tools:
   `|Σ_r (S(A_r, z₀) − S(B_r, z₀)/φ(q))| ≤ ηq^L/(φ(q) log q) + q^{L−δ}/φ(q)` for every `η > 0` and large `q`. The
   leaves pass through two trees, so the level `k` is chosen with `(2k + 4)³ζ(k)` small
   (`SieveFillComp.exists_k3`).
-- `SieveAd.fillTests_sound`, `SieveAd.fillTests_soundX` (`lib/pnt/SieveAdFill.lean`; the tests are
+- `SieveAd.fillTests_sound` (`lib/pnt/SieveAdFill.lean`; the tests are
   `lib/pnt/SieveAdFillDefs.lean`'s, without Mathlib), **the tests of a decomposition with no Type II window**, for
   the trees of Buchstab steps on boxes of cells (`SieveAd.sound`). A box is evaluated by the estimate in two
   variables (`okI2`); its terms at a floor by the comparison with the rest among the box's primes (`okJ2`) or,
   for a box that has none of that size, among the tree's (`okJ3`, by `SieveFillComp.prop6_fill_at`): the rest is
   then of exponent between `r₁`, the least that the region takes, and `r₁ + f` for the floor `x^{f/DEN}`, the
-  window is the one the region allows for all such rests, and the leaves grow by `t + r₁ + f`. The second
-  statement is the same under two more atoms, for the trees of a reversed term. They are the tests of the
-  theorems at `2165/1000` and `2150/1000`, `Linnik21650.linnik_21650` and `Linnik21500.linnik_21500`
-  (`formalisations/README.md`; `docs/research-opportunities.md`, §3.1).
+  window is the one the region allows for all such rests, and the leaves grow by `t + r₁ + f`. They are the
+  tests of the theorem at `21/10`, with the resonant window's, and, with the paper's conditions on the leaves
+  alone (`SieveAd.Plain.fillTests_sound`), of the theorem at `2150/1000`, `Linnik21500.linnik_21500`.
 - `SieveAd.frozSolve_sound_at`, `SieveAd.dJF_level_at`, `SieveAd.famIR_eq`, `SieveAd.famJR_eq`
   (`lib/pnt/SieveAdFroz.lean`, `lib/pnt/SieveAdFrozTree.lean`), **the tree of a reversed term over a frozen
   part.** A reversed term is a sum over numbers `R` (the product `r'` of the term's other primes and its cofactor)
@@ -231,7 +246,8 @@ Its main tools:
   part, which is what `SieveAd.bd_flip_neg_at` and `SieveAd.bd_flip_pos_at` ask for.
 - `SieveAd.pr_of_kidsF_at` (`lib/pnt/SieveAdFlipSearch.lean`; the definitions are `lib/pnt/SieveAdFlipDefs.lean`'s,
   without Mathlib), **the search with the reversal of a box through its largest prime is sound.**
-  `SieveAd.opsF` is the nodes of `SieveAd.opsR` with one more bound for a box of the sign `−` that passes
+  `SieveAd.opsF` is the nodes of the search with the role reversal of a box of three primes (`SieveAd.revOK`,
+  `SieveAd.revCost`) with one more bound for a box of the sign `−` that passes
   `SieveAd.flipOK`: two to `maxlen ≤ 11` cells with `0 < lo < hi` and upper ends of sum at most `DEN − 2`, the
   largest prime's cell `(l₁, h₁)` above the others (`h₂ + 1 ≤ l₁`) with `l₁ ≥ 3`, and the level `t = ⌈h₁/2⌉` with `t ≤ l₁` and
   `h₁ + t + 1 ≤ DEN`. The bound is `SieveAd.flipCost`, `⌈(c(h₁D₀ + E) + bdK·E)/(DEN·K)⌉`: `c` is the cost of the
@@ -245,23 +261,10 @@ Its main tools:
   A cost below the limit bounds the term of the box (`SieveAd.bd_flipCost`, by `SieveAd.bd_flip_core`): it is
   `SieveAd.bd_flip_neg_at` with the tree's bound (the frozen part's rules `SieveAd.frozRules` and
   `SieveAd.frozTests_sound_at`), the terms at the root's floor from the test that passed, and the weights of
-  the frozen part and of its two ends from the shares of the three boxes (`SieveAd.froz_weight_le_at`). So the search with these nodes is sound for any strategies
-  (`SieveAd.solveF2_sound`), and a part of it as the kernel checks it gives the bound for its range, in the form
-  of `SieveAd.pr_of_kids`.
-- `Linnik21650.flip_box_21650` (`lib/pnt/SieveFlipBox21650.lean`; the part is `lib/pnt/SieveFlipPart21650.lean`'s
-  and the strategies `lib/pnt/SieveAdFlipStratDefs.lean`'s, both without Mathlib), **a bound by the search with
-  the reversal through the largest prime**, at `L = 2165/1000`: for `p₁` between `x^{0.4237}` and `x^{0.4287}`
-  and `p₂` between `x^{0.2687}` and `x^{0.2737}`, the term of the box `(p₁, p₂)`, of the sign `+`, is at least
-  its count in the comparison set less `(c/K + o(1))x/(φ(q) log x)` with `c = 0.000501·K`, where the search of
-  the theorem at `2165/1000` drops the box, at `0.000734·K`. The strategies: `SieveAd.stratFF` for a tree over a
-  frozen part proposes the sets of the tests on the box with the cofactor as one more cell (`SieveAd.vboxF`),
-  widened by the tests' room for the floors (`SieveAd.propIF`, `SieveAd.propJFF`), and cuts the chain's first
-  prime from the level down; `SieveAd.stratGFF` is the theorem's strategy with one more cut of a new prime's
-  range, one unit below the largest prime's cell, so that the box below the cut passes `flipOK`. The kernel
-  runs the search on the box (`SieveAd.flipPart21650`, by `decide +kernel`, nineteen seconds): it takes seven
-  reversals through the largest prime, of boxes of three primes, of the nineteen it tries. This is one part,
-  not a certificate of the sieve: it checks the rule, its strategies and `tools/linnik/flip_cert.py`, the
-  search in Python, against the kernel.
+  the frozen part and of its two ends from the shares of the three boxes (`SieveAd.froz_weight_le_at`). So the
+  search with these nodes is sound for any strategies (`SieveAd.solveF2_sound`), and a part of it as the kernel
+  checks it gives the bound for its range (`SieveAd.pr_of_kidsF`). The search that the kernel follows is led by
+  hints (below), and its plan carries the strategies' choices.
 - `SieveAd.pr_of_partD_at` (`lib/pnt/SieveAdDir.lean`; the search is `lib/pnt/SieveAdDirDefs.lean`'s, without
   Mathlib), **the search led by hints is sound.** The search of `SieveAdRevDefs.lean` tries at each box what
   its strategy proposes and keeps the cheapest; the kernel, running it, spends most of its time on what is not
@@ -300,36 +303,25 @@ Its main tools:
   in the arithmetic of `ℕ` written out, and is `dropC`'s and `dropK`'s (`SieveAd.omKwP_eq`, `SieveAd.drpMP_eq`,
   `SieveAd.opsKP_eq`).
 - `Linnik21500.linnik_21500` (`lib/pnt/Linnik21500.lean`; the parts are `lib/pnt/SieveHint21500P1.lean` and the
-  files after it, without Mathlib), **Linnik's theorem with exponent `2150/1000`**: for every `q ≥ 1` and every
-  `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{2150/1000}`, with no hypothesis. The route
-  and the tests are those of the theorem at `2165/1000`; the search is led by hints (`SieveAd.solve21500`:
-  `SieveAd.solveD`), with the reversal through the largest prime of boxes of the sign `−` of at most six
-  primes, that is of three and of five, as its hinted bound, on cells of side at most `0.004` and chains' cells
-  of side at most `0.006` over the frozen parts. The bound of the first term costs `0.94847·K`
+  files after it, without Mathlib), **Linnik's theorem with exponent `2150/1000`**, the Linnik paper's Theorem 1.2:
+  for every `q ≥ 1` and every `a` prime to `q` there is a prime `p ≡ a (mod q)` with `p ≤ K·q^{2150/1000}`, with no
+  hypothesis. The route has no Type II window, its only estimate being the one in two variables, and the tests
+  are those of the namespace `SieveAd.Plain` (`lib/pnt/SieveAdPlain*.lean`), with the paper's conditions on the
+  leaves alone; the search is
+  led by hints (`SieveAd.solve21500`: `SieveAd.solveD`), with the reversal through the largest prime of boxes of
+  the sign `−` of at most six primes, that is of three and of five, as its hinted bound, on cells of side at most
+  `0.004` and chains' cells of side at most `0.006` over the frozen parts. The bound of the first term costs `0.94847·K`
   (`Linnik21500.tree21500`). The hints are the plan that `tools/linnik/hint_cert.py` kept of its search:
   `3.4·10^6` steps, of which `1.6·10^5` reversals, in `1552` parts, where the search visited `3.4·10^7` boxes,
   `2.8·10^7` of them over frozen parts.
-- The theorems at `2140/1000` and `2135/1000` (in no paper) are superseded since; they and their part files are in
-  the git history. The first had the search led by hints of the theorem at `2150/1000`, on cells of side at most
-  `0.003`, with the reversal through the largest prime of boxes of at most six primes of either sign
-  (`SieveAd.bd_flip_coreB`), each step chosen by its cost plus ten millionths of `K` for each second that the
-  planner predicts of the kernel: `0.99055·K` on `9.8·10^6` steps, in `3705` parts (with no price on the
-  kernel's time the same search costs `0.96408·K` on `1.87·10^7` steps). The second had the same search with the
-  leaves of a comparison cut in three where the paper's conditions fail (`SieveAd.leavesE`;
-  `SieveTwoCompE.prop6_two3_at`, `SieveFillCompE.prop6_fill3_at`, in `formalisations/halasz-montgomery.md`),
-  with no price on the kernel's time: `0.98988·K` on `2.4·10^7` steps, in `9110` parts.
-- `Linnik21150.linnik_21150`, Linnik's theorem with exponent `2115/1000` (in no paper): the search led by hints of
-  those two, with the main tree's boxes decomposed to eight primes, and the resonant window in both trees, with the
-  cofactor in the rest when it is one prime and Chen, Gupta and Li's large values of the powers
-  (`SieveAd.resTestsFC_sound`, `SieveAd.pr_of_partDR_at`, in `formalisations/halasz-montgomery.md`); each step
-  chosen by its cost plus a millionth of `K` for each second that the planner predicts of the kernel. The bound of
-  the first term costs `0.88304·K` (`Linnik21150.tree21150`), on `3.04·10^7` steps, `7.5·10^5` of them reversals,
-  in `57689` parts (`lib/pnt/SieveHint21150P1.lean` … `SieveHint21150P612.lean`), with the theorems of the cells
-  cut by the next prime's cells in 17 files (`lib/pnt/SieveHint21150N1.lean` …), where the search visited
-  `4.9·10^8` boxes.
-- `Linnik21000.linnik_21000`, Linnik's theorem with exponent `2100/1000` (in no paper): that search with the
-  window's test at the two corners of the box of a rest's cells where its test at one corner fails, and the
-  window's lines named by the hint (`SieveAd.resTestsFYH_sound`, `SieveAd.pr_of_partDYCH_at`, in
+- `Linnik21000.linnik_21000`, Linnik's theorem with exponent `2100/1000`, the Linnik paper's Theorem 1.1: a
+  search led by hints (`SieveAd.solveD`), the plan of its own search in `tools/linnik/hint_cert.py`, with the reversal through the largest prime of boxes of
+  either sign (`SieveAd.bd_flip_coreB`), the leaves of a comparison cut in three where the paper's conditions
+  fail (`SieveAd.leavesE`), the main tree's boxes decomposed to eight primes, and the resonant window in both
+  trees, with the cofactor in the rest when it is one prime and Chen, Gupta and Li's large values of the powers
+  (`SieveAd.resTestsFC_sound`, `SieveAd.pr_of_partDR_at`, in `formalisations/halasz-montgomery.md`); the window's
+  test at the two corners of the box of a rest's cells where its test at one corner fails, and the window's lines
+  named by the hint (`SieveAd.resTestsFYH_sound`, `SieveAd.pr_of_partDYCH_at`, in
   `formalisations/halasz-montgomery.md`); the chains over the frozen parts on cells of side `0.003`; a box of two
   primes of the main tree cut in two where that is worth the kernel's time; and a plan that searches, over the
   frozen parts, every configuration of the estimate in two variables that the hints can name. Each step is chosen
@@ -338,9 +330,10 @@ Its main tools:
   `2.22·10^6` of them reversals, in `107374` parts (`lib/pnt/SieveHint21000P1.lean` …
   `SieveHint21000P1150.lean`), with the theorems of the cells cut by the next prime's cells in 58
   files (`lib/pnt/SieveHint21000N1.lean` …), where the search visited `5.14·10^9` boxes.
-- `Linnik21000.count_21000` and `Linnik21500.count_21500`, the two theorems in number (in no paper): there are
-  `c > 0` and `K` such that for every `q ≥ 1`, every `a` prime to `q` and every `x ≥ K·q^L` the primes `p ≤ x` with
-  `p ≡ a (mod q)` number at least `c·x/(φ(q) log x)`, at `L = 2100/1000` and at `L = 2150/1000`
+- `Linnik21000.count_21000` and `Linnik21500.count_21500`, the two theorems in number, the Linnik paper's
+  Corollary 1.3: there are `c > 0` and `K` such that for every `q ≥ 1`, every `a` prime to `q` and every
+  `x ≥ K·q^L` the primes `p ≤ x` with `p ≡ a (mod q)` number at least `c·x/(φ(q) log x)`, at `L = 2100/1000` and
+  at `L = 2150/1000`
   (`lib/pnt/SieveAdCount.lean`; `lib/pnt/Linnik21000Count.lean` and `lib/pnt/Linnik21500Count.lean`, the
   second of which imports nothing of the theorem at `2100/1000`). Two steps. A bound `C < 1` of the first term gives
   `S(𝒜, z_top) ≥ φ(q)⁻¹·(1 − C)/2·x/log x` at `x = q^L` for large `q`, and every integer that `S(𝒜, z_top)` counts
@@ -352,20 +345,26 @@ Its main tools:
   (`SieveAd.card_units_above`) have their primes of `(Q^L, 2Q^L]` below `x`, in the class of `a` mod `q`, and
   apart; the constant is `c = (1 − C)/2^{L+2}`. The step uses that the theorems hold for every modulus and every
   class: with exceptional moduli it would not go through.
-- `SieveDecomp.buchstab_fam`, Buchstab's identity on families of tuples of primes:
-  `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)`, in the form that extends a tuple by one smaller prime.
+- `SieveDecomp.buchstab_pt`, Buchstab's identity at one `n`, which summed over a set `C` is
+  `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)` for `m` whose prime factors are at least `z ≥ w`, in the form
+  that extends a tuple by one smaller prime.
 - `SieveLeaf.prod_T_le`, the main term at a leaf: `∏_{p < w, p ∤ q} (1 − 1/p) ≤ q/(φ(q) log w)` for an integer
   `w ≥ 2`, from `∏_{p < w} (1 − 1/p) ≤ 1/log w` (`SieveLeaf.prod_primesBelow_le`). That bound is elementary: the
   reciprocal of the product is `Σ 1/m` over the `m` whose prime factors are all below `w` (Mathlib's Euler product over
   the primes below `w`), and that sum is at least the harmonic sum `Σ_{m < w} 1/m ≥ log w`.
 
-The note also covers the bound for rough numbers that the certificate's cells use (below):
+The note also covers the bound for rough numbers on which the costs of the certificates' dropped boxes rest (the
+share of a box, `SieveRough.shareBox`):
 
 - `SieveRough.psi_le`, rough numbers from above. For every `U` and `ε > 0`, eventually in `z`,
   `Ψ(y, z) ≤ (ω*(u) + ε)y/log z` for `u = log 2y/log z ≤ U`. Here `Ψ(y, z)` counts the `m ∈ (y, 2y]` with no prime
   factor below `z`, and `ω*` is the bound of `SieveCert.omegaC`: `0` below `1`, Buchstab's function `ω` itself on
   `[1, 3]` (`1/u` on `[1, 2)`, `(1 + log(u − 1))/u` on `[2, 3]`), and `0.565073` above `3`, the least constant, to six
   decimals, for which the induction of the proof closes with `0.5671433 ≥ max ω` on `[2, 3]` (`SieveOmegaB`).
+- `SieveDrop.famI_gB_le` (`lib/pnt/SieveDrop.lean`), a family's count in `B` by rough numbers: for `q ≥ 1` it is at
+  most `φ(q)⁻¹ Σ_{rt} Ψ(x/∏rt, rt_last)`, `x = q^L`, since the `n = Wc ∈ (x, 2x]` with no prime factor below `z` go
+  to the `c` counted by `Ψ(x/W, z)` (`SieveDrop.card_le_Psi`). With `SieveRough.shareBox` it bounds a dropped box's
+  term in `B` by `(β + δ)x/(φ(q) log x)` for every `δ > 0` and large `q`, `β` the box's share (`SieveAd.drop_bound`).
 
 These theorems are printed by `lib/check/Check.lean` or `lib/check/CheckAll.lean`, and their axioms are `propext`,
 `Classical.choice` and `Quot.sound` only.
@@ -389,18 +388,28 @@ methods as recalled, and state only what the route needs. Nothing in this librar
 
 ## What the formalisation here is
 
-Proposition 6 is proved with one Buchstab tree for every product `r ≤ q^{b₀}`.
+Proposition 6 is proved at each large `q` by `SieveTwoP6.prop6_two_core`: the family splits by the product
+`∏_{S₀} rt` against the window. A tuple whose product is already in the window needs no tree: one step of Buchstab's
+identity and the estimate in two variables bound its term (`SieveTwoP6.root_bound2'`). The others go through one
+Buchstab tree.
 
-- **The tree** (`SieveDiff.tree_weighted`) iterates Buchstab's identity from `z₀` down to `w = ⌈q^{ε_w}⌉`, with
-  `ε_w = c/(2k + 4)` and `c = (L − 1 − b₀)/4`. A branch stops when its partial product exceeds `X' = ⌊q^{b₀}⌋`: the
-  stop then lies in the reflection `(X', z₀X']` of the route's window, and its cofactor in the window. `SieveStops2.stops2_bound` bounds the stopped terms by the route's Type II estimate (`hII`).
-- **The leaves** (`SieveProp6.leaf_bound`). At a leaf `d = r∏P ≤ q^{b₀}`, `SieveLeaf.leaf_A` and `SieveLeaf.leaf_B`
-  apply the fundamental lemma to `A` and `B`, with the ranges of primes below `w` cut into dyadic-exponent ranges and
-  the levels `k + 2j`. Both main terms are `YV`, with `Y = (N₂ − N₁)/(dq)` and `V = ∏_{p < w, p ∤ q} (1 − 1/p)`, so the
-  gap is at most `2ζ(k)·YV` plus a remainder, and `YV ≤ (N₂ − N₁)/(dφ(q) log w)` by `SieveLeaf.prod_T_le`. No lower
-  bound for `B` and no count of rough numbers is needed.
-- **Summing the leaves** (`SieveProp6.leaves_sum_le`). With `N₂ − N₁ ≤ X + 1`, `X = q^L`, the leaves total at most
-  `(2ζ(k)(X + 1)/(φ(q) log w) + 2·rem·q^{b₀})·Σ_{rt} 1/r ∏_{w≤p<z₀}(1 + 1/p)`.
+- **The tree** (`SieveP6Tree.tree_chains`) iterates Buchstab's identity from `z₀` down to `w = ⌈q^{ε_w}⌉`, with
+  `ε_w = c/(2k + 4)` and `c = min(1/32, A₀/32, σ/32)`, where `A₀ = L − 1 − max(D₁, 1)` and
+  `σ = L + A₀ − D₁ − 2D₂` are the leaves' margins. A branch `P` stops when the first variable, `∏_{S₀} rt·∏P`,
+  enters the window: the stop's rest is the tuple's product on `Sr`. The branches are summed as chains, the set `P`
+  read as a strictly decreasing tuple (`SieveP6Tree.sum_stops_chain`, `SieveP6Chain.sum_chain`, `SieveStops2.desc`),
+  and `SieveTwoP6.stops_bound2` bounds the stopped terms by the estimate in two variables (`SieveTwoTerm.chainOK2_of_zone`, from `hII` and the zone).
+- **The leaves** (`SieveProp6.leaf_bound`). At a leaf `d = r∏P ≤ q^{L−1−δ'}`, the sum of `dw` is the count of the
+  `n ≡ a` minus that of the `n` prime to `q` over `φ(q)` (`SieveDiff.sum_dw_eq`), and `SieveLeaf.leaf_A` and
+  `SieveLeaf.leaf_B` apply the fundamental lemma to `A` and `B`, with the ranges of primes below `w` cut into
+  dyadic-exponent ranges and the levels `k + 2j`. Both main terms are `YV`, with `Y = (N₂ − N₁)/(dq)` and
+  `V = ∏_{p < w, p ∤ q} (1 − 1/p)`, so the gap is at most `2ζ(k)·YV` plus a remainder, and
+  `YV ≤ (N₂ − N₁)/(dφ(q) log w)` by `SieveLeaf.prod_T_le`. No lower bound for `B` and no count of rough numbers is
+  needed. A larger leaf is split into the two blocks of `(S₁, eIn₁)` and evaluated by the bilinear Type I estimate on
+  its wider region (`SieveP6LeavesWide.leavesOK_wide`).
+- **Summing the leaves** (`SieveP6TreeLeaves.tree_leaves_le`). The leaves total at most
+  `(2ζ(k)(N₂ − N₁)/(φ(q) log w) + 2·rem·q^{L−1−δ'})·Σ_{rt} 1/r ∏_{w≤p<z₀}(1 + 1/p) + s_max·q^{L−δ}/φ(q)`, with
+  `s_max` the tree's depth.
 - **The parameters** (`SieveProp6.exists_k`, `SieveProp6.main_term`, `SieveProp6.rem_term`). An even `k` with
   `(2k + 4)²ζ(k)` small puts the main terms below `ηq^L/(φ(q) log q)`, and the remainders total at most
   `q^{L−c}/φ(q)`.
@@ -412,8 +421,8 @@ theorem in the form `|θ(t) − t| ≤ εt/log t` for all large `t` (`SieveRough
 
 - **One problem, not a general theorem.** Proposition 6 compares `A`, the integers of `(q^L, 2q^L]` in one class mod
   `q`, with `B/φ(q)`, `B` those prime to `q`. The tuples `rt` are cut out by finitely many comparisons between their
-  primes and products, and the Type II information is the route's hypothesis `TypeIIAt`. A general statement of
-  Harman's fundamental theorem is not formalised.
+  primes and products, and the Type II information is the hypothesis `TypeIITwoAt`, the estimate in two variables
+  on a region. A general statement of Harman's fundamental theorem is not formalised.
 - **The fundamental lemma** is proved by Brun's sieve, with each range of primes truncated at its own level, not by
   Selberg's or Rosser's sieve. Its constants are explicit: the gap is at most `V·ζ(k)` with
   `ζ(k) = e^{2C₀}(2C₀^k/k!)·exp(e^{2C₀}·2C₀^{k+1}/(k + 1)!)` (`SieveLeaf.leaf_gap`).
@@ -427,14 +436,18 @@ theorem in the form `|θ(t) − t| ≤ εt/log t` for all large `t` (`SieveRough
 
 ## Where the Linnik paper uses it
 
-The paper's theorem at `43/20` (`Linnik21500.linnik_21500`) uses Harman's comparison in two variables through the
-tests of its trees: `SieveTwoComp.prop6_two_at` (the rest among the box's primes) for the test `okJ2`
-(`SieveAd.evJ_two`), `SieveFillComp.prop6_fill_at` (the rest among the primes of the comparison's own tree) for
-`okJ3` (`SieveAd.evJ_fill`), and the chains of `SieveTwoTerm.chain2_bound` for `okI2` (`SieveAd.evI_two`); the leaves
-of both comparisons are evaluated on the wider region of the bilinear Type I estimate (`SieveP6LeavesWide.leavesOK_wide`).
-Its earlier version, at `11/5` (`Linnik22000E.linnik_22000e`, still in the library), used it in the leaves of its
-decomposition: `SieveLeaves.P6_spec` applies `prop6` to each family of at most `40` comparisons,
-and `SieveLeaves.P6IB_spec` applies the form of Proposition 6 with the bilinear Type I estimate (`SieveP6ib.prop6ib`)
-to the families of the boxes that the rule's bilinear test (R2) takes whole, with the
-witnesses of the test (`SieveCert.ibOK_sound`) turned into its hypotheses by `SieveQ.P6IB_boxes`. The rough-number bound also gives the shares of the certificate's cells (`SieveRough.share2_of_cand`), with which
-`SieveDrop` bounds the terms the decomposition drops.
+The paper's Theorem 1.2, at `43/20` (`Linnik21500.linnik_21500`), uses Harman's comparison in two variables through
+the tests of its trees: `SieveTwoComp.prop6_two_at` (the rest among the box's primes) for the test `okJ2`
+(`SieveAd.Plain.evJ_two`), `SieveFillComp.prop6_fill_at` (the rest among the primes of the comparison's own tree) for
+`okJ3` (`SieveAd.Plain.evJ_fill`), and the chains of `SieveTwoTerm.chain2_bound` for `okI2`
+(`SieveAd.Plain.evI_two`); the leaves of both comparisons are evaluated on the wider
+region of the bilinear Type I estimate (`SieveP6LeavesWide.leavesOK_wide`). Its tests are those of the namespace
+`SieveAd.Plain`, which accept the leaves by the paper's conditions alone.
+
+The paper's Theorem 1.1, at `21/10` (`Linnik21000.linnik_21000`), uses the same comparisons, and two rules more. Where
+the paper's conditions on the leaves fail for a box, the leaves are cut in three (`SieveAd.leavesE`): the paper's
+lemma on the first two parts, and on the third the estimate in two variables with the fourth moment of the cofactor's
+polynomial, on the curve `g7d` (`SieveTwoCompE.prop6_two3_at`, `SieveFillCompE.prop6_fill3_at`, with
+`SieveLeafTwo.typeIITwoAt_leafX`). And a term of the sign `+` is reversed through its largest prime, bounded from
+below by the identity that bounds a term of the sign `−` from above (`SieveAd.bd_flip_pos`). Its tests also have the
+resonant window ([halasz-montgomery.md](halasz-montgomery.md)).

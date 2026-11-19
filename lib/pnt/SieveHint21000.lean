@@ -18,7 +18,7 @@ The bilinear Type I rule's exponent `2100/1000` (`ibPar21000`), and `solve21000`
 
 With the resonant window: an evaluation of kind `3` in the main tree is `SieveAd.chkIRC`'s
 (`SieveAd.resTestsFC`; the rest tested by `SieveResTest.resX`, with the box's cofactor in it when it is
-one prime), its configuration read by `SieveAd.cfgIMRC`; over the frozen parts too, the box `ch ++ β` (`SieveAd.frozResTestsC`, with
+one prime); over the frozen parts too, the box `ch ++ β` (`SieveAd.frozResTestsC`, with
 `SieveAd.chkIRF`), read by `SieveAd.cfgIFR`.
 
 With the window's test at the two corners of a box too: an evaluation of kind `4` is

@@ -1,37 +1,31 @@
 /-
-# The primes of `(x, 2x]` prime to `q`, for Linnik's theorem by the sieve route
+# The primes of `(x, 2x]`
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statements. The route and the grid are as in `SieveQ` (`RouteOK`, `GridOK`, `GridOKC` and `Fits`).
+Plain statements.
 
 * `primes_dyadic_ge`: for `ε > 0`, the primes of `(⌊x⌋, ⌊2x⌋]` number at least `(1 − ε)x/log x` for large `x`.
-* `TB_ev`: for `ε > 0`, `S(B, z_top) ≥ φ(q)⁻¹((1 − ε)x/log x − q)` for large `q`, at `x = q^L`.
+* `ev_log_le`: for `c > 0` and `r > 0`, `log q ≤ c q^r` for large `q`.
 
-The proof:
-
-* `primes_dyadic_ge`: `SieveRough.theta_near` at `x` and `2x`. `TB_ev`: `z_top = ⌊√N₂⌋ + 1`, so the `z_top`-rough
-  `n ∈ (N₁, N₂]` are the primes there, and at most `ω(q) ≤ q` of them divide `q`.
-
-The route's numbers and the certificate's grids are parameters. `SieveMain8.lean` proves Linnik's theorem by the
-sieve route with `TB_ev`.
+The proof of `primes_dyadic_ge` is `SieveRough.theta_near` at `x` and `2x`.
 
 The file imports `SieveDrop.lean`.
 -/
 import SieveDrop
 
-open Real Finset Filter SieveFamily SieveChain SieveDecomp SieveBuch SieveLeaves SieveQ SieveRough SieveDrop SieveRoute
+open Real Finset Filter SieveFamily SieveChain SieveDecomp SieveLeaves SieveQ SieveRough SieveDrop SieveRoute
 open scoped Chebyshev
 
 namespace SieveMain
 
 open Classical
 
-variable [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [SieveCert.GridOKC] [Fits]
+variable [Route] [RouteOK] [SieveCert.Grid]
 
-/-! ### `S(B, z_top)`: the primes of `(x, 2x]` prime to `q` -/
+/-! ### The primes of `(x, 2x]` -/
 
-omit [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [SieveCert.GridOKC] [Fits] in
+omit [Route] [RouteOK] [SieveCert.Grid] in
 /-- For `ε > 0`, the primes of `(⌊x⌋, ⌊2x⌋]` number at least `(1 − ε)x/log x` for large `x`. -/
 theorem primes_dyadic_ge {ε : ℝ} (hε : 0 < ε) : ∀ᶠ x : ℝ in atTop,
     (1 - ε) * (x / Real.log x) ≤ (((Ioc ⌊x⌋₊ ⌊2 * x⌋₊).filter Nat.Prime).card : ℝ) := by
@@ -106,79 +100,9 @@ theorem primes_dyadic_ge {ε : ℝ} (hε : 0 < ε) : ∀ᶠ x : ℝ in atTop,
     exact hkey
   linarith [this, (div_le_div_of_nonneg_right hθ h2x0.le)]
 
-omit [SieveCert.GridOKC] in
-/-- For a route with `RouteOK` and a grid with `GridOK` that fit (`Fits`), and `ε > 0`:
-`S(B, z_top) ≥ φ(q)⁻¹((1 − ε)x/log x − q)` for large `q`. -/
-theorem TB_ev {ε : ℝ} (hε : 0 < ε) : ∀ᶠ q : ℕ in atTop, LargeQ q →
-    (q.totient : ℝ)⁻¹ * ((1 - ε) * (xq q / Real.log (xq q)) - q) ≤ (parQ q).T (gB q) := by
-  filter_upwards [tendsto_xq.eventually (primes_dyadic_ge hε)] with q hq hL
-  have hq3 := hL.q3
-  have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast (show 1 ≤ q by omega)
-  have G := good_of_large hL
-  have hφ : (0 : ℝ) < (q.totient : ℝ)⁻¹ := by
-    have : 0 < q.totient := Nat.totient_pos.2 (by omega)
-    positivity
-  set P := (Ioc (N1 q) (N2 q)).filter Nat.Prime with hP
-  set Pc := P.filter (fun p => Nat.Coprime p q) with hPc
-  -- the primes of `(N₁, N₂]` prime to `q` are rough and prime to `q`
-  have hztopN : (parQ q).ztop ≤ N1 q + 1 := by
-    have h1 : ((parQ q).ztop : ℝ) ≤ Real.sqrt (2 * xq q) + 1 := (ztop_bounds q (by omega)).2
-    have hx16 : (16 : ℝ) ≤ xq q := by
-      have h4 : (4 : ℝ) ≤ (q : ℝ) ^ (L / 2 : ℝ) := hL.hhalf
-      have : xq q = ((q : ℝ) ^ (L / 2 : ℝ)) ^ 2 := by
-        rw [← Real.rpow_natCast, ← Real.rpow_mul (by positivity)]
-        push_cast
-        ring_nf
-      rw [this]
-      nlinarith
-    have h2 : Real.sqrt (2 * xq q) ≤ xq q - 2 := by
-      rw [Real.sqrt_le_left (by linarith)]
-      nlinarith
-    have h3 : xq q - 1 < (N1 q : ℝ) := Nat.sub_one_lt_floor _
-    have : ((parQ q).ztop : ℝ) < (N1 q : ℝ) + 1 := by linarith
-    exact_mod_cast this.le
-  have hT : (q.totient : ℝ)⁻¹ * (Pc.card : ℝ) ≤ (parQ q).T (gB q) := by
-    unfold Par.T
-    rw [Finset.card_eq_sum_ones, Nat.cast_sum, Finset.mul_sum]
-    have hsub : Pc ⊆ Ioc (N1 q) (N2 q) := fun p hp => (Finset.mem_filter.1 (Finset.mem_filter.1 hp).1).1
-    refine le_trans (le_of_eq ?_) (Finset.sum_le_sum_of_subset_of_nonneg hsub fun m _ _ =>
-      mul_nonneg (gB_nonneg q m) (by split_ifs <;> norm_num))
-    refine Finset.sum_congr rfl fun p hp => ?_
-    rw [hPc, hP, Finset.mem_filter, Finset.mem_filter, Finset.mem_Ioc] at hp
-    obtain ⟨⟨⟨h1, -⟩, hpp⟩, hcop⟩ := hp
-    have hu : IsUnit (p : ZMod q) := (ZMod.isUnit_iff_coprime p q).2 hcop
-    have hr : SieveTree.rough (parQ q).ztop p := by
-      intro ℓ hℓ hℓp hd
-      have := (Nat.prime_dvd_prime_iff_eq hℓp hpp).1 hd
-      omega
-    simp only [gB, hu, ite_true, hr, Nat.cast_one, mul_one]
-  -- the primes dividing `q` are at most `q`
-  have hcount : (P.card : ℝ) - q ≤ Pc.card := by
-    have h1 : P.filter (fun p => ¬ Nat.Coprime p q) ⊆ q.primeFactors := by
-      intro p hp
-      rw [Finset.mem_filter, hP, Finset.mem_filter] at hp
-      rw [Nat.mem_primeFactors]
-      exact ⟨hp.1.2, (Nat.Prime.dvd_iff_not_coprime hp.1.2).2 hp.2, by omega⟩
-    have h2 : q.primeFactors.card ≤ q := by
-      calc q.primeFactors.card ≤ (Finset.Icc 1 q).card := Finset.card_le_card fun p hp => by
-            rw [Finset.mem_Icc]
-            exact ⟨(Nat.prime_of_mem_primeFactors hp).one_lt.le,
-              Nat.le_of_dvd (by omega) (Nat.dvd_of_mem_primeFactors hp)⟩
-        _ = q := by simp
-    have h3 := Finset.card_filter_add_card_filter_not (s := P) (fun p => Nat.Coprime p q)
-    have h4 := (Finset.card_le_card h1).trans h2
-    have : (P.card : ℝ) ≤ Pc.card + q := by
-      rw [hPc]
-      exact_mod_cast (show P.card ≤ (P.filter fun p => Nat.Coprime p q).card + q by omega)
-    linarith
-  have hP' : (1 - ε) * (xq q / Real.log (xq q)) ≤ (P.card : ℝ) := hq
-  calc (q.totient : ℝ)⁻¹ * ((1 - ε) * (xq q / Real.log (xq q)) - q)
-      ≤ (q.totient : ℝ)⁻¹ * (Pc.card : ℝ) := mul_le_mul_of_nonneg_left (by linarith) hφ.le
-    _ ≤ (parQ q).T (gB q) := hT
+/-! ### `log q` against a power of `q` -/
 
-/-! ### The count, and the theorem -/
-
-omit [Route] [RouteOK] [SieveCert.Grid] [SieveCert.GridOK] [SieveCert.GridOKC] [Fits] in
+omit [Route] [RouteOK] [SieveCert.Grid] in
 /-- `log q ≤ c q^r` for large `q`, any `c > 0`, `r > 0`. -/
 theorem ev_log_le {c r : ℝ} (hc : 0 < c) (hr : 0 < r) : ∀ᶠ q : ℕ in atTop, Real.log q ≤ c * (q : ℝ) ^ r := by
   have h := (isLittleO_log_rpow_atTop hr).bound hc

@@ -3,13 +3,13 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveTypeIIHM.typeII_gen_hm` bounds `Σ_{χ≠1} |W(χ)|·|∏_j Sp_j(χ)|` by the bins of the characters' zeros: in the bin
+Proposition 3′ bounds `Σ_{χ≠1} |W(χ)|·|∏_j Sp_j(χ)|`. The bins of the characters' zeros class the characters: in the bin
 of `β` each prime sum is at most `Q_j^{β+w}`, and the bin has at most `(qT)^{g(β)}` characters. The resonant window
-classes the characters further, by the size of each prime sum: the level `ℓ_j` of `Sp_j(χ)` in steps of
-`τ = 10⁻⁶` of `log_{Q_j}` (`SieveTypeIIHM.lev`, capped at `10⁶`). A class `(i, ℓ)` has its prime sums at most
-`Q_j^{t_j}`, `t_j = min(β + w, τ(ℓ_j + 1))` (`β + w` at the cap), and at most as many characters as each prime sum
-has at least `Q_j^{τℓ_j}`: by the `2k`-th moment, `C_k q^{momExp k s_j (τℓ_j)}` (`SieveTypeIIHM.card_Sp_large`), and
-by the large values of its `k`-th power, `C q^{lvExp k s_j (τℓ_j)}` (Chen, Gupta and Li's Proposition 3.1:
+classes the characters further, by the size of each prime sum: the level `ℓ_j` of `Sp_j(χ)` in steps of `τ = 10⁻⁶` of
+`log_{Q_j}` (`SieveTypeIIHM.lev`, capped at `10⁶`). A class `(i, ℓ)` has its prime sums at most `Q_j^{t_j}`,
+`t_j = min(β + w, τ(ℓ_j + 1))` (`β + w` at the cap), and at most as many characters as each prime sum has at least
+`Q_j^{τℓ_j}`: by the `2k`-th moment, `C_k q^{momExp k s_j (τℓ_j)}` (`SieveTypeIIHM.card_Sp_large`), and by the large
+values of its `k`-th power, `C q^{lvExp k s_j (τℓ_j)}` (Chen, Gupta and Li's Proposition 3.1:
 `SieveTypeIIHM.card_Sp_large_lv` with `LinnikCGLHB101.prop31`). The class's count exponent `γ` is the least of `g(β)`
 and these for `k` up to a bound, and `SieveTypeIIHM.bin_bound_exp` bounds the class with the rest's exponent
 `Σ_j s_j(t_j − 1) + L − m` (the product of the scales is at most `2^{K₀}q^L/P`). The condition on the exponents is
@@ -18,9 +18,9 @@ and these for `k` up to a bound, and `SieveTypeIIHM.bin_bound_exp` bounds the cl
 * `ResCond g L K m s`: for the variable's exponent `m` and the rest's `s_0, …, s_{K−1}`, every `β ∈ [1/2, 11/12]`,
   `γ ≤ g(β)` and `t_j ≤ β + 4·10⁻⁶` with `γ ≤ momExp k s_j (t_j − 10⁻⁶)` and `γ ≤ lvExp k s_j (t_j − 10⁻⁶)` for all
   `k ≥ 1` have `ResBinOK L (1/1000) (1/1000) (Σ_j s_j(t_j − 1) + L − m) γ m`.
-* `typeII_res`, **Proposition 3′ for the resonant window, pointwise in the heights**: the conclusion of
-  `typeII_gen_hm` for a curve with its counts, when `ResCond` holds at `m = log_q P` and `s_j = log_q Q_j`. The
-  classes number `500000·(10⁶ + 1)^K`, a constant absorbed into `q^{1/100000}` as the bins are.
+* `typeII_res`, **Proposition 3′ for the resonant window, pointwise in the heights**: for a curve with its counts,
+  `Σ_{χ≠1} |W(χ)|·|∏_j Sp(χ, Q_j, h_j)| ≤ q^{L−1/50000}(Σ|a|²/P)^{1/2}` when `ResCond` holds at `m = log_q P` and
+  `s_j = log_q Q_j`. The classes number `500000·(10⁶ + 1)^K`, a constant absorbed into `q^{1/100000}` as the bins are.
 
 The file imports `SieveResBins.lean`, `SieveResCount.lean`, `SieveResLV.lean` and `LinnikCGLHB101.lean`.
 -/
@@ -51,7 +51,7 @@ open scoped ContDiff in
 `Q_j ≥ q^{e₁}` with heights `|h_j| ≤ q^η` and `∏_j Q_j ≤ 2^{K₀}q^L/P`, and `ResCond g L K (log_q P) (log_q Q_j)`:
 `Σ_{χ≠1} |W(χ)|·|∏_j Sp(χ, Q_j, h_j)| ≤ q^{L−1/50000}(Σ|a|²/P)^{1/2}`. The proof: `sum_typeII_cls` with the
 classes of the zeros' bin and the prime sums' levels, `bin_bound_exp` for each class (its count by the zeros' bin,
-by a moment or by the large values of a power), and the constants absorbed as in `typeII_gen_hm`. -/
+by a moment or by the large values of a power), and the constants absorbed into `q^{1/100000}`. -/
 theorem typeII_res {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 : g (1 / 2) = 1) (hcnt : CurveCounts g)
     {f0 : ℝ → ℝ} (hf0 : ContDiff ℝ ∞ f0) (hsupp : Function.support f0 ⊆ Set.Icc (1 / 2) 2) (K₀ : ℕ) {e₁ η : ℝ}
     (he₁ : 0 < e₁) (hη : 0 < η) (hη1 : η ≤ 1 / 100000) :

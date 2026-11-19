@@ -3,10 +3,9 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveTypeIIHM.typeII_gen_hm` is the Type II estimate for one polynomial `W` with its scale in a window: for a curve
-`g` with the counts `CurveCounts g` and a window with `WindowOKHM`, the sum over `χ ≠ 1` of `|W(χ)|` times the prime
-sums is at most `q^{L − 1/50000}(Σ|a|²/P)^{1/2}`. This file is the same for two polynomials `W₁` and `W₂`, with the
-exponents `(m₁, m₂)` of their scales `P₁ = q^{m₁}` and `P₂ = q^{m₂}` in a region `R` of a zone.
+The Type II estimate for two polynomials `W₁` and `W₂`, for a curve `g` with the counts `CurveCounts g`, with the
+exponents `(m₁, m₂)` of their scales `P₁ = q^{m₁}` and `P₂ = q^{m₂}` in a region `R` of a zone: the sum over `χ ≠ 1`
+of `|W₁(χ)||W₂(χ)|` times the prime sums is at most `q^{L − 1/50000}(Σ|a|²/P₁)^{1/2}(Σ|b|²/P₂)^{1/2}`.
 
 * `ZoneOK g L d e R`, **the zone's exponents on a region**: for `1/2 ≤ β ≤ 11/12`, `(m₁, m₂)` with `R m₁ m₂` and
   `0 ≤ w ≤ 4·10⁻⁶`, the exponent bound `twoBound L d e (g β) β m₁ m₂ w` of `SieveTwoZone` holds: there are
@@ -24,9 +23,9 @@ exponents `(m₁, m₂)` of their scales `P₁ = q^{m₁}` and `P₂ = q^{m₂}`
   `typeII_two_gen` at the curve `g = 1`, whose counts are trivial: no density estimate enters. The third factor,
   the prime sums, has length at least about `q^{1/2000}`.
 
-The proof of `typeII_two_gen` is that of `typeII_gen_hm`: `SieveTwoBins.sum_typeII_two_bins` bounds the sum by
-bins (each bin's `M_i` the larger of `0` and the product of Lemma 1's bounds, the kernels' bounds at `Λ = 2P_i` from
-`offK_bound`), `SieveTwoZone.bin_bound_two` bounds each bin, and the constants are absorbed into `q^{1/100000}`.
+The proof of `typeII_two_gen`: `SieveTwoBins.sum_typeII_two_bins` bounds the sum by bins (each bin's `M_i` the
+larger of `0` and the product of Lemma 1's bounds, the kernels' bounds at `Λ = 2P_i` from `offK_bound`),
+`SieveTwoZone.bin_bound_two` bounds each bin, and the constants are absorbed into `q^{1/100000}`.
 
 The file imports `SieveTwoZone.lean` and `SieveCurveGlue.lean`.
 -/

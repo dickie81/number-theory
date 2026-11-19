@@ -3,25 +3,23 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveTypeIIU.typeII_unw` (the paper's Lemma 4.5) removes the dyadic weights from `SieveFamily.typeII_sharp`: the
-primes run over all the primes up to `⌊2q^L⌋` and `m` over an interval of the window's range, cut into dyadic blocks.
-This file is its argument with the polynomial part abstract, as `SieveFamilyGen` is for `typeII_sharp`: `m` runs over
-a finite set `Xs` of any type with a value `nv m ≥ 1`, a coefficient `c_m` and parts `φ_j(m)` of the forms, and `Xs`
-is cut into blocks by a map `blk` into a finite set `T` of labels.
+`SieveFamilyGen.sharp_gen` bounds a family whose primes carry dyadic weights `f0(x_i/Q_i)` at fixed scales. This
+file bounds the family without those weights: the primes run over all the primes up to `⌊2q^L⌋`, and `m` runs over a
+finite set `Xs` of any type with a value `nv m ≥ 1`, a coefficient `c_m` and parts `φ_j(m)` of the forms, cut into
+blocks by a map `blk` into a finite set `T` of labels.
 
 * `unw_gen`: fix `K₀`, `J₀`, `c₀`, `0 < L ≤ 5/2`, `e₁ > 0`, `E₀ ≥ 0` and `Λ₁ ≥ 0`. There are `δ > 0` and `q₀` such
   that for `q ≥ q₀` and a unit `a`: let `T` have at most `(3 + 4 log q)^{c₀}` labels, and let each block `b` have a
   size `P_b > 0` with `nv m > P_b` and `Σ|c_m| ≤ P_bA₀` on it. Let `n + 1 ≤ K₀` primes run over the primes up to
-  `⌊2q^L⌋`, with `J ≤ J₀` sharp comparisons with pivots as in `typeII_unw`, `φ_j(m) ≤ Λ₁ log q`, and suppose that
-  wherever they all hold each `x_i ≥ 2q^{e₁}` and `nv m·∏_i x_i ≤ 2q^L`. If for each block, scales `Q_i ≥ q^{e₁}`
-  with `∏ Q_i ≤ 2^{K₀+1}q^L/P_b`, the coefficients `c_m` and `|c_m|`, phases `κ + Σ_j ξ_jφ_j(m)` and heights
-  `|h_i| ≤ q^{1/100000}`, the sum over `χ ≠ 1` of the block's twisted sum times the prime sums (with the weight
-  `bump`) is at most `A₀q^{L − 1/50000}`, then the family's `|A − B/φ(q)|` is at most `A₀q^{L−δ}/φ(q)`.
+  `⌊2q^L⌋`, with `J ≤ J₀` sharp comparisons with pivots `e_{ji} = ±1` and `|e_{ji}| ≤ E₀`, `φ_j(m) ≤ Λ₁ log q`, and
+  suppose that wherever they all hold each `x_i ≥ 2q^{e₁}` and `nv m·∏_i x_i ≤ 2q^L`. If for each block, scales
+  `Q_i ≥ q^{e₁}` with `∏ Q_i ≤ 2^{K₀+1}q^L/P_b`, the coefficients `c_m` and `|c_m|`, phases `κ + Σ_j ξ_jφ_j(m)` and
+  heights `|h_i| ≤ q^{1/100000}`, the sum over `χ ≠ 1` of the block's twisted sum times the prime sums (with the
+  weight `bump`) is at most `A₀q^{L − 1/50000}`, then the family's `|A − B/φ(q)|` is at most `A₀q^{L−δ}/φ(q)`.
 
-The proof is that of `typeII_unw`: the family splits over the blocks (`Dsum_fiber_gen`); in a block each prime's
-range is covered by `Σ_k bump(x/2^k) = 1`, and `box_change_gen` puts each piece in `Sp`'s ranges; a piece whose
-scales are not as `SieveFamilyGen.sharp_gen` asks vanishes, and `sharp_gen` bounds the others. The pieces number at
-most `(3 + 4 log q)^{c₀ + K₀}`.
+The proof: the family splits over the blocks (`Dsum_fiber_gen`); in a block each prime's range is covered by
+`Σ_k bump(x/2^k) = 1`, and `box_change_gen` puts each piece in `Sp`'s ranges; a piece whose scales are not as
+`sharp_gen` asks vanishes, and `sharp_gen` bounds the others. The pieces number at most `(3 + 4 log q)^{c₀ + K₀}`.
 
 The file imports `SieveFamilyGen.lean` and `SieveTypeIIU.lean`.
 -/

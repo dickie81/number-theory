@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""typeib_payoff.py: what a bilinear Type I estimate would buy the sieve route (issue #39), by replaying the library's
+"""typeib_payoff.py: what a bilinear Type I estimate would buy the sieve route (issue #39), by replaying `mirror2.py`'s
 certificate with a wider sharp rule.
 
 Usage:
@@ -19,7 +19,9 @@ The estimate. For `x = q^L`, `d₁ ~ x^{a₁}` and `d₂ ~ x^{a₂}` with bounde
   `|h|, |h′| ≤ H` with `2H·d₂ < q` is the equation `hd₂′ = h′d₂` in the integers, give `(m x)^{1/2+ε}` with
   `m = 1 + d₁/q`. The weight is a spline (a repeated convolution of intervals), whose transform decays as fast as a
   smooth weight's, so the frequencies above `H ≈ q^{1+ε}/k` cost nothing; `a₁ + 2a₂ < 1` keeps `d₂` below `k`.
-  `lib/pnt/SieveTypeIB.lean` proves the bound (`SieveTypeIB.typeIB_bound`).
+  `lib/pnt/SieveTypeIBWide.lean` proves the bound (`SieveTypeIB.typeIB_bound_wide`, for `d₂ ≤ Dm` and `2H < q`, with
+  the factor `F·(⌊2H·Dm/q⌋ + 1)` in the diagonal, `F` a bound for the number of divisors of `|h|·d₂`; with
+  `2H·Dm < q` it is `F`, which is `x^{o(1)}`).
 * `trap`: `parseval`'s conditions and, for a trapezoid weight (transform decaying as `1/h²`), `3a₁ + 7a₂ < 2(2 − 1/L)`
   if `a₁ ≤ 1/L`, else `4a₁ + 7a₂ < 2(2 − 1/(2L))`.
 * `sharp`: an interval weight: `a₁ < 1 − 1/L` and `a₁ + 3a₂ < 2(1 − 1/L)` if `a₁ ≤ 1/L`, else `2a₁ + 3a₂ < 2 − 1/L`.
@@ -28,7 +30,7 @@ The estimate. For `x = q^L`, `d₁ ~ x^{a₁}` and `d₂ ~ x^{a₂}` with bounde
 * `off`: no estimate; the replay is `mirror2.py`'s.
 `--margin M` lowers both limits of the estimate by `M`.
 
-The sharp rule. `mirror2.py` (as `SieveCertDefs.allowed` and `allowed4`) lets a term over prime boxes `B` be split and
+The sharp rule. `mirror2.py` (its certificate's `allowed` and `allowed4`) lets a term over prime boxes `B` be split and
 decomposed only when the upper end of `ΣB` is below `1 − U1/D`: then Proposition `prop:harman` evaluates its
 `S(A_r, z₀)`, whose branches stop once the product enters the window's reflection. Here a term may also be decomposed
 when `ib(B)`: the same iteration from `z₀` down to `w`, with a branch (the product `e` of the cofactor's primes below

@@ -34,8 +34,8 @@ A set is as many bits as the box has cells (one more over a frozen part, for the
 * `tailP`, `drpMP`: the cost of a dropped box of the main tree in one pass. `chainP`, `drpKP`, `opsKP`: the same
   for the chain of a box of a tree over a frozen part.
 * `gridP`, `cutK`, `kidsCS`, `kidsC`: the cells of the new prime, their cuts read from the hints as numbers of
-  steps of the grid. `sumsP`, `kidsM`: those of the main tree, with the grid and the other cuts of `cutsOfGF`.
-  `headP`, `kidsF`: those of a tree over a frozen part, with the grid and the other cuts of `stratFF`, from a
+  steps of the grid. `sumsP`, `kidsM`: those of the main tree, with the grid and three other cuts.
+  `headP`, `kidsF`: those of a tree over a frozen part, with the grid and two other cuts, from a
   pass over the chain's cells, the cells of the box before the frozen primes'.
 * `partDS`, `partD`: the cells of the new prime cut at given cuts, for a part of the search.
 * `stepD`, `solveD`: the search. `noAltH`: no bound that reads hints.
@@ -46,11 +46,12 @@ A set is as many bits as the box has cells (one more over a frozen part, for the
 * `lastP`, `initP`, `flipOKP`, `flipTreeD`, `flipCostB`, `flipCostD`, `altFD`: the reversal of a box through its
   largest prime, its tree searched this way, for a box of either sign.
 
-`SieveAdDir.lean` proves what a cost returned below its limit gives. The file imports `SieveAdFastDefs.lean` and
-`SieveAdFlipStratDefs.lean`.
+`SieveAdDir.lean` proves what a cost returned below its limit gives. The file imports `SieveAdFastDefs.lean`,
+`SieveAdFillSearchDefs.lean` and `SieveAdFlipDefs.lean`.
 -/
 import SieveAdFastDefs
-import SieveAdFlipStratDefs
+import SieveAdFillSearchDefs
+import SieveAdFlipDefs
 
 namespace SieveAd
 
@@ -250,8 +251,8 @@ noncomputable def sumsP {α : Type} : List Cell → ℕ → ℕ → ℕ → ℕ 
   List.rec (motive := fun _ => ℕ → ℕ → ℕ → ℕ → (ℕ → ℕ → ℕ → ℕ → α) → α) (fun ls hs n ll k => k ls hs n ll)
     (fun x _ ih ls hs n _ k => ih (Nat.add ls x.1) (Nat.add hs x.2) (Nat.succ n) x.1 k)
 
-/-- **The cells of the new prime in the main tree**, from the floor `f` to `top`: the grid and the three other
-cuts are `cutsOfGF`'s, the cut where the new prime's square is too large for a term with a cofactor, the cut one
+/-- **The cells of the new prime in the main tree**, from the floor `f` to `top`: the grid and three other
+cuts, the cut where the new prime's square is too large for a term with a cofactor, the cut one
 unit below the largest prime's cell, and the cut where the product of all the primes reaches `x`. -/
 noncomputable def kidsM (κ hI : ℕ) (rec : List Cell → Bool → ℕ → ℕ → ℕ × ℕ) (top : ℕ) (bl : List Cell)
     (par : Bool) (f lim h : ℕ) : ℕ × ℕ :=
@@ -267,7 +268,7 @@ noncomputable def headP {α : Type} : List Cell → ℕ → ℕ → ℕ → (ℕ
         (Nat.beq j 0))
 
 /-- **The cells of the new prime in a tree over a frozen part** of `nb` frozen primes, from the floor `f` to
-`top`: the grid and the two other cuts are `stratFF`'s, from the sums of the chain's cells, the cells of the box
+`top`: the grid and two other cuts, from the sums of the chain's cells, the cells of the box
 before the frozen primes'. -/
 noncomputable def kidsF (κ hR : ℕ) (ctx : Cell) (nb : ℕ) (rec : List Cell → Bool → ℕ → ℕ → ℕ × ℕ) (top : ℕ)
     (bl : List Cell) (par : Bool) (f lim h : ℕ) : ℕ × ℕ :=

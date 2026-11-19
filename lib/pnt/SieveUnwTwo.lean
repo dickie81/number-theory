@@ -3,9 +3,9 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-The paper's Lemma 4.5 (`SieveTypeIIU.typeII_unw`) is its Lemma 4.4 without the dyadic weights: the primes run over
-all the primes up to `⌊2q^L⌋` and `m` over an interval of the window's range. This file is the same for two
-polynomial variables, from `SieveUnwGen.unw_gen` and `SieveFamilyTwo.box_two`.
+The paper's Lemma 4.5 is its Lemma 4.4 without the dyadic weights. This file is that lemma for two polynomial
+variables: it removes the dyadic weights from the families of `SieveFamilyTwo`, so that the primes run over all the
+primes up to `⌊2q^L⌋` and `m₁`, `m₂` over intervals, from `SieveUnwGen.unw_gen` and `SieveFamilyTwo.box_two`.
 
 * `typeII_unw_two`, **Lemma 4.5 in two variables**: assume Proposition 3′ in two variables at `L` on a region `R`
   (`SieveFamilyTwo.TypeIITwoAt L R`), `0 < L ≤ 5/2`, and fix `K₀`, `J₀`, `e₁ > 0`, `E₀ ≥ 0` and `Λ₁ ≥ 0`. There are

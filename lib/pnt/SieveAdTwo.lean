@@ -25,9 +25,9 @@ the exponent `κn` of `q`.
 * `evI_two`, `evI_okI2`: **a box evaluated by the estimate.** If `chkI2` passes the box, for the first variable
   `s0` and the rest `sr`, the term of the box is evaluated (`SieveAd.EvI`), the second variable being the other
   primes and the cofactor.
-* `twoTests_sound`: so the tests of the estimate in two variables are sound (`SieveAd.Tests.Sound`).
-* `evJ_twoE`, `evI_twoE`, `twoTests_soundX`: the same under more atoms, uniformly in the atoms, while the box's
-  atoms and those are at most `40` (`SieveAd.Tests.SoundX`).
+* `evJ_twoE`, `evI_twoE`: `evJ_two` and `evI_two` under more atoms: `dJP` at the floor `f`, and `dIP`, are at most
+  `η · Xq q / φ(q)` for large `q`, uniformly in the lists `E` of at most `m` atoms that pass `ThrOK`, where
+  `3 · min(k, 13) + m ≤ 40` for a box of `k` primes.
 
 The file imports `SieveAdSpec.lean`, `SieveAdTwoDefs.lean`, `SieveTwoComp.lean`, `SieveTwoCompE.lean` and
 `SieveLeafZoneX.lean`.
@@ -933,17 +933,5 @@ theorem evJ_okJ2 (bl : List Cell) (f : ℕ) (cfg : Cfg) (k : ℕ) (h : bl.length
     EvJ f (boxFn bl k h) :=
   evJ_two bl k h f cfg.s0 cfg.sr cfg.s1 cfg.e _ _ _ hok
 
-/-- **The tests of the estimate in two variables are sound.** -/
-theorem twoTests_sound : (twoTests).Sound :=
-  ⟨fun bl cfg k' h hok => evI_okI2 bl cfg k' h hok, fun bl f cfg k h hok => evJ_okJ2 bl f cfg k h hok⟩
-
-/-- **The tests of the estimate in two variables are sound under two more atoms**, on the boxes of at most twelve
-primes. -/
-theorem twoTests_soundX : (twoTests).SoundX :=
-  ⟨fun bl cfg k' h hk hok => evI_twoE bl k' h cfg.s0 cfg.sr hok (m := 2) (by omega),
-    fun bl f cfg k h hk hok => evJ_twoE bl k h f cfg.s0 cfg.sr cfg.s1 cfg.e _ _ _ hok (m := 2) (by omega)⟩
-
 end SieveAd
 
-#print axioms SieveAd.twoTests_sound
-#print axioms SieveAd.twoTests_soundX
