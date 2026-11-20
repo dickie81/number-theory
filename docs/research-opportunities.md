@@ -194,18 +194,50 @@ covers. The region does not close at `13/6`.
   Two variants change little: the estimate's stops in the rule (`0.7609𝒦` at
   `11/5`), and the bilinear Type I rule without the condition that `d₂` be shorter than the cofactor (`0.7335𝒦` at
   `11/5`, `1.0057𝒦` at `2.192`).
-- **In Harman's decomposition**, which uses no window (`tools/linnik/type2_model.py`). A model of the large-value
-  tools gives the region of his Type II lemma (Baker–Harman–Pintz, Lemma 9) with his tools, and shows that his proof
-  cuts the modulus in one place, Huxley's theorem on powers of the prime-factored factor. Without it the region's
-  condition `|α₁ − α₂| < 2θ − 1` is unchanged and its other side shrinks by at most a tenth (`ρ < 0.100` for his
-  `0.112` at `θ = 0.528`), so that the region at `θ = 0.530` contains his at `0.528`. That suggests that his sieve
-  reaches every modulus near `q < x^{0.47}`, an exponent of about `2.13`, given the half-plane. It is an estimate
-  from one lemma's region: the sieve was not run, and his Type I lemmas were not modelled. Harman's own theorems, read on
-  17 November 2026, are stronger. His Theorem 2 of 2005 (Bull. London Math. Soc. 37) has `q < x^{0.472}` for every
-  large modulus under a zero-free condition that the half-plane implies: the exponent `1/0.472 < 2.1187` for every
-  modulus. (His proof gets `q < x^{0.47}`, the model's figure, from the analogy with Harman, Kumchev and Lewis's work
-  on prime ideals, and `0.472` from a finer numerical analysis in Lewis's thesis.) His Theorem 1.2 of 2008 (Int. J. Number Theory 4) has `q < x^{0.4736}` for large
-  moduli whose prime factors are all below `q^δ`: the exponent `1/0.4736 < 2.1115` (the Linnik paper, Section 12).
+- **In Harman's decomposition**, which uses no window (`tools/linnik/type2_model.py`,
+  `tools/linnik/harman_sieve.py`). Harman's own theorems, read on 17 November 2026: his Theorem 2 of 2005 (Bull.
+  London Math. Soc. 37) has `q < x^{0.472}` for every large modulus under a zero-free condition that the half-plane
+  implies, so the exponent `1/0.472 < 2.1187` for every modulus. (His proof gets `q < x^{0.47}` from the analogy with
+  Harman, Kumchev and Lewis's work on prime ideals, and `0.472` from a finer numerical analysis in Lewis's thesis.)
+  His Theorem 1.2 of 2008 (Int. J. Number Theory 4) has `q < x^{0.4736}` for large moduli whose prime factors are all
+  below `q^δ`: the exponent `1/0.4736 < 2.1115` (the Linnik paper, Section 12). An earlier version of this item read
+  the model of the large-value tools as saying that his proof cuts the modulus in one place, Huxley's large values
+  estimate on the powers of the prime-factored factor, and estimated his reach from that at about `2.13`. The premise
+  was wrong: Huxley's Theorem 1 holds for the characters to one modulus (`LinnikReflect.huxley_large_values`), and
+  `type2_model.py` now takes it so.
+
+  *With Chen, Gupta and Li's estimate in his lemmas* (19 November 2026; the Linnik paper, Section 12, "Harman's sieve
+  with Input 2", states it). Input 2 can stand in only for Huxley's estimate, which Harman uses on the powers of the
+  rest in his region in two variables, and which Harman, Kumchev and Lewis use in their estimate on four variables.
+  On the powers of the rest it gives his region exactly and no more: the region's width `2θ − 1` and its bound
+  `4θ − 2` on the rest come from the mean value estimate on the two factors with arbitrary coefficients. Huxley's
+  estimate and Input 2 on every sub-product of the Type II sum widen it a little (the largest rest on the diagonal at
+  `21/10` goes from `0.0952` to `0.0977` and `0.1020`). `harman_sieve.py points` with his information (his region
+  with the best `g` of Baker, Harman and Pintz, and Harman, Kumchev and Lewis's Type I reach, estimate on four
+  variables and Buchstab's identity in reverse) passes `1` at these exponents, by the shape of the role reversal:
+
+  | information | none | one level, through the largest prime, terms of at most three primes that need an upper bound | the certificates' shapes | every shape |
+  |---|---|---|---|---|
+  | Harman's | `2.1292` | `2.1035` | `2.0937` | `2.0891` |
+  | with Huxley's estimate on every sub-product | `2.1248` | `2.0999` | `2.0919` | `2.0873` |
+  | with Huxley's estimate and Input 2 on every sub-product | `2.1211` | `2.0928` | `2.0850` | `2.0817` |
+  | the paper's rules as formalised, without the leaves cut in three | `2.1127` | `2.0924` | `2.0802` | `2.0779` |
+
+  His `2.1187` lies between the first two columns with his information (Harman, Kumchev and Lewis reverse some of the
+  terms of the second); lowered by the shift from the first row to the third there, it is about `2.108` to `2.111`.
+  The certificate at `21/10` lies about `0.02` above the model of its rules in the certificates' shapes, and the same
+  offset puts his `2.0850` at about `2.105`. So his lemmas with Input 2 do not reach `21/10`, and the paper's rules
+  are ahead in every shape, by `0.0004` in the second. What puts them ahead is the estimate in one variable. Given its
+  count of the characters at which a term's prime sums are large (the estimate on four variables taken to every set
+  of prime sums, by the mean values of their powers, Huxley's estimate and Input 2: `--res plain,hux,lv --curve
+  ghx`), Harman's information with Input 2 passes at `2.1128` and `2.0746` in the first and third columns: level with
+  the paper's rules there and `0.006` ahead, because his region in two variables is the larger. It contains the
+  paper's (Definition 3.1) at every `L` from `2.02` to `2.30`, in exact arithmetic on a grid of step `10⁻⁴` with a
+  margin of at least `0.004` in the rest's exponent. The paper's rules with his region, his estimate on four variables
+  and Buchstab's identity in reverse added pass at `2.1054` and `2.0738`. So `21/10` is not the method's limit: the
+  estimate in one variable and Harman's region in two variables go further together than either does alone. The
+  commands are in `harman_sieve.py`'s docstring. All of this is the model's: the Type II theorem on the widened regions
+  has not been written out, and `points` is the limit of fine cells.
 - **In a decomposition that does not lean on the window** (`tools/linnik/harman_sieve.py`, whose docstring states
   it). Each term has its own floor, the largest at which Harman's comparison evaluates it: its tree over the small
   primes is stopped by the estimate (the part that enters the zone is a set of the term's primes times the small
@@ -224,8 +256,8 @@ covers. The region does not close at `13/6`.
   | at midpoints | `0.013` | `0.090` | `0.285` | `0.364` | `0.459` | `0.569` | `0.690` | `0.849` | `1.011` |
 
   So the computation passes at `2.12`, where the paper's decomposition stops at `2.193` (there this one loses
-  `0.10`), and the limit of fine cells is near `2.10`, which is Baker, Harman and Pintz's `0.525` in the dictionary
-  of the previous item, and agrees with its estimate of `2.13`. What carries it, at `2.13` on cells of side `0.004`,
+  `0.10`), and the limit of fine cells is near `2.10`, that is `θ = 1 − 1/L` near `0.524`, beside Baker, Harman and
+  Pintz's `0.525`. What carries it, at `2.13` on cells of side `0.004`,
   where the loss is `1.006`: role reversal (`1.090` without the second level, `1.269` for terms of at most four
   primes, `1.426` with none; with none the midpoints pass `1` at `2.16`) and the wider bilinear estimate (`1.174`
   with Lemma 4.2 as it stands). The linear sieve's bounds, for terms that the comparison does not evaluate, lower
