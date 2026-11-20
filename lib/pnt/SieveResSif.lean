@@ -16,8 +16,8 @@ its number of primes. There is no multiple with `t = 0`, as `∏rt ≤ N₁`.
   curve `g ≤ 1` with `g(1/2) = 1` and its counts, `e₀ > 0`, `k′`, `J₀`, `Λ₁ ≥ 0`, `ρ₂ ≥ 0` and `ε > 0` with
   `L − ρ₂ − ε > 0`, there are `δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a` mod `q`: let `rt` run over the
   `(k′ + 1)`-tuples of primes up to `N₂ = ⌊2q^L⌋` that satisfy at most `J₀` comparisons, each strictly decreasing
-  with entries at least `q^{e₀}` and `rt (r i) ≥ q^{lo i}`, with `∏rt ≤ N₁ = ⌊q^L⌋`, and such that every `m` with
-  `N₁ < ∏rt·m ≤ N₂` has `m ≥ q^{lo (n+1)}` and the rest's product `∏_i rt (r i)·m` in `[q^{ρ₁}, q^{ρ₂}]`. If
+  with entries at least `q^{e₀}` and `rt (r i) ≥ q^{lo i}`, with `∏rt ≤ N₁ = ⌊q^L⌋`, and such that every `m` at least
+  `rt`'s last entry with `N₁ < ∏rt·m ≤ N₂` has `m ≥ q^{lo (n+1)}` and the rest's product `∏_i rt (r i)·m` in `[q^{ρ₁}, q^{ρ₂}]`. If
   `ResBox g L (n + 2) (L − ρ₂ − ε) (lo − ε)` holds, the multiples `n ∈ (N₁, N₂]` of `∏rt` with no prime factor below
   `rt`'s last entry, summed over `rt`, have `|A − B/φ(q)| ≤ q^{L−δ}/φ(q)`. It is `chain_res_cof` without its
   condition that the cofactor be one prime.
@@ -182,7 +182,7 @@ theorem chain_res_sif [RouteOK] {g : ℝ → ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg
       (∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ C ∈ Ω, C.holds 0 rt) →
         StrictAnti rt ∧ (∀ i, (q : ℝ) ^ e₀ ≤ rt i) ∧ (∀ i : Fin (n + 1), (q : ℝ) ^ lo i ≤ rt (r i)) ∧
           ∏ i, rt i ≤ ⌊(q : ℝ) ^ L⌋₊ ∧
-          ∀ m : ℕ, ⌊(q : ℝ) ^ L⌋₊ < (∏ i, rt i) * m → (∏ i, rt i) * m ≤ ⌊2 * (q : ℝ) ^ L⌋₊ →
+          ∀ m : ℕ, rt (Fin.last k') ≤ m → ⌊(q : ℝ) ^ L⌋₊ < (∏ i, rt i) * m → (∏ i, rt i) * m ≤ ⌊2 * (q : ℝ) ^ L⌋₊ →
             (q : ℝ) ^ lo (n + 1) ≤ m ∧
               (q : ℝ) ^ ρ₁ ≤ (((∏ i ∈ Finset.univ.image r, rt i) * m : ℕ) : ℝ) ∧
               (((∏ i ∈ Finset.univ.image r, rt i) * m : ℕ) : ℝ) ≤ (q : ℝ) ^ ρ₂) →
@@ -344,7 +344,9 @@ theorem chain_res_sif [RouteOK] {g : ℝ → ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg
       have hprod : ∏ i, z i = (∏ i, z (Fin.castAdd t i)) * ∏ b, z (Fin.natAdd (k' + 1) b) := Fin.prod_univ_add z
       have hlo' : N₁ < ∏ i, z i := by rw [hprod]; exact_mod_cast hlo
       have hhi' : ∏ i, z i ≤ N₂ := by rw [hprod]; exact_mod_cast hhi
-      obtain ⟨hcof, hρlo, hρhi⟩ := hm (∏ b, z (Fin.natAdd (k' + 1) b)) (by exact_mod_cast hlo)
+      have hylast : z (Fin.castAdd t (Fin.last k')) ≤ ∏ b, z (Fin.natAdd (k' + 1) b) :=
+        (hlast ⟨0, ht0⟩).trans (Finset.single_le_prod (fun b _ => hy1 b) (Finset.mem_univ _))
+      obtain ⟨hcof, hρlo, hρhi⟩ := hm (∏ b, z (Fin.natAdd (k' + 1) b)) hylast (by exact_mod_cast hlo)
         (by exact_mod_cast hhi)
       have hρ : ∏ x ∈ Finset.univ.image (sifR t r), z x =
           (∏ x ∈ Finset.univ.image r, z (Fin.castAdd t x)) * ∏ b, z (Fin.natAdd (k' + 1) b) :=
@@ -393,7 +395,7 @@ theorem chain_res_sifG [RouteOK] {e₀ : ℝ} (he₀ : 0 < e₀) (k' J₀ : ℕ)
       ∀ (Ω : List (GCmp (k' + 1))), Ω.length ≤ J₀ → (∀ C ∈ Ω, C.c 0 ≤ Λ₁ * Real.log q) →
       (∀ rt : Fin (k' + 1) → ℕ, (∀ i, (rt i).Prime) → (∀ C ∈ Ω, C.holds 0 rt) →
         StrictAnti rt ∧ (∀ i, (q : ℝ) ^ e₀ ≤ rt i) ∧ ∏ i, rt i ≤ ⌊(q : ℝ) ^ L⌋₊ ∧
-          ∀ m : ℕ, ⌊(q : ℝ) ^ L⌋₊ < (∏ i, rt i) * m → (∏ i, rt i) * m ≤ ⌊2 * (q : ℝ) ^ L⌋₊ →
+          ∀ m : ℕ, rt (Fin.last k') ≤ m → ⌊(q : ℝ) ^ L⌋₊ < (∏ i, rt i) * m → (∏ i, rt i) * m ≤ ⌊2 * (q : ℝ) ^ L⌋₊ →
             Reg q (fun i => rt (r i)) m) →
       ‖∑ rt ∈ RTg (k' + 1) ⌊2 * (q : ℝ) ^ L⌋₊ Ω,
           ∑ n ∈ Finset.Ioc ⌊(q : ℝ) ^ L⌋₊ ⌊2 * (q : ℝ) ^ L⌋₊,
@@ -545,7 +547,9 @@ theorem chain_res_sifG [RouteOK] {e₀ : ℝ} (he₀ : 0 < e₀) (k' J₀ : ℕ)
         Fin.prod_univ_add z
       have hlo' : N₁ < ∏ i, z i := by rw [hprod]; exact_mod_cast hlo
       have hhi' : ∏ i, z i ≤ N₂ := by rw [hprod]; exact_mod_cast hhi
-      have hReg := hm (∏ b, z (Fin.natAdd (k' + 1) b)) (by exact_mod_cast hlo) (by exact_mod_cast hhi)
+      have hylast : z (Fin.castAdd (u + 1) (Fin.last k')) ≤ ∏ b, z (Fin.natAdd (k' + 1) b) :=
+        (hlast ⟨0, by omega⟩).trans (Finset.single_le_prod (fun b _ => hy1 b) (Finset.mem_univ _))
+      have hReg := hm (∏ b, z (Fin.natAdd (k' + 1) b)) hylast (by exact_mod_cast hlo) (by exact_mod_cast hhi)
       refine ⟨fun i => ?_, ?_, hlo', hhi'⟩
       · refine Fin.addCases (fun i => ?_) (fun b => ?_) i
         · exact hge i
