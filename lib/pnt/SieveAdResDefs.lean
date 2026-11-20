@@ -18,9 +18,9 @@ values of the powers). This file is the kernel's side:
   (a set of `pw` values), four bits `k` and the test's `k` intervals' ends, thirteen bits each; or, for `k = 0`
   (`resT2`), four more bits `k₂` and `k₂` ends.
 * `headLo`, `chkIRC`, `okIRC`, `resTestsFC`: the same with the box's cofactor in the rest, at the bit after the
-  box's cells: when the box's upper ends sum to at most `DEN − 2` and its lower ends with twice its least prime's
-  reach `DEN + 1`, every multiple's cofactor is one prime, in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`
-  (`lo₀` the least prime's lower end).
+  box's cells: when the box's upper ends sum to at most `DEN − 2`, every multiple's cofactor, free of primes below
+  the box's least, is in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)` (`lo₀` the least prime's lower end), and
+  it is one part of the rest, whatever its number of primes (`SieveTypeIIHM.chain_res_sif`).
 
 Its soundness is `SieveAdRes.lean`'s. The file imports `SieveAdDirDefs.lean` and `SieveResTestDefs.lean`.
 -/
@@ -97,14 +97,13 @@ variable [SieveCert.IBPar]
 open SieveCert.IBPar (Lnum Lden)
 
 /-- **The resonant window's test of a box, with its cofactor**: `chkIR`, and when the bit of `sr` after the box's
-cells is set, the cofactor in the rest after the box's primes: when the box's upper ends sum to at most `DEN − 2`
-and its lower ends with twice its least prime's reach `DEN + 1`, in the cell `(max(DEN − Σhi − 1, lo₀),
-DEN − Σlo + 1)`. -/
+cells is set, the cofactor in the rest after the box's primes, one part: when the box's upper ends sum to at most
+`DEN − 2`, in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`. -/
 noncomputable def chkIRC (bl : List Cell) (sr k h : ℕ) : Bool :=
   rpass bl sr fun los hs ns ok n =>
     Nat.ble n 13 && ok && Nat.blt 0 ns &&
       cond (Nat.beq (Nat.land (Nat.shiftRight sr n) 1) 1)
-        (Nat.ble (Nat.add (hiSum bl) 2) DEN && Nat.ble (Nat.add DEN 1) (Nat.add (loSum bl) (Nat.mul 2 (headLo bl))) &&
+        (Nat.ble (Nat.add (hiSum bl) 2) DEN &&
           SieveResTest.resX Lnum Lden (los ++ [maxN (Nat.sub (Nat.sub DEN (hiSum bl)) 1) (headLo bl)])
             (Nat.add hs (Nat.add (Nat.sub DEN (loSum bl)) 1)) k h)
         (SieveResTest.resX Lnum Lden los hs k h)

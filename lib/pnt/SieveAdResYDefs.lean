@@ -52,13 +52,13 @@ open SieveCert.IBPar (Lnum Lden)
 /-- **The test at the two corners of a box, with its cofactor**: at most `13` cells, each with
 `1 ≤ lo ≤ hi ≤ DEN`, a rest `sr` with at least one cell, and `SieveResTest.resYHF` (`resYH`) on the rest's cells
 with the hints `s`; when the bit of `sr` after the box's cells is set, the cofactor in the rest after the box's
-primes: when the box's upper ends sum to at most `DEN − 2` and its lower ends with twice its least prime's reach
-`DEN + 1`, in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`. -/
+primes, one part: when the box's upper ends sum to at most `DEN − 2`, in the cell
+`(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`. -/
 noncomputable def chkIRY (bl : List Cell) (sr s : ℕ) : Bool :=
   rpassY bl sr fun cs ns ok n =>
     Nat.ble n 13 && ok && Nat.blt 0 ns &&
       cond (Nat.beq (Nat.land (Nat.shiftRight sr n) 1) 1)
-        (Nat.ble (Nat.add (hiSum bl) 2) DEN && Nat.ble (Nat.add DEN 1) (Nat.add (loSum bl) (Nat.mul 2 (headLo bl))) &&
+        (Nat.ble (Nat.add (hiSum bl) 2) DEN &&
           SieveResTest.resYHF Lnum Lden
             (cs ++ [(maxN (Nat.sub (Nat.sub DEN (hiSum bl)) 1) (headLo bl), Nat.add (Nat.sub DEN (loSum bl)) 1)]) s)
         (SieveResTest.resYHF Lnum Lden cs s)

@@ -230,7 +230,7 @@ theorem evIF_froz_resTH {e₁ e₂ s : ℕ} (β : List Cell) (hβl : β.length =
 set_option maxHeartbeats 4000000 in
 /-- **A box evaluated by the resonant window with its cofactor in the rest, under more atoms.** If `chkIRCH` passes
 the box with the rest `sr`, the term of the box is evaluated under `m` more atoms, uniformly in the atoms, when the
-box's atoms and those are at most `40`: by `chain_res_cof` with the cofactor's cell when the bit after the box's
+box's atoms and those are at most `40`: by `chain_res_sif` with the cofactor's cell when the bit after the box's
 cells is set, and by `evI_resEH` otherwise. -/
 theorem evI_resCEH (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk hh : ℕ)
     (hok : chkIRCH bl sr kk hh = true) {m : ℕ} (hm : 3 * min (k' + 1) 13 + m ≤ 40) :
@@ -254,7 +254,7 @@ theorem evI_resCEH (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk h
     exact evI_resEH bl k' h sr kk hh hok' hm
   rw [hbit, Bool.cond_true] at hcof
   simp only [Bool.and_eq_true, Nat.ble_eq] at hcof
-  obtain ⟨⟨hshi, hslo⟩, hT⟩ := hcof
+  obtain ⟨hshi, hT⟩ := hcof
   have hc := (cellsFrom_iff 1 bl).1 hcells
   set bx := boxFn bl (k' + 1) h with hbx
   have hbxc : ∀ i, 1 ≤ (bx i).1 ∧ (bx i).1 ≤ (bx i).2 ∧ (bx i).2 ≤ DEN := fun i => hc _ (boxFn_mem bl _ h i)
@@ -262,10 +262,10 @@ theorem evI_resCEH (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk h
   have hlos : loSum bl = ∑ i, (bx i).1 := by rw [loSum_eq, hbx, sum_boxFn (fun c => c.1) bl _ h]
   have hhis : hiSum bl = ∑ i, (bx i).2 := by rw [hiSum_eq, hbx, sum_boxFn (fun c => c.2) bl _ h]
   have hhead : headLo bl = (bx (Fin.last k')).1 := headLo_eq bl k' h
-  simp only [Nat.add_eq, Nat.sub_eq, Nat.mul_eq] at hT hshi hslo
-  rw [hlos] at hT hslo
+  simp only [Nat.add_eq, Nat.sub_eq] at hT hshi
+  rw [hlos] at hT
   rw [hhis] at hT hshi
-  rw [hhead] at hT hslo
+  rw [hhead] at hT
   -- the rest's cells and positions
   have hcsr : mList (fun c => c.1) bl sr = (ridx (k' + 1) sr).map fun i => (bx i).1 :=
     mList_eq (fun c => c.1) bl (k' + 1) h sr
@@ -344,7 +344,7 @@ theorem evI_resCEH (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk h
     fun m => by rw [hbx, sum_mset (fun c => c.2) bl _ h m]
   have hqx : ∀ (q : ℕ) (e : ℕ), (q : ℝ) ^ (κ * (e : ℝ)) = Xe q e := fun q e => by rw [hκdef, qpow_eq]; rfl
   intro η hη
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveTypeIIHM.chain_res_cof SieveCurveHx.ghx_le_one SieveCurveHx.ghx_half
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveTypeIIHM.chain_res_sif SieveCurveHx.ghx_le_one SieveCurveHx.ghx_half
     SieveCurveHx.counts_hx (e₀ := κ * ((1 : ℕ) : ℝ)) (by positivity) k' 40 (Λ₁ := L + 1) (by linarith)
     (ρ₂ := κ * (hs : ℝ)) (ε := κ) (by positivity) hκ hLρ
   filter_upwards [eventually_ge_atTop q₀, eventually_ge_atTop 2, le_Xq hδ hη, big_ev] with q hq hq2 hX hbig a ha E
@@ -369,11 +369,11 @@ theorem evI_resCEH (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk h
           rw [hκdef, qpow_eq, qpow_eq]
           exact ⟨(hcc i).1, (hcc i).2.le⟩
       have hcx : ∀ i, Xe q (bx i).1 ≤ rt i ∧ (rt i : ℝ) < Xe q (bx i).2 := fun i => hcc i
-      obtain ⟨hf0, hf2, hf1⟩ := cof_facts hbig bx rt hcx (fun i => (hbxc i).2.1) hshi hslo
+      obtain ⟨hf0, hf1⟩ := cof_facts hbig bx rt hcx (fun i => (hbxc i).2.1) hshi
       have br := prod_set_bounds hq0 κ bx hcc' (mset (k' + 1) sr)
       rw [hslo' sr, hshi' sr] at br
       rw [himg]
-      refine ⟨hsa, fun i => ?_, fun j => ?_, hf0, hf2, fun y hy hylo hyhi => ?_⟩
+      refine ⟨hsa, fun i => ?_, fun j => ?_, hf0, fun y hy hylo hyhi => ?_⟩
       · rw [hκdef, qpow_eq]
         exact (pow_mono hx1 (hbxc i).1).trans (hcc i).1
       · show (q : ℝ) ^ (κ * (cs.getD (j : ℕ) 0 : ℝ)) ≤ rt (r j)

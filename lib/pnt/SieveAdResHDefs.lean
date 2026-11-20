@@ -82,15 +82,13 @@ noncomputable def chkIRH (bl : List Cell) (sr k h : ℕ) : Bool :=
     Nat.ble n 13 && ok && Nat.blt 0 ns && SieveResTest.resXH Lnum Lden los hs k h
 
 /-- **The resonant window's test of a box with its cofactor, its lines named by the hint**: `chkIRH`, and when the
-bit of `sr` after the box's cells is set, the cofactor in the rest after the box's primes: when the box's upper ends
-sum to at most `DEN − 2` and its lower ends with twice its least prime's reach `DEN + 1`, in the cell
-`(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`. -/
+bit of `sr` after the box's cells is set, the cofactor in the rest after the box's primes, one part: when the box's
+upper ends sum to at most `DEN − 2`, in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`. -/
 noncomputable def chkIRCH (bl : List Cell) (sr k h : ℕ) : Bool :=
   rpass bl sr fun los hs ns ok n =>
     Nat.ble n 13 && ok && Nat.blt 0 ns &&
       cond (Nat.beq (Nat.land (Nat.shiftRight sr n) 1) 1)
         (Nat.ble (Nat.add (hiSum bl) 2) DEN &&
-          Nat.ble (Nat.add DEN 1) (Nat.add (loSum bl) (Nat.mul 2 (headLo bl))) &&
           SieveResTest.resXHF Lnum Lden (los ++ [maxN (Nat.sub (Nat.sub DEN (hiSum bl)) 1) (headLo bl)])
             (Nat.add hs (Nat.add (Nat.sub DEN (loSum bl)) 1)) k h)
         (SieveResTest.resXHF Lnum Lden los hs k h)
