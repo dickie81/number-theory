@@ -377,6 +377,42 @@ calls nothing, `Nat.land`, `Nat.mod`, or a 14-bit `and` written by recursion on 
 - So nothing here speeds the build up. This is a reading of the definitions and one benchmark, not a profile
   of the certificate.
 
+## 13. What happens when the files are imported with the rest
+
+**Question.** Nothing in the library imports this directory. If something did, alongside Mathlib, would anything
+change for the code that is already there?
+
+**Done.** A file that imports Mathlib and the directory's modules together, with statements that Mathlib alone
+accepts. The names the files declare were looked up in the census of Mathlib and in `lib/`, the files were
+compiled with the package's options, and they were read against the checks that the library's own sources must
+pass. `PlugIn.lean` is the file, after the change below.
+
+**Found.**
+
+- One thing did change, and it is fixed. `Tower.lean` declared `Ax.decDvd` as an instance of `Decidable (d ∣ n)`
+  on `ℕ`. An instance is not confined to its namespace, and the one declared last is tried first. So in a file
+  that imported `Tower` with Mathlib, divisibility was decided by `Ax.decDvd` and not by core's
+  `Nat.decidable_dvd`. A goal written there, such as `{d ∈ Finset.range n.succ | d ∣ n} = n.divisors`, then held a
+  different instance from the lemma of Mathlib that states it (`Nat.filter_dvd_eq_divisors`): `exact` failed with
+  a mismatch between two types that print the same, `rw` did not find its pattern, and `simp` left the goal.
+  `convert` got through. `decDvd` is now a `local instance`: an instance inside `Tower.lean`, and elsewhere a
+  definition to be named. With that, the same file compiles (`PlugIn.lean`).
+- No constant is declared twice: the modules load together with Mathlib, and no name they declare is in Mathlib,
+  in Lean's core or in `lib/`. The declarations of `Compute.lean`, `Stuck.lean` and `LandBench.lean` that sat in
+  the root namespace (`five`, `chosen`, `loop`, `andF`, …) are now in namespaces, so that a later `loop` elsewhere
+  cannot collide with them.
+- `Ax.Prime` is not Mathlib's `Prime`. After `open Ax` in a file that imports Mathlib, `Prime 7` is ambiguous,
+  and Lean says so; inside `namespace Ax` it means `Ax.Prime`.
+- `Bare.lean` cannot be imported by anything: it declares its own `Eq`, and a file that imports it with `Init`
+  fails with "environment already contains 'Eq.refl'". It is a file to compile alone.
+- The files compile with the package's options (`autoImplicit` off). Moved into `lib/` they would not pass its
+  checks as they are: `Spectroscopy.lean` uses `native_decide`, which the hygiene check forbids, and no theorem of
+  the check files uses any of them, which the dead-code check forbids.
+- Two files depend on things that can change under them, and CI does not run `check.sh`. `DivLt.lean` unfolds
+  core's `Nat.div` by its internal recursion (`Nat.div.go`), and `Tower.lean` relies on about sixty lemmas of
+  core being free of axioms; a new toolchain can break either, and `check.sh` is what would show it.
+  `CertAxioms.lean` names a module and a theorem of the certificate at `43/20`.
+
 ## What the entries add up to
 
 - With no axiom, Lean is a programming language whose programs are proofs: Euclid's theorem is a function that

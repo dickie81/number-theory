@@ -12,6 +12,8 @@ The times are for one `example` at a time (keep one, comment out the others); th
 `check.sh` does not run it.
 -/
 
+namespace LandBench
+
 open Ax
 
 /-- A 14-bit `and` by recursion on a bound. It depends on no axiom, and the kernel cannot hand it to GMP. -/
@@ -46,4 +48,6 @@ example : loop (fun a => Nat.mod a 16) 200000 1 0 = loop (fun a => Nat.mod a 16)
 example : loop (fun a => andF 14 a 5461) 200000 1 0 = loop (fun a => andF 14 a 5461) 200000 1 0 + 0 := by
   decide +kernel
 
-#axiom_free andF loop
+end LandBench
+
+#axiom_free LandBench.andF LandBench.loop

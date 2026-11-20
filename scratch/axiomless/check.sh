@@ -21,10 +21,10 @@ table() { # table FILE [OLEAN]
   else echo "ok: $1 ($(echo "$out" | wc -l) declarations, none with an axiom)"; fi
 }
 table Tower.lean build/Tower.olean
-table Principles.lean
-table Ladder.lean
-run Compute.lean
-run DivLt.lean
-run Stuck.lean
+table Principles.lean build/Principles.olean
+table Ladder.lean build/Ladder.olean
+run Compute.lean build/Compute.olean
+run DivLt.lean build/DivLt.olean
+run Stuck.lean build/Stuck.olean
 run Spectroscopy.lean
 exit $fail
