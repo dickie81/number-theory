@@ -103,9 +103,8 @@ noncomputable def resTestsFCH : Tests :=
   ⟨fun bl cfg => cond (Nat.beq cfg.kind 3) (okIRCH bl cfg) (fillTestsF.okI bl cfg), fillTestsF.okJ⟩
 
 /-- **The resonant window's test of a box `ch ++ β` of a tree over a frozen part, with the chain's cofactor in the
-rest** at the bit after the box's cells: with the slab `(x^{e₁/DEN}, x^{e₂/DEN}]`, when the chain's upper ends (the
-box's less `β`'s) with `e₂` sum to at most `DEN − 2` and its lower ends with `e₁` and twice its least prime's reach
-`DEN + 1`, every multiple's chain cofactor is one prime, in the cell
+rest**, one part, at the bit after the box's cells: with the slab `(x^{e₁/DEN}, x^{e₂/DEN}]`, when the chain's upper
+ends (the box's less `β`'s) with `e₂` sum to at most `DEN − 2`, every multiple's chain cofactor is in the cell
 `(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo + 1)`. Without the bit, `chkIRH`. -/
 noncomputable def chkIRFH (e₁ e₂ : ℕ) (β bl : List Cell) (sr k h : ℕ) : Bool :=
   (fun slo shi =>
@@ -113,7 +112,6 @@ noncomputable def chkIRFH (e₁ e₂ : ℕ) (β bl : List Cell) (sr k h : ℕ) :
       Nat.ble n 13 && ok && Nat.blt 0 ns &&
         cond (Nat.beq (Nat.land (Nat.shiftRight sr n) 1) 1)
           (Nat.ble (Nat.add (Nat.add e₂ shi) 2) DEN &&
-            Nat.ble (Nat.add DEN 1) (Nat.add (Nat.add e₁ slo) (Nat.mul 2 (headLo bl))) &&
             SieveResTest.resXHF Lnum Lden (los ++ [maxN (Nat.sub (Nat.sub (Nat.sub DEN e₂) shi) 1) (headLo bl)])
               (Nat.add hs (Nat.add (Nat.sub (Nat.sub DEN e₁) slo) 1)) k h)
           (SieveResTest.resXHF Lnum Lden los hs k h))

@@ -167,7 +167,12 @@ CERTS = {# the tests, the reversal and their soundness are `SieveAd.Plain`'s (`p
          # of `K` for each second of the kernel by the table fitted on the plan at 2115/1000 (`SEC3`)
          '21000': dict(lnum=2100, lden=1000, h=0.003, hF=0.003, maxlen=6, depth=8, pos=True, lam=0.3, sec=3,
                        energy=True, res=True, resF=True, cof=True, lv=True, lazy=True, rmerge=True, split=3, skip=3,
-                       ycorner=True, exh=2, split2=1, hl=True, chunk=700)}
+                       ycorner=True, exh=2, split2=1, hl=True, chunk=700),
+         # and the cofactor in the rest whatever its number of primes, one part counted by its own sums
+         # (`SieveTypeIIHM.chain_res_sif`, `SieveAd.evIF_froz_sif`; `sif`)
+         '20900': dict(lnum=2090, lden=1000, h=0.003, hF=0.003, maxlen=6, depth=8, pos=True, lam=0.3, sec=3,
+                       energy=True, res=True, resF=True, cof=True, lv=True, lazy=True, rmerge=True, split=3, skip=3,
+                       ycorner=True, exh=2, split2=1, hl=True, chunk=700, sif=True)}
 TAG = '21500'
 LNUM, LDEN, H, HF, MAXLEN = (CERTS[TAG][k] for k in ('lnum', 'lden', 'h', 'hF', 'maxlen'))
 # dropped cells next to each other are one cell while its bound is at most DMERGE of the sum of theirs
@@ -692,6 +697,9 @@ class Planner(fl.FlipSearch):
     # in the trees over the frozen parts, its cell from the slab and the chain's cells too (`SieveAd.chkIRF`); for
     # measurement only (no hints), 'main': the main tree's alone, and 'mom': that and any cofactor but 1, counted by
     # its moments alone (`res_test.mkTmM`)
+    res_sif = False      # with `res_cof`, any cofactor in the cell that the cells leave it, not only one prime: one
+    # part of the rest whatever its number of primes, counted by its own sums (`SieveTypeIIHM.chain_res_sif`,
+    # `SieveAd.evIF_froz_sif`); the kernel's tests have no condition on its number of primes
     res_lv = False       # the test with the large values of the powers too (`SieveResTest.resT2`)
     res_lazy = False     # a rest that the strict float filter passes is taken as passing, and its hint is found
     # when the plan is written (`resolve`): `('R', mask, -1, key)` until then
@@ -749,22 +757,23 @@ class Planner(fl.FlipSearch):
         nch = n - len(self.frz[3]) if self.frz is not None and self.res_frozen == 'chain' else n
         cofm = False
         if self.res_cof in (True, 'main', 'mom') and self.frz is None:
-            # the cofactor `m = n/∏p` with `n ∈ (x, 2x]`: `m ∈ (x^{(DEN − Σhi)/DEN}, x^{(DEN − Σlo + 1)/DEN})`, one
-            # prime at least the least prime `x^{lo₀/DEN}` when its upper end is at most twice `lo₀`
-            # (the kernel's cell and conditions, `SieveAd.chkIRC`)
+            # the cofactor `m = n/∏p` with `n ∈ (x, 2x]`: `m ∈ (x^{(DEN − Σhi)/DEN}, x^{(DEN − Σlo + 1)/DEN})`, at
+            # least the least prime `x^{lo₀/DEN}` (the kernel's cell and condition, `SieveAd.chkIRC`); one prime when
+            # its upper end is at most twice `lo₀`, which is all the planner takes without `res_sif`
             slo, shi = sum(c[0] for c in bl), sum(c[1] for c in bl)
-            one = shi + 2 <= DEN and DEN + 1 <= slo + 2 * bl[0][0]
+            one = shi + 2 <= DEN and (self.res_sif or DEN + 1 <= slo + 2 * bl[0][0])
             cofm = self.res_cof == 'mom' and shi + 1 < DEN and not one
             if one or cofm:
                 bl = list(bl) + [(max(tsub(tsub(DEN, shi), 1), bl[0][0]), tsub(DEN, slo) + 1)]
                 n = nch = n + 1
         elif self.res_cof is True and self.frz is not None and self.res_frozen is True and n > len(self.frz[3]):
             # in a tree over a frozen part, the chain's cofactor `M` with `n = R·∏ch·M`, `R` in the slab
-            # `(x^{e₁/DEN}, x^{e₂/DEN}]`: one prime at least the chain's least prime when its upper end is at most
-            # twice that prime's lower end (the kernel's cell and conditions, `SieveAd.chkIRF`)
+            # `(x^{e₁/DEN}, x^{e₂/DEN}]`: at least the chain's least prime (the kernel's cell and condition,
+            # `SieveAd.chkIRF`); one prime when its upper end is at most twice that prime's lower end, which is all
+            # the planner takes without `res_sif`
             e1, e2, ch = self.frz[0], self.frz[1], bl[:n - len(self.frz[3])]
             slo, shi = sum(c[0] for c in ch), sum(c[1] for c in ch)
-            if e2 + shi + 2 <= DEN and DEN + 1 <= e1 + slo + 2 * ch[0][0]:
+            if e2 + shi + 2 <= DEN and (self.res_sif or DEN + 1 <= e1 + slo + 2 * ch[0][0]):
                 bl = list(bl) + [(max(tsub(tsub(tsub(DEN, e2), shi), 1), ch[0][0]), tsub(tsub(DEN, e1), slo) + 1)]
                 n = nch = n + 1
         if nch < 2:
@@ -1035,7 +1044,7 @@ class Planner(fl.FlipSearch):
 
     def chkIRY(self, bl, sr, s):
         """`SieveAd.chkIRY`: `resYH` on the cells of the rest `sr`, with the cofactor's cell after them when the bit
-        after the box's cells is set, under `chkIRC`'s conditions."""
+        after the box's cells is set, under `chkIRC`'s condition."""
         n = len(bl)
         if n > 13 or any(not (1 <= c[0] <= c[1] <= DEN) for c in bl):
             return False
@@ -1044,14 +1053,14 @@ class Planner(fl.FlipSearch):
             return False
         if sr >> n & 1:
             slo, shi, lk = loSum(bl), hiSum(bl), bl[0][0]
-            if not (shi + 2 <= DEN and DEN + 1 <= slo + 2 * lk):
+            if not shi + 2 <= DEN:
                 return False
             cells = cells + [(max(tsub(tsub(DEN, shi), 1), lk), tsub(DEN, slo) + 1)]
         return rt.resYH(self.T.Ln, self.T.Ld, cells, s)
 
     def chkIRFY(self, e1, e2, beta, bl, sr, s):
         """`SieveAd.chkIRFY`: `chkIRY` on the box `ch ++ β` of a tree over a frozen part, the chain's cofactor's
-        cell and its conditions those of `chkIRF`."""
+        cell and its condition those of `chkIRF`."""
         n = len(bl)
         if n > 13 or any(not (1 <= c[0] <= c[1] <= DEN) for c in bl):
             return False
@@ -1061,7 +1070,7 @@ class Planner(fl.FlipSearch):
         if sr >> n & 1:
             slo, shi = tsub(loSum(bl), loSum(beta)), tsub(hiSum(bl), hiSum(beta))
             lk = bl[0][0] if bl else 0
-            if not (e2 + shi + 2 <= DEN and DEN + 1 <= e1 + slo + 2 * lk):
+            if not e2 + shi + 2 <= DEN:
                 return False
             cells = cells + [(max(tsub(tsub(tsub(DEN, e2), shi), 1), lk), tsub(tsub(DEN, e1), slo) + 1)]
         return rt.resYH(self.T.Ln, self.T.Ld, cells, s)
@@ -1095,9 +1104,8 @@ class Planner(fl.FlipSearch):
         return r is not None and self.resTest(r[0], r[1], k, h)
 
     def chkIRC(self, bl, sr, k, h):
-        """`SieveAd.chkIRC`: `chkIR`, with the box's cofactor in the rest at the bit after its cells: one prime when
-        the box's upper ends sum to at most `DEN − 2` and its lower ends with twice its least prime's reach
-        `DEN + 1`, in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`."""
+        """`SieveAd.chkIRC`: `chkIR`, with the box's cofactor in the rest at the bit after its cells, one part, when
+        the box's upper ends sum to at most `DEN − 2`, in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`."""
         r = self.restIRC(bl, sr)
         return r is not None and self.resTest(r[0], r[1], k, h)
 
@@ -1112,16 +1120,15 @@ class Planner(fl.FlipSearch):
             return None
         if sr >> n & 1:
             slo, shi, lk = loSum(bl), hiSum(bl), bl[0][0]
-            if not (shi + 2 <= DEN and DEN + 1 <= slo + 2 * lk):
+            if not shi + 2 <= DEN:
                 return None
             cs, hs = cs + [max(tsub(tsub(DEN, shi), 1), lk)], hs + tsub(DEN, slo) + 1
         return cs, hs
 
     def chkIRF(self, e1, e2, beta, bl, sr, k, h):
         """`SieveAd.chkIRF`: `chkIR` on the box `ch ++ β` of a tree over a frozen part, with the chain's cofactor in
-        the rest at the bit after the box's cells: one prime when the chain's upper ends (the box's less `β`'s) with
-        `e₂` sum to at most `DEN − 2` and its lower ends with `e₁` and twice its least prime's reach `DEN + 1`, in the
-        cell `(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo + 1)`."""
+        the rest at the bit after the box's cells, one part, when the chain's upper ends (the box's less `β`'s) with
+        `e₂` sum to at most `DEN − 2`, in the cell `(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo + 1)`."""
         r = self.restIRF(e1, e2, beta, bl, sr)
         return r is not None and self.resTest(r[0], r[1], k, h)
 
@@ -1137,7 +1144,7 @@ class Planner(fl.FlipSearch):
         if sr >> n & 1:
             slo, shi = tsub(loSum(bl), loSum(beta)), tsub(hiSum(bl), hiSum(beta))
             lk = bl[0][0] if bl else 0
-            if not (e2 + shi + 2 <= DEN and DEN + 1 <= e1 + slo + 2 * lk):
+            if not e2 + shi + 2 <= DEN:
                 return None
             cs = cs + [max(tsub(tsub(tsub(DEN, e2), shi), 1), lk)]
             hs += tsub(tsub(DEN, e1), slo) + 1
@@ -1533,7 +1540,7 @@ class Par:
                  depthF=3, maxlen=6, cap=3.5, pmax=100, fcap=240.0, levels=5, rev=False, lam=0, pos=False, sec=1,
                  blk=1, blkF=None, skip=0, skipmin=30, energy=False, res=False, resF=False, cof=False, lv=False,
                  lazy=False, rmerge=False, split=0, ycorner=False, exh=0, split2=0, hl=False, chunk=0,
-                 rescap=0, plain=False):
+                 rescap=0, plain=False, sif=False):
         """`lam`: the planner's price of a second of the kernel, in millionths of `K`; `pos`: boxes of the sign
         `+` may be reversed; `sec`: the table of the kernel's seconds a step (`SEC1`, `SEC2` or `SEC3`); `blk`: with
         `lam > 0`, a new prime's cells are up to `blk` steps of the grid of side `h` in the main tree, and up to
@@ -1544,7 +1551,8 @@ class Par:
         the kernel's tests allow (`SieveAd.leavesE`); `res`: the resonant window's leaves in the main tree
         (`SieveAd.resTestsF`), and with `resF` in the trees over the frozen parts too (`SieveAd.frozResTestsC`); `cof`:
         the boxes with their cofactor in the rest when it is one prime (`SieveAd.resTestsFC`, and with `resF`
-        `SieveAd.chkIRF`); `lv`: the window's test with the large values of the powers too (`SieveResTest.resX`);
+        `SieveAd.chkIRF`), and with `sif` whatever its number of primes (`Planner.res_sif`); `lv`: the window's test
+        with the large values of the powers too (`SieveResTest.resX`);
         `lazy`: the planner takes the strict float filter's word that a rest passes, and finds the hints of the plan
         it keeps when the plan is written (`resolve`); `rmerge`: consecutive cells of a new prime that the window
         evaluates are one cell while one test covers them; `split`: a box that the plan does not evaluate is cut in
@@ -1571,7 +1579,8 @@ class Par:
         self.lam, self.pos, self.sec, self.blk, self.blkF = lam, pos, sec, blk, blk if blkF is None else blkF
         self.skip, self.skipmin, self.energy, self.res, self.resF, self.cof = skip, skipmin, energy, res, resF, cof
         self.lv, self.lazy, self.rmerge, self.split, self.ycorner = lv, lazy, rmerge, split, ycorner
-        self.exh, self.split2, self.hl, self.chunk, self.rescap = exh, split2, hl, chunk, rescap
+        self.exh, self.split2, self.hl, self.chunk, self.rescap, self.sif = exh, split2, hl, chunk, rescap, sif
+        assert not sif or cof, 'the sifted cofactor comes with the cofactor'
         assert not hl or (cof and resF), 'the lines named by the hint come with the cofactor in both trees'
         assert not ycorner or (res and resF and cof), 'the test at the two corners comes with the window in both ' \
             'trees and the cofactor'
@@ -1595,6 +1604,7 @@ class Par:
         P.res = self.res
         P.res_frozen = self.resF
         P.res_cof = self.cof
+        P.res_sif = getattr(self, 'sif', False)
         P.res_lv, P.res_lazy, P.res_merge, P.res_split = self.lv, self.lazy, self.rmerge, self.split
         P.res_y = self.ycorner
         P.res_hl = self.hl
@@ -2286,9 +2296,9 @@ theorem node{T}_{i} : PR {rc.box(bl)} {rc.bool_(par)} {c} :=
             '3.1 for its powers. ' + (
                 'So may a box of a tree over a frozen part, its rest among the frozen primes and the chain\'s '
                 '(`SieveAd.evIF_froz_resT`). ' if resF else '') + (
-                'Where a box\'s cells leave room for one prime only as the cofactor of its numbers, that prime may '
-                'be in the rest too, in the cell that the cells leave it (`SieveAd.chkIRC`, `SieveAd.chkIRF`; '
-                '`SieveTypeIIHM.chain_res_cof`, `SieveAd.evIF_froz_resC`). ' if cof else '') + (
+                'The cofactor of a box\'s numbers, free of primes below its least, may be in the rest too, one '
+                'part whatever its number of primes, in the cell that the cells leave it (`SieveAd.chkIRC`, '
+                '`SieveAd.chkIRF`; `SieveTypeIIHM.chain_res_sif`, `SieveAd.evIF_froz_sif`). ' if cof else '') + (
                 'The hint names the window\'s lines as well as its intervals\' ends, the clamp\'s line and each '
                 'term\'s, so the kernel checks them rather than picks them (`SieveResTest.resXH`). ' if hl else '') + (
                 'Where no rest passes, a box may be evaluated by the window\'s test at the two corners of the box of '

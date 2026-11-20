@@ -39,7 +39,7 @@ static struct {
     i64 Ln, Ld;
     i64 hI, hF, hR, hQ, wmin, kappa;
     int depth, depthR, depthF, maxlen, fuel;
-    int pos, skip, skipmin, energy, res, resF, cof, lv, lazy, rmerge, split, ycorner, exh, split2, blk, blkF, hl;
+    int pos, skip, skipmin, energy, res, resF, cof, sif, lv, lazy, rmerge, split, ycorner, exh, split2, blk, blkF, hl;
     int redo, merge;
     double lamK;
     i64 dm0, dm1;
@@ -881,7 +881,9 @@ static int resHint(const Cell *bl0, int n, int probe, u32 *maskOut, Memo **eOut)
     CHECK(G.cof == 0 || G.cof == 1, "res_cof 'main'/'mom' is not supported");
     if (G.cof && !FZ.on) {
         i64 slo = loSum(bl, n), shi = hiSum(bl, n);
-        int one = shi + 2 <= DEN && DEN + 1 <= slo + 2 * bl[0].lo;
+        /* one prime when its upper end is at most twice the least prime's lower end; with `sif`, any cofactor, one
+           part of the rest whatever its number of primes (`SieveTypeIIHM.chain_res_sif`) */
+        int one = shi + 2 <= DEN && (G.sif || DEN + 1 <= slo + 2 * bl[0].lo);
         if (one) {
             bl[n].lo = max64(tsub(tsub(DEN, shi), 1), bl[0].lo);
             bl[n].hi = tsub(DEN, slo) + 1;
@@ -890,7 +892,7 @@ static int resHint(const Cell *bl0, int n, int probe, u32 *maskOut, Memo **eOut)
     } else if (G.cof && FZ.on && G.resF && n > FZ.nb) {
         int nc = n - FZ.nb;
         i64 slo = loSum(bl, nc), shi = hiSum(bl, nc);
-        if (FZ.e2 + shi + 2 <= DEN && DEN + 1 <= FZ.e1 + slo + 2 * bl[0].lo) {
+        if (FZ.e2 + shi + 2 <= DEN && (G.sif || DEN + 1 <= FZ.e1 + slo + 2 * bl[0].lo)) {
             bl[n].lo = max64(tsub(tsub(tsub(DEN, FZ.e2), shi), 1), bl[0].lo);
             bl[n].hi = tsub(tsub(DEN, FZ.e1), slo) + 1;
             n = nch = n + 1;
@@ -2200,6 +2202,7 @@ static void readParams(const char *path) {
     G.res = (int)rdI("res");
     G.resF = (int)rdI("resF");
     G.cof = (int)rdI("cof");
+    G.sif = (int)rdI("sif");
     G.lv = (int)rdI("lv");
     G.lazy = (int)rdI("lazy");
     G.rmerge = (int)rdI("rmerge");

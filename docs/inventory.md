@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 198 | 712 |
-| `lib/pnt` | 347 | 1012 |
+| `lib/pnt` | 346 | 1012 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2630,13 +2630,13 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveAd.evIF_froz_res`: The term of a chain's box over the frozen part, by the resonant window
 - `SieveAd.evIF_froz_resT`: The term of a chain's box over the frozen part, when the resonant window's test passes the box `ch ++ β` ([note](../formalisations/halasz-montgomery.md))
 
-#### `SieveAdFrozResCof`: The chain's cofactor over the frozen part, in the resonant window's rest
+#### `SieveAdFrozResCof`: The chain's sifted cofactor over the frozen part, in the window's rest
 
-- `SieveAd.frozCof_facts`: The chain's cofactor over the frozen part is one prime
+- `SieveAd.frozCof_facts`: The chain's cofactor over the frozen part
 - `SieveAd.evIF_froz_resC`: The term of a chain's box over the frozen part, by the resonant window with the chain's cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.evIF_froz_resTC`: The term of a chain's box over the frozen part, when the resonant window's test with the chain's cofactor passes the box `ch ++ β` ([note](../formalisations/halasz-montgomery.md))
 
-#### `SieveAdFrozResCofG`: The chain's cofactor over the frozen part, in the rest of an estimate given as a hypothesis
+#### `SieveAdFrozResCofG`: The chain's sifted cofactor over the frozen part, in the rest of an estimate given as a hypothesis
 
 - `SieveAd.evIF_froz_genC`: The term of a chain's box over the frozen part, by an estimate of the tuples with the chain's cofactor in the rest
 
@@ -2731,7 +2731,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveAdResCof`: The resonant window's test with the box's cofactor in the rest, in the main tree, is sound
 
-- `SieveAd.cof_facts`: The cofactor's facts
+- `SieveAd.cof_facts`: The cofactor's facts ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.evI_resCE`: A box evaluated by the resonant window with its cofactor in the rest, under more atoms ([note](../formalisations/halasz-montgomery.md))
 - `SieveAd.resTestsFC_sound`: The tests with the resonant window and the cofactor are sound ([note](../formalisations/halasz-montgomery.md))
 
@@ -3027,14 +3027,6 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTypeIIHM.typeII_gcmp_res`: Type II with comparisons, for the resonant window ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.chainTU_res`: Chains times a rough cofactor, by the resonant window ([note](../formalisations/halasz-montgomery.md))
 
-#### `SieveResCof`: Chains whose cofactor is one prime, the cofactor in the resonant window's rest
-
-- `SieveTypeIIHM.chain_res_cof`: Chains whose cofactor is one prime, by the resonant window with the cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
-
-#### `SieveResCofG`: Chains whose cofactor is one prime, the cofactor in the rest of an estimate given as a hypothesis
-
-- `SieveTypeIIHM.chain_res_cofG`: Chains whose cofactor is one prime, by an estimate of the tuples with the cofactor in the rest
-
 #### `SieveResCorner`: The resonant window's test at the two corners of a box, sound
 
 - `SieveResTest.two_corner`: The two corners give the box
@@ -3070,6 +3062,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTypeIIHM.sum_chars_dp_pow_le`: The `2k`-th moment of a polynomial over the characters ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.card_large_le`: The count of the large values ([note](../formalisations/halasz-montgomery.md))
 
+#### `SieveResSif`: Chains with a sifted cofactor, the cofactor in the resonant window's rest as one part
+
+- `SieveTypeIIHM.chain_res_sif`: Chains with a sifted cofactor, by the resonant window with the cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.chain_res_sifG`: Chains with a sifted cofactor, by an estimate of the tuples with the cofactor in the rest
+
 #### `SieveResTerm`: Chains with a rest, by the resonant window
 
 - `SieveTypeIIHM.chain_res_exp`: Chains with a rest, by the resonant window ([note](../formalisations/halasz-montgomery.md))
@@ -3094,7 +3091,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTypeIIHM.ResBoxT`: The resonant window's condition on a box, the variable tied to the rest ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.resBox_of_tight`: A thin sub-cell of a box with the variable tied to the rest
 - `SieveTypeIIHM.FullEst`: The estimate of the tuples of primes with a rest in a region
-- `SieveTypeIIHM.fullEst_of_tight`: The estimate on a box, from the condition with the variable tied to the rest ([note](../formalisations/halasz-montgomery.md))
+- `SieveTypeIIHM.fullEst_of_tight`: The estimate on a box, from the condition with the variable tied to the rest
 
 #### `SieveResTypeII`: The resonant window: Proposition 3′ with the characters classed by the sizes of the rest's prime sums
 

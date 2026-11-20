@@ -4,9 +4,10 @@
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Plain statements. `SieveAdResYDefs.lean`'s `chkIRFY` tests the box `ch ++ β` of a tree over a frozen part by
-`SieveResTest.resYH` on the cells of a rest of its primes, and of the chain's cofactor when it is one prime. The
-test gives the estimate of the tuples with the rest in its cells (`fullEst_of_resYH`), and that the term of the
-chain's box over the frozen part (`evIF_froz_gen`, `evIF_froz_genC`).
+`SieveResTest.resYH` on the cells of a rest of its primes, and of the chain's cofactor, one part whatever its
+number of primes. The test gives the estimate of the tuples with the rest in its cells (`fullEst_of_resYH`,
+`fullEst_of_resYHS`), and that the term of the chain's box over the frozen part (`evIF_froz_gen`,
+`evIF_froz_genC`).
 
 * `evIF_froz_resTY`: **the term of a chain's box over the frozen part is evaluated when `chkIRFY` passes the box
   `ch ++ β`**: by `evIF_froz_genC` with the cofactor's cell when the bit after the box's cells is set, by
@@ -87,7 +88,7 @@ theorem evIF_froz_resTY {e₁ e₂ s : ℕ} (β : List Cell) (hβl : β.length =
   -- the chain's cofactor in the rest, its cell after the box's
   rw [hbit, Bool.cond_true] at hcof
   simp only [Bool.and_eq_true, Nat.ble_eq] at hcof
-  obtain ⟨⟨hshi, hslo⟩, hT⟩ := hcof
+  obtain ⟨hshi, hT⟩ := hcof
   -- the chain's sums and its least prime
   have hlos : loSum (ch ++ β) - loSum β = ∑ j, (bx j).1 := by
     have e1 : loSum (ch ++ β) = loSum ch + loSum β := by
@@ -104,10 +105,10 @@ theorem evIF_froz_resTY {e₁ e₂ s : ℕ} (β : List Cell) (hβl : β.length =
     cases ch with
     | nil => simp at hch
     | cons c b => rfl
-  simp only [Nat.add_eq, Nat.sub_eq, Nat.mul_eq] at hT hshi hslo
-  rw [hlos] at hT hslo
+  simp only [Nat.add_eq, Nat.sub_eq] at hT hshi
+  rw [hlos] at hT
   rw [hhis] at hT hshi
-  rw [hhead] at hT hslo
+  rw [hhead] at hT
   set cl := maxN (DEN - e₂ - ∑ j, (bx j).2 - 1) (bx (Fin.last k')).1 with hcl
   set cu := DEN - e₁ - ∑ j, (bx j).1 + 1 with hcu
   set cs : List Cell := mCells (ch ++ β) sr ++ [(cl, cu)] with hcs
@@ -121,9 +122,9 @@ theorem evIF_froz_resTY {e₁ e₂ s : ℕ} (β : List Cell) (hβl : β.length =
     rw [hcs, List.getD_eq_getElem _ _ (by rw [List.length_append, hn]; simp),
       List.getElem_append_right (by rw [hn])]
     simp [hn]
-  have hfull := fullEst_of_resYH hcsn hT hκdef hκ
-  refine evIF_froz_genC hβc he₁ he₂ hbc hshi hslo hκdef r hr (fun j => κ * ((cs.getD j (0, 0)).1 : ℝ))
-    (fun j => κ * ((cs.getD j (0, 0)).2 : ℝ)) (fun j => ?_) (fun j => ?_) ?_ ?_ hfull
+  refine evIF_froz_genC hβc he₁ he₂ hbc hshi hκdef r hr (fun j => κ * ((cs.getD j (0, 0)).1 : ℝ))
+    (fun j => κ * ((cs.getD j (0, 0)).2 : ℝ)) (fun j => ?_) (fun j => ?_) ?_ ?_
+    fun u hu => fullEst_of_resYHS hcsn hT hκdef hκ u hu
   · show κ * ((cs.getD (j : ℕ) (0, 0)).1 : ℝ) = κ * ((Fin.append βx bx (r j)).1 : ℝ)
     rw [hcsj' j, hcxe]
   · show κ * ((cs.getD (j : ℕ) (0, 0)).2 : ℝ) = κ * ((Fin.append βx bx (r j)).2 : ℝ)

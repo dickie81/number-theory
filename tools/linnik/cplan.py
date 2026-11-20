@@ -62,7 +62,8 @@ def params(par_):
                  ('depth', P.depth), ('depthR', P.depthR), ('depthF', P.depthF), ('maxlen', P.maxlen),
                  ('fuel', P.fuel), ('pos', int(P.pos)), ('skip', P.skip), ('skipmin', P.skipmin),
                  ('energy', int(T.energy)), ('res', int(bool(P.res))), ('resF', int(bool(P.res_frozen))),
-                 ('cof', int(bool(P.res_cof))), ('lv', int(bool(P.res_lv))), ('lazy', int(bool(P.res_lazy))),
+                 ('cof', int(bool(P.res_cof))), ('sif', int(bool(P.res_sif))), ('lv', int(bool(P.res_lv))),
+                 ('lazy', int(bool(P.res_lazy))),
                  ('rmerge', int(bool(P.res_merge))), ('split', int(P.res_split)), ('ycorner', int(bool(P.res_y))),
                  ('exh', int(P.exh)), ('split2', int(P.split2)), ('blk', P.blk), ('blkF', P.blkF),
                  ('redo', int(bool(P.redo))), ('merge', int(bool(P.merge)))):

@@ -69,16 +69,15 @@ noncomputable def resTestsFY : Tests :=
   ⟨fun bl cfg => cond (Nat.beq cfg.kind 4) (chkIRY bl cfg.sr cfg.s1) (resTestsFC.okI bl cfg), resTestsFC.okJ⟩
 
 /-- **The test at the two corners of a box `ch ++ β` of a tree over a frozen part, with the chain's cofactor**: as
-`chkIRY`, the cofactor's cell and its conditions those of `chkIRF`: with the slab `(x^{e₁/DEN}, x^{e₂/DEN}]`, when
-the chain's upper ends with `e₂` sum to at most `DEN − 2` and its lower ends with `e₁` and twice its least prime's
-reach `DEN + 1`, the cell `(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo + 1)`. -/
+`chkIRY`, the cofactor's cell and its condition those of `chkIRF`: with the slab `(x^{e₁/DEN}, x^{e₂/DEN}]`, when
+the chain's upper ends with `e₂` sum to at most `DEN − 2`, the cell `(max(DEN − e₂ − Σhi − 1, lo₀),
+DEN − e₁ − Σlo + 1)`. -/
 noncomputable def chkIRFY (e₁ e₂ : ℕ) (β bl : List Cell) (sr s : ℕ) : Bool :=
   (fun slo shi =>
     rpassY bl sr fun cs ns ok n =>
       Nat.ble n 13 && ok && Nat.blt 0 ns &&
         cond (Nat.beq (Nat.land (Nat.shiftRight sr n) 1) 1)
           (Nat.ble (Nat.add (Nat.add e₂ shi) 2) DEN &&
-            Nat.ble (Nat.add DEN 1) (Nat.add (Nat.add e₁ slo) (Nat.mul 2 (headLo bl))) &&
             SieveResTest.resYHF Lnum Lden
               (cs ++ [(maxN (Nat.sub (Nat.sub (Nat.sub DEN e₂) shi) 1) (headLo bl),
                 Nat.add (Nat.sub (Nat.sub DEN e₁) slo) 1)]) s)

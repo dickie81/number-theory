@@ -110,7 +110,7 @@ static int restIRg(const Cell *bl, int n, u32 sr, int cof, Rest *r) {
     if (r->n == 0) return 0;
     if (cof && (sr >> n & 1)) {
         i64 slo = loSum(bl, n), shi = hiSum(bl, n), lk = bl[0].lo;
-        if (!(shi + 2 <= DEN && DEN + 1 <= slo + 2 * lk)) return 0;
+        if (!(shi + 2 <= DEN)) return 0;
         r->cs[r->n++] = max64(tsub(tsub(DEN, shi), 1), lk);
         r->hs += tsub(DEN, slo) + 1;
     }
@@ -129,7 +129,7 @@ static int restIRFg(i64 e1, i64 e2, const Cell *beta, int nb, const Cell *bl, in
     if (sr >> n & 1) {
         i64 slo = tsub(loSum(bl, n), loSum(beta, nb)), shi = tsub(hiSum(bl, n), hiSum(beta, nb));
         i64 lk = n ? bl[0].lo : 0;
-        if (!(e2 + shi + 2 <= DEN && DEN + 1 <= e1 + slo + 2 * lk)) return 0;
+        if (!(e2 + shi + 2 <= DEN)) return 0;
         r->cs[r->n++] = max64(tsub(tsub(tsub(DEN, e2), shi), 1), lk);
         r->hs += tsub(tsub(DEN, e1), slo) + 1;
     }
@@ -145,14 +145,14 @@ static int cellsIRY(int frozen, const Cell *bl, int n, u32 sr, Cell *out, int *n
     if (sr >> n & 1) {
         if (!frozen) {
             i64 slo = loSum(bl, n), shi = hiSum(bl, n), lk = bl[0].lo;
-            if (!(shi + 2 <= DEN && DEN + 1 <= slo + 2 * lk)) return 0;
+            if (!(shi + 2 <= DEN)) return 0;
             out[m].lo = max64(tsub(tsub(DEN, shi), 1), lk);
             out[m].hi = tsub(DEN, slo) + 1;
         } else {
             i64 e1 = FZ.e1, e2 = FZ.e2;
             i64 slo = tsub(loSum(bl, n), loSum(FZ.beta, FZ.nb)), shi = tsub(hiSum(bl, n), hiSum(FZ.beta, FZ.nb));
             i64 lk = n ? bl[0].lo : 0;
-            if (!(e2 + shi + 2 <= DEN && DEN + 1 <= e1 + slo + 2 * lk)) return 0;
+            if (!(e2 + shi + 2 <= DEN)) return 0;
             out[m].lo = max64(tsub(tsub(tsub(DEN, e2), shi), 1), lk);
             out[m].hi = tsub(tsub(DEN, e1), slo) + 1;
         }
