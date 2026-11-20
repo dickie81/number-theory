@@ -87,13 +87,19 @@ typedef struct {
     int res;                     /* the resonant window (below): 1, +2 with the Halasz-Montgomery inequality for
                                   * the powers, +4 with sifted parts in the rest, +8 with a cofactor that is a
                                   * prime as one of the box's primes, +16 with Chen-Gupta-Li's large values for the
-                                  * powers, +32 with the sifted parts counted by their own sums */
+                                  * powers, +32 with the sifted parts counted by their own sums, +64 with
+                                  * Huxley's large values for the powers shorter than q */
     int NC;
     const double *cl, *reach;    /* the levels of the count, from 1 down to 0, and the density curve's reach there */
     const int *ord;              /* the order in which the levels are tested */
     double L, thr, wbin, mres, top, K0, K1;
     int res_main, res_split;     /* the window in the main tree only; a box that fails it is cut in two, so deep */
     int res_lev;                 /* the levels as in `pointwise` on boxes too: a test that is exact in the level */
+    int four, fourk;             /* Harman, Kumchev and Lewis's Lemma 5, for terms of at most fourk atoms */
+    int type1;                   /* 1: their Lemma 8 as the reach of Type I, in the place of the bilinear estimates */
+    int up;                      /* Buchstab's identity in reverse on a term that may be dropped, this many times */
+    int NLG;                     /* the levels of the sparse tables of the zone's ends */
+    const double *Zmx, *Zmn;     /* Zmx[l (NR + 1) + i] = max Alo[i .. i + 2^l - 1], Zmn likewise min Ahi */
 } Ctx;
 
 typedef struct {
@@ -139,12 +145,16 @@ static inline double tab(const double *t, int n, double ds, double s) {
     return t[i];
 }
 
-/* The zone valid for every rest in [rlo, rhi]: Alo and Ahi decrease as the rest grows. */
+/* The zone valid for every rest in [rlo, rhi]: [max Alo, min Ahi] over the lattice points i = floor(rlo / DL), ...,
+ * j = ceil(rhi / DL), read from the sparse tables (a rest with no zone has Alo = INF and Ahi = -INF, so a range
+ * that holds one has no zone).  Where Alo and Ahi decrease as the rest grows this is [Alo[i], Ahi[j]]. */
 static inline int zone(const Ctx *c, double rlo, double rhi, double *zl, double *zh) {
     if (rlo < c->DL || rhi > c->rmax) return 0;
     int i = (int)floor(rlo / c->DL), j = (int)ceil(rhi / c->DL);
     if (i < 1 || j > c->NR) return 0;
-    double l = c->Alo[i], h = c->Ahi[j];
+    int lv = 31 - __builtin_clz((unsigned)(j - i + 1)), o = lv * (c->NR + 1), j2 = j - (1 << lv) + 1;
+    double l = c->Zmx[o + i] > c->Zmx[o + j2] ? c->Zmx[o + i] : c->Zmx[o + j2];
+    double h = c->Zmn[o + i] < c->Zmn[o + j2] ? c->Zmn[o + i] : c->Zmn[o + j2];
     if (!(l <= h)) return 0;
     *zl = l;
     *zh = h;
@@ -243,7 +253,9 @@ static int resonant(const Ctx *c, int k, const double *Slo, const double *Shi, i
                 int km = own && shi > 0.0025 ? (int)ceil(1 / shi - 1e-12) - 1 : 0;
                 double hm = km >= 1 && (c->res & 2) ? slo / 2 - kern(c, km * slo) / (2 * km) : 0;
                 for (int i = 0; i < NC; i++) {
-                    double lev = c->cl[i], T = c->reach[i] < c->top ? c->reach[i] : c->top, D = slo * (1 - T), v;
+                    double lev = c->cl[i], T = c->reach[i] < c->top ? c->reach[i] : c->top, v;
+                    /* with `res & 128` (nozs) a sifted part has no zeros' count and no half-plane: its own sums only */
+                    double D = ((c->res & 128) && (sifted >> j & 1)) ? 0.0 : slo * (1 - T);
                     if (kp >= 1 && (v = lev / (2 * kp)) > D) D = v;
                     if (km >= 1) {
                         if ((v = slo / 2 - (1 - lev) / (2 * km)) > D) D = v;
@@ -264,6 +276,20 @@ static int resonant(const Ctx *c, int k, const double *Slo, const double *Shi, i
                             if (t3 > Tp) Tp = t3;
                             if (Tp < 0.7) Tp = 0.7;
                             if (Tp < 0.8 && (v = slo * (1 - Tp)) > D) D = v;
+                        }
+                    }
+                    if (own && (c->res & 64) && slo > 0.0025) {
+                        /* Huxley's large values estimate (Harman's (iv)) for the power of length q^m, m = kk s < 1:
+                         * at the levels t >= 3/4, at most q^{max(2m(1-t), 1 + m(4-6t))} characters; so what the
+                         * prime saves at the level `lev` is at least min(s/4, lev/(2kk), (2m - 1 + lev)/(6kk)),
+                         * which increases with s */
+                        int kmax = (int)ceil(1 / slo - 1e-12);
+                        if (kmax > 400) kmax = 400;
+                        for (int kk = 1; kk <= kmax; kk++) {
+                            v = (2 * kk * slo - 1 + lev) / (6 * kk);
+                            if (lev / (2 * kk) < v) v = lev / (2 * kk);
+                            if (slo / 4 < v) v = slo / 4;
+                            if (v > D) D = v;
                         }
                     }
                     V[j][i] = D;
@@ -318,9 +344,60 @@ static int res_box(const Ctx *c, int k, const double *Slo, const double *Shi, in
     return ok;
 }
 
+/* Harman, Kumchev and Lewis's Lemma 5 (Baker, Harman and Pintz's Lemma 3 of 1997, R. Li's Lemma 4.2), with the
+ * family's size q = x^tau: the atoms and the cofactor in four parts, the first with arbitrary coefficients and the
+ * others prime-factored (primes, sifted atoms, the cofactor), of exponents a1, ..., a4, and one of
+ *     (i)   a1 >= tau, a2 >= tau/2, a3 >= tau/4, a4 >= 2 tau/7;
+ *     (ii)  a1 >= tau, a2 >= tau/2, a3 >= tau/3, a4 >= 2 tau/11;
+ *     (iii) a1 >= tau, a2 >= tau/3, 2 a3 + a4 >= tau, a4 >= 2 tau/5;
+ *     (iv)  a1 >= tau, a2 <= tau/3, a3 <= tau/3, a2 + a3 >= 4 tau/7, a2 + a3 + a4 >= 14 tau/13
+ * at every point of the box, with the margin eps1. */
+static int four(const Ctx *c, int k, const double *Slo, const double *Shi) {
+    int full = (1 << k) - 1, all = (2 << k) - 1, cof = 1 << k;
+    double t = c->tau, e = c->eps1;
+#define LO(M) ((M) & cof ? 1 - Shi[full ^ ((M) & full)] : Slo[M])
+#define HI(M) ((M) & cof ? 1 - Slo[full ^ ((M) & full)] : Shi[M])
+    for (int P = 1; P < all; P++) {
+        if (LO(P) < t + e) continue;
+        int rest = all ^ P;
+        double hiP = HI(P);
+        for (int A = rest; A; A = (A - 1) & rest) {
+            int r2 = rest ^ A;
+            if (!r2) continue;
+            double lo2 = LO(A), hi2 = HI(A);
+            if (lo2 < 4 * t / 21 + e) continue;          /* every case asks a2 > 4 tau/21 */
+            for (int B = r2; B; B = (B - 1) & r2) {
+                int F = r2 ^ B;
+                if (!F) continue;
+                double lo3 = LO(B), hi3 = HI(B), lo4 = LO(F);
+                if (lo2 >= t / 2 + e && lo3 >= t / 4 + e && lo4 >= 2 * t / 7 + e) return 1;
+                if (lo2 >= t / 2 + e && lo3 >= t / 3 + e && lo4 >= 2 * t / 11 + e) return 1;
+                if (lo2 >= t / 3 + e && 2 * lo3 + lo4 >= t + e && lo4 >= 2 * t / 5 + e) return 1;
+                if (hi2 <= t / 3 - e && hi3 <= t / 3 - e && LO(A | B) >= 4 * t / 7 + e && hiP <= 1 - 14 * t / 13 - e)
+                    return 1;
+            }
+        }
+    }
+#undef LO
+#undef HI
+    return 0;
+}
+
 static double capacity(const Ctx *c, int k, const double *Shi, int linear) {
     int full = (1 << k) - 1;
     if (linear) return c->theta - c->eps1 - Shi[full];   /* the linear Type I estimate alone: r P < x^theta */
+    if (c->type1 == 1) {
+        /* Harman, Kumchev and Lewis's Lemma 8 (the mean value and the fourth moment): two variables x^a1, x^a2
+         * with max(a1, tau) + max(a2, tau/2) <= (1 + theta)/2; the small primes join one of them */
+        double X = (1 + c->theta) / 2 - c->eps1, best = -1;
+        for (int S1 = 0; S1 <= full; S1++) {
+            double a1 = Shi[S1], a2 = Shi[full ^ S1];
+            double m1 = a1 > c->tau ? a1 : c->tau, m2 = a2 > c->tau / 2 ? a2 : c->tau / 2;
+            if (X - m2 >= c->tau && X - m2 - a1 > best) best = X - m2 - a1;
+            if (X - m1 >= c->tau / 2 && X - m1 - a2 > best) best = X - m1 - a2;
+        }
+        return best;
+    }
     double th = c->theta - c->eps1, one = 1 - c->eps1 + c->ext, W = 2 - c->tau - c->eps1 + c->ext, best = -1;
     for (int S1 = 0; S1 <= full; S1++) {
         double a1 = Shi[S1], a2 = Shi[full ^ S1];
@@ -438,23 +515,23 @@ static double reversal(const Ctx *c, int k, const double *Slo, const double *Shi
 }
 
 static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, double lhi, int odd, int npm,
-                   int std, int fl, int na, Stats *st);
+                   int std, int fl, int na, int ul, Stats *st);
 
 /* The cost of the child whose new prime has its exponent in [qlo, qhi], split in two where that helps. */
 static double child(const Ctx *c, int k, double *Slo, double *Shi, double qlo, double qhi, int odd, int npm, int std,
-                    int fl, int na, int split, Stats *st) {
+                    int fl, int na, int ul, int split, Stats *st) {
     int bit = 1 << k;
     if (c->pointwise) qlo = qhi = (qlo + qhi) / 2;
     for (int m = 0; m < bit; m++) {
         Slo[m | bit] = Slo[m] + qlo;
         Shi[m | bit] = Shi[m] + qhi;
     }
-    double v = node(c, k + 1, Slo, Shi, qlo, qhi, odd, npm, std, fl, na, st);
+    double v = node(c, k + 1, Slo, Shi, qlo, qhi, odd, npm, std, fl, na, ul, st);
     if (v > 0 && split > 0 && qhi - qlo > c->wmin) {
         double mid = (qlo + qhi) / 2;
-        double v1 = child(c, k, Slo, Shi, mid, qhi, odd, npm, std, fl, na, split - 1, st);
+        double v1 = child(c, k, Slo, Shi, mid, qhi, odd, npm, std, fl, na, ul, split - 1, st);
         if (v1 < BIG) {
-            double v2 = child(c, k, Slo, Shi, qlo, mid, odd, npm, std, fl, na, split - 1, st);
+            double v2 = child(c, k, Slo, Shi, qlo, mid, odd, npm, std, fl, na, ul, split - 1, st);
             if (v2 < BIG) {
                 double vv = (v1 * log(qhi / mid) + v2 * log(mid / qlo)) / log(qhi / qlo);
                 if (vv < v) v = vv;
@@ -465,7 +542,7 @@ static double child(const Ctx *c, int k, double *Slo, double *Shi, double qlo, d
 }
 
 static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, double lhi, int odd, int npm,
-                   int std, int fl, int na, Stats *st) {
+                   int std, int fl, int na, int ul, Stats *st) {
     int full = (1 << k) - 1;
     double mulo = 1 - Shi[full], muhi = 1 - Slo[full];
     st->nodes[std ? k : MAXK + 1]++;
@@ -475,6 +552,7 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
     if (c->res && (std || !c->res_main) &&
         res_box(c, k, Slo, Shi, npm, mulo > 0 && muhi < 2 * llo, std ? c->res_split : 0))
         return 0;
+    if (c->four && k <= c->fourk && four(c, k, Slo, Shi)) return 0;
     double T = capacity(c, k, Shi, !std && c->rev_linear);
     double fs = exact_floor(c, k, Slo, Shi, lhi, T);
     if (c->rev_floor && !std && fs >= 0)         /* a floor below every atom of a reversed term */
@@ -556,7 +634,7 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
                 for (int i = 0; i < k; i++)
                     if (i != j && Slo[1 << i] < y) y = Slo[1 << i];
                 if (mulo < y) y = mulo > 0.01 ? mulo : 0.01;
-                v = node(c, n + 1, S2lo, S2hi, y, y, odd, npm2, 0, fl - 1, n + 1, st);
+                v = node(c, n + 1, S2lo, S2hi, y, y, odd, npm2, 0, fl - 1, n + 1, ul, st);
                 if (v < BIG) {
                     double pen = omega_max(c, Slo[bj] / y, Shi[bj] / y) / y - 1 / Shi[bj];
                     v += pen > 0 ? pen : 0;
@@ -564,11 +642,32 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
             } else if (c->rev_low)
                 continue;                                /* a lower bound needs the identity */
             else
-                v = node(c, n + 1, S2lo, S2hi, Slo[bj] / 2, Shi[bj] / 2, odd, npm2, 0, fl - 1, n + 1, st);
+                v = node(c, n + 1, S2lo, S2hi, Slo[bj] / 2, Shi[bj] / 2, odd, npm2, 0, fl - 1, n + 1, ul, st);
             if (v < BIG && v * Shi[bj] * cdrop < best) best = v * Shi[bj] * cdrop;
         }
     }
     if (k >= (std ? c->maxdepth : c->flipmax)) return best;
+    /* Buchstab's identity in reverse (Harman, Kumchev and Lewis, (6.7)): a term that needs a lower bound is the sum of
+     * the term whose cofactor is a prime and of the terms S(A_{r p}, p) over the primes p from its level to the
+     * square root of its cofactor.  Each needs a lower bound.  The first has the exponents of the term itself, which
+     * no estimate evaluates, and is dropped (its B-version: 1 / mu); the others are nodes like any other.  On a box
+     * the cells of p cover [llo, muhi / 2], which holds every point's range. */
+    if (!odd && ul > 0 && !hasd && muhi / 2 > llo) {
+        double lo = llo, hi = muhi / 2, cum = 1 / mulo;
+        int n = (int)ceil((hi - lo) / c->step[k + 1] - 1e-9);
+        if (n < 1) n = 1;
+        double w = (hi - lo) / n;
+        for (int j = 0; j < n && cum < best; j++) {
+            double qlo = lo + j * w, qhi = j == n - 1 ? hi : lo + (j + 1) * w;
+            double ch = child(c, k, Slo, Shi, qlo, qhi, odd, npm, std, fl, na, ul - 1, 0, st);
+            if (ch >= BIG) {
+                cum = INF;
+                break;
+            }
+            cum += ch * log(qhi / qlo);
+        }
+        if (cum < best) best = cum;
+    }
     int inexact = (odd ? c->use_ub : c->use_lb) && T > 0;
     double top = lhi < muhi / 2 ? lhi : muhi / 2;
     if (mulo < lhi) top = lhi < muhi ? lhi : muhi;   /* not regular everywhere: the new prime may be the cofactor */
@@ -590,7 +689,7 @@ static double node(const Ctx *c, int k, double *Slo, double *Shi, double llo, do
     int sp = k + 1 <= c->splitdepth ? c->split : 0;
     for (int j = 0; j < n; j++) {
         double qhi = top - j * w, qlo = j == n - 1 ? flow : top - (j + 1) * w;
-        double ch = child(c, k, Slo, Shi, qlo, qhi, !odd, npm, std, fl, na, sp, st);
+        double ch = child(c, k, Slo, Shi, qlo, qhi, !odd, npm, std, fl, na, ul, sp, st);
         if (ch >= BIG) {
             cum = INF;
             break;
@@ -620,7 +719,8 @@ double hs_loss(const Ctx *c, double nu, int n1, double *prof, Stats *out) {
 #pragma omp for schedule(dynamic, 1) reduction(+ : tot)
         for (int i = 0; i < n1; i++) {
             double hi = 0.5 - i * w, lo = i == n1 - 1 ? nu : 0.5 - (i + 1) * w;
-            double v = child(c, 0, Slo, Shi, lo, hi, 1, 0, 1, c->flip, 0, 1 <= c->splitdepth ? c->split : 0, &st);
+            double v = child(c, 0, Slo, Shi, lo, hi, 1, 0, 1, c->flip, 0, c->up, 1 <= c->splitdepth ? c->split : 0,
+                             &st);
             prof[i] = v;
             tot += v * log(hi / lo);
         }
