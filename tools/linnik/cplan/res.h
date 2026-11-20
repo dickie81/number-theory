@@ -833,6 +833,81 @@ static int quick(const i64 *cs, int n, i64 hs, int fuel, double slack, int lv, i
     return qcheck(&Q, 0.0, 1.0, fuel);
 }
 
+/* The bounds that let the search drop a rest before `quick` (`resHint`), with the same plan. At each grid point of
+   `quick`, a lower bound on the term that one entry adds, whatever the other entries: the entry's `los` and `tlo` are
+   `lo` and `tl`. The term is the least of some lines; the bound is the least of the same lines and of every
+   large-values line that `quick` could keep, loose or strict (one whose `lvG` might be below the point, whatever its
+   `hi`), so it is at most the term. +inf for an entry that `quick` refuses (`tl` not positive); -inf, no bound, where
+   `quick` would find a power too large */
+static const double QGS[9] = {0.0, 0.17, 0.26, 0.34, 0.4, 0.45, 0.5, 0.75, 1.0};
+static void quickLB(double lo, double tl, int lv, double *lb) {
+    if (!(tl > 0) || !(lo > 0)) {
+        for (int gi = 0; gi < 9; gi++) lb[gi] = INFINITY;
+        return;
+    }
+    double w = 4e-6, e = RC.LVEQ, mg = 1e-9 + 1e-8;
+    double kc = ceil(1 / lo - 1e-12);
+    if (!(kc < 1e15)) {
+        for (int gi = 0; gi < 9; gi++) lb[gi] = -INFINITY;
+        return;
+    }
+    i64 k0 = (i64)kc;
+    if (k0 < 1) k0 = 1;
+    for (int gi = 0; gi < 9; gi++) {
+        double g = QGS[gi];
+        double mn = lo * (bmF(g) + w - 1);
+        for (i64 k = k0 - 1; k <= k0; k++)
+            if (k >= 1) {
+                double dk = (double)k;
+                mn = pminF(mn, pmax0(1 - dk * lo) / (double)(2 * k) + (-1.0 / (double)(2 * k)) * g);
+            }
+        if (lv)
+            for (i64 k = k0 - 1; k > k0 - 1 - RC.LVKS; k--) {
+                double dk = (double)k;
+                if (k >= 1 && dk * tl >= 2.0 / 3 + e - mg) {
+                    double v = pmaxF(0.5 - dk * tl * (0.2 - 4 * e), 4.0 / 3 - dk * tl * (1.2 - 4 * e));
+                    if (e + v - mg < g) mn = pminF(mn, lvv(lo, dk, g));
+                }
+            }
+        lb[gi] = mn;
+    }
+}
+/* `quickLB`, kept by its arguments (a pure function: the cells' ends repeat from box to box) */
+#define LBCACHE (1 << 15)
+static struct { double lo, tl; int lv, set; double lb[9]; } LBC_[LBCACHE];
+static void quickLBc(double lo, double tl, int lv, double *lb) {
+    u64 a, b;
+    memcpy(&a, &lo, 8);
+    memcpy(&b, &tl, 8);
+    u64 h = (a * 0x9E3779B97F4A7C15ULL) ^ (b * 0xC2B2AE3D27D4EB4FULL) ^ (u64)lv;
+    int i = (int)(h >> 49);
+    if (!(LBC_[i].set && LBC_[i].lv == lv && !memcmp(&LBC_[i].lo, &lo, 8) && !memcmp(&LBC_[i].tl, &tl, 8))) {
+        LBC_[i].lo = lo;
+        LBC_[i].tl = tl;
+        LBC_[i].lv = lv;
+        LBC_[i].set = 1;
+        quickLB(lo, tl, lv, LBC_[i].lb);
+    }
+    memcpy(lb, LBC_[i].lb, sizeof(double) * 9);
+}
+/* 1 when `quick`, loose and so strict too, fails for the entries of `mask`: at a grid point, the clamp's part (with
+   `clamp`, from `m`, at least `quick`'s m: the part falls as m grows) and the entries' bounds `lb`, added in
+   `quick`'s order, exceed its threshold with a margin. Each addend is at most `quick`'s and rounding is monotone, so
+   `quick`'s sum is at least this one */
+static int quickRej(const double (*lb)[9], u32 mask, int clamp, double m) {
+    double L = (double)RC.Ln / (double)RC.Ld;
+    double c1 = clamp ? pmax0(1 - m) / 2 : 0.0;
+    double y0 = clamp ? (5.0 / 12 + 3.0 / 1000 - m * (11.0 / 12 + 1.0 / 1000)) / 2 : -1.0;
+    double thr = -1.0 / 25000 - L * 1e-6 + 1e-9 + 1e-9;
+    for (int gi = 0; gi < 9; gi++) {
+        double g = QGS[gi];
+        double v = g / 2 + pminF(c1, pmaxF(0.0, g / 2 + y0));
+        for (u32 r = mask; r; r &= r - 1) v += lb[__builtin_ctz(r)][gi];
+        if (v > thr) return 1;
+    }
+    return 0;
+}
+
 /* `quickY`: the cells (lo_[j], hi_[j]) */
 static int quickY(const i64 *lo_, const i64 *hi_, int n, int lv, int strict) {
     if (n == 0) return 0;

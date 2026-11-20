@@ -909,9 +909,19 @@ static int resHint(const Cell *bl0, int n, int probe, u32 *maskOut, Memo **eOut)
         SL[m] = SL[m & (m - 1)] + (bl[j].lo - 1);
         SH[m] = SH[m & (m - 1)] + bl[j].hi;
     }
+    /* each cell's bounds on `quick`'s terms (`quickLB`): a rest that the loose filter fails, and so the strict one,
+       goes before the filters' cache, with the same plan (`quickRej`) */
+    double LBX[MAXB][9];
+    double kq = ((double)RC.Ln / (double)RC.Ld) / (double)RC.DEN;
+    for (int p = 0; p < n; p++) {
+        double lo = kq * (double)(bl[p].lo - 1);
+        quickLBc(lo, lo, G.lv, LBX[p]);
+    }
     for (u32 mask = 3; mask < top; mask++) {
         if ((mask & (mask - 1)) == 0) continue;
         if (SL[mask] < need) continue;
+        if (SH[mask] + 1 >= DEN || quickRej((const double (*)[9])LBX, mask, 1, kq * (double)(RC.DEN - SH[mask] - 1)))
+            continue;
         i64 cs[MAXT], hs = SH[mask];
         int k = 0;
         for (int p = 0; p < n; p++)
@@ -944,9 +954,26 @@ static int resHint(const Cell *bl0, int n, int probe, u32 *maskOut, Memo **eOut)
         }
     }
     if (G.ycorner) {
+        /* the same for `quickY`'s two corners: the lower ends with no clamp, and the upper ends with the clamp's
+           m = (ls - need)/S from above (to within 1e-14 in doubles) */
+        double LBY[MAXB][9], LBY1[MAXB][9], FL[MAXB], FH[MAXB];
+        for (int p = 0; p < n; p++) {
+            FL[p] = U_div_S(loW(bl[p].lo));
+            FH[p] = U_div_S(hiW(bl[p].hi));
+            quickLBc(FL[p], FL[p], G.lv, LBY[p]);
+            quickLBc(FH[p], FL[p], G.lv, LBY1[p]);
+        }
+        double lq = (double)RC.Ln / (double)RC.Ld, w2 = U_div_S(RC.W2);
         for (u32 mask = 3; mask < top; mask++) {
             if ((mask & (mask - 1)) == 0) continue;
             if (SH[mask] < need) continue;
+            if (quickRej((const double (*)[9])LBY, mask, 0, 1.0)) continue;
+            double sfh = 0, sfl = 0;
+            for (u32 r = mask; r; r &= r - 1) {
+                sfh += FH[__builtin_ctz(r)];
+                sfl += FL[__builtin_ctz(r)];
+            }
+            if (quickRej((const double (*)[9])LBY1, mask, 1, lq - sfh - w2 - (sfh - sfl) / 11 + 1e-9)) continue;
             i64 key[2 * MAXT], lo[MAXT], hi[MAXT];
             int k = 0;
             for (int p = 0; p < n; p++)
