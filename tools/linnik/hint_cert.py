@@ -2037,9 +2037,13 @@ def defs_file(par_):
             ('resTestsFCH', 'cfgIMRCH', 'SieveAdResHDefs', 'altFDRH', 'frozResTestsCH'))
     # the decoder of the main tree's configurations with neither `--ycorner` nor `--hl`, `cfgIMRC`, is not in the
     # library (see `CERTS`), and a certificate with either does not use it: its doc names the decoders it uses, below
+    # with `sif` the plan puts any cofactor in the rest (one part, `SieveTypeIIHM.chain_res_sif`); without, only one
+    # that is one prime, which is what the plans before it did
+    cofdoc = ('with the box\'s cofactor in it, one part\nwhatever its number of primes)' if getattr(par_, 'sif', False)
+              else 'with the box\'s cofactor in it when it is\none prime)')
     resdoc = ('With the resonant window: an evaluation of kind `3` in the main tree is `SieveAd.chkIRC`\'s\n'
-              '(`SieveAd.resTestsFC`; the rest tested by `SieveResTest.resX`, with the box\'s cofactor in it when it is\n'
-              'one prime)' + ('' if yc or hl else ', its configuration read by `SieveAd.cfgIMRC`') + (
+              '(`SieveAd.resTestsFC`; the rest tested by `SieveResTest.resX`, ' + cofdoc +
+              ('' if yc or hl else ', its configuration read by `SieveAd.cfgIMRC`') + (
                   '; over the frozen parts too, the box `ch ++ β` (`SieveAd.frozResTestsC`, with\n'
                   '`SieveAd.chkIRF`), read by `SieveAd.cfgIFR`.\n\n' if resF else '.\n\n') if res else '')
     if yc:
