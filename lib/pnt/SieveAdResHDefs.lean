@@ -4,7 +4,9 @@
 `SieveAdResDefs.lean` and `SieveAdFrozResDefs.lean` have the resonant window's tests of a box, of the main tree
 (`chkIRC`) and of a tree over a frozen part (`chkIRF`), with `SieveResTest.resX`, which picks each interval's lines
 at the interval's midpoint. These are the same tests with `SieveResTest.resXH`, which reads them from the hint
-(`SieveResTestHDefs.lean`), and the same search with them; the names end in `H`:
+(`SieveResTestHDefs.lean`), and the same search with them; the names end in `H`. The search's tests, `chkIRCH` and
+`chkIRFH`, call it as `SieveResTest.resXHF` (`SieveResTestFDefs.lean`), the same function in the form that the kernel
+evaluates fastest (`SieveResTest.resXHF_eq`).
 
 * `popc`, `cfgIPRH`, `cfgIMRCH`, `cfgIFRH`: the configuration of an evaluation from the hints, its intervals'
   records of `15 + 2n` bits (`15 + 3n` with the large values' terms) for the `n` terms that the rest names.
@@ -13,10 +15,10 @@ at the interval's midpoint. These are the same tests with `SieveResTest.resXH`, 
 * `flipTreeDRH`, `flipCostBRH`, `flipCostDRH`, `altFDRH`: the hinted bound with these tests in the trees over the
   frozen parts.
 
-Their soundness is `SieveAdResH.lean`'s. The file imports `SieveAdFrozResDefs.lean` and `SieveResTestHDefs.lean`.
+Their soundness is `SieveAdResH.lean`'s. The file imports `SieveAdFrozResDefs.lean` and `SieveResTestFDefs.lean`.
 -/
 import SieveAdFrozResDefs
-import SieveResTestHDefs
+import SieveResTestFDefs
 
 namespace SieveAd
 
@@ -89,9 +91,9 @@ noncomputable def chkIRCH (bl : List Cell) (sr k h : ℕ) : Bool :=
       cond (Nat.beq (Nat.land (Nat.shiftRight sr n) 1) 1)
         (Nat.ble (Nat.add (hiSum bl) 2) DEN &&
           Nat.ble (Nat.add DEN 1) (Nat.add (loSum bl) (Nat.mul 2 (headLo bl))) &&
-          SieveResTest.resXH Lnum Lden (los ++ [maxN (Nat.sub (Nat.sub DEN (hiSum bl)) 1) (headLo bl)])
+          SieveResTest.resXHF Lnum Lden (los ++ [maxN (Nat.sub (Nat.sub DEN (hiSum bl)) 1) (headLo bl)])
             (Nat.add hs (Nat.add (Nat.sub DEN (loSum bl)) 1)) k h)
-        (SieveResTest.resXH Lnum Lden los hs k h)
+        (SieveResTest.resXHF Lnum Lden los hs k h)
 
 /-- The test of an evaluation of kind `3` with the cofactor: `chkIRCH`. -/
 noncomputable def okIRCH (bl : List Cell) (cfg : Cfg) : Bool :=
@@ -114,9 +116,9 @@ noncomputable def chkIRFH (e₁ e₂ : ℕ) (β bl : List Cell) (sr k h : ℕ) :
         cond (Nat.beq (Nat.land (Nat.shiftRight sr n) 1) 1)
           (Nat.ble (Nat.add (Nat.add e₂ shi) 2) DEN &&
             Nat.ble (Nat.add DEN 1) (Nat.add (Nat.add e₁ slo) (Nat.mul 2 (headLo bl))) &&
-            SieveResTest.resXH Lnum Lden (los ++ [maxN (Nat.sub (Nat.sub (Nat.sub DEN e₂) shi) 1) (headLo bl)])
+            SieveResTest.resXHF Lnum Lden (los ++ [maxN (Nat.sub (Nat.sub (Nat.sub DEN e₂) shi) 1) (headLo bl)])
               (Nat.add hs (Nat.add (Nat.sub (Nat.sub DEN e₁) slo) 1)) k h)
-          (SieveResTest.resXH Lnum Lden los hs k h))
+          (SieveResTest.resXHF Lnum Lden los hs k h))
     (Nat.sub (loSum bl) (loSum β)) (Nat.sub (hiSum bl) (hiSum β))
 
 /-- The test of an evaluation of kind `3` in a tree over a frozen part: `chkIRFH` with the rest `sr` and the hint in
