@@ -169,8 +169,9 @@ CERTS = {# the tests, the reversal and their soundness are `SieveAd.Plain`'s (`p
                        energy=True, res=True, resF=True, cof=True, lv=True, lazy=True, rmerge=True, split=3, skip=3,
                        ycorner=True, exh=2, split2=1, hl=True, chunk=700),
          # and the cofactor in the rest whatever its number of primes, one part counted by its own sums
-         # (`SieveTypeIIHM.chain_res_sif`, `SieveAd.evIF_froz_sif`; `sif`)
-         '20900': dict(lnum=2090, lden=1000, h=0.003, hF=0.003, maxlen=6, depth=8, pos=True, lam=0.3, sec=3,
+         # (`SieveTypeIIHM.chain_res_sif`, `SieveAd.evIF_froz_sif`; `sif`), and cells of side 0.002 over the frozen
+         # parts (at x^0.2945, 0.008378K against 0.008478K for 2% more of the kernel's time)
+         '20900': dict(lnum=2090, lden=1000, h=0.003, hF=0.002, maxlen=6, depth=8, pos=True, lam=0.3, sec=3,
                        energy=True, res=True, resF=True, cof=True, lv=True, lazy=True, rmerge=True, split=3, skip=3,
                        ycorner=True, exh=2, split2=1, hl=True, chunk=700, sif=True)}
 TAG = '21500'
