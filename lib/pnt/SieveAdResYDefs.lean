@@ -4,7 +4,9 @@
 `SieveAdResDefs.lean` and `SieveAdFrozResDefs.lean` have the resonant window's test of a box, `chkIRC` in the main
 tree and `chkIRF` in the trees over the frozen parts: `SieveResTest.resX` on the rest's lower ends and the sum of
 its upper ends. `SieveResTest.resYH` (`SieveResTestYDefs.lean`) tests the box of the rest's cells at its two
-corners, the variable tied to the rest. This file is the kernel's side of the search with both:
+corners, the variable tied to the rest; the search calls it as `SieveResTest.resYHF` (`SieveResTestFDefs.lean`), the
+same function in the form that the kernel evaluates fastest (`SieveResTest.resYHF_eq`). This file is the kernel's side
+of the search with both:
 
 * `rpassY bl m k`: one pass over the box: the cells at the set bits of `m` (in the list's order), how many they
   are, whether every cell has `1 ≤ lo ≤ hi ≤ DEN`, and the number of cells, passed to `k`.
@@ -23,10 +25,10 @@ corners, the variable tied to the rest. This file is the kernel's side of the se
   these tests and this configuration in the trees over the frozen parts.
 
 Their soundness is `SieveAdResY.lean`'s and `SieveAdFrozResYTree.lean`'s. The file imports
-`SieveAdFrozResDefs.lean` and `SieveResTestYDefs.lean`.
+`SieveAdFrozResDefs.lean` and `SieveResTestFDefs.lean`.
 -/
 import SieveAdFrozResDefs
-import SieveResTestYDefs
+import SieveResTestFDefs
 
 namespace SieveAd
 
@@ -48,18 +50,18 @@ variable [SieveCert.IBPar]
 open SieveCert.IBPar (Lnum Lden)
 
 /-- **The test at the two corners of a box, with its cofactor**: at most `13` cells, each with
-`1 ≤ lo ≤ hi ≤ DEN`, a rest `sr` with at least one cell, and `SieveResTest.resYH` on the rest's cells with the hints
-`s`; when the bit of `sr` after the box's cells is set, the cofactor in the rest after the box's primes: when the
-box's upper ends sum to at most `DEN − 2` and its lower ends with twice its least prime's reach `DEN + 1`, in the
-cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`. -/
+`1 ≤ lo ≤ hi ≤ DEN`, a rest `sr` with at least one cell, and `SieveResTest.resYHF` (`resYH`) on the rest's cells
+with the hints `s`; when the bit of `sr` after the box's cells is set, the cofactor in the rest after the box's
+primes: when the box's upper ends sum to at most `DEN − 2` and its lower ends with twice its least prime's reach
+`DEN + 1`, in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`. -/
 noncomputable def chkIRY (bl : List Cell) (sr s : ℕ) : Bool :=
   rpassY bl sr fun cs ns ok n =>
     Nat.ble n 13 && ok && Nat.blt 0 ns &&
       cond (Nat.beq (Nat.land (Nat.shiftRight sr n) 1) 1)
         (Nat.ble (Nat.add (hiSum bl) 2) DEN && Nat.ble (Nat.add DEN 1) (Nat.add (loSum bl) (Nat.mul 2 (headLo bl))) &&
-          SieveResTest.resYH Lnum Lden
+          SieveResTest.resYHF Lnum Lden
             (cs ++ [(maxN (Nat.sub (Nat.sub DEN (hiSum bl)) 1) (headLo bl), Nat.add (Nat.sub DEN (loSum bl)) 1)]) s)
-        (SieveResTest.resYH Lnum Lden cs s)
+        (SieveResTest.resYHF Lnum Lden cs s)
 
 /-- **The tests with the window's test at the two corners too**: `chkIRY` for an evaluation of kind `4`, the rest
 `sr` and the hints `s1`; `resTestsFC`'s otherwise. -/
@@ -77,10 +79,10 @@ noncomputable def chkIRFY (e₁ e₂ : ℕ) (β bl : List Cell) (sr s : ℕ) : B
         cond (Nat.beq (Nat.land (Nat.shiftRight sr n) 1) 1)
           (Nat.ble (Nat.add (Nat.add e₂ shi) 2) DEN &&
             Nat.ble (Nat.add DEN 1) (Nat.add (Nat.add e₁ slo) (Nat.mul 2 (headLo bl))) &&
-            SieveResTest.resYH Lnum Lden
+            SieveResTest.resYHF Lnum Lden
               (cs ++ [(maxN (Nat.sub (Nat.sub (Nat.sub DEN e₂) shi) 1) (headLo bl),
                 Nat.add (Nat.sub (Nat.sub DEN e₁) slo) 1)]) s)
-          (SieveResTest.resYH Lnum Lden cs s))
+          (SieveResTest.resYHF Lnum Lden cs s))
     (Nat.sub (loSum bl) (loSum β)) (Nat.sub (hiSum bl) (hiSum β))
 
 /-- **The tests of a tree over a frozen part, with the window's test at the two corners too**: `chkIRFY` on the box

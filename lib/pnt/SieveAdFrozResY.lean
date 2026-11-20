@@ -41,7 +41,7 @@ theorem evIF_froz_resTY {e₁ e₂ s : ℕ} (β : List Cell) (hβl : β.length =
   unfold chkIRFY at hok
   beta_reduce at hok
   rw [rpassY_eq] at hok
-  simp only [Bool.and_eq_true, Nat.ble_eq, Nat.blt_eq] at hok
+  simp only [Bool.and_eq_true, Nat.ble_eq, Nat.blt_eq, SieveResTest.resYHF_eq] at hok
   obtain ⟨⟨⟨_, hcells⟩, hns⟩, hcof⟩ := hok
   have hc := (cellsFrom_iff 1 (ch ++ β)).1 hcells
   have hlen : (ch ++ β).length = s + 1 + (k' + 1) := by rw [List.length_append, hch, hβl]; omega

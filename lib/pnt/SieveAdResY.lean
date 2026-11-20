@@ -23,6 +23,7 @@ The file imports `SieveAdResCof.lean`, `SieveAdResYDefs.lean`, `SieveResCorner.l
 -/
 import SieveAdResCof
 import SieveAdResYDefs
+import SieveResTestF
 import SieveResCorner
 import SieveResTermG
 import SieveResCofG
@@ -143,7 +144,7 @@ theorem evI_resYE (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr s : �
         |dIP q a (boxFn bl (k' + 1) h) (fun rt => ∀ A ∈ E, A.sem rt)| ≤ (q.totient : ℝ)⁻¹ * (η * Xq q) := by
   unfold chkIRY at hok
   rw [rpassY_eq] at hok
-  simp only [Bool.and_eq_true, Nat.ble_eq, Nat.blt_eq] at hok
+  simp only [Bool.and_eq_true, Nat.ble_eq, Nat.blt_eq, SieveResTest.resYHF_eq] at hok
   obtain ⟨⟨⟨_, hcells⟩, hns⟩, hcof⟩ := hok
   have hc := (cellsFrom_iff 1 bl).1 hcells
   set bx := boxFn bl (k' + 1) h with hbx
