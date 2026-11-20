@@ -23,7 +23,6 @@ make up `q^L`, so the variable's exponent is `L − Σ_j s_j` up to the dyadic b
   `q^{lo p} ≤ ∏_{grp i = p} x_i ≤ q^{hi p}`: the family is cut by the sub-cell of each part's product (comparisons of
   products with thresholds `q^{a}`, `prodGeC` and `prodLtC`, appended to the family's), a fixed number of families,
   each evaluated by `full_res_expG`. `FullEst.mono`: a smaller region.
-* `fullEst_of_tight`: the case of one entry in each part, the region `q^{lo i} ≤ x_i ≤ q^{hi i}`.
 
 The file imports `SieveResFull.lean` and `SieveP6Tree.lean`.
 -/
@@ -125,8 +124,8 @@ lemma FullEst.mono {L e₀ : ℝ} {n : ℕ} {Reg Reg' : ℕ → (Fin (n + 1) →
 
 set_option maxHeartbeats 1600000 in
 /-- **The estimate on a box, from the condition with the variable tied to the rest, with the rest grouped into
-parts.** `fullEst_of_tight` for the rest's entries grouped by `grp` into `m + 1` nonempty parts, with cells
-`0 ≤ lo p ≤ hi p` for the parts' products: from `ResBoxT` at the parts on the cells widened by `2·10⁻⁵`, `FullEst`
+parts.** For the rest's entries grouped by `grp` into `m + 1` nonempty parts (each its own for a box of cells),
+with cells `0 ≤ lo p ≤ hi p` for the parts' products: from `ResBoxT` at the parts on the cells widened by `2·10⁻⁵`, `FullEst`
 holds for the region `q^{lo p} ≤ ∏_{grp i = p} x_i ≤ q^{hi p}`. The family is cut by the sub-cells
 `[lo p + cη, lo p + (c + 1)η)` of the parts' products, `η = 1/(4·10⁵(m + 1))` (comparisons of products,
 `prodGeC`, `prodLtC`), each evaluated by `full_res_expG`. -/
@@ -347,28 +346,8 @@ theorem fullEst_of_tightG {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1)
         congr 2
         ring
 
-/-- **The estimate on a box, from the condition with the variable tied to the rest.** For cells `0 ≤ lo j ≤ hi j`
-with `Σ_j hi j + 10⁻⁵ ≤ L` and `ResBoxT` on the cells widened by `2·10⁻⁵`, `FullEst` holds for the region
-`q^{lo i} ≤ x_i ≤ q^{hi i}`. The family is cut by the sub-cells `[lo j + cη, lo j + (c + 1)η)` of the rest's primes,
-`η = 1/(4·10⁵(n + 1))`: for each choice `c` of sub-cells the tuples with those are the family with `2(n + 1)` more
-comparisons, evaluated by `full_res_exp` with `ρ₂ = Σ_j (a_j + η)`, `ε = η` (`resBox_of_tight`); the choices are a
-fixed number, at most `q^{δ/2}`: `fullEst_of_tightG` with each entry its own part. -/
-theorem fullEst_of_tight {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 : g (1 / 2) = 1) (hcnt : CurveCounts g)
-    (hL0 : 0 < L) (hL : L ≤ 5 / 2) {e₀ : ℝ} (he₀ : 0 < e₀) {n : ℕ} {lo hi : ℕ → ℝ}
-    (hlo : ∀ j < n + 1, 0 ≤ lo j ∧ lo j ≤ hi j) (hsum : ∑ j ∈ Finset.range (n + 1), hi j + 1 / 10 ^ 5 ≤ L)
-    (hres : ResBoxT g L (n + 1) (fun j => lo j - 2 / 10 ^ 5) (fun j => hi j + 2 / 10 ^ 5) (2 / 10 ^ 5)) :
-    FullEst L e₀ n (fun q x => ∀ i : Fin (n + 1), (q : ℝ) ^ lo i ≤ x i ∧ (x i : ℝ) ≤ (q : ℝ) ^ hi i) := by
-  refine FullEst.mono (fullEst_of_tightG hg1 hg0 hcnt hL0 hL he₀ (n := n) (m := n) (grp := id) (fun j hj => hj)
-    (fun p hp => ⟨p, hp, rfl⟩) hlo hsum hres) fun q x hx p hp => ?_
-  have hsing : Finset.univ.filter (fun i : Fin (n + 1) => id (i : ℕ) = p) = {⟨p, hp⟩} := by
-    ext i
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, id, Finset.mem_singleton]
-    exact ⟨fun h => Fin.ext h, fun h => by rw [h]⟩
-  rw [hsing, Finset.prod_singleton]
-  exact hx ⟨p, hp⟩
-
 end Est
 
 end SieveTypeIIHM
 
-#print axioms SieveTypeIIHM.fullEst_of_tight
+#print axioms SieveTypeIIHM.fullEst_of_tightG

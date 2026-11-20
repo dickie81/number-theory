@@ -11,8 +11,7 @@ chain's rest primes, each its own part, and of all of `y`, one part. The cofacto
 a prime sum of its length is (`typeII_resG`). There is no multiple with `t = 0`, as `∏rt ≤ N₁`.
 
 * `sifR t r`, `sifGrp n`: the rest's positions in the full tuple, and their parts (the chain's rest's `n + 1`, then
-  the cofactor's); `sifR_injective`, `prod_image_sifR`, `filter_sifGrp_lt`, `prod_filter_sifGrp_cof`,
-  `prod_sifGrp_split`.
+  the cofactor's); `sifR_injective`, `filter_sifGrp_lt`, `prod_filter_sifGrp_cof`, `prod_sifGrp_split`.
 * `fullEst_of_res`: **the window's estimate on the full tuples as `FullEst`**: for `ResBox g L K′ (L − ρ₂ − ε)
   (lo − ε)` and parts `grp` of the rest, the region `q^{lo p} ≤ ∏_{grp i = p} x_i`, `∏x ≤ q^{ρ₂}`
   (`full_res_expG`); `fullEst_sif_of_res`: with the parts of a chain's rest and its sifted cofactor.
@@ -72,48 +71,6 @@ lemma sifR_injective {n k' t : ℕ} {r : Fin (n + 1) → Fin (k' + 1)} (hr : Fun
     have h1 := congrArg Fin.val hij
     simp only [Fin.val_natAdd] at h1
     exact Fin.ext (by omega)
-
-/-- The rest's product in the full tuple: the chain's rest's times all of the cofactor's primes. -/
-lemma prod_image_sifR {n k' t : ℕ} (r : Fin (n + 1) → Fin (k' + 1)) (z : Fin (k' + 1 + t) → ℕ) :
-    ∏ x ∈ Finset.univ.image (sifR t r), z x =
-      (∏ x ∈ Finset.univ.image r, z (Fin.castAdd t x)) * ∏ b : Fin t, z (Fin.natAdd (k' + 1) b) := by
-  have e : Finset.univ.image (sifR t r) = Finset.univ.image (fun i => Fin.castAdd t (r i)) ∪
-      Finset.univ.image (fun b : Fin t => Fin.natAdd (k' + 1) b) := by
-    ext x
-    simp only [Finset.mem_image, Finset.mem_univ, true_and, Finset.mem_union]
-    constructor
-    · rintro ⟨j, rfl⟩
-      unfold sifR
-      split_ifs with hj
-      · exact Or.inl ⟨⟨j, hj⟩, rfl⟩
-      · exact Or.inr ⟨_, rfl⟩
-    · rintro (⟨i, rfl⟩ | ⟨b, rfl⟩)
-      · refine ⟨⟨i, by have := i.isLt; omega⟩, ?_⟩
-        unfold sifR
-        rw [dite_eq_left i.isLt]
-      · refine ⟨⟨n + 1 + b, by have := b.isLt; omega⟩, ?_⟩
-        unfold sifR
-        rw [dite_eq_right (by simp only [not_lt]; omega)]
-        congr 1
-        ext
-        simp
-  have hdisj : Disjoint (Finset.univ.image (fun i => Fin.castAdd t (r i)))
-      (Finset.univ.image (fun b : Fin t => Fin.natAdd (k' + 1) b)) := by
-    rw [Finset.disjoint_left]
-    intro x hx1 hx2
-    obtain ⟨i, -, rfl⟩ := Finset.mem_image.1 hx1
-    obtain ⟨b, -, hb⟩ := Finset.mem_image.1 hx2
-    have h1 := congrArg Fin.val hb
-    have h2 := (r i).isLt
-    simp only [Fin.val_castAdd, Fin.val_natAdd] at h1
-    omega
-  have hinj : ∀ a ∈ (Finset.univ : Finset (Fin t)), ∀ b ∈ (Finset.univ : Finset (Fin t)),
-      Fin.natAdd (k' + 1) a = Fin.natAdd (k' + 1) b → a = b := by
-    intro a _ b _ h
-    have h1 := congrArg Fin.val h
-    simp only [Fin.val_natAdd] at h1
-    exact Fin.ext (by omega)
-  rw [e, Finset.prod_union hdisj, prod_image_castAdd r z, Finset.prod_image hinj]
 
 /-- A part of the chain's rest is its one position. -/
 lemma filter_sifGrp_lt {n t p : ℕ} (hp : p < n + 1) :

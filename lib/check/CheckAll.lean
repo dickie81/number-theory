@@ -1369,7 +1369,7 @@ certificate's bound and the theorem. -/
 #print axioms SieveTypeIIHM.card_fiber_le_pow
 #print axioms SieveTypeIIHM.chain_res_sifG
 #print axioms SieveTypeIIHM.chain_res_gen
-#print axioms SieveTypeIIHM.fullEst_of_tight
+#print axioms SieveTypeIIHM.fullEst_of_tightG
 #print axioms SieveTypeIIHM.full_res_bound
 #print axioms SieveTypeIIHM.resBox_of_tight
 #print axioms SieveTypeIIHM.sum_bin_four_le

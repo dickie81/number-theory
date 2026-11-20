@@ -3064,8 +3064,8 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveResSif`: Chains with a sifted cofactor, the cofactor in the resonant window's rest as one part
 
+- `SieveTypeIIHM.chain_res_sifG`: Chains with a sifted cofactor, by an estimate of the tuples with the cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.chain_res_sif`: Chains with a sifted cofactor, by the resonant window with the cofactor in the rest ([note](../formalisations/halasz-montgomery.md))
-- `SieveTypeIIHM.chain_res_sifG`: Chains with a sifted cofactor, by an estimate of the tuples with the cofactor in the rest
 
 #### `SieveResTerm`: Chains with a rest, by the resonant window
 
@@ -3091,7 +3091,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveTypeIIHM.ResBoxT`: The resonant window's condition on a box, the variable tied to the rest ([note](../formalisations/halasz-montgomery.md))
 - `SieveTypeIIHM.resBox_of_tight`: A thin sub-cell of a box with the variable tied to the rest
 - `SieveTypeIIHM.FullEst`: The estimate of the tuples of primes with a rest in a region
-- `SieveTypeIIHM.fullEst_of_tight`: The estimate on a box, from the condition with the variable tied to the rest
+- `SieveTypeIIHM.fullEst_of_tightG`: The estimate on a box, from the condition with the variable tied to the rest, with the rest grouped into parts ([note](../formalisations/halasz-montgomery.md))
 
 #### `SieveResTypeII`: The resonant window: Proposition 3′ with the characters classed by the sizes of the rest's prime sums
 

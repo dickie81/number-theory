@@ -187,41 +187,41 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   (`frozCof_facts`); the frozen tuples `(a, y, c, y′)` with `y′` of `u ≥ 1` primes have `y′` as one part of the rest
   with the frozen primes and the chain's (`evIF_frozP_sif`, given `FullEst` for each `u`, and `evIF_froz_resC` with
   the window's). `frozResTestsC` reads `chkIRF` (with the bit clear, `chkIR`), so `SieveAd.rules_frozResC` covers it;
-- `SieveResTest.resY_sound` (`lib/pnt/SieveResCorner.lean`; the test `SieveResTest.resY`, and `resYH` with its
-  hints in one number, in `lib/pnt/SieveResTestYDefs.lean`, written by `tools/linnik/res_test.py`): **the window's
-  test at the two corners of a box of cells**. `resX` tests the window at a corner that is no point of the box, the
-  rest's lower ends with the variable that the rest's upper ends leave. On a box the rest and the variable make up
-  `q^L`, so the condition is needed only with the variable tied to the rest, `SieveTypeIIHM.ResBoxT`
-  (`lib/pnt/SieveResTight.lean`): the rest's exponents in their cells and `Σ_j s_j + m ≥ L − 2·10⁻⁵`. `resY` gives
-  it from the bound at the box's upper corner, with the large values' thresholds of the cells and the variable
-  shorter by `1/11` of the box's width, and the bound with no clamp at its lower corner (`two_corner`: a class of
-  characters at a point of the box is carried to the upper corner with the sizes `t′ = 1/2 + (s/s′)(t − 1/2)`); the
-  record of an interval names the clamp's line and each term's bound, so the kernel does not look for them.
+- `SieveResTest.resY_sound` (`lib/pnt/SieveResCorner.lean`; the test `SieveResTest.resY`, and `resYH` with its hints
+  in one number, in `lib/pnt/SieveResTestYDefs.lean`, written by `tools/linnik/res_test.py`): **the window's test at
+  the two corners of a box of cells**. `resX` tests the window at a corner that is no point of the box, the rest's
+  lower ends with the variable that the rest's upper ends leave. On a box the rest and the variable make up `q^L`, so
+  the condition is needed only with the variable tied to the rest, `SieveTypeIIHM.ResBoxT`
+  (`lib/pnt/SieveResTight.lean`): the rest's exponents in their cells and `Σ_j s_j + m ≥ L − 2·10⁻⁵`. `resY` gives it
+  from the bound at the box's upper corner, with the large values' thresholds of the cells and the variable shorter by
+  `1/11` of the box's width, and the bound with no clamp at its lower corner (`two_corner`: a class of characters at a
+  point of the box is carried to the upper corner with the sizes `t′ = 1/2 + (s/s′)(t − 1/2)`); the record of an
+  interval names the clamp's line and each term's bound, so the kernel does not look for them.
   `SieveTypeIIHM.fullEst_of_tightG` (`lib/pnt/SieveResTight.lean`): `ResBoxT` on a box gives the estimate of the
-  tuples of primes with the rest's parts in their cells (`FullEst`, what `full_res_expG` gives): the family is cut
-  by sub-cells of the parts' products (`prodGeC`, `prodLtC`), a fixed number of families, and `full_res_expG`
-  applies to each (`resBox_of_tight`); `fullEst_of_tight` is its case of one prime a part, and
-  `SieveAd.fullEst_of_resYHS` (`lib/pnt/SieveAdResY.lean`) its case of a chain's rest with a sifted cofactor. The
-  terms' evaluations with `FullEst` as a hypothesis, their proofs those of `chain_res_exp`, `evIF_froz_res` and the
-  sifted cofactor's: `SieveTypeIIHM.chain_res_gen` (`lib/pnt/SieveResTermG.lean`), `chain_res_sifG`,
-  `SieveAd.evIF_froz_gen` (`lib/pnt/SieveAdFrozResG.lean`) and `evIF_froz_genC` (`lib/pnt/SieveAdFrozResCofG.lean`,
-  by `evIF_froz_sif`). In the search
-  (`lib/pnt/SieveAdResYDefs.lean`: the tests `SieveAd.chkIRY` of a box of the main tree and `chkIRFY` of a box
-  `ch ++ β` over a frozen part, each with the cofactor's cell when its bit is set; `resTestsFY`, `frozResTestsY`,
-  which read them for an evaluation of kind `4` and are `resTestsFC`, `frozResTestsC` otherwise; the decoders
-  `SieveAd.cfgIMY`, `cfgIFY`; the search `altFDY`): `SieveAd.resTestsFY_sound` (`lib/pnt/SieveAdResY.lean`), the
-  tests of the main tree are sound, and `SieveAd.pr_of_partDY_at` (`lib/pnt/SieveAdFrozResYTree.lean`, with
-  `evIF_froz_resTY` of `lib/pnt/SieveAdFrozResY.lean`), a part of the search whose trees over the frozen parts read
-  them bounds its term. The existing modules are unchanged. The certificate at `2100/1000` uses these tests with
-  the window's lines named by the hint (below). **A cut of any cell
-  of a box, at any point, in the search led by hints** (`lib/pnt/SieveAdCutDefs.lean`: `SieveAd.altC`, a cut read
-  where `stepD` reads its hinted bound, one bit, the cell's position and the exponent of the cut; `solveDS`, the
-  search with it at every depth; `flipTreeDYS` … `altFDYS`, the reversal whose trees are searched that way, a cut
-  there being of a cell of the chain): `SieveAd.pr_splitAt` and `pf_splitAt` (`lib/pnt/SieveAdCut.lean`), the
-  costs of the two boxes of a cut add, in the main tree and over a frozen part (`bd_split`, `bdF_split` at the
-  cell's index); `SieveAd.solveDS_sound`, by `stepD_sound` at each depth; and `SieveAd.pr_of_partDYS_at`, a part of
-  that search bounds its term. It is for boxes that the edge of a test's zone crosses: cut at the zone's edge,
-  the part inside is evaluated and only the rest is dropped or decomposed. No certificate uses it yet;
+  tuples of primes with the rest's parts in their cells (`FullEst`, what `full_res_expG` gives): the family is cut by
+  sub-cells of the parts' products (`prodGeC`, `prodLtC`), a fixed number of families, and `full_res_expG` applies to
+  each (`resBox_of_tight`). Its cases for the window's test at the two corners (`lib/pnt/SieveAdResY.lean`):
+  `SieveAd.fullEst_of_resYH`, each prime its own part, and `SieveAd.fullEst_of_resYHS`, a chain's rest with a sifted
+  cofactor. The terms' evaluations with `FullEst` as a hypothesis, their proofs those of `chain_res_exp`,
+  `evIF_froz_res` and the sifted cofactor's: `SieveTypeIIHM.chain_res_gen` (`lib/pnt/SieveResTermG.lean`),
+  `chain_res_sifG`, `SieveAd.evIF_froz_gen` (`lib/pnt/SieveAdFrozResG.lean`) and `evIF_froz_genC`
+  (`lib/pnt/SieveAdFrozResCofG.lean`, by `evIF_froz_sif`). In the search (`lib/pnt/SieveAdResYDefs.lean`: the tests
+  `SieveAd.chkIRY` of a box of the main tree and `chkIRFY` of a box `ch ++ β` over a frozen part, each with the
+  cofactor's cell when its bit is set; `resTestsFY`, `frozResTestsY`, which read them for an evaluation of kind `4`
+  and are `resTestsFC`, `frozResTestsC` otherwise; the decoders `SieveAd.cfgIMY`, `cfgIFY`; the search `altFDY`):
+  `SieveAd.resTestsFY_sound` (`lib/pnt/SieveAdResY.lean`), the tests of the main tree are sound, and
+  `SieveAd.pr_of_partDY_at` (`lib/pnt/SieveAdFrozResYTree.lean`, with `evIF_froz_resTY` of
+  `lib/pnt/SieveAdFrozResY.lean`), a part of the search whose trees over the frozen parts read them bounds its term.
+  The existing modules are unchanged. The certificate at `2100/1000` uses these tests with the window's lines named by
+  the hint (below). **A cut of any cell of a box, at any point, in the search led by hints**
+  (`lib/pnt/SieveAdCutDefs.lean`: `SieveAd.altC`, a cut read where `stepD` reads its hinted bound, one bit, the cell's
+  position and the exponent of the cut; `solveDS`, the search with it at every depth; `flipTreeDYS` … `altFDYS`, the
+  reversal whose trees are searched that way, a cut there being of a cell of the chain): `SieveAd.pr_splitAt` and
+  `pf_splitAt` (`lib/pnt/SieveAdCut.lean`), the costs of the two boxes of a cut add, in the main tree and over a
+  frozen part (`bd_split`, `bdF_split` at the cell's index); `SieveAd.solveDS_sound`, by `stepD_sound` at each depth;
+  and `SieveAd.pr_of_partDYS_at`, a part of that search bounds its term. It is for boxes that the edge of a test's
+  zone crosses: cut at the zone's edge, the part inside is evaluated and only the rest is dropped or decomposed. No
+  certificate uses it yet;
 - `SieveResTest.resXH_sound_cells` (`lib/pnt/SieveResTestH.lean`; the test `SieveResTest.resXH` in
   `lib/pnt/SieveResTestHDefs.lean`, written by `tools/linnik/res_test.py`): `resX` with each interval's lines named
   by the hint. A record gives the interval's end, the line of the Halász–Montgomery clamp and each term's line;
