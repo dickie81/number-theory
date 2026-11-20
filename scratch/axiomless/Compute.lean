@@ -8,7 +8,7 @@ is a product of primes. They depend on no axiom, so the kernel can evaluate them
 the kernel reducing the proof term to a numeral or a list (`decide +kernel`).
 -/
 
-open Ax
+namespace Ax
 
 /-! The prime that Euclid's proof finds above `n`: the least prime factor of `n! + 1`. -/
 example : (nextPrime 1).val = 2 := by decide +kernel
@@ -38,4 +38,7 @@ check.
 theorem factor_fact10 : (factor 3628801 (by decide)).val = [11, 329891] := by decide +kernel
 -/
 
-#axiom_free nextPrime_12 factor_360 factor_5041 factor_30030 factor_1000001 prime_9901 not_prime_5041
+end Ax
+
+#axiom_free Ax.nextPrime_12 Ax.factor_360 Ax.factor_5041 Ax.factor_30030 Ax.factor_1000001 Ax.prime_9901
+  Ax.not_prime_5041

@@ -56,6 +56,8 @@ theorem find_eq [DecidablePred P] (h : ∃ n, P n) {m : Nat} (hm : P m) (hmin : 
 
 end Search
 
+namespace Stuck
+
 open Search
 
 /-! ## The kernel runs the search when the proof is free of axioms -/
@@ -103,7 +105,9 @@ theorem five_eq : five = 5 := by
 one, and nothing proves which number it is: `chosen = 5` and `chosen ≠ 5` are both unprovable. -/
 noncomputable def chosen : Nat := Classical.choice ⟨5⟩
 
-#axiom_free Search.acc_of_add Search.findFrom Search.find Search.find_eq sq_gt find_sq
-#print axioms find_sq_classical
-#print axioms five_eq
-#print axioms chosen
+end Stuck
+
+#axiom_free Search.acc_of_add Search.findFrom Search.find Search.find_eq Stuck.sq_gt Stuck.find_sq
+#print axioms Stuck.find_sq_classical
+#print axioms Stuck.five_eq
+#print axioms Stuck.chosen
