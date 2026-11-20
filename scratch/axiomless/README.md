@@ -19,6 +19,7 @@ only the pinned Lean toolchain, not Mathlib, and takes fifteen seconds.
 | `Ladder.lean` | one proposition generates infinitely many without excluded middle (the Rieger–Nishimura ladder, a Kripke model, non-derivability in intuitionistic logic) and four with it |
 | `DivLt.lean` | core's lemma `n / k < n`, which core proves with `propext`, proved with no axiom |
 | `CertAxioms.lean` | the axioms of a certificate part of this library's Linnik theorem, and the one route by which `propext` reaches it; needs `lake build SieveHint21500P1`, so `check.sh` does not run it |
+| `LandBench.lean` | the kernel's time for `Nat.land`, for a remainder and for a hand-written `and`: what removing `propext` from the certificates inside the library would cost; 80 s, so `check.sh` does not run it |
 | `Census.lean` | the axioms of every constant of an environment: `lean --run Census.lean OUT.tsv Init Std Lean`, or `lake env lean --run scratch/axiomless/Census.lean --edges EDGES OUT.tsv Mathlib` (ten minutes, 10 GB) |
 | `census_report.py` | tables from a census |
 | `gateways.c`, `gateways_report.py` | the dominator tree of an axiom: the constants through which every use of it passes |

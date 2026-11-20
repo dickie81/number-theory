@@ -343,6 +343,40 @@ when `d` is not entered.
 - The same holds for any definition that uses `&&&`, `|||`, `^^^` or `Nat.testBit`: in core they are
   definitions that depend on `propext`.
 
+## 12. Would any of this change the certificates' build time?
+
+**Question.** Entry 11 says the certificates are one lemma away from depending on no axiom, and entry 6 found
+ways of writing a definition that cost the kernel time. Would any of it make the certificate build faster or
+slower?
+
+**Done.** For a part (`tree21500_0`), the constants the kernel can be asked to evaluate were listed: its
+definitions, without the proofs. `LandBench.lean` times, in the kernel, a loop of 200 000 steps that at each step
+calls nothing, `Nat.land`, `Nat.mod`, or a 14-bit `and` written by recursion on a bound.
+
+**Found.**
+
+- Nothing in this directory is part of the build. No file of `lib/` changed, and CI skipped every Lean build
+  stage for it.
+- Removing `propext` would not make the certificates faster. The axiom is in the termination proof of
+  `Nat.bitwise`, and the kernel never evaluates that definition: it computes `Nat.land` with GMP. The loop with
+  `Nat.land` takes the time of the loop without it (19.6 s and 19.5 s).
+- Removing it inside this library would make them slower. The masks (`Nat.land h 15`, `Nat.land m 1`) could be
+  remainders, which depend on no axiom, at no cost (18.9 s). But the tests also intersect two sets,
+  `Nat.land cfg.s0 cfg.sr`, and core's `Nat.lor` and `Nat.xor` rest on the same `Nat.bitwise`. A hand-written
+  `and` costs about 10 µs a call (22.3 s for the loop), where a step of the search in a part takes about 1 ms
+  (244 426 steps, predicted 240 s). How many of those tests a step makes was not counted, so the share is not
+  known. The change would also mean generating and checking every part again: an hour of the kernel for the
+  theorem at `43/20`, 61 hours for the one at `21/10`. A proof of `Nat.div_lt_self` without `simp` in core would
+  cost nothing.
+- The patterns of entry 6 that cost the kernel time are not in the certificates. The bounded-quantifier
+  instances (`Nat.decidableBallLT` and the like) are not among what a part evaluates. None of the library's 132
+  constants there is defined by well-founded recursion: they are recursors applied to `Nat.add`, `Nat.div`, `Nat.ble`
+  and the other operations the kernel hands to GMP. A part has about 2 700 steps, far below the 100 000 where
+  an unevaluated counter began to matter, and the certificate is already cut into parts, which bounds the
+  kernel's memory.
+- So nothing here speeds the build up. This is a reading of the definitions and one benchmark, not a profile
+  of the certificate.
+
 ## What the entries add up to
 
 - With no axiom, Lean is a programming language whose programs are proofs: Euclid's theorem is a function that
