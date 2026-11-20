@@ -147,6 +147,44 @@ the main tree that fails in two, N times at most. Without the window the cells g
 of the certificate at 2135/1000 costs 0.990, and the window as it is in Lean is worth 8.0% there, where the model
 has 6.4%.
 
+Harman's own information, and Input 2 in it (19 November 2026; the Linnik paper, Section 12, "Harman's sieve with
+Input 2"). `--region bhp --zone-mode replace` puts Harman's region in two variables (2005, p. 646, with the largest
+of Baker, Harman and Pintz's gamma_g) in the place of the paper's; `--zone-file` with `--zone-mode replace` puts a
+region of type2_model.py there instead (`zone H L`: Huxley's large values estimate on every sub-product of the
+Type II sum; `zone H+CGL L`: Chen, Gupta and Li's Proposition 3.1 as well). With `--type1 hkl` (the Type I reach
+of Harman, Kumchev and Lewis, from the mean value and the fourth moment), `--four` (their estimate on four
+variables), `--up 2` (Buchstab's identity in reverse) and `--no-window`, this is Harman's information. The
+exponent at which `points` (--h 0.006) passes 1, by linear interpolation between the exponents (steps of 1/100)
+that bracket it, by the shape of the reversal: R0 --flips 0; R1 --flips 3 --nest 1 --rev first,odd; R2 --nest 1
+--rev first (the certificates' shapes); R3 the default search.
+
+                                                              R0        R1        R2        R3
+    Harman's (--region bhp)                                   2.1292    2.1035    2.0937    2.0891
+    with Huxley on every sub-product (zone H)                 2.1248    2.0999    2.0919    2.0873
+    with Huxley and Input 2 on every one (zone H+CGL)         2.1211    2.0928    2.0850    2.0817
+    the paper's rules as formalised (--curve ghx
+      --res hm,lv,cofp; no leaves cut in three)               2.1127    2.0924    2.0802    2.0779
+    zone H+CGL, with --res plain,hux,lv --curve ghx           2.1128              2.0746
+    the paper's rules, with --region bhp --zone-mode union
+      --four --up 2                                           2.1054              2.0738
+
+Harman's 1/0.472 = 2.1186 lies between R0 and R1 with his information (his decomposition is that of Harman, Kumchev
+and Lewis, which reverses some of the terms of R1); lowered by the shift from the first row to the third there, it
+is about 2.108 to 2.111. The paper's certificate at 21/10 is about 0.02 above the model of its rules in R2, and the
+same offset puts Harman's with Input 2 in his lemmas at about 2.105. In the fifth row his sieve also counts the
+characters at which the prime sums of a term are large, by the mean values of their powers, Huxley's estimate and
+Input 2: the estimate on four variables taken to every set of prime sums, which is the paper's estimate in one
+variable on a rest of primes. With it his region in two variables, the larger (it contains the paper's region at
+every L from 2.02 to 2.30), puts him ahead of the paper's rules. Two of the runs, from tools/linnik (the zone file
+is written in the current directory, in 17 s; each run takes a few minutes):
+
+    python3 type2_model.py zone H+CGL 2080/1000
+    H="--h 0.006 --zone-mode replace --type1 hkl --four --up 2 --no-window"
+    python3 harman_sieve.py points 2080/1000 $H --zone-file zones_H+CGL_L2080_1000.npz --nest 1 --rev first
+    python3 harman_sieve.py points 2080/1000 --h 0.006 --nest 1 --rev first --curve ghx --res hm,lv,cofp
+
+give the losses 1.0972 (Harman's information with Input 2) and 1.0044 (the paper's rules) at 2.08 in R2.
+
 What is assumed, beyond the paper: the estimate in two variables on the tabulated zone (two_factor.py states it; in
 Lean it is proved on the region SieveTwoZone7D.Zone7d, which holds all of the zone but under 2% of its width, as far
 as chains of primes: SieveTwoChain.chain_two); the bilinear Type I estimate without 2HD < q at the leaves (in Lean:
@@ -213,7 +251,9 @@ class Ctx(C.Structure):
                 ('res', C.c_int), ('NC', C.c_int), ('cl', dp), ('reach', dp), ('ord', ip),
                 ('L', C.c_double), ('thr', C.c_double), ('wbin', C.c_double), ('mres', C.c_double),
                 ('top', C.c_double), ('K0', C.c_double), ('K1', C.c_double),
-                ('res_main', C.c_int), ('res_split', C.c_int), ('res_lev', C.c_int)]
+                ('res_main', C.c_int), ('res_split', C.c_int), ('res_lev', C.c_int),
+                ('four', C.c_int), ('fourk', C.c_int), ('type1', C.c_int), ('up', C.c_int),
+                ('NLG', C.c_int), ('Zmx', dp), ('Zmn', dp)]
 
 
 class Stats(C.Structure):
@@ -255,6 +295,9 @@ def pieces_of(curve, theta0=None):
         out = base
     elif name == 'dh':
         out = [(0.5, top, 2.0)]
+    elif name == 'triv':
+        # no density estimate: the count 1 (every character) up to the half-plane
+        out = [(0.5, top, None)]
     elif name in ('gm', 'cap', 'shift'):
         cuts = sorted({top} | {x for lo, hi, _ in base for x in (lo, hi)} | {0.5 + 0.0025 * i for i in range(167)})
         cuts = [x for x in cuts if x <= top]
@@ -408,22 +451,131 @@ def window(L):
     return None
 
 
+def gamma05(theta, kind='g3', gmax=200):
+    """The cap on the rest in Harman's Type II theorem: `g3`, as his paper of 2005 prints it (p. 646),
+    min(4 theta - 2, (20 theta - 9)/11, (72 theta - 37)/11); `g4`, the case g = 4 that Harman, Kumchev and Lewis use at
+    theta = 0.53; `bhp`, the largest over g of Baker, Harman and Pintz's
+    gamma_g = min(4 theta - 2, ((8g - 4) theta - (4g - 3))/(4g - 1), (24 g theta - (12g + 1))/(4g - 1))."""
+    def gg(g):
+        return min(4 * theta - 2, ((8 * g - 4) * theta - (4 * g - 3)) / (4 * g - 1),
+                   (24 * g * theta - (12 * g + 1)) / (4 * g - 1))
+    if kind in ('g3', 'g4'):
+        return gg(int(kind[1]))
+    if kind == 'bhp':
+        return max(gg(g) for g in range(1, gmax + 1))
+    raise ValueError(kind)
+
+
+def harman05_zones(L, kind='g3', eps=0.0005):
+    """Harman's Type II region on the model's lattice: for a rest rho = c DL with 0 < rho < gamma(theta) - eps, the
+    first part a1 with tau - rho/2 + eps <= a1 <= theta - rho/2 - eps (that is |a1 - a2| < 2 theta - 1 for the second
+    part a2 = 1 - a1 - rho), its ends taken inwards to the lattice a1 = A0 + i DL."""
+    Lf = float(L)
+    tau = 1 / Lf
+    theta = 1 - tau
+    g = gamma05(theta, kind)
+    r = DL * np.arange(int(round(R1 / DL)) + 1)
+    Alo = np.full(len(r), np.inf)
+    Ahi = np.full(len(r), -np.inf)
+    na = int(round((A1 - A0) / DL))
+    for c in range(1, len(r)):
+        if not r[c] < g - eps:
+            continue
+        i = max(0, int(math.ceil((tau - r[c] / 2 + eps - A0) / DL - 1e-9)))
+        j = min(na, int(math.floor((theta - r[c] / 2 - eps - A0) / DL + 1e-9)))
+        if i <= j:
+            Alo[c], Ahi[c] = A0 + DL * i, A0 + DL * j
+    return r, Alo, Ahi
+
+
+def model_zones(L, name):
+    """The region of a set of tools of type2_model.py (`H`: Harman's tools on every factor; `all`: with the paper's
+    inputs as well) on the model's lattice: for each rest, the run of first parts through a1 = a2 that passes."""
+    import type2_model as tm
+    r, Alo, Ahi = tm.zone(tm.toolset(name), 1 / float(L))
+    assert len(r) == int(round(R1 / DL)) + 1 and abs(r[1] - DL) < 1e-12
+    return r, np.where(np.isnan(Alo), np.inf, Alo), np.where(np.isnan(Ahi), -np.inf, Ahi)
+
+
+def load_zone_file(fn):
+    """The arrays r, Alo, Ahi of an .npz file, checked against the model's lattice of rests (NaN: no zone)."""
+    z = np.load(fn)
+    r, Alo, Ahi = (np.asarray(z[k], dtype=float) for k in ('r', 'Alo', 'Ahi'))
+    r0 = DL * np.arange(int(round(R1 / DL)) + 1)
+    if r.shape != r0.shape or not np.allclose(r, r0, atol=1e-9) or Alo.shape != r.shape or Ahi.shape != r.shape:
+        raise ValueError(f'{fn}: r must be c * {DL} for c = 0 .. {len(r0) - 1}')
+    Alo = np.where(np.isnan(Alo), np.inf, Alo)
+    Ahi = np.where(np.isnan(Ahi), -np.inf, Ahi)
+    bad = np.isfinite(Alo) & ((Alo < A0 - 1e-9) | (Ahi > A1 + 1e-9))
+    if bad.any():
+        raise ValueError(f'{fn}: a1 must lie in [{A0}, {A1}] (rests {r[bad][:5]} ...)')
+    return r, Alo, Ahi
+
+
+def combine_zones(base, extra, mode='union'):
+    """The table `base` with another, `extra`, on the same lattice. `replace` takes `extra`. `union` takes, for each
+    rest, the hull of the two intervals where they meet on the lattice, and the wider of them where they do not (both
+    are symmetric about (1 - rho)/2 when the estimate is symmetric in its two parts, and then they meet). Returns the
+    table and the rests at which `extra` is wider than `base`."""
+    r, lo1, hi1 = base
+    r2, lo2, hi2 = extra
+    assert np.allclose(r, r2)
+    ok1 = np.isfinite(lo1) & (lo1 <= hi1)
+    ok2 = np.isfinite(lo2) & (lo2 <= hi2)
+    if mode == 'replace':
+        return (r, np.where(ok2, lo2, np.inf), np.where(ok2, hi2, -np.inf)), r[ok2]
+    if mode != 'union':
+        raise ValueError(mode)
+    lo, hi = np.where(ok1, lo1, np.inf), np.where(ok1, hi1, -np.inf)
+    wider = np.zeros(len(r), dtype=bool)
+    for c in range(len(r)):
+        if not ok2[c]:
+            continue
+        if not ok1[c]:
+            lo[c], hi[c], wider[c] = lo2[c], hi2[c], True
+        elif lo2[c] <= hi1[c] + DL + 1e-9 and lo1[c] <= hi2[c] + DL + 1e-9:
+            l, h = min(lo1[c], lo2[c]), max(hi1[c], hi2[c])
+            wider[c] = h - l > hi1[c] - lo1[c] + 1e-12
+            lo[c], hi[c] = l, h
+        elif hi2[c] - lo2[c] > hi1[c] - lo1[c]:
+            lo[c], hi[c], wider[c] = lo2[c], hi2[c], True
+    return (r, lo, hi), r[wider]
+
+
+def sparse_tables(Alo, Ahi):
+    """The sparse tables of max Alo and min Ahi over the runs of 2^l lattice points, level by level."""
+    n = len(Alo)
+    lev = max(1, int(math.floor(math.log2(n))) + 1)
+    mx = np.full((lev, n), 1e300)
+    mn = np.full((lev, n), -1e300)
+    mx[0], mn[0] = Alo, Ahi
+    for l in range(1, lev):
+        w = 1 << (l - 1)
+        mx[l, :n - w] = np.maximum(mx[l - 1, :n - w], mx[l - 1, w:])
+        mn[l, :n - w] = np.minimum(mn[l - 1, :n - w], mn[l - 1, w:])
+    return lev, np.ascontiguousarray(mx.ravel()), np.ascontiguousarray(mn.ravel())
+
+
 class Sieve:
     def __init__(self, L, h=0.004, depth=8, flips=6, nest=2, flipmax=8, flipmin=0.15, wide=True, usewin=True,
                  sieve=False, upper=False, type2=True, eps1=0.002, eps0=0.002, fmin=0.01, smax=7.0, shrink=0.0,
                  tables=None, rev=(), first=True, direct=('window', 'second', 'rest'), fill=False,
                  curve='g7d', theta0=None, kernel=1.0, kshift=0.0, ext=0.0, res=0, levels=None, res_main=False,
-                 res_split=0, res_lev=False):
+                 res_split=0, res_lev=False, four=False, fourk=5, type1='ours', up=0, zextra=(), zmode='union'):
         L = Fr(L)
         self.L, Lf = L, float(L)
         whatif = curve != 'g7d' or theta0 is not None or kernel != 1.0 or kshift != 0.0
         r, Alo, Ahi = tables if tables is not None else zones(L, curve, theta0=theta0, kernel=kernel, kshift=kshift)
+        # further Type II tables (Harman's region, or a file), each united with the zone or in its place
+        self.zwider = []
+        for name, table in zextra:
+            (r, Alo, Ahi), wider = combine_zones((r, Alo, Ahi), table, zmode)
+            self.zwider.append((name, wider))
         Alo, Ahi = Alo + shrink / 2, Ahi - shrink / 2          # a narrower zone, to see what the width is worth
         ok = np.isfinite(Alo) & (Alo <= Ahi) if type2 else np.zeros(len(r), dtype=bool)
         idx = np.nonzero(ok)[0]
-        # the cells lean on this: one run of rests, and the zone's ends decrease as the rest grows
-        assert not len(idx) or (idx[-1] - idx[0] + 1 == len(idx) and np.all(np.diff(Alo[idx]) <= 1e-12)
-                                and np.all(np.diff(Ahi[idx]) <= 1e-12))
+        # the rests with a zone need not be one run, nor the ends decrease as the rest grows: zone() in C reads
+        # sparse tables, and a range of rests that holds one with no zone has none
         NR = len(r) - 1
         self.Alo = np.ascontiguousarray(np.where(ok, Alo, 1e300))
         self.Ahi = np.ascontiguousarray(np.where(ok, Ahi, -1e300))
@@ -452,6 +604,8 @@ class Sieve:
         ctx.tau, ctx.theta, ctx.eps1, ctx.wide = 1 / Lf, 1 - 1 / Lf, eps1, int(wide)
         ctx.NR, ctx.DL = NR, DL
         ctx.Alo, ctx.Ahi = self.Alo.ctypes.data_as(dp), self.Ahi.ctypes.data_as(dp)
+        ctx.NLG, self.Zmx, self.Zmn = sparse_tables(self.Alo, self.Ahi)
+        ctx.Zmx, ctx.Zmn = self.Zmx.ctypes.data_as(dp), self.Zmn.ctypes.data_as(dp)
         ctx.rmax = float(r[idx[-1]]) if len(idx) else 0.0
         ctx.amin = float(Alo[idx].min()) if len(idx) else 9.0
         ctx.amax = float(Ahi[idx].max()) if len(idx) else -9.0
@@ -505,6 +659,8 @@ class Sieve:
         ctx.L, ctx.thr, ctx.wbin, ctx.mres, ctx.top = Lf, Lf - float(rl.MARGIN), 4e-6, 0.8, top
         ctx.K0, ctx.K1 = kernel * (top - 0.5) - kshift, kernel * (1 - top)
         ctx.res_main, ctx.res_split, ctx.res_lev = int(res_main), int(res_split), int(res_lev)
+        ctx.four, ctx.fourk, ctx.type1 = int(four), int(fourk), {'ours': 0, 'hkl': 1}[type1]
+        ctx.up = int(up)
         self.ctx = ctx
         # the floor of the top node: the largest f at which S(A, x^f) is evaluated
         T = ctx.theta - eps1
@@ -566,7 +722,27 @@ def main():
                     "'lv' (Chen, Gupta and Li's large-value estimate for the powers), 'sifted' (the cofactor and "
                     "sifted atoms may be in the rest, with the zeros' count), 'own' (those counted by their own "
                     "sums as well) and 'cofp' (without 'sifted': the cofactor may be in the rest where it is "
-                    "prime on the whole box, counted as a prime); alone: the first four")
+                    "prime on the whole box, counted as a prime), 'hux' (Huxley's large values estimate for "
+                    "the powers shorter than q) and 'nozs' (with 'sifted' and 'own': a sifted part is counted by its "
+                    "own sums only, without the zeros' count or the half-plane); alone: the first four")
+    ap.add_argument('--four', action='store_true', help="with Harman, Kumchev and Lewis's Lemma 5: a box is "
+                    'evaluated when its atoms and cofactor split into a part with arbitrary coefficients and three '
+                    'prime-factored parts in one of its four regions')
+    ap.add_argument('--four-k', type=int, default=5, help='--four for terms of at most this many atoms')
+    ap.add_argument('--region', choices=['g3', 'g4', 'bhp', 'H', 'all'], default=None, help='with a second Type II '
+                    "region in two variables. Harman's (2005, p. 646), the first part between tau - rho/2 and "
+                    'theta - rho/2 for a rest rho below gamma(theta): g3, gamma as printed there; g4, Harman, '
+                    "Kumchev and Lewis's choice; bhp, the largest of Baker, Harman and Pintz's gamma_g. Or a region "
+                    "of type2_model.py: H, Harman's tools on every factor; all, with the paper's inputs as well")
+    ap.add_argument('--zone-file', default=None, help='with a Type II table from an .npz file (arrays r, Alo, Ahi on '
+                    'the lattice of the rests r = c * 0.0005 up to 0.22, a1 in [0.30, 0.62]; NaN: no zone)')
+    ap.add_argument('--zone-mode', choices=['union', 'replace'], default='union', help="a further table is united "
+                    "with the model's zone, or takes its place")
+    ap.add_argument('--up', type=int, default=0, help="Buchstab's identity in reverse on a term that may be dropped "
+                    '(Harman, Kumchev and Lewis, (6.7)), at most this many times on a branch of the tree')
+    ap.add_argument('--type1', choices=['ours', 'hkl'], default='ours', help="the reach of Type I: the paper's "
+                    "bilinear estimates, or Harman, Kumchev and Lewis's Lemma 8 (the mean value and the fourth "
+                    'moment): max(a1, tau) + max(a2, tau/2) <= (1 + theta)/2')
     ap.add_argument('--res-main', action='store_true', help='the resonant window in the main tree only')
     ap.add_argument('--res-split', type=int, default=0, help='`cells`: a box of the main tree that fails the '
                     'resonant window is cut in two across its widest cell, at most this many times, and is '
@@ -595,8 +771,19 @@ def main():
                       direct=tuple(x for x in a.direct.split(',') if x),
                       curve=a.curve, theta0=a.theta0, kernel=a.kernel, kshift=a.kshift, ext=a.ext,
                       res=0 if a.res is None else 1 + sum(v for kk, v in (('hm', 2), ('sifted', 4), ('cofp', 8),
-                                                                    ('lv', 16), ('own', 32)) if kk in a.res.split(',')),
-                      res_main=a.res_main, res_split=a.res_split, res_lev=a.res_lev)
+                                                                    ('lv', 16), ('own', 32), ('hux', 64), ('nozs', 128))
+                                                      if kk in a.res.split(',')),
+                      res_main=a.res_main, res_split=a.res_split, res_lev=a.res_lev,
+                      four=a.four, fourk=a.four_k, type1=a.type1, up=a.up,
+                      zextra=([('the file', load_zone_file(a.zone_file))] if a.zone_file else [])
+                      + ([("Harman's region", harman05_zones(Fr(Ls), a.region))]
+                         if a.region in ('g3', 'g4', 'bhp') else [])
+                      + ([(f"type2_model.py's region `{a.region}`", model_zones(Fr(Ls), a.region))]
+                         if a.region in ('H', 'all') else []),
+                      zmode=a.zone_mode)
+            for name, wider in s.zwider:
+                print(f'  {name} ({a.zone_mode}): wider than the zone at {len(wider)} rests'
+                      + (f', from {wider.min():.4f} to {wider.max():.4f}' if len(wider) else ''))
             if a.nu is not None:
                 nu = a.nu
             elif s.nu0 is not None:

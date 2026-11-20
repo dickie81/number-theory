@@ -69,8 +69,9 @@ the residue class contains $\gg x/(\varphi(q) \log x)$ primes $p \le x$.
 These exponents are not to be compared with Xylouris's $5$, whose proof uses refereed results only. From the
 half-plane, the classical argument gives every exponent above $12/5$ with Huxley's estimate and above $7/3$ with Chen,
 Gupta and Li's density estimate. A theorem of Harman on primes in a progression gives $1/0.472 < 2.1187$ from the
-half-plane; our $43/20$ is larger, and our $21/10$ smaller. Like Harman's, our proofs use his sieve, fed here by a
-Type~II estimate that sorts the characters by the largest real part of the zeros of their $L$-functions; a finite
+half-plane; our $43/20$ is larger, and our $21/10$ smaller. A numerical model of his sieve keeps it above $21/10$
+when Chen, Gupta and Li's estimate replaces Huxley's in his lemmas. Like Harman's, our proofs use his sieve, fed here
+by a Type~II estimate that sorts the characters by the largest real part of the zeros of their $L$-functions; a finite
 computation, checked by Lean's kernel, bounds the fraction of the primes that the sieve loses.
 \end{abstract}
 
@@ -151,7 +152,12 @@ The half-plane gives more than the classical argument through Harman's theorems 
 (see the subsection on related work below). His theorem of 2005 then gives Linnik's theorem with the exponent
 $1/0.472 < 2.1187$, and his theorem of 2008 gives $1/0.4736 < 2.1115$ for large moduli with only small prime
 factors. So the exponent of Theorem~\ref{thm:4320} is not the smallest that the half-plane gives: it is larger than
-both of these, and that of Theorem~\ref{thm:2110} is smaller than both.
+both of these, and that of Theorem~\ref{thm:2110} is smaller than both. With Input~\ref{inp:cgl} in the place of
+Huxley's estimate in his lemmas, a numerical model of Harman's sieve puts his method at about $2.105$ to $2.111$
+(Section~\ref{sec:comparison}). It does not reach $21/10$; what does is the estimate in one variable of
+Section~\ref{sec:window}, which his sieve has only in the special form of an estimate on four variables. In the
+model, his sieve with this estimate goes further than this paper's rules, since his Type~II region in two variables
+is the larger; so $21/10$ is not the limit of the method.
 
 \subsection*{The zeros near $\operatorname{Re} s = 1$}
 
@@ -248,8 +254,11 @@ give with and without the sieve of this paper.
 \caption{Linnik exponents from the inputs, by the classical deduction from a density exponent, by Harman's theorems
 and by the sieve of this paper (Section~\ref{sec:comparison}). The exponent $12$ comes from the trivial count, at most
 $\varphi(q)$ characters. The exponent $11667/5000 = 2.3334$ is what the library proves in place of $7/3$, from which
-it differs by a rounding. Harman's Theorem~1.2 \cite{harman08} is for large moduli with only small prime factors.}
+it differs by a rounding. Harman's Theorem~1.2 \cite{harman08} is for large moduli with only small prime factors.
+The value of Harman's sieve with Input~\ref{inp:cgl} is a numerical model's, not a theorem's
+(Section~\ref{sec:comparison}).}
 \label{tab:exponents}
+\vspace{3pt}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.40\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}l@{}}
 \toprule
 Inputs & Method & Exponent \\
@@ -266,6 +275,8 @@ Input~\ref{inp:half-plane}, Harman's Theorem~2 \cite{harman05} &
   Harman's sieve (not formalised) & $1/0.472 < 2.1187$ \\
 Input~\ref{inp:half-plane}, Harman's Theorem~1.2 \cite{harman08} &
   Harman's sieve (not formalised) & $1/0.4736 < 2.1115$ \\
+Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}, Harman's Theorem~2 with Input~\ref{inp:cgl} for Huxley's estimate &
+  Harman's sieve, a numerical model & about $2.105$--$2.111$ \\
 Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}, Ingham, Huxley & sieve, Theorem~\ref{thm:2110} & $21/10 = 2.1$ \\
 \bottomrule
 \end{tabular}
@@ -4954,9 +4965,7 @@ Input~\ref{inp:half-plane} gives. The theorem is stated because its proof, from 
 Huxley's density estimate, is given in full and formalised, and because the proof of Theorem~\ref{thm:2110} builds
 on it (Sections~\ref{sec:window} to~\ref{sec:certificate-b} add to Sections~\ref{sec:inputs} to~\ref{sec:proof}).
 The exponent of Theorem~\ref{thm:2110} is smaller than $1/0.472$ by $0.0186\ldots$, and its proof uses
-Input~\ref{inp:cgl} as well. We have not examined what Harman's argument would give with the inputs of this paper
-in the place of its own: the half-plane for its zero-free region, and Input~\ref{inp:cgl} for Huxley's large values
-estimate.
+Input~\ref{inp:cgl} as well; the next subsection asks what Harman's argument gives with that input.
 
 For the powers of a fixed prime, exponents smaller than that of Theorem~\ref{thm:4320} have been obtained without
 Input~\ref{inp:half-plane}. Banks and Shparlinski \cite{banks-shparlinski} have $2.1115$ (the value as cited in
@@ -4976,6 +4985,84 @@ ranges $0.472$, $0.4736$ and $0.4752$ above lie between these two: the corollary
 them at $20/43$, and longer at $10/21$. The corollary uses Input~\ref{inp:half-plane}, and at $10/21$
 Input~\ref{inp:cgl} as well, which have not been refereed; Harman's theorems assume their condition on the zeros
 for the one modulus.
+
+\subsection*{Harman's sieve with Input~\ref{inp:cgl}}
+
+Of the information in Harman's argument, Input~\ref{inp:half-plane} supplies the zero-free region, and
+Input~\ref{inp:cgl} can stand in for one item only, Huxley's large values estimate. That estimate enters in two places.
+It bounds the powers of the rest, a product of primes, in the Type~II estimate in two variables that Harman uses: two
+variables of exponents $a_1$ and $a_2$ in base $x$ with $|a_1 - a_2| < 2\theta - 1$, $\theta = 1 - 1/L$, and a rest
+of exponent below $\gamma(\theta)$ \cite[p.~646]{harman05}. And it bounds the powers of the prime-factored variables
+in the estimate on four variables of Harman, Kumchev and Lewis \cite{hkl}: one variable with arbitrary coefficients,
+of length at least $q$, and three prime-factored ones, whose exponents lie in one of four regions. We have not proved
+what the argument gives with Input~\ref{inp:cgl} in these places, but we have modelled it in floating point, with two
+programs in the repository on which nothing in the paper or the library depends. The first,
+\file{tools/linnik/type2\_model.py}, finds the region in which a set of large-value tools bounds a Type~II sum to one
+modulus, by a linear programme over the sizes of the polynomials. The second, \file{tools/linnik/harman\_sieve.py},
+runs Harman's sieve on such a region, with the Type~I estimates and the estimate on four variables of \cite{hkl},
+Buchstab's identity in reverse and role reversal in a chosen shape. It takes every test at a point, which is the limit
+of fine cells, and gives the fraction of the primes that the sieve loses.
+
+Three things come out. In the place where Harman's argument uses Huxley's estimate, the powers of the rest,
+Input~\ref{inp:cgl} changes nothing: with it the model gives his region exactly, and no more, at the exponents where
+we compared them, from $2.08$ to $2.12$. The region's limits, the width $2\theta - 1$ and the bound $4\theta - 2$
+on the rest's exponent, come from the mean value estimate on the two variables with arbitrary coefficients, and no
+estimate for the rest moves them. Huxley's estimate and
+Input~\ref{inp:cgl} on every sub-product of the Type~II sum, which his argument does not use, widen the region a
+little: at $L = 21/10$ the largest rest on the diagonal $a_1 = a_2$ goes from $0.0952$ to $0.0977$ with Huxley's
+estimate, and to $0.1020$ with Input~\ref{inp:cgl} as well. And on these regions, with the estimate on four
+variables as \cite{hkl} state it, the exponent at which the sieve's loss reaches $1$ moves as
+Table~\ref{tab:harman-cgl} shows: by $0.007$ to $0.011$ in all, according to the role reversal in the decomposition,
+of which Input~\ref{inp:cgl} gives $0.004$ to $0.007$.
+
+\begin{table}[t]
+\centering
+\small
+\caption{The exponent at which the loss of a model of Harman's sieve reaches $1$ (floating point, every test at a
+point; \file{tools/linnik/harman\_sieve.py}), by the information that it uses and the shape of the role reversal.
+$\mathsf R_0$: none. $\mathsf R_1$: one level, through the largest prime, in the terms of at most three primes that
+need an upper bound. $\mathsf R_2$: one level, through the largest prime, as in this paper's certificates.
+$\mathsf R_3$: every shape that the model searches. Harman's information is his region, with the best $g$ of
+\cite{bhp}, the Type~I estimates and the estimate on four variables of \cite{hkl}, and Buchstab's identity in
+reverse. The last row is this paper's rules as formalised, without the leaves cut in three.}
+\label{tab:harman-cgl}
+\vspace{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.52\textwidth}llll@{}}
+\toprule
+Information & $\mathsf R_0$ & $\mathsf R_1$ & $\mathsf R_2$ & $\mathsf R_3$ \\
+\midrule
+Harman's & $2.1292$ & $2.1035$ & $2.0937$ & $2.0891$ \\
+Harman's, with Huxley's estimate on every sub-product & $2.1248$ & $2.0999$ & $2.0919$ & $2.0873$ \\
+Harman's, with Huxley's estimate and Input~\ref{inp:cgl} on every sub-product & $2.1211$ & $2.0928$ & $2.0850$ &
+  $2.0817$ \\
+This paper's rules, without the leaves cut in three & $2.1127$ & $2.0924$ & $2.0802$ & $2.0779$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Harman's argument takes its decomposition, by the analogy, from \cite{hkl}, which reverses the roles, through the
+largest prime, in some of the terms of three primes that need an upper bound. Such a decomposition lies between the
+shapes $\mathsf R_0$ and $\mathsf R_1$, and so does his exponent $1/0.472 < 2.1187$. Lowered by the shift from the
+first row of the table to the third in those two shapes, $0.008$ and $0.011$, it becomes about $2.108$ to $2.111$. In
+the shapes of this paper's certificates, $\mathsf R_2$, the model has his information with Input~\ref{inp:cgl} at
+$2.0850$, and this paper's rules at $2.0802$. This paper's certificate passes at $21/10$, about $0.02$ above the
+model of its rules, and the same offset puts his at about $2.105$. So, as far as the model tells, Harman's argument
+with Input~\ref{inp:cgl} in his lemmas does not reach $21/10$, and this paper's rules are ahead of it in every shape
+of the table, if by little in $\mathsf R_1$.
+
+What puts them ahead is the estimate in one variable of Section~\ref{sec:window}, which takes further the second
+place for Input~\ref{inp:cgl} in Harman's argument. The estimate on four variables counts the characters at which
+three prime-factored variables are large, by the mean values of their powers and Huxley's estimate, in four regions
+of their exponents; the estimate in one variable counts them for every set of prime sums in a term's rest, by the
+mean values of their powers and by Input~\ref{inp:cgl}. Given that count for the prime sums of each term, with
+Huxley's estimate as well, Harman's information with Input~\ref{inp:cgl} goes to $2.1128$ in $\mathsf R_0$ and
+$2.0746$ in $\mathsf R_2$: level with this paper's rules in $\mathsf R_0$, and $0.006$ ahead in $\mathsf R_2$. What
+puts it ahead then is his region in two variables, the larger of the two: at every $L$ from $2.02$ to $2.30$ it
+contains the region of Definition~\ref{def:region}, with the best $g$ of Baker, Harman and Pintz's lemma \cite{bhp}
+(in exact arithmetic on a grid of step $10^{-4}$ in $L$, with a margin of at least $0.004$ in the exponent $\rho$ of
+the rest). With his region, his estimate on four variables and Buchstab's identity in reverse added to this paper's
+rules, the model has $2.0738$ in $\mathsf R_2$. So $21/10$ is not the limit of the method: the estimate in one
+variable and Harman's region in two variables go further together than either does alone.
 
 \subsection*{What the half-plane is used for}
 

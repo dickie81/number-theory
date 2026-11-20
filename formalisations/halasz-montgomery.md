@@ -219,7 +219,12 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   and are `resTestsFCH`, `frozResTestsCH` otherwise, the decoders `SieveAd.cfgIMYH`, `cfgIFYH` and the search
   `altFDYH` in `lib/pnt/SieveAdResYHDefs.lean`): the proofs of `resTestsFY_sound` and `pr_of_partDY_at` with
   those of the tests with `resXH` (`hint_cert.py --ycorner --hl`). They are the tests of the search at
-  `2100/1000` (`Linnik21000.linnik_21000`, `formalisations/harman-sieve.md`);
+  `2100/1000` (`Linnik21000.linnik_21000`, `formalisations/harman-sieve.md`). The search calls `resYH` and `resXH`
+  as `SieveResTest.resYHF` and `resXHF` (`lib/pnt/SieveResTestFDefs.lean`, written by `tools/linnik/res_test.py`),
+  the same functions (`SieveResTest.resYHF_eq`, `resXHF_eq` in `lib/pnt/SieveResTestF.lean`, which the proofs of
+  `chkIRY`, `chkIRFY`, `chkIRCH` and `chkIRFH` rewrite with) in the form that the kernel evaluates fastest: lists by
+  their recursor, `cond` and `&&` by `Bool.rec`, the piece of the curve by bisection; the kernel runs about half
+  the instructions for the test at the two corners;
 - `SieveTypeIIHM.zone_leaf` (`lib/pnt/SieveLeafZone.lean`, written by `tools/linnik/gen_leafzone.py`): `ZoneOK4` for
   the curve `g7d` (Ingham's, Chen, Gupta and Li's and Huxley's steps) on the region `LeafZone L` of the leaves,
   for every `L`: the first variable `d₁` of length `q^{m₁}`, `9/10 ≤ m₁ ≤ 6/5`, the second the cofactor, of length

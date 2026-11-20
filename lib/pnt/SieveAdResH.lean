@@ -21,6 +21,7 @@ The file imports `SieveAdFrozResTree.lean`, `SieveAdResHDefs.lean` and `SieveRes
 import SieveAdFrozResTree
 import SieveAdResHDefs
 import SieveResTestH
+import SieveResTestF
 
 open Real Finset Filter SieveDecomp SieveLeaves SieveQ SieveRough SieveRoute SieveChain SieveFamily
 
@@ -238,7 +239,7 @@ theorem evI_resCEH (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk h
         |dIP q a (boxFn bl (k' + 1) h) (fun rt => ∀ A ∈ E, A.sem rt)| ≤ (q.totient : ℝ)⁻¹ * (η * Xq q) := by
   unfold chkIRCH at hok
   rw [rpass_eq] at hok
-  simp only [Bool.and_eq_true, Nat.ble_eq, Nat.blt_eq] at hok
+  simp only [Bool.and_eq_true, Nat.ble_eq, Nat.blt_eq, SieveResTest.resXHF_eq] at hok
   obtain ⟨⟨⟨h13, hcells⟩, hns⟩, hcof⟩ := hok
   by_cases hbit : Nat.beq (Nat.land (Nat.shiftRight sr bl.length) 1) 1 = true
   swap
@@ -445,7 +446,7 @@ theorem evIF_froz_resTCH {e₁ e₂ s : ℕ} (β : List Cell) (hβl : β.length 
   unfold chkIRFH at hok
   beta_reduce at hok
   rw [rpass_eq] at hok
-  simp only [Bool.and_eq_true, Nat.ble_eq, Nat.blt_eq] at hok
+  simp only [Bool.and_eq_true, Nat.ble_eq, Nat.blt_eq, SieveResTest.resXHF_eq] at hok
   obtain ⟨⟨⟨h13, hcells⟩, hns⟩, hcof⟩ := hok
   by_cases hbit : Nat.beq (Nat.land (Nat.shiftRight sr (ch ++ β).length) 1) 1 = true
   swap
