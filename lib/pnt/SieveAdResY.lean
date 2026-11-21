@@ -5,28 +5,27 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
 Plain statements. The setting is a route with `RouteOK` whose exponent is `Lnum/Lden` (`SieveQ.IBFits`); the test
 is `SieveAdResYDefs.lean`'s `chkIRY`: `SieveResTest.resYH` on the cells of a rest of the box's primes, and of the
-box's cofactor when it is one prime. Write `κ = L/DEN`. The test gives the window's condition on the box of the
-rest's cells with the variable tied to the rest (`SieveResTest.resY_sound`), that the estimate of the tuples with
-the rest in its cells (`SieveTypeIIHM.fullEst_of_tight`), and that the box's term
-(`SieveTypeIIHM.chain_res_gen`, `chain_res_cofG`).
+box's cofactor, one part whatever its number of primes. Write `κ = L/DEN`. The test gives the window's condition on
+the box of the rest's cells with the variable tied to the rest (`SieveResTest.resY_sound`), that the estimate of the
+tuples with the rest's parts in its cells (`SieveTypeIIHM.fullEst_of_tightG`), and that the box's term
+(`SieveTypeIIHM.chain_res_gen`, `chain_res_sifG`).
 
 * `mCells`, `rpassY_eq`, `mCells_eq`: the cells at the set bits of a rest, in the list's order: what `rpassY` gives
   its continuation, and the box's cells at the indices `ridx`.
-* `fullEst_of_resYH`: **the test gives the estimate on the box of the cells**: `FullEst L e₀ n` for the region
-  `q^{κ·lo_i} ≤ x_i ≤ q^{κ·hi_i}`.
+* `fullEst_of_resYHG`: **the test gives the estimate on the box of the cells, with parts**: `FullEst L e₀ n` for the
+  region `q^{κ·lo_p} ≤ ∏_{grp i = p} x_i ≤ q^{κ·hi_p}`. `fullEst_of_resYH`: each prime its own part.
+  `fullEst_of_resYHS`: the parts of a chain's rest with a sifted cofactor of `t` primes (`SieveTypeIIHM.sifGrp`).
 * `evI_resYE`: **a box evaluated by the test at the two corners, under more atoms**: if `chkIRY` passes the box, its
   term is evaluated, with the cofactor in the rest when its bit is set. `evI_resY`, `resTestsFY_sound`: so the
   tests `resTestsFY` are sound.
 
-The file imports `SieveAdResCof.lean`, `SieveAdResYDefs.lean`, `SieveResCorner.lean`, `SieveResTermG.lean` and
-`SieveResCofG.lean`.
+The file imports `SieveAdResCof.lean`, `SieveAdResYDefs.lean`, `SieveResCorner.lean` and `SieveResTermG.lean`.
 -/
 import SieveAdResCof
 import SieveAdResYDefs
 import SieveResTestF
 import SieveResCorner
 import SieveResTermG
-import SieveResCofG
 
 open Real Finset Filter SieveDecomp SieveLeaves SieveQ SieveRoute SieveChain SieveFamily
 
@@ -99,14 +98,18 @@ variable [Route] [RouteOK] [SieveCert.IBPar] [IBFits]
 
 open SieveCert.IBPar (Lnum Lden)
 
-/-- **The test at the two corners gives the estimate on the box of the cells**: if `resYH` passes the `n + 1` cells,
-the tuples of primes with a rest in those cells, `q^{κ·lo_i} ≤ x_i ≤ q^{κ·hi_i}` with `κ = L/DEN`, are estimated
-(`SieveTypeIIHM.FullEst`), by `resY_sound` and `fullEst_of_tight`. -/
-theorem fullEst_of_resYH {cells : List Cell} {s n : ℕ} (hn : cells.length = n + 1)
-    (hT : SieveResTest.resYH Lnum Lden cells s = true) {κ : ℝ} (hκ : κ = L / DEN) {e₀ : ℝ} (he₀ : 0 < e₀) :
-    SieveTypeIIHM.FullEst L e₀ n (fun q x => ∀ i : Fin (n + 1),
-      (q : ℝ) ^ (κ * ((cells.getD i (0, 0)).1 : ℝ)) ≤ x i ∧
-        (x i : ℝ) ≤ (q : ℝ) ^ (κ * ((cells.getD i (0, 0)).2 : ℝ))) := by
+/-- **The test at the two corners gives the estimate on the box of the cells, with parts**: if `resYH` passes the
+`m + 1` cells, the tuples of `n + 1` primes whose parts (the primes `i` with `grp i = p`, each part nonempty) have
+their products in those cells, `q^{κ·lo_p} ≤ ∏_{grp i = p} x_i ≤ q^{κ·hi_p}` with `κ = L/DEN`, are estimated
+(`SieveTypeIIHM.FullEst`), by `resY_sound` and `fullEst_of_tightG`. -/
+theorem fullEst_of_resYHG {cells : List Cell} {s m : ℕ} (hn : cells.length = m + 1)
+    (hT : SieveResTest.resYH Lnum Lden cells s = true) {κ : ℝ} (hκ : κ = L / DEN) {e₀ : ℝ} (he₀ : 0 < e₀)
+    {n : ℕ} {grp : ℕ → ℕ} (hgrp : ∀ j < n + 1, grp j < m + 1) (hne : ∀ p < m + 1, ∃ j < n + 1, grp j = p) :
+    SieveTypeIIHM.FullEst L e₀ n (fun q x => ∀ p < m + 1,
+      (q : ℝ) ^ (κ * ((cells.getD p (0, 0)).1 : ℝ)) ≤
+          ∏ i ∈ Finset.univ.filter (fun i : Fin (n + 1) => grp i = p), (x i : ℝ) ∧
+        ∏ i ∈ Finset.univ.filter (fun i : Fin (n + 1) => grp i = p), (x i : ℝ) ≤
+          (q : ℝ) ^ (κ * ((cells.getD p (0, 0)).2 : ℝ))) := by
   have hD := DEN_pos'
   have hL0 : 0 < L := L_pos
   obtain ⟨hden, -⟩ := lnum_eq
@@ -119,24 +122,69 @@ theorem fullEst_of_resYH {cells : List Cell} {s n : ℕ} (hn : cells.length = n 
   have hres := SieveResTest.resY_sound hLd hT
   obtain ⟨hord, hroom⟩ := SieveResTest.resY_room hLd hT
   rw [hLeq, hDD, ← hκ, hn] at hres hroom
-  refine SieveTypeIIHM.fullEst_of_tight SieveCurveHx.ghx_le_one SieveCurveHx.ghx_half SieveCurveHx.counts_hx
-    hL0 L_le he₀ (lo := fun j => κ * ((cells.getD j (0, 0)).1 : ℝ))
+  refine SieveTypeIIHM.fullEst_of_tightG SieveCurveHx.ghx_le_one SieveCurveHx.ghx_half SieveCurveHx.counts_hx
+    hL0 L_le he₀ hgrp hne (lo := fun j => κ * ((cells.getD j (0, 0)).1 : ℝ))
     (hi := fun j => κ * ((cells.getD j (0, 0)).2 : ℝ)) (fun j hj => ⟨by positivity, ?_⟩) ?_ hres
   · have hj' : j < cells.length := by rw [hn]; exact hj
     have h1 : (cells.getD j (0, 0)).1 ≤ (cells.getD j (0, 0)).2 := by
       rw [List.getD_eq_getElem _ _ hj']
       exact hord _ (List.getElem_mem hj')
     exact mul_le_mul_of_nonneg_left (Nat.cast_le.2 h1) hκ0.le
-  · show ∑ j ∈ Finset.range (n + 1), κ * ((cells.getD j (0, 0)).2 : ℝ) + 1 / 10 ^ 5 ≤ L
+  · show ∑ j ∈ Finset.range (m + 1), κ * ((cells.getD j (0, 0)).2 : ℝ) + 1 / 10 ^ 5 ≤ L
     linarith
+
+/-- **The test at the two corners gives the estimate on the box of the cells**: if `resYH` passes the `n + 1` cells,
+the tuples of primes with a rest in those cells, `q^{κ·lo_i} ≤ x_i ≤ q^{κ·hi_i}` with `κ = L/DEN`, are estimated
+(`SieveTypeIIHM.FullEst`): `fullEst_of_resYHG` with each prime its own part. -/
+theorem fullEst_of_resYH {cells : List Cell} {s n : ℕ} (hn : cells.length = n + 1)
+    (hT : SieveResTest.resYH Lnum Lden cells s = true) {κ : ℝ} (hκ : κ = L / DEN) {e₀ : ℝ} (he₀ : 0 < e₀) :
+    SieveTypeIIHM.FullEst L e₀ n (fun q x => ∀ i : Fin (n + 1),
+      (q : ℝ) ^ (κ * ((cells.getD i (0, 0)).1 : ℝ)) ≤ x i ∧
+        (x i : ℝ) ≤ (q : ℝ) ^ (κ * ((cells.getD i (0, 0)).2 : ℝ))) := by
+  refine SieveTypeIIHM.FullEst.mono (fullEst_of_resYHG hn hT hκ he₀ (n := n) (grp := id) (fun j hj => hj)
+    (fun p hp => ⟨p, hp, rfl⟩)) fun q x hx p hp => ?_
+  have hsing : Finset.univ.filter (fun i : Fin (n + 1) => id (i : ℕ) = p) = {⟨p, hp⟩} := by
+    ext i
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, id, Finset.mem_singleton]
+    exact ⟨fun h => Fin.ext h, fun h => by rw [h]⟩
+  rw [hsing, Finset.prod_singleton]
+  exact hx ⟨p, hp⟩
+
+/-- **The test at the two corners gives the estimate with a sifted cofactor**: if `resYH` passes the `n + 2` cells,
+then for each number `t ≥ 1` of the cofactor's primes the tuples of `n + 1 + t` primes with the first `n + 1` in the
+first `n + 1` cells and the product of the last `t` in the last cell are estimated: `fullEst_of_resYHG` with the parts
+`SieveTypeIIHM.sifGrp n`. -/
+theorem fullEst_of_resYHS {cells : List Cell} {s n : ℕ} (hn : cells.length = n + 1 + 1)
+    (hT : SieveResTest.resYH Lnum Lden cells s = true) {κ : ℝ} (hκ : κ = L / DEN) {e₀ : ℝ} (he₀ : 0 < e₀)
+    (t : ℕ) (ht : 1 ≤ t) :
+    SieveTypeIIHM.FullEst L e₀ (n + t) (fun q x =>
+      (∀ i : Fin (n + 1), (q : ℝ) ^ (κ * ((cells.getD i (0, 0)).1 : ℝ)) ≤ x (Fin.castLE (by omega) i) ∧
+        (x (Fin.castLE (by omega) i) : ℝ) ≤ (q : ℝ) ^ (κ * ((cells.getD i (0, 0)).2 : ℝ))) ∧
+      (q : ℝ) ^ (κ * ((cells.getD (n + 1) (0, 0)).1 : ℝ)) ≤
+          ((∏ i ∈ Finset.univ.filter (fun i : Fin (n + t + 1) => SieveTypeIIHM.sifGrp n i = n + 1), x i : ℕ) : ℝ) ∧
+        ((∏ i ∈ Finset.univ.filter (fun i : Fin (n + t + 1) => SieveTypeIIHM.sifGrp n i = n + 1), x i : ℕ) : ℝ) ≤
+          (q : ℝ) ^ (κ * ((cells.getD (n + 1) (0, 0)).2 : ℝ))) := by
+  refine SieveTypeIIHM.FullEst.mono (fullEst_of_resYHG hn hT hκ he₀ (n := n + t) (grp := SieveTypeIIHM.sifGrp n)
+    (fun j hj => ?_) (fun p hp => ?_)) fun q x hx p hp => ?_
+  · unfold SieveTypeIIHM.sifGrp
+    split_ifs <;> omega
+  · by_cases hp' : p < n + 1
+    · exact ⟨p, by omega, by unfold SieveTypeIIHM.sifGrp; rw [ite_eq_left hp']⟩
+    · exact ⟨n + 1, by omega, by unfold SieveTypeIIHM.sifGrp; rw [ite_eq_right (by omega)]; omega⟩
+  · by_cases hp' : p < n + 1
+    · rw [SieveTypeIIHM.filter_sifGrp_lt hp', Finset.prod_singleton]
+      exact hx.1 ⟨p, hp'⟩
+    · obtain rfl : p = n + 1 := by omega
+      push_cast at hx
+      exact hx.2
 
 /-! ### A box evaluated by the test at the two corners -/
 
 set_option maxHeartbeats 4000000 in
 /-- **A box evaluated by the test at the two corners, under more atoms.** If `chkIRY` passes the box with the rest
 `sr`, the term of the box is evaluated under `m` more atoms, uniformly in the atoms, when the box's atoms and those
-are at most `40`: by `chain_res_cofG` with the cofactor's cell when the bit after the box's cells is set, and by
-`chain_res_gen` otherwise, on the estimate `fullEst_of_resYH`. -/
+are at most `40`: by `chain_res_sifG` with the cofactor's cell when the bit after the box's cells is set, on the
+estimate `fullEst_of_resYHS`, and by `chain_res_gen` otherwise, on the estimate `fullEst_of_resYH`. -/
 theorem evI_resYE (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr s : ℕ)
     (hok : chkIRY bl sr s = true) {m : ℕ} (hm : 3 * min (k' + 1) 13 + m ≤ 40) :
     ∀ η : ℝ, 0 < η → ∀ᶠ q : ℕ in atTop, ∀ a : ZMod q, IsUnit a → ∀ E : List (Atom (k' + 1)), E.length ≤ m →
@@ -203,14 +251,14 @@ theorem evI_resYE (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr s : �
   -- the cofactor in the rest, its cell after the box's
   rw [hbit, Bool.cond_true] at hcof
   simp only [Bool.and_eq_true, Nat.ble_eq] at hcof
-  obtain ⟨⟨hshi, hslo⟩, hT⟩ := hcof
+  obtain ⟨hshi, hT⟩ := hcof
   have hlos : loSum bl = ∑ i, (bx i).1 := by rw [loSum_eq, hbx, sum_boxFn (fun c => c.1) bl _ h]
   have hhis : hiSum bl = ∑ i, (bx i).2 := by rw [hiSum_eq, hbx, sum_boxFn (fun c => c.2) bl _ h]
   have hhead : headLo bl = (bx (Fin.last k')).1 := headLo_eq bl k' h
-  simp only [Nat.add_eq, Nat.sub_eq, Nat.mul_eq] at hT hshi hslo
-  rw [hlos] at hT hslo
+  simp only [Nat.add_eq, Nat.sub_eq] at hT hshi
+  rw [hlos] at hT
   rw [hhis] at hT hshi
-  rw [hhead] at hT hslo
+  rw [hhead] at hT
   set cl := maxN (DEN - ∑ i, (bx i).2 - 1) (bx (Fin.last k')).1 with hcl
   set cu := DEN - ∑ i, (bx i).1 + 1 with hcu
   set cs : List Cell := mCells bl sr ++ [(cl, cu)] with hcs
@@ -224,9 +272,12 @@ theorem evI_resYE (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr s : �
     rw [hcs, List.getD_eq_getElem _ _ (by rw [List.length_append, hn]; simp),
       List.getElem_append_right (by rw [hn])]
     simp [hn]
-  have hfull := fullEst_of_resYH hcsn hT hκdef he₀
   intro η hη
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveTypeIIHM.chain_res_cofG he₀ k' 40 (Λ₁ := L + 1) (by linarith) hfull
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveTypeIIHM.chain_res_sifG he₀ k' 40 (Λ₁ := L + 1) (by linarith)
+    (Reg := fun q xs y => (∀ i : Fin (n + 1), (q : ℝ) ^ (κ * ((cs.getD i (0, 0)).1 : ℝ)) ≤ xs i ∧
+        (xs i : ℝ) ≤ (q : ℝ) ^ (κ * ((cs.getD i (0, 0)).2 : ℝ))) ∧
+      (q : ℝ) ^ (κ * ((cs.getD (n + 1) (0, 0)).1 : ℝ)) ≤ y ∧ (y : ℝ) ≤ (q : ℝ) ^ (κ * ((cs.getD (n + 1) (0, 0)).2 : ℝ)))
+    (fun t ht => fullEst_of_resYHS hcsn hT hκdef he₀ t ht)
   filter_upwards [eventually_ge_atTop q₀, eventually_ge_atTop 2, le_Xq hδ hη, big_ev] with q hq hq2 hX hbig a ha E
     hEl hEt
   have : NeZero q := ⟨by omega⟩
@@ -242,26 +293,15 @@ theorem evI_resYE (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr s : �
       obtain ⟨hsa, hcc⟩ := (sem_specB q bx rt).1
         fun A hA => (holds_iff_sem hthr hp).1 hΩ A (List.mem_append_left _ hA)
       have hcx : ∀ i, Xe q (bx i).1 ≤ rt i ∧ (rt i : ℝ) < Xe q (bx i).2 := fun i => hcc i
-      obtain ⟨hf0, hf2, hf1⟩ := cof_facts hbig bx rt hcx (fun i => (hbxc i).2.1) hshi hslo
-      refine ⟨hsa, fun i => ?_, hf0, hf2, fun y hy hylo hyhi i => ?_⟩
+      obtain ⟨hf0, hf1⟩ := cof_facts hbig bx rt hcx (fun i => (hbxc i).2.1) hshi
+      refine ⟨hsa, fun i => ?_, hf0, fun y hy hylo hyhi => ⟨fun j => ?_, ?_⟩⟩
       · rw [hκdef, qpow_eq]
         exact (pow_mono hx1 (hbxc i).1).trans (hcc i).1
+      · rw [hcsj' j, hqx, hqx]
+        exact ⟨(hcc (r j)).1, (hcc (r j)).2.le⟩
       · obtain ⟨hyc, hyC⟩ := hf1 y hy hylo hyhi
-        induction i using Fin.lastCases with
-        | last =>
-          show (q : ℝ) ^ (κ * ((cs.getD (n + 1) (0, 0)).1 : ℝ)) ≤
-              (Fin.snoc (α := fun _ => ℕ) (fun i => rt (r i)) y (Fin.last (n + 1)) : ℕ) ∧
-            ((Fin.snoc (α := fun _ => ℕ) (fun i => rt (r i)) y (Fin.last (n + 1)) : ℕ) : ℝ) ≤
-              (q : ℝ) ^ (κ * ((cs.getD (n + 1) (0, 0)).2 : ℝ))
-          rw [Fin.snoc_last, hcsl, hqx, hqx]
-          exact ⟨hyc, hyC⟩
-        | cast j =>
-          show (q : ℝ) ^ (κ * ((cs.getD (j : ℕ) (0, 0)).1 : ℝ)) ≤
-              (Fin.snoc (α := fun _ => ℕ) (fun i => rt (r i)) y (Fin.castSucc j) : ℕ) ∧
-            ((Fin.snoc (α := fun _ => ℕ) (fun i => rt (r i)) y (Fin.castSucc j) : ℕ) : ℝ) ≤
-              (q : ℝ) ^ (κ * ((cs.getD (j : ℕ) (0, 0)).2 : ℝ))
-          rw [Fin.snoc_castSucc, hcsj' j, hqx, hqx]
-          exact ⟨(hcc (r j)).1, (hcc (r j)).2.le⟩)
+        rw [hcsl, hqx, hqx]
+        exact ⟨hyc, hyC⟩)
   rw [RTg_eq_of_thrOK hthr, sum_dw_famI, Complex.norm_real, Real.norm_eq_abs] at hmain
   rw [dIP_eq_famSet]
   exact hmain.trans (mul_le_mul_of_nonneg_left hX hφ)

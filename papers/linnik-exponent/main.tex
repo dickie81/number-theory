@@ -316,8 +316,9 @@ to 3, the search of item 4, and items 5 to 8.
   the estimate holds where the bound for every class is below the main term.
 \item \emph{The tests of that estimate} (Sections~\ref{sec:window-terms} to~\ref{sec:window-tests}). A term is
   evaluated by the estimate in one variable: some of its primes, the rest, give the prime sums of $S$, and its other
-  primes and its cofactor give $W$; a cofactor of one prime may be in the rest. The condition on the classes
-  is checked on finitely many integers for a whole range of primes.
+  primes and its cofactor give $W$. The cofactor may be in the rest too, as one part whatever its number of primes: a
+  product of prime sums is counted as one prime sum of its length is (Lemma~\ref{lem:part}). The condition on the
+  classes is checked on finitely many integers for a whole range of primes.
 \item \emph{Two more rules} (Section~\ref{sec:rules}). Leaves beyond the reach of the bilinear Type~I estimate are cut
   in three ranges: two that it reaches, and a third bounded by an estimate in two variables with a fourth moment. A term
   of the sign $+$ may be reversed as in item~3.
@@ -2751,8 +2752,8 @@ Throughout, $q > 1$, $S_Q(\chi, h)$ is the smoothed prime sum of Section~\ref{se
   W(\chi) = \sum_{n \in S} a_n \chi(n) n^{-ih_0}, \qquad S \subseteq (P, 2P], \qquad V = \sum_{n \in S} |a_n|^2,
 \]
 is \emph{the variable}, of length $P = q^m$. The \emph{rest} is a product of prime sums $S_{Q_j}(\chi, h_j)$, $1 \le j
-\le K$, with $Q_j = q^{s_j}$. Exponents are exponents of $q$, except the sizes $t_j$ below, which are exponents of
-$Q_j$.
+\le K$, with $Q_j = q^{s_j}$, and it is counted part by part: a part is one prime sum or a product of several (the
+classes below). Exponents are exponents of $q$, except the sizes $t_j$ below, which are exponents of a part's length.
 
 \subsubsection*{The characters at which a prime sum is large}
 
@@ -2813,7 +2814,7 @@ $u < 7/10 + \epsilon_{\mathrm{lv}}$ and for $ks \ge 5/2$. At $u = 3/4$ and $5/6
 2\epsilon_{\mathrm{lv}}$: there Input~\ref{inp:cgl} counts fewer characters.
 
 \begin{lemma}[the large values of the powers]\label{lem:lv-powers}
-% Lean: SieveTypeIIHM.card_Sp_large_lv, SieveTypeIIHM.card_Sp_pow_large, SieveTypeIIHM.lvExp, SieveTypeIIHM.lvRaw, LinnikCGLLV.cgl_all, LinnikCGLLV.lv_range
+% Lean: SieveTypeIIHM.card_prodSp_large_lv with one prime sum, SieveTypeIIHM.card_prodSp_pow_large, SieveTypeIIHM.lvExp, SieveTypeIIHM.lvRaw, LinnikCGLLV.cgl_all, LinnikCGLLV.lv_range
 Assume Input~\ref{inp:cgl}. Let $k_{\max} \ge 1$ be an integer and $F_1 \ge 1$. There are $C \ge 1$ and $q_0$ such that
 for every $q \ge q_0$, every real function $f$ with $|f| \le F_1$ and support in $[1/2, 2]$, all reals $Q \ge 4$,
 $h$ and $u$, and every integer $1 \le k \le k_{\max}$, the prime sum $S_Q(\chi, h)$ formed with $f$ in place of $f_0$
@@ -2851,28 +2852,71 @@ then a constant times $q$ to a term of $\mathfrak r_k(s, u')$, so the count is a
 $k_{\max}$ and $F_1$ only, times $q^{\mathfrak r_k(s, u') + \epsilon_{\mathrm{lv}}}$.
 \end{proof}
 
+\subsubsection*{Parts}
+
+A \emph{part} of the rest is a product $G(\chi) = \prod_{i \in \mathcal P} S_{Q_i}(\chi, h_i)$ of some of its prime
+sums, of length $M = \prod_{i \in \mathcal P} Q_i$. A part of one prime sum is that prime sum. A part of several is
+what a sifted cofactor gives when it is written out as its primes (Section~\ref{sec:window-terms}): their scales are
+not cut into cells, only their product is bounded. The characters at which a part is large are counted as for one
+prime sum of length $M$.
+
+\begin{lemma}[a part]\label{lem:part}
+% Lean: SieveTypeIIHM.card_prodSp_large, SieveTypeIIHM.card_prodSp_large_lv, SieveTypeIIHM.card_part_large, SieveTypeIIHM.card_part_large_lv, SieveTypeIIHM.sum_chars_prod_Sp_sq_le
+Let $t \ge 1$, $Q_1, \dots, Q_t \ge 1$ and $h_1, \dots, h_t$ be real, $G = \prod_{i=1}^t S_{Q_i}(\chi, h_i)$, $M = Q_1
+\cdots Q_t$ and $s = \log_q M$.
+\begin{enumerate}
+\item[(a)] For $q > 1$, every integer $k \ge 1$ and every real $u$,
+  \[
+    \#\{\chi \bmod q : |G(\chi)| \ge M^u\} \le (2^{tk} + 1)\, (kt)^{kt} (3F_0^2)^{kt}\, q^{\mathfrak m_k(s, u)}.
+  \]
+\item[(b)] Assume Input~\ref{inp:cgl}. Let $k_{\max}, t_{\max} \ge 1$ be integers and $F_1 \ge 1$. There are $C \ge 1$
+  and $q_0$ such that for every $q \ge q_0$, every $f$ as in Lemma~\ref{lem:lv-powers}, $t \le t_{\max}$, $Q_i \ge 4$,
+  every real $u$ and every integer $1 \le k \le k_{\max}$, the part formed with $f$ in place of $f_0$ has
+  $\#\{\chi \bmod q : |G(\chi)| \ge M^u\} \le C\, q^{\mathfrak v_k(s, u)}$.
+\end{enumerate}
+\end{lemma}
+
+So a part's counts are those of Lemmas~\ref{lem:moments} and~\ref{lem:lv-powers} at its length, with constants that
+depend on $t$ as well.
+
+\begin{proof}
+The part is the Dirichlet polynomial over the products $p_1 \cdots p_t$ of one prime $p_i \le 2Q_i$ from each range,
+with the products of the coefficients, and $G^k$ is the product of the $kt$ prime sums indexed by $\{1, \dots, k\}
+\times \{1, \dots, t\}$. A tuple of $kt$ primes with a given product $n$ has its entries among the prime factors of
+$n$, of which there are at most $kt$; so at most $(kt)^{kt}$ tuples have the product $n$, and $G^k = \sum_n c_n
+\chi(n)$ with $\sum_n |c_n|^2 \le (kt)^{kt} (3F_0^2)^{kt} M^k$ by Cauchy--Schwarz, and $c_n = 0$ for $n > (2^tM)^k$.
+(a) is then the proof of Lemma~\ref{lem:moments}, with $(2^tM)^k + q \le (2^{tk} + 1) q^{\max(1, ks)}$. For (b),
+$|c_n| \le (kt)^{kt} F_1^{kt}$ and $c_n = 0$ outside $[(M/2^t)^k, (2^tM)^k] = [(Q'/2)^{kt}, (2Q')^{kt}]$ with $Q' =
+M^{1/t}$. The proof of Lemma~\ref{lem:lv-powers} applies, with $2kt + 1$ dyadic blocks and $B_{kt}$ in place of $B_k$;
+its exponents read only the length $M^k = q^{ks}$ of $G^k$ and the threshold $M^{ku}$, and are those of a prime sum of
+length $M$.
+\end{proof}
+
 \subsubsection*{The classes}
 
-Let $\tau = 10^{-6}$. The \emph{level} of the $j$-th prime sum at $\chi$ is
+Let $\tau = 10^{-6}$, and let the rest's prime sums be grouped into $K'$ nonempty parts $G_1, \dots, G_{K'}$, the
+$j$-th of $n_j$ prime sums and of length $M_j = q^{s_j}$; where nothing else is said, each prime sum is a part of its
+own. The \emph{level} of the $j$-th part at $\chi$ is
 \[
-  \ell_j(\chi) = \min\bigl(10^6,\ \lfloor \tau^{-1} \log_{Q_j} |S_{Q_j}(\chi, h_j)| \rfloor\bigr),
+  \ell_j(\chi) = \min\bigl(10^6,\ \lfloor \tau^{-1} \log_{M_j} |G_j(\chi)| \rfloor\bigr),
 \]
-the integer part taken as $0$ where the logarithm is negative and where the sum vanishes. If $\ell_j(\chi) \ge 1$ then
-$|S_{Q_j}(\chi, h_j)| \ge Q_j^{\tau\ell_j(\chi)}$, and if $\ell_j(\chi) < 10^6$ then $|S_{Q_j}(\chi, h_j)| \le
-Q_j^{(\ell_j(\chi) + 1)\tau}$. The \emph{class} of $\chi \in \mathcal X^*$ is its bin $i$ (Section~\ref{sec:bins})
-together with the levels of its prime sums, $(i, \ell_1(\chi), \dots, \ell_K(\chi))$; there are at most $I (10^6 +
-1)^K$ classes, with $I = 500000$ the number of bins.
+the integer part taken as $0$ where the logarithm is negative and where the part vanishes. If $\ell_j(\chi) \ge 1$ then
+$|G_j(\chi)| \ge M_j^{\tau\ell_j(\chi)}$, and if $\ell_j(\chi) < 10^6$ then $|G_j(\chi)| \le M_j^{(\ell_j(\chi) +
+1)\tau}$. The \emph{class} of $\chi \in \mathcal X^*$ is its bin $i$ (Section~\ref{sec:bins}) together with the levels
+of its parts, $(i, \ell_1(\chi), \dots, \ell_{K'}(\chi))$; there are at most $I (10^6 + 1)^{K'}$ classes, with $I =
+500000$ the number of bins.
 
-On a class each prime sum is at most $2Q_j^{t_j}$, with the \emph{size} $t_j$ the smaller of the zeros' bound
-$\beta_{i+1} + 2\delta$ of Section~\ref{sec:bins} and, if $\ell_j < 10^6$, the bound $(\ell_j + 1)\tau$ of the level.
-The class has at most about $q^\gamma$ characters, with the \emph{count exponent} $\gamma$ the least of
-the density curve's exponent at the bin and the exponents of Lemmas~\ref{lem:moments} and~\ref{lem:lv-powers} at the
-levels. A class is bounded as a bin is in Section~\ref{sec:zone}, by orthogonality or by the Hal\'asz--Montgomery
-inequality, but in one variable: Cauchy--Schwarz is taken over the class, and the inequality is used in its first-moment
-form, $(\sum_{\chi \in \mathcal X} |W(\chi)|)^2 \le eV(2P|\mathcal X| + |\mathcal X|^2 \mathcal H)$, which follows from
-Lemma~\ref{lem:hm-sq} (the remark after it). With $\mathcal X$ of about $q^\gamma$ characters, the rest at most about
-$q^E$ on it, and $V^{1/2} = q^{m/2}(V/P)^{1/2}$, the three bounds (orthogonality, and the two terms of this
-inequality) have the exponents of $q$ below.
+On a class the $j$-th part is at most $2^{n_j} M_j^{t_j}$, with the \emph{size} $t_j$ the smaller of the zeros' bound
+$\beta_{i+1} + 2\delta$ of Section~\ref{sec:bins}, which bounds each of its prime sums, and, if $\ell_j < 10^6$, the
+bound $(\ell_j + 1)\tau$ of the level. The class has at most about $q^\gamma$ characters, with the \emph{count
+exponent} $\gamma$ the least of the density curve's exponent at the bin and the exponents of Lemma~\ref{lem:part}
+(Lemmas~\ref{lem:moments} and~\ref{lem:lv-powers} for a part of one prime sum) at the levels. A class is bounded as a
+bin is in Section~\ref{sec:zone}, by orthogonality or by the Hal\'asz--Montgomery inequality, but in one variable:
+Cauchy--Schwarz is taken over the class, and the inequality is used in its first-moment form, $(\sum_{\chi \in
+\mathcal X} |W(\chi)|)^2 \le eV(2P|\mathcal X| + |\mathcal X|^2 \mathcal H)$, which follows from Lemma~\ref{lem:hm-sq}
+(the remark after it). With $\mathcal X$ of about $q^\gamma$ characters, the rest at most about $q^E$ on it, and
+$V^{1/2} = q^{m/2}(V/P)^{1/2}$, the three bounds (orthogonality, and the two terms of this inequality) have the
+exponents of $q$ below.
 
 \begin{definition}\label{def:fit}
 % Lean: SieveTypeIIHM.ResBinOK
@@ -2915,14 +2959,14 @@ The \emph{resonance condition} $\operatorname{Res}_L(m; s_1, \dots, s_K)$ holds 
 fit at $L$.
 \end{definition}
 
-The first exponent is that of $\prod_j Q_j^{t_j} = q^{\sum_j s_j(t_j - 1)} \prod_j Q_j$ when $\prod_j Q_j \le q^{L -
-m}$. The bound $t_j \le \beta + 4 \cdot 10^{-6}$ is the zeros' bound in the bin of $\beta$, rounded up: there $t_j \le
-\beta_{i+1} + 2\delta = \beta + \varpi$, and $\varpi < 2.9 \cdot 10^{-6}$ (Section~\ref{sec:bins}) is rounded up
-to $4 \cdot 10^{-6}$. The left sides of Definition~\ref{def:fit} increase with $\gamma$ and with each $t_j$, while
-the hypotheses bound $\gamma$ by functions of $t_j$ that do not increase. So the condition weighs the size of a prime
-sum against the number of characters at which
-it can be that large, and the classes that bind combine a large size with as many characters as the counts allow at
-that size. The condition reads $m$ and each $s_j$, not only their sum, and the variable may be shorter than $q$.
+The first exponent is that of $\prod_j M_j^{t_j} = q^{\sum_j s_j(t_j - 1)} \prod_j M_j$ when $\prod_j M_j \le q^{L -
+m}$, for parts of lengths $M_j = q^{s_j}$. The bound $t_j \le \beta + 4 \cdot 10^{-6}$ is the zeros' bound in the bin
+of $\beta$, rounded up: there $t_j \le \beta_{i+1} + 2\delta = \beta + \varpi$, and $\varpi < 2.9 \cdot 10^{-6}$
+(Section~\ref{sec:bins}) is rounded up to $4 \cdot 10^{-6}$. The left sides of Definition~\ref{def:fit} increase with
+$\gamma$ and with each $t_j$, while the hypotheses bound $\gamma$ by functions of $t_j$ that do not increase. So the
+condition weighs the size of a part against the number of characters at which it can be that large, and the classes
+that bind combine a large size with as many characters as the counts allow at that size. The condition reads $m$ and
+each $s_j$, not only their sum, and the variable may be shorter than $q$.
 
 \begin{lemma}[one class]\label{lem:class}
 % Lean: SieveTypeIIHM.bin_bound_exp, SieveTypeIIHM.sum_typeII_cls, SieveTypeIIHM.sum_bin_hm, SieveTypeII.sum_chars_dp_sq_le
@@ -2969,12 +3013,13 @@ q^\eta$, and the constants are at most $C'$.
 \end{proof}
 
 \begin{theorem}[the resonant window]\label{thm:window}
-% Lean: SieveTypeIIHM.typeII_res, SieveCurveHx.counts_hx, SieveCurveHx.ghx_le_one, SieveCurveHx.ghx_half
+% Lean: SieveTypeIIHM.typeII_resG, SieveTypeIIHM.typeII_res, SieveCurveHx.counts_hx, SieveCurveHx.ghx_le_one, SieveCurveHx.ghx_half
 Assume Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}. Let $L$ be real, let $K_0 \ge 0$ be an integer, $e_1 > 0$ and $0
 < \eta \le 10^{-5}$. There is $q_0$, depending on $f_0$, $K_0$, $e_1$, $\eta$ and $L$, such that for every $q \ge q_0$,
 every integer $P \ge 1$, every $S \subseteq (P, 2P]$, all coefficients $a_n$ and $h_0 \in \mathbb R$, every $K \le
-K_0$, and all $Q_1, \dots, Q_K \ge q^{e_1}$ and $|h_1|, \dots, |h_K| \le q^\eta$ with $Q_1 \cdots Q_K \le 2^{K_0}
-q^L/P$, if $\operatorname{Res}_L(\log_q P; \log_q Q_1, \dots, \log_q Q_K)$ holds, then
+K_0$, all $Q_1, \dots, Q_K \ge q^{e_1}$ and $|h_1|, \dots, |h_K| \le q^\eta$ with $Q_1 \cdots Q_K \le 2^{K_0}
+q^L/P$, and every grouping of $\{1, \dots, K\}$ into nonempty parts $\mathcal P_1, \dots, \mathcal P_{K'}$, with $M_j =
+\prod_{a \in \mathcal P_j} Q_a$, if $\operatorname{Res}_L(\log_q P; \log_q M_1, \dots, \log_q M_{K'})$ holds, then
 \[
   \sum_{\chi \in \mathcal X^*} |W(\chi)| \prod_{j=1}^K |S_{Q_j}(\chi, h_j)| \le q^{L - 1/50000} \Bigl(\frac VP
   \Bigr)^{1/2}.
@@ -2984,39 +3029,41 @@ q^L/P$, if $\operatorname{Res}_L(\log_q P; \log_q Q_1, \dots, \log_q Q_K)$ holds
 As after Theorem~\ref{thm:type2}, the trivial character's term is at most a constant times $q^L(V/P)^{1/2}$, and the
 bound saves $q^{-1/50000}$ against it. The proof is that of Proposition~\ref{prop:type2-gen}, with the classes in place
 of the bins: each class satisfies the hypotheses of Lemma~\ref{lem:class} at exponents that the condition makes fit.
+With each prime sum a part of its own, the condition is read at the prime sums' exponents; a part of several prime
+sums is read at its length, as one prime sum of that length is.
 Of the curve $g_{\mathrm H}$ it uses only that it is a density curve (Proposition~\ref{prop:curve}) with $g_{\mathrm H}
 \le 1$ and $g_{\mathrm H}(1/2) = 1$ (for the bin $0$, Section~\ref{sec:bins}).
 
 \begin{proof}
 Take $\delta = 10^{-6}$, $H = q^\eta$, $T = 2H + 1 \le 3q^\eta$ and the bins of Section~\ref{sec:bins}. Write $m =
-\log_q P$ and $s_j = \log_q Q_j \ge e_1$. As there, for large $q$ each $Q_j \ge 4$ and $Q_j \le q^{1 + L}$, and in the
-bin $i$ every $|S_{Q_j}(\chi, h_j)| \le 2Q_j^{\beta_{i+1} + 2\delta}$. Let $F_0$ bound $|f_0|$, $k_1 = \lceil 1/e_1
-\rceil + 1$, $k_2 = \lceil 5/(2e_1) \rceil + 1$, and let $C_{\mathrm{lv}}$ be the constant of
-Lemma~\ref{lem:lv-powers} at $k_{\max} = k_2$ and $F_1 = \max(F_0, 1)$, for $q$ beyond the lemma's $q_0$; let $C_d$ be
-the largest of $C_{\mathrm{lv}}$, $1$, the constant of the density curve $g_{\mathrm H}$, and the constants of
-Lemma~\ref{lem:moments} for $1 \le k \le k_1$.
+\log_q P$, and for the parts $s_j = \log_q M_j \ge e_1$ and $n_j = |\mathcal P_j|$, so that $G_j = \prod_{a \in
+\mathcal P_j} S_{Q_a}(\chi, h_a)$. As there, for large $q$ each $Q_a \ge 4$ and $Q_a \le q^{1 + L}$, and in the bin $i$
+every $|S_{Q_a}(\chi, h_a)| \le 2Q_a^{\beta_{i+1} + 2\delta}$, so every $|G_j(\chi)| \le 2^{n_j} M_j^{\beta_{i+1} +
+2\delta}$. Let $F_0$ bound $|f_0|$, $k_1 = \lceil 1/e_1 \rceil + 1$, $k_2 = \lceil 5/(2e_1) \rceil + 1$, and let
+$C_{\mathrm{lv}}$ be the constant of Lemma~\ref{lem:part}(b) at $k_{\max} = k_2$, $t_{\max} = K_0$ and $F_1 = \max(F_0,
+1)$, for $q$ beyond the lemma's $q_0$; let $C_d$ be the largest of $C_{\mathrm{lv}}$, $1$, the constant of the density
+curve $g_{\mathrm H}$, and the constants of Lemma~\ref{lem:part}(a) for $1 \le k \le k_1$ and $1 \le t \le K_0$.
 
-Fix a class $c = (i, \ell_1, \dots, \ell_K)$, and let $t_j = \min(\beta_{i+1} + 2\delta, (\ell_j + 1)\tau)$ if
+Fix a class $c = (i, \ell_1, \dots, \ell_{K'})$, and let $t_j = \min(\beta_{i+1} + 2\delta, (\ell_j + 1)\tau)$ if
 $\ell_j < 10^6$ and $t_j = \beta_{i+1} + 2\delta$ if $\ell_j = 10^6$. Then $t_j \le \beta_i + 1/1200000 + 2 \cdot
 10^{-6} \le \beta_i + 4 \cdot 10^{-6}$.
 
-\emph{The rest.} On the class, $|S_{Q_j}(\chi, h_j)| \le 2Q_j^{t_j}$, by the bin and by the level of the prime sum. So
-the product is
-at most $2^K q^{\sum_j s_j t_j} = 2^K q^{\sum_j s_j(t_j - 1)} \prod_j Q_j \le 4^{K_0} q^E$, with $E = \sum_j s_j(t_j -
-1) + L - m$, since $\prod_j Q_j \le 2^{K_0} q^{L - m}$.
+\emph{The rest.} On the class, $|G_j(\chi)| \le 2^{n_j} M_j^{t_j}$, by the bin and by the level of the part. So the
+product of the prime sums is at most $2^K q^{\sum_j s_j t_j} = 2^K q^{\sum_j s_j(t_j - 1)} \prod_j M_j \le 4^{K_0}
+q^E$, with $E = \sum_j s_j(t_j - 1) + L - m$, since $\prod_j M_j = \prod_a Q_a \le 2^{K_0} q^{L - m}$.
 
 \emph{The count.} Let $\gamma$ be the least of $g_{\mathrm H}(\beta_i)$, of $\mathfrak m_k(s_j, \tau\ell_j)$ for $1 \le
 k \le k_1$, and of $\mathfrak v_k(s_j, \tau\ell_j)$ for $1 \le k \le k_2$, over the $j$ with $\ell_j \ge 1$. The class
 lies in the set counted by the least of these: the bin $i$, with at most $C_d (qT)^{g_{\mathrm H}(\beta_i)} (1 + \log
-qT)^{10}$ characters (Section~\ref{sec:bins}), or, for a $j$ with $\ell_j \ge 1$, the characters with $|S_{Q_j}(\chi,
-h_j)| \ge Q_j^{\tau\ell_j}$, counted by Lemma~\ref{lem:moments} or Lemma~\ref{lem:lv-powers}. In the last two cases
+qT)^{10}$ characters (Section~\ref{sec:bins}), or, for a $j$ with $\ell_j \ge 1$, the characters with $|G_j(\chi)| \ge
+M_j^{\tau\ell_j}$, counted by Lemma~\ref{lem:part}(a) or~(b). In the last two cases
 $\gamma \ge 0$, since $s_j \ge 0$ and $\tau\ell_j \le 1$, so $q^\gamma \le (qT)^\gamma$. In every case the class has
 at most $C_d (qT)^\gamma (1 + \log qT)^{10}$ characters, and $\gamma \le g_{\mathrm H}(\beta_i) \le 1$. The counts are
 not combined: the class is counted by the single least of them.
 
-\emph{The condition.} The tuple $(\beta_i, \gamma, t_1, \dots, t_K)$ has $1/2 \le \beta_i \le 11/12$, $\gamma \le
-g_{\mathrm H}(\beta_i)$ and $t_j \le \beta_i + 4 \cdot 10^{-6}$. For it to be an admissible tuple at $(s_1, \dots,
-s_K)$ (Definition~\ref{def:res}) it remains to see that $\gamma \le \mathfrak m_k(s_j, t_j - \tau)$ and $\gamma
+\emph{The condition.} The tuple $(\beta_i, \gamma, t_1, \dots, t_{K'})$ has $1/2 \le \beta_i \le 11/12$, $\gamma
+\le g_{\mathrm H}(\beta_i)$ and $t_j \le \beta_i + 4 \cdot 10^{-6}$. For it to be an admissible tuple at $(s_1, \dots,
+s_{K'})$ (Definition~\ref{def:res}) it remains to see that $\gamma \le \mathfrak m_k(s_j, t_j - \tau)$ and $\gamma
 \le \mathfrak v_k(s_j, t_j - \tau)$ for every $j$ and every $k \ge 1$. If $\ell_j = 0$, then $t_j - \tau \le 0$, so
 $\mathfrak m_k(s_j, t_j - \tau) \ge 1 \ge \gamma$ and $\mathfrak v_k(s_j, t_j - \tau) = 1$. If $\ell_j \ge 1$, then
 $t_j - \tau \le \tau\ell_j$ (at the cap because $\beta_{i+1} + 2\delta - \tau \le 1$), and $\mathfrak m_k$ and
@@ -3025,15 +3072,15 @@ $\mathfrak v_k$ do not increase in their second argument, so it suffices that $\
 $\gamma$. For $k > k_1$, $k_0 = \lceil 1/s_j \rceil \le \lceil 1/e_1 \rceil < k_1$ has $k_0 s_j \ge 1$, and for $u \le
 1$, $\mathfrak m_k(s, u) = 2ks(1 - u)$ does not decrease in $k \ge k_0$, so $\mathfrak m_k(s_j, \tau\ell_j) \ge
 \mathfrak m_{k_0}(s_j, \tau\ell_j) \ge \gamma$. For $k > k_2$, $ks_j \ge ke_1 \ge 5/2$, so $\mathfrak v_k(s_j,
-\tau\ell_j) = 1 \ge \gamma$. So the tuple is admissible, and by $\operatorname{Res}_L(m; s_1, \dots, s_K)$ the
+\tau\ell_j) = 1 \ge \gamma$. So the tuple is admissible, and by $\operatorname{Res}_L(m; s_1, \dots, s_{K'})$ the
 exponents $(E, \gamma, m)$ fit at $L$.
 
-\emph{The sum.} The kernel bound of Section~\ref{sec:two-bounds} gives $\mathcal H$ as in Lemma~\ref{lem:class}, with a
-constant $C_K$. By Lemma~\ref{lem:class} with $C_0 = 4^{K_0}$ and this $C_d$, applied to the characters of $\mathcal
+\emph{The sum.} The kernel bound of Section~\ref{sec:two-bounds} gives $\mathcal H$ as in Lemma~\ref{lem:class}, with
+a constant $C_K$. By Lemma~\ref{lem:class} with $C_0 = 4^{K_0}$ and this $C_d$, applied to the characters of $\mathcal
 X^*$ in the class, each class contributes at most $C'(1 + \log qT)^{10} q^{L - 1/25000 + \eta}(V/P)^{1/2}$, with $C'$
-independent of $q$. There are at most $I(10^6 + 1)^{K_0}$ classes, and $1 + \log qT \le 3(1 + \log q)$. As in the proof
-of Proposition~\ref{prop:type2-gen}, for large $q$ the number of classes times $C'(1 + \log qT)^{10}$ is at most
-$q^{1/100000}$, and $L - 1/25000 + \eta + 1/100000 \le L - 1/50000$ since $\eta \le 10^{-5}$.
+independent of $q$. There are at most $I(10^6 + 1)^{K'} \le I(10^6 + 1)^{K_0}$ classes, and $1 + \log qT \le 3(1 +
+\log q)$. As in the proof of Proposition~\ref{prop:type2-gen}, for large $q$ the number of classes times $C'(1 + \log
+qT)^{10}$ is at most $q^{1/100000}$, and $L - 1/25000 + \eta + 1/100000 \le L - 1/50000$ since $\eta \le 10^{-5}$.
 \end{proof}
 
 The heuristic remark at the beginning of the section and Theorem~\ref{thm:window} are related as follows. On a class,
@@ -3106,21 +3153,20 @@ because a term's cofactor adds primes to its tuple. It does not depend on the in
 themselves, which are chosen after $q$.
 
 \begin{proposition}[tuples of primes with a rest]\label{prop:tuples-rest}
-% Lean: SieveTypeIIHM.full_res_exp (from SieveTypeIIHM.full_res_bound, SieveTypeIIHM.chain_res_core,
-% SieveTypeIIHM.box_res_gen, SieveUnwGen.unw_gen_lo)
+% Lean: SieveTypeIIHM.full_res_expG, with parts (from SieveTypeIIHM.full_res_boundG, SieveTypeIIHM.chain_res_coreG,
+% SieveTypeIIHM.box_res_genG, SieveUnwGen.unw_gen_grp); SieveTypeIIHM.full_res_exp, each prime its own part
 Assume Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}. Let $0 < L \le 5/2$ and $e_0 > 0$, let $k \ge 1$ and $J_0 \ge 0$
 be integers, and
 let $\Lambda_1 \ge 0$, $\rho_2 \ge 0$ and $\varepsilon > 0$ be reals with $L - \rho_2 - \varepsilon > 0$. There are
 $\delta > 0$ and $q_0$, depending only on $L$, $e_0$, $k$, $J_0$, $\Lambda_1$, $\rho_2$ and $\varepsilon$, such that
 the following holds for every $q \ge q_0$ and every $a$ prime to $q$. Let $K \ge 1$, let $i_1, \dots, i_K$ be distinct
-indices of $\{1, \dots, k\}$, and let $\sigma_1, \dots, \sigma_K$ and $\rho_1$ be reals
-such that $\operatorname{Res}_L$ holds on the quadrant $(L - \rho_2 - \varepsilon; \sigma_1 - \varepsilon, \dots,
-\sigma_K - \varepsilon)$. Let $\mathbf z$ run over the $k$-tuples of primes up to $N_2$ that satisfy a list of at most
-$J_0$ comparisons with constant terms at most $\Lambda_1 \log q$, and suppose that every tuple of primes that
-satisfies the
-comparisons has
+indices of $\{1, \dots, k\}$, grouped into nonempty parts $\mathcal P_1, \dots, \mathcal P_{K'}$, and let $\sigma_1,
+\dots, \sigma_{K'}$ and $\rho_1$ be reals such that $\operatorname{Res}_L$ holds on the quadrant $(L - \rho_2 -
+\varepsilon; \sigma_1 - \varepsilon, \dots, \sigma_{K'} - \varepsilon)$. Let $\mathbf z$ run over the $k$-tuples of
+primes up to $N_2$ that satisfy a list of at most $J_0$ comparisons with constant terms at most $\Lambda_1 \log q$, and
+suppose that every tuple of primes that satisfies the comparisons has
 \begin{gather*}
-  z_t \ge q^{e_0} \ (1 \le t \le k), \qquad z_{i_j} \ge q^{\sigma_j} \ (1 \le j \le K), \\
+  z_t \ge q^{e_0} \ (1 \le t \le k), \qquad \prod_{i \in \mathcal P_j} z_i \ge q^{\sigma_j} \ (1 \le j \le K'), \\
   q^{\rho_1} \le \prod_{j = 1}^K z_{i_j} \le q^{\rho_2}, \qquad N_1 < z_1 \cdots z_k \le N_2.
 \end{gather*}
 Then
@@ -3129,26 +3175,27 @@ Then
 \]
 \end{proposition}
 
-So, for fixed $K$, $\sigma_j$ and $\rho_1$ with $\operatorname{Res}_L$ on that quadrant, the proposition says that the
-tuple estimate holds at $(L, e_0)$ for the region of the $K$-tuples $\mathbf y$ with $y_j \ge q^{\sigma_j}$ and
-$q^{\rho_1} \le y_1 \cdots y_K \le q^{\rho_2}$. The margin $\varepsilon$ is spent twice, on the variable's lower end and
-on the rest's dyadic scales. The lower bound $q^{\rho_1}$ is no restriction: $\rho_1 = 0$ always satisfies it, as a
-product of primes is at least $1$, and $\delta$ does not depend on $\rho_1$.
+With each prime of the rest a part of its own ($K' = K$), the lower bounds are on the rest's primes. So, for fixed
+parts, $\sigma_j$ and $\rho_1$ with $\operatorname{Res}_L$ on that quadrant, the proposition says that the tuple
+estimate holds at $(L, e_0)$ for the region of the $K$-tuples $\mathbf y$ with $\prod_{i \in \mathcal P_j} y_i \ge
+q^{\sigma_j}$ and $q^{\rho_1} \le y_1 \cdots y_K \le q^{\rho_2}$. The margin $\varepsilon$ is spent twice, on the
+variable's lower end and on the rest's dyadic scales. The lower bound $q^{\rho_1}$ is no restriction: $\rho_1 = 0$
+always satisfies it, as a product of primes is at least $1$, and $\delta$ does not depend on $\rho_1$.
 
 The proof is in \S S7; here is an outline. It is that of Lemma~\ref{lem:chains-two} with one variable, the integer
-$\prod_{t \notin \mathcal S_r} z_t$. Group the tuples of the variable by their product: at most $(k + 1)^k$ tuples have a
-given product, so a polynomial over them is a polynomial over the integers with coefficients at most $(k + 1)^k$, and
-Theorem~\ref{thm:window} bounds it, block by dyadic block of the variable, at each frequency of the separation of
-variables. A
-comparison with a nonzero coefficient at an index of $\mathcal S_r$ has a prime of the rest as a pivot. Every other
-comparison is a condition on the variable's tuple alone, and goes into the set over which the polynomial runs. So
-Lemma~\ref{lem:cross} is not needed: with one variable there is no condition between two variables, and the
-coefficients lose a constant, not a power of $\log q$. The argument of Lemma~\ref{lem:family-sharp-two} then applies,
-with one change: a dyadic piece in which the scale of a prime of the rest is below $q^{\sigma_j - \varepsilon}$ is
-empty, so the condition is asked only at scales above it. The hypotheses $q^{\rho_1} \le \prod_j z_{i_j} \le q^{\rho_2}$
-and $N_1 < z_1 \cdots z_k$ put the variable above $\lfloor N_1/\lfloor q^{\rho_2} \rfloor \rfloor \ge q^{L - \rho_2 -
-\varepsilon}$, and the scales of a nonempty piece have $\sum_j s_j \le L$ and $\sum_j s_j + m \le L + 10^{-5}$ for large
-$q$: the quadrant of the hypothesis.
+$\prod_{t \notin \mathcal S_r} z_t$. Group the tuples of the variable by their product: at most $(k + 1)^k$ tuples
+have a given product, so a polynomial over them is a polynomial over the integers with coefficients at most $(k +
+1)^k$, and Theorem~\ref{thm:window} bounds it, block by dyadic block of the variable, at each frequency of the
+separation of variables. A comparison with a nonzero coefficient at an index of $\mathcal S_r$ has a prime of the rest
+as a pivot. Every other comparison is a condition on the variable's tuple alone, and goes into the set over which the
+polynomial runs. So Lemma~\ref{lem:cross} is not needed: with one variable there is no condition between two
+variables, and the coefficients lose a constant, not a power of $\log q$. The argument of
+Lemma~\ref{lem:family-sharp-two} then applies, with one change: a dyadic piece in which the product of the scales of a
+part's primes is below $q^{\sigma_j - \varepsilon}$ is empty, so the condition is asked only at scales above it, and
+at each part's product of scales (Theorem~\ref{thm:window} with those parts). The hypotheses $q^{\rho_1} \le \prod_j
+z_{i_j} \le q^{\rho_2}$ and $N_1 < z_1 \cdots z_k$ put the variable above $\lfloor N_1/\lfloor q^{\rho_2} \rfloor
+\rfloor \ge q^{L - \rho_2 - \varepsilon}$, and the scales of a nonempty piece have $\sum_j s_j \le L$ and $\sum_j s_j
++ m \le L + 10^{-5}$ for large $q$: the quadrant of the hypothesis.
 
 \begin{lemma}[a term with a rest]\label{lem:term-rest}
 % Lean: (a) SieveTypeIIHM.chain_res_gen; (b) SieveTypeIIHM.chain_res_exp
@@ -3202,65 +3249,69 @@ $\Lambda_1 + L + 1$, $\rho_2$ and $\varepsilon$, in place of the tuple estimate;
 $\mathbf r$, since the rest's entries are entries of $\mathbf r$.
 \end{proof}
 
-When every counted integer's cofactor is one prime $y$, the cofactor can be in the rest too. This is what a box whose
-cells leave room for exactly one more prime gives, and its cell is then known.
+The cofactor $m = n/r$ of a counted integer can be in the rest too, as one part whatever its number of primes:
+written out as its primes, it is a part of several prime sums (Section~\ref{sec:window-estimate}). Its scale is bounded
+by the box's cells, and its primes are only bounded below, by $r_k$.
 
 \begin{lemma}[the cofactor in the rest]\label{lem:term-rest-cof}
-% Lean: (a) SieveTypeIIHM.chain_res_cofG; (b) SieveTypeIIHM.chain_res_cof; (c) SieveAd.cof_facts
+% Lean: (a) SieveTypeIIHM.chain_res_sifG; (b) SieveTypeIIHM.chain_res_sif, SieveTypeIIHM.fullEst_sif_of_res, SieveTypeIIHM.fullEst_of_res, SieveTypeIIHM.full_res_expG; (c) SieveAd.cof_facts
 Let $2 < L \le 5/2$, $e_0 > 0$, let $k \ge 1$ and $J_0 \ge 0$ be integers, and $\Lambda_1 \ge 0$ a real. In (a) and
 (b), once $q$ is given, let $(r_1, \dots, r_k)$ run over the $k$-tuples of primes up to $N_2$ that satisfy a list of
 at most $J_0$ comparisons with constant terms at most $\Lambda_1 \log q$, and let $r = r_1 \cdots r_k$.
 \begin{enumerate}
-\item[(a)] Let $K \ge 1$ and let $\mathcal G$ be a region of $(K + 1)$-tuples for which the tuple estimate holds at
-  $(L, e_0)$. There are $\delta > 0$ and $q_0$ such that for every $q \ge q_0$, every $a$ prime to $q$ and all
-  distinct indices $i_1, \dots, i_K$ of $\{1, \dots, k\}$ the bound of Lemma~\ref{lem:term-rest}(a) holds if every
-  tuple of primes that satisfies the comparisons is strictly decreasing, has $r_i \ge q^{e_0}$ for every $i$, $r \le
-  N_1$ and $N_2 < r r_k^2$, and every integer $y \ge r_k$ with $N_1 < ry \le N_2$ has $(r_{i_1}, \dots, r_{i_K}, y)
-  \in \mathcal G_q$.
-\item[(b)] Assume Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}, and let $\rho_2 \ge 0$ and $\varepsilon > 0$ with $L -
-\rho_2 -
-  \varepsilon > 0$. There are $\delta > 0$ and $q_0$ such that the following holds for every $q \ge q_0$ and every $a$
-  prime to $q$. Let $K \ge 1$, let $i_1, \dots, i_K$ be distinct indices of $\{1, \dots, k\}$, and let $\sigma_1,
-  \dots, \sigma_{K + 1}$ and $\rho_1$ be reals such that $\operatorname{Res}_L$ holds on the quadrant $(L - \rho_2 -
-  \varepsilon; \sigma_1 - \varepsilon, \dots, \sigma_{K + 1} - \varepsilon)$, of $K + 1$ prime sums. The bound of
-  Lemma~\ref{lem:term-rest}(a) holds if every tuple of primes that satisfies the comparisons is strictly decreasing,
-  has $r_i \ge q^{e_0}$ for every $i$, $r_{i_j} \ge q^{\sigma_j}$ for $j \le K$, $r \le N_1$ and $N_2 < r r_k^2$,
-  and every integer $y \ge r_k$ with $N_1 < ry \le N_2$ has $y \ge q^{\sigma_{K + 1}}$ and $q^{\rho_1} \le y
-  \prod_{j \le K} r_{i_j} \le q^{\rho_2}$.
-\item[(c)] Let $x^{1/D} \ge 3$, and let $\mathfrak b$ be a box of $k$ cells with $l_i \le h_i$ for every $i$,
-$h(\mathfrak
-  b) + 2 \le D$ and $l(\mathfrak b) + 2 l_k \ge D + 1$. Let $p_1, \dots, p_k$ be integers with $x^{l_i/D} \le p_i <
-  x^{h_i/D}$, and $r = p_1 \cdots p_k$. Then $r \le N_1$, $N_2 < r p_k^2$, and every integer $y \ge p_k$ with $N_1 < ry
-  \le N_2$ has
+\item[(a)] Let $K \ge 1$, and let $\mathcal G = (\mathcal G_q)_{q \ge 1}$ be sets of pairs $(\mathbf x, m)$ of a
+  $K$-tuple and an integer such that, for every $t \ge 1$, the tuple estimate holds at $(L, e_0)$ for the region of the
+  $(K + t)$-tuples $(\mathbf x, y_1, \dots, y_t)$ with $(\mathbf x, y_1 \cdots y_t) \in \mathcal G_q$. There are
+  $\delta > 0$ and $q_0$ such that for every $q \ge q_0$, every $a$ prime to $q$ and all distinct indices $i_1, \dots,
+  i_K$ of $\{1, \dots, k\}$ the bound of Lemma~\ref{lem:term-rest}(a) holds if every tuple of primes that satisfies
+  the comparisons is strictly decreasing, has $r_i \ge q^{e_0}$ for every $i$ and $r \le N_1$, and every integer $m \ge
+  r_k$ with $N_1 < rm \le N_2$ has $((r_{i_1}, \dots, r_{i_K}), m) \in \mathcal G_q$.
+\item[(b)] Assume Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}, let $\rho_2 \ge 0$ and $\varepsilon > 0$ with $L -
+  \rho_2 - \varepsilon > 0$, $K \ge 1$, and let $\sigma_1, \dots, \sigma_{K + 1}$ be reals such that
+  $\operatorname{Res}_L$ holds on the quadrant $(L - \rho_2 - \varepsilon; \sigma_1 - \varepsilon, \dots, \sigma_{K + 1}
+  - \varepsilon)$, of $K + 1$ parts. There are $\delta > 0$ and $q_0$ such that for every $q \ge q_0$, every $a$ prime
+  to $q$ and all distinct indices $i_1, \dots, i_K$ of $\{1, \dots, k\}$ the bound of Lemma~\ref{lem:term-rest}(a)
+  holds if every tuple of primes that satisfies the comparisons is strictly decreasing, has $r_i \ge q^{e_0}$ for every
+  $i$, $r_{i_j} \ge q^{\sigma_j}$ for $j \le K$ and $r \le N_1$, and every integer $m \ge r_k$ with $N_1 < rm \le N_2$
+  has $m \ge q^{\sigma_{K + 1}}$ and $m \prod_{j \le K} r_{i_j} \le q^{\rho_2}$.
+\item[(c)] Let $x^{1/D} \ge 3$, and let $\mathfrak b$ be a box of $k$ cells with $l_i \le h_i$ for every $i$ and
+  $h(\mathfrak b) + 2 \le D$. Let $p_1, \dots, p_k$ be integers with $x^{l_i/D} \le p_i < x^{h_i/D}$, and $r = p_1
+  \cdots p_k$. Then $r \le N_1$, and every integer $m \ge p_k$ with $N_1 < rm \le N_2$ has
   \[
-    x^{\max(D - h(\mathfrak b) - 1,\, l_k)/D} \le y \le x^{(D - l(\mathfrak b) + 1)/D}.
+    x^{\max(D - h(\mathfrak b) - 1,\, l_k)/D} \le m \le x^{(D - l(\mathfrak b) + 1)/D}.
   \]
 \end{enumerate}
 \end{lemma}
 
-In (a) and (b) the conditions $r \le N_1$ and $N_2 < r r_k^2$ make the cofactor one prime, and the rest has $K + 1$
-members, the last the cofactor. Lemma~\ref{lem:term-rest-cof}(c) gives those conditions for a box of the main tree,
+In (a) and (b) the rest has $K + 1$ members, the last the cofactor, a part of as many primes as it has; $r \le N_1$
+says that the cofactor is never $1$. Lemma~\ref{lem:term-rest-cof}(c) gives that condition for a box of the main tree,
 and the cofactor's cell $(\max(D - h(\mathfrak b) - 1, l_k), D - l(\mathfrak b) + 1)$, its upper end included. The
 main tree is the tree on the boxes of Definition~\ref{def:tree}, as against the trees over frozen parts of
-Definition~\ref{def:frozen-tree}.
+Definition~\ref{def:frozen-tree}. In (b), unlike Lemma~\ref{lem:term-rest}(b), the quadrant is fixed before $\delta$.
 
 \begin{proof}
-(a) and (b). As in the proof of Lemma~\ref{lem:term-rest}, the integers counted for a tuple $\mathbf r$ are $n = r y_1
-\cdots y_t$
-with $y_1 \ge \dots \ge y_t \ge r_k$ primes. Only $t = 1$ remains: $t = 0$ gives $n = r \le N_1$, outside $(N_1, N_2]$,
-and $t \ge 2$ gives $n \ge r r_k^2 > N_2$. The pairs $(\mathbf r, y)$ are the $(k + 1)$-tuples of primes up to $N_2$
-that satisfy the given comparisons, $y \ge r_k$ and $N_1 < ry \le N_2$: at most $J_0 + 4$ comparisons, with constant
-terms at most $(\Lambda_1 + L + 1)\log q$. Each has its entries at least $q^{e_0}$, and, by the hypothesis on $y$, its
-rest $(r_{i_1}, \dots, r_{i_K}, y)$, at the indices $i_1, \dots, i_K, k + 1$, in $\mathcal G_q$ for (a), and with the
-lower bounds $\sigma_j$ and the product in $[q^{\rho_1}, q^{\rho_2}]$ for (b). The tuple estimate with $k + 1$ entries,
-$J_0 + 4$ comparisons and $\Lambda_1 + L + 1$, or Proposition~\ref{prop:tuples-rest} with these and $\rho_2$,
-$\varepsilon$, bounds the sum; $\delta$ is theirs.
+(a). As in the proof of Lemma~\ref{lem:term-rest}, the integers counted for a tuple $\mathbf r$ are $n = r y_1 \cdots
+y_t$ with $y_1 \ge \dots \ge y_t \ge r_k$ primes and $t \le t_{\max} = \lceil (L + 1)/e_0 \rceil$; $t = 0$ gives $n = r
+\le N_1$, outside $(N_1, N_2]$. For each $t \ge 1$ the pairs $(\mathbf r, \mathbf y)$ are the $(k + t)$-tuples of
+primes up to $N_2$ that satisfy at most $J_0 + t_{\max}^2 + t_{\max} + 2$ comparisons, with constant terms at most
+$(\Lambda_1 + L + 1)\log q$: the given ones, the order of $\mathbf y$, $y_a \ge r_k$ and $N_1 < r y_1 \cdots y_t \le
+N_2$. Each has its entries at least $q^{e_0}$, its product in $(N_1, N_2]$, and, by the hypothesis on $m = y_1 \cdots
+y_t \ge r_k$, its rest $(r_{i_1}, \dots, r_{i_K}, y_1, \dots, y_t)$, at the indices $i_1, \dots, i_K, k + 1, \dots, k +
+t$, in the region of $\mathcal G$ at $t$. The tuple estimate with $k + t$ entries, $J_0 + t_{\max}^2 + t_{\max} + 2$
+comparisons and $\Lambda_1 + L + 1$ gives $\delta_t$, and each $t$ contributes at most $q^{L - \delta_t}/\varphi(q)$.
+With $\delta_0 = \min_{t \le t_{\max}} \delta_t$, the sum over the $t_{\max}$ values of $t$ is at most $q^{L -
+\delta_0/2}/\varphi(q)$ for large $q$, and $\delta = \delta_0/2$ will do.
+
+(b). Let $\mathcal G_q$ be the set of the pairs $(\mathbf x, m)$ with $x_j \ge q^{\sigma_j}$ for $j \le K$, $m \ge
+q^{\sigma_{K + 1}}$ and $m \prod_j x_j \le q^{\rho_2}$. For each $t \ge 1$, Proposition~\ref{prop:tuples-rest} with
+the rest $(x_1, \dots, x_K, y_1, \dots, y_t)$ grouped into the $K + 1$ parts $\{x_1\}, \dots, \{x_K\}$ and $\{y_1,
+\dots, y_t\}$, these lower bounds, $\rho_2$, $\varepsilon$ and $\rho_1 = 0$, gives the tuple estimate for the region of
+$\mathcal G$ at $t$. So (b) is (a).
 
 (c). Since $x^{1/D} \ge 3$, $x^{(D - 1)/D} \le N_1$ and $N_2 < x^{(D + 1)/D}$; and $x^{l(\mathfrak b)/D} \le r \le
-x^{h(\mathfrak b)/D}$. So $r \le x^{(D - 1)/D} \le N_1$, as $h(\mathfrak b) \le D - 2$; and $r p_k^2 \ge x^{(l(\mathfrak
-b) + 2l_k)/D} \ge x^{(D + 1)/D} > N_2$. Let $y \ge p_k$ with $N_1 < ry \le N_2$. Then $y \ge p_k \ge x^{l_k/D}$; if $y
-< x^{(D - h(\mathfrak b) - 1)/D}$, then $ry < x^{(D - 1)/D} \le N_1$, which is false; and if $y > x^{(D - l(\mathfrak b)
-+ 1)/D}$, then $ry > x^{(D + 1)/D} > N_2$, which is false.
+x^{h(\mathfrak b)/D}$. So $r \le x^{(D - 1)/D} \le N_1$, as $h(\mathfrak b) \le D - 2$. Let $m \ge p_k$ with $N_1 < rm
+\le N_2$. Then $m \ge p_k \ge x^{l_k/D}$; if $m < x^{(D - h(\mathfrak b) - 1)/D}$, then $rm < x^{(D - 1)/D} \le N_1$,
+which is false; and if $m > x^{(D - l(\mathfrak b) + 1)/D}$, then $rm > x^{(D + 1)/D} > N_2$, which is false.
 \end{proof}
 
 Section~\ref{sec:window-tests} evaluates the terms of boxes with these lemmas: the test (W) through
@@ -3510,12 +3561,14 @@ estimate on the box. Here $k$ is again the length of a tuple, as in Section~\ref
 tuple has $k$ primes, $K$ of which make up the rest.
 
 \begin{lemma}\label{lem:tied-to-tuples}
-% Lean: SieveTypeIIHM.fullEst_of_tight, SieveTypeIIHM.resBox_of_tight, SieveTypeIIHM.full_res_exp, SieveCurveHx.ghx_le_one, SieveCurveHx.ghx_half, SieveCurveHx.counts_hx
+% Lean: SieveTypeIIHM.fullEst_of_tightG, SieveTypeIIHM.resBox_of_tight, SieveTypeIIHM.full_res_expG, SieveTypeIIHM.prodGeC, SieveTypeIIHM.prodLtC, SieveCurveHx.ghx_le_one, SieveCurveHx.ghx_half, SieveCurveHx.counts_hx; for the window's test at the two corners SieveAd.fullEst_of_resYH, SieveAd.fullEst_of_resYHS
 Under Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}, let $0 < L \le 5/2$, $e_0 > 0$, $K \ge 1$, and $0 \le a_j \le b_j$
-for $1 \le j \le K$ with $\sum_j b_j + 10^{-5} \le L$. If $\operatorname{Res}_L$ holds on the box $\prod_j [a_j - 2
-\cdot 10^{-5}, b_j + 2 \cdot 10^{-5}]$ with the variable tied to the rest, with the margin $2 \cdot 10^{-5}$, then the
-tuple estimate (Definition~\ref{def:tuple-estimate}) holds at $(L, e_0)$ for the region $\mathcal G_q$ of the
-$K$-tuples $\mathbf y$ with $q^{a_j} \le y_j \le q^{b_j}$, $1 \le j \le K$.
+for $1 \le j \le K$ with $\sum_j b_j + 10^{-5} \le L$, and let $\{1, \dots, n\}$ be grouped into $K$ nonempty parts
+$\mathcal P_1, \dots, \mathcal P_K$. If $\operatorname{Res}_L$ holds on the box $\prod_j [a_j - 2 \cdot 10^{-5}, b_j + 2
+\cdot 10^{-5}]$ with the variable tied to the rest, with the margin $2 \cdot 10^{-5}$, then the tuple estimate
+(Definition~\ref{def:tuple-estimate}) holds at $(L, e_0)$ for the region $\mathcal G_q$ of the $n$-tuples $\mathbf y$
+with $q^{a_j} \le \prod_{i \in \mathcal P_j} y_i \le q^{b_j}$, $1 \le j \le K$. With each entry its own part ($n = K$),
+the region is $q^{a_j} \le y_j \le q^{b_j}$.
 \end{lemma}
 
 \begin{proof}
@@ -3535,21 +3588,23 @@ so $s_j \le b_j + 10^{-5} + 2K\eta \le b_j + 2 \cdot 10^{-5}$. Also $\sum_j s_j 
 the variable tied, and $\operatorname{Res}_L(m; \mathbf s)$ holds.
 
 \emph{The estimate of a sub-cell.} For each $\mathbf n$, Proposition~\ref{prop:tuples-rest} with $k$, $J_0 + 2K$
-comparisons, $\Lambda_1 + L$, $\rho_2 = \rho_2(\mathbf n) \ge 0$, $\varepsilon = \eta$, $\sigma_j = A_j(\mathbf n)$ and
-$\rho_1 = 0$ applies, since $L - \rho_2(\mathbf n) - \eta \ge L - \sum_j b_j - K\eta - \eta \ge 10^{-5} - 5 \cdot
-10^{-6} > 0$; it gives $\delta_{\mathbf n} > 0$ and $q_{\mathbf n}$. Let $\delta_0 = \min_{\mathbf n} \delta_{\mathbf
-n}$, and take $q_0 \ge \max_{\mathbf n} q_{\mathbf n}$ such that $|\mathcal J| \le q^{\delta_0/2}$ for $q \ge q_0$.
+comparisons, $\Lambda_1 + L$, the parts $\mathcal P_j$, $\rho_2 = \rho_2(\mathbf n) \ge 0$, $\varepsilon = \eta$,
+$\sigma_j = A_j(\mathbf n)$ and $\rho_1 = 0$ applies, since $L - \rho_2(\mathbf n) - \eta \ge L - \sum_j b_j - K\eta -
+\eta \ge 10^{-5} - 5 \cdot 10^{-6} > 0$; it gives $\delta_{\mathbf n} > 0$ and $q_{\mathbf n}$. Let $\delta_0 =
+\min_{\mathbf n} \delta_{\mathbf n}$, and take $q_0 \ge \max_{\mathbf n} q_{\mathbf n}$ such that $|\mathcal J| \le
+q^{\delta_0/2}$ for $q \ge q_0$.
 
 \emph{The cut.} Let $q \ge q_0$, $a$, the rest's indices $i_1, \dots, i_K$ and comparisons be as in
-Definition~\ref{def:tuple-estimate}. Each tuple $\mathbf z$ that satisfies them has $q^{a_j} \le z_{i_j} \le q^{b_j}$,
-so $n_j(\mathbf z) = \lfloor (\log_q z_{i_j} - a_j)/\eta \rfloor$ defines $\mathbf n(\mathbf z) \in \mathcal J$, and
-$\mathbf n(\mathbf z) = \mathbf n$ if and only if the $2K$ comparisons $z_{i_j} \ge q^{A_j(\mathbf n)}$ and $z_{i_j} <
-q^{A_j(\mathbf n) + \eta}$ hold. Their constant terms are $-A_j \log q \le 0$ and $(A_j + \eta)\log q \le L\log q$,
-since $A_j + \eta \le b_j + 10^{-5} \le L$. The sum over the tuples is the sum over $\mathbf n \in \mathcal J$ of the
-sums over the families with these $2K$ comparisons added. In the family of $\mathbf n$ every tuple has its entries at
-least $q^{e_0}$, $z_{i_j} \ge q^{A_j}$, $1 \le \prod_j z_{i_j} \le q^{\rho_2(\mathbf n)}$ and its product in $(N_1,
-N_2]$, and $\operatorname{Res}_L$ holds on the quadrant above; so its sum is at most $q^{L - \delta_{\mathbf
-n}}/\varphi(q) \le q^{L - \delta_0}/\varphi(q)$. Summing over $\mathcal J$ gives at most $q^{L -
+Definition~\ref{def:tuple-estimate}, the rest at the indices $i_1, \dots, i_n$, and write $Z_j = \prod_{a \in \mathcal
+P_j} z_{i_a}$ for the parts' products. Each tuple $\mathbf z$ that satisfies them has $q^{a_j} \le Z_j \le q^{b_j}$,
+so $n_j(\mathbf z) = \lfloor (\log_q Z_j - a_j)/\eta \rfloor$ defines $\mathbf n(\mathbf z) \in \mathcal J$, and
+$\mathbf n(\mathbf z) = \mathbf n$ if and only if the $2K$ comparisons $Z_j \ge q^{A_j(\mathbf n)}$ and $Z_j <
+q^{A_j(\mathbf n) + \eta}$ hold, comparisons of products of entries. Their constant terms are $-A_j \log q \le 0$ and
+$(A_j + \eta)\log q \le L\log q$, since $A_j + \eta \le b_j + 10^{-5} \le L$. The sum over the tuples is the sum over
+$\mathbf n \in \mathcal J$ of the sums over the families with these $2K$ comparisons added. In the family of $\mathbf
+n$ every tuple has its entries at least $q^{e_0}$, $Z_j \ge q^{A_j}$, $1 \le \prod_j Z_j \le q^{\rho_2(\mathbf n)}$
+and its product in $(N_1, N_2]$, and $\operatorname{Res}_L$ holds on the quadrant above; so its sum is at most $q^{L -
+\delta_{\mathbf n}}/\varphi(q) \le q^{L - \delta_0}/\varphi(q)$. Summing over $\mathcal J$ gives at most $q^{L -
 \delta_0/2}/\varphi(q)$, and $\delta = \delta_0/2$.
 \end{proof}
 
@@ -3570,25 +3625,26 @@ is the exponent of $q$ of the unit $e$. Throughout, $\mathfrak b$ is a box of $k
 the curve is $g_{\mathrm H}$, and for a nonempty set $\mathcal S_r$ of indices, $l(\mathcal S_r)$ and $h(\mathcal S_r)$
 are as in Section~\ref{sec:decomp}.
 
-\emph{The cofactor.} The cofactor $n/(p_1 \cdots p_k)$ of a counted $n$ is one prime when the box's cells leave room
-for one prime and no more:
+\emph{The cofactor.} The cofactor $m = n/(p_1 \cdots p_k)$ of a counted $n$ has no prime factor below $p_k$, and it is
+never $1$ when
 \[
-  (\mathrm{Cf}) \qquad h(\mathfrak b) \le D - 2, \qquad l(\mathfrak b) + 2l_k \ge D + 1,
+  (\mathrm{Cf}) \qquad h(\mathfrak b) \le D - 2,
 \]
-the hypotheses of Lemma~\ref{lem:term-rest-cof}(c). For large $q$ that lemma gives $p_1 \cdots p_k \le N_1$ and $N_2 <
-p_1 \cdots p_k\, p_k^2$, and puts the cofactor of a counted $n$, a prime $y \ge p_k$, possibly equal to $p_k$, in the
-cell $c_* = (l_*, h_*)$, here with both ends included ($x^{l_*/D} \le y \le x^{h_*/D}$), with $l_* = \max(D -
-h(\mathfrak b) - 1, l_k)$ and $h_* = D - l(\mathfrak b) + 1$.
+the hypothesis of Lemma~\ref{lem:term-rest-cof}(c). For large $q$ that lemma gives $p_1 \cdots p_k \le N_1$ and puts
+the cofactor of a counted $n$, whatever its number of primes, in the cell $c_* = (l_*, h_*)$, here with both ends
+included ($x^{l_*/D} \le m \le x^{h_*/D}$), with $l_* = \max(D - h(\mathfrak b) - 1, l_k)$ and $h_* = D - l(\mathfrak
+b) + 1$. In the rest the cofactor is one part (Section~\ref{sec:window-estimate}).
 Over a frozen part $\mathcal M(e_-, e_+)$ (Section~\ref{sec:reversal}), $R$ is the product of the frozen primes $a_2,
 \dots, a_k$ and of the frozen cofactor, an integer with no prime factor below $a_k$, and $\Delta_{\mathcal M}(\mathfrak
 c)$ is the term over $\mathcal M$ of a chain $\mathfrak c$. For a chain $\mathfrak c$ of $j \ge 1$ primes with cells
-$(l'_i, h'_i)$, the chain's cofactor $k' = n/(R p'_1 \cdots p'_j)$ is one prime when
+$(l'_i, h'_i)$, the chain's cofactor $k' = n/(R p'_1 \cdots p'_j)$, which has no prime factor below $p'_j$, is
+never $1$ when
 \[
-  (\mathrm{Cf}_{\mathcal M}) \qquad e_+ + h'(\mathfrak c) \le D - 2, \qquad e_- + l'(\mathfrak c) + 2l'_j \ge D + 1,
+  (\mathrm{Cf}_{\mathcal M}) \qquad e_+ + h'(\mathfrak c) \le D - 2,
 \]
-by the argument of that lemma with $R \in (x^{e_-/D}, x^{e_+/D}]$ (\lean{SieveAd.\allowbreak frozCof\_facts}), and
-its cell is $c_* = (l_*, h_*)$ with $l_* = \max(D - e_+ - h'(\mathfrak c) - 1, l'_j)$ and $h_* = \max(D - e_- -
-l'(\mathfrak c), 0) + 1$.
+by the argument of that lemma with $R \in (x^{e_-/D}, x^{e_+/D}]$ (\lean{SieveAd.\allowbreak frozCof\_facts}), and its
+cell, whatever its number of primes, is $c_* = (l_*, h_*)$ with $l_* = \max(D - e_+ - h'(\mathfrak c) - 1, l'_j)$ and
+$h_* = \max(D - e_- - l'(\mathfrak c), 0) + 1$.
 % Lean: SieveAd.cof_facts, SieveAd.frozCof_facts, SieveAd.big_facts
 
 \begin{definition}\label{def:window-tests}
@@ -3631,7 +3687,7 @@ when it is not in the rest. The frozen primes $a_2, \dots, a_k$ enter the tests 
 the rest. The range $(x^{e_-/D}, x^{e_+/D}]$ of $R$ enters only through $(\mathrm{Cf}_{\mathcal M})$ and $c_*$.
 
 \begin{lemma}\label{lem:window-tests}
-% Lean: (a) SieveAd.evI_resCEH, SieveAd.evI_resEH, SieveAd.evI_resYE, SieveAd.cof_facts, SieveTypeIIHM.chain_res_exp, SieveTypeIIHM.chain_res_cof, SieveTypeIIHM.chain_res_gen, SieveTypeIIHM.chain_res_cofG, SieveTypeIIHM.fullEst_of_tight; (b) SieveAd.evIF_froz_res, SieveAd.evIF_froz_resC, SieveAd.evIF_froz_gen, SieveAd.evIF_froz_genC, SieveAd.evIF_frozP_res, SieveAd.evIF_frozP_resC, SieveAd.frozCof_facts
+% Lean: (a) SieveAd.evI_resCEH, SieveAd.evI_resEH, SieveAd.evI_resYE, SieveAd.cof_facts, SieveTypeIIHM.chain_res_exp, SieveTypeIIHM.chain_res_sif, SieveTypeIIHM.chain_res_gen, SieveTypeIIHM.chain_res_sifG, SieveTypeIIHM.fullEst_of_tightG, SieveAd.fullEst_of_resYH, SieveAd.fullEst_of_resYHS; (b) SieveAd.evIF_froz_res, SieveAd.evIF_froz_resC, SieveAd.evIF_froz_gen, SieveAd.evIF_froz_genC, SieveAd.evIF_frozP_res, SieveAd.evIF_froz_sif, SieveAd.evIF_frozP_sif, SieveAd.frozCof_facts
 Assume Inputs~\ref{inp:half-plane} and~\ref{inp:cgl}, and let $2 < L \le 5/2$.
 \begin{enumerate}
 \item[(a)] The term of a box of $k \ge 1$ primes that passes (W) or (W$'$), with or without the cofactor, is
@@ -3665,20 +3721,20 @@ $\sigma_i - \varepsilon = L(l_i - 1)/D$, is (W), and $L - \rho_2 - \varepsilon >
 $q^{L - \delta}/\varphi(q)$ is at most $\eta X$ for large $q$.
 
 (W) with the cofactor. By $(\mathrm{Cf})$ and Lemma~\ref{lem:term-rest-cof}(c), for large $q$ every tuple of the family
-has $r =
-p_1 \cdots p_k \le N_1$ and $N_2 < r p_k^2$, and every $y \ge p_k$ with $N_1 < ry \le N_2$ has $y \ge x^{l_*/D}$ and
-$x^{(l(\mathcal S_r) + l_*)/D} \le y \prod_{\mathcal S_r} p_i \le x^{H/D}$, with $H = h(\mathcal S_r) + h_*$. These are
-the hypotheses of Lemma~\ref{lem:term-rest-cof}(b), with the rest $\mathcal S_r$ and the cofactor's lower bound
-$Ll_*/D$,
-$\rho_2 = LH/D$, $\varepsilon = L/D$ and $\rho_1 = L(l(\mathcal S_r) + l_*)/D$; its condition on the quadrant is (W)
+has $r = p_1 \cdots p_k \le N_1$, and every $m \ge p_k$ with $N_1 < rm \le N_2$ has $m \ge x^{l_*/D}$ and $m
+\prod_{\mathcal S_r} p_i \le x^{H/D}$, with $H = h(\mathcal S_r) + h_*$. These are the hypotheses of
+Lemma~\ref{lem:term-rest-cof}(b), with the rest $\mathcal S_r$, the lower bounds $\sigma_i = Ll_i/D$ for $i \in
+\mathcal S_r$ and the cofactor's $Ll_*/D$, $\rho_2 = LH/D$ and $\varepsilon = L/D$; its condition on the quadrant is (W)
 with the cofactor, and it bounds $\Delta(\mathfrak b)$ by $q^{L - \delta}/\varphi(q)$.
 
 (W$'$). Lemma~\ref{lem:tied-to-tuples}, with the lower ends $Lc_j/D \ge 0$ and the upper ends $Ld_j/D$, turns (W$'$)
 into the tuple estimate (Definition~\ref{def:tuple-estimate}) for the region $x^{c_j/D} \le z_j \le x^{d_j/D}$ of the
 rest's entries, with $e_0 = L/D$. Without the cofactor, each prime of $\mathcal S_r$ lies in its cell, so in the region;
-Lemma~\ref{lem:term-rest}(a) gives the bound. With the cofactor, Lemma~\ref{lem:term-rest-cof}(c) gives $r \le N_1$
-and $N_2 < r p_k^2$ and puts every $y \ge p_k$ with $N_1 < ry \le N_2$ in $c_*$; with the facts on the family above and
-the rest's primes in their cells, these are the hypotheses of Lemma~\ref{lem:term-rest-cof}(a).
+Lemma~\ref{lem:term-rest}(a) gives the bound. With the cofactor, the same lemma with the parts $\{i\}$ for $i \in
+\mathcal S_r$ and the cofactor's $t$ primes as the last gives, for each $t \ge 1$, the tuple estimate for the region of
+the rest's primes in their cells and the cofactor's product in $c_*$; Lemma~\ref{lem:term-rest-cof}(c) gives $r \le N_1$
+and puts every $m \ge p_k$ with $N_1 < rm \le N_2$ in $c_*$. With the facts on the family above and the rest's primes
+in their cells, these are the hypotheses of Lemma~\ref{lem:term-rest-cof}(a).
 
 The uniformity is that of Lemmas~\ref{lem:term-rest} and~\ref{lem:term-rest-cof}: $\delta$ and $q_0$ depend only on
 $J_0$, $\Lambda_1$, the exponents and the estimate, not on the comparisons, and the family with $J$ further
@@ -3705,13 +3761,14 @@ S)/D}]$. Its condition is (W$_{\mathcal M}$), and it bounds each family by $q^{L
 and $q_0$ that depend on $t$, $t'$ and the fixed data only. The $(D + 1)^2$ families give $o(X)$.
 
 With the chain's cofactor in the rest, $(\mathrm{Cf}_{\mathcal M})$ gives, for large $q$ and every tuple $(\mathbf a,
-\mathbf y, \mathbf p')$, $R p'_1 \cdots p'_j \le N_1$ and $N_2 < R p'_1 \cdots p'_j\, {p'_j}^2$, so only $t' = 1$
-contributes, and its one prime $y'$ lies in $[x^{l_*/D}, x^{h_*/D}]$. It joins the rest as its last member, with the
-lower bound $Ll_*/D$, $\rho_2 = L(\overline e(\mathcal S) + h_*)/D$ and $\rho_1 = 0$ ($\rho_1$ does not enter the
-condition), and the argument is the same. For
+\mathbf y, \mathbf p')$, $R p'_1 \cdots p'_j \le N_1$, so $t' = 0$ contributes nothing, and for $t' \ge 1$ the product
+$y'_1 \cdots y'_{t'}$ lies in $[x^{l_*/D}, x^{h_*/D}]$. The $t'$ primes join the rest as one part, its last, with the
+lower bound $Ll_*/D$ on their product, $\rho_2 = L(\overline e(\mathcal S) + h_*)/D$ and $\rho_1 = 0$ ($\rho_1$ does not
+enter the condition), and the argument is the same, with Proposition~\ref{prop:tuples-rest} for these parts. For
 (W$'_{\mathcal M}$), Lemma~\ref{lem:tied-to-tuples} gives the tuple estimate for the region of the rest's cells, with or
-without $c_*$, and it is applied to each family in place of Proposition~\ref{prop:tuples-rest}: every member of the
-rest lies in its cell, the chain's cofactor by $(\mathrm{Cf}_{\mathcal M})$.
+without the chain's cofactor's product in $c_*$ (one part), and it is applied to each family in place of
+Proposition~\ref{prop:tuples-rest}: every member of the rest lies in its cell, the chain's cofactor by
+$(\mathrm{Cf}_{\mathcal M})$.
 \end{proof}
 
 The formalisation proves (b) for every frozen part with $e_\pm \le D$, with (W$_{\mathcal M}$) and (W$'_{\mathcal M}$)

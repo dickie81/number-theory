@@ -10,9 +10,11 @@ each prime has its own lower bound, `x_i ≥ 2q^{lo i}` wherever the comparisons
 resonant window's estimate (`SieveTypeIIHM.typeII_res`) holds on such scales: its condition is on the exponents of
 the rest's prime sums, each at least that of its prime's cell.
 
-* `unw_gen_lo`: `unw_gen` with the numbers `lo i`: in the hypothesis of the support each `x_i ≥ 2q^{lo i}`, and
-  in `hbox` the scales `Q_i ≥ q^{lo i}`. The proof is `unw_gen`'s, with the bound `Q_i ≥ q^{lo i}` among those of a
-  piece that has a term.
+* `unw_gen_grp`: `unw_gen` with the numbers `lo i` and, for sets `G w` of the primes, numbers `c w`: in the
+  hypothesis of the support each `x_i ≥ 2q^{lo i}` and `∏_{i∈G w} x_i ≥ 2^{|G w|}q^{c w}`, and in `hbox` the scales
+  `Q_i ≥ q^{lo i}` and `∏_{i∈G w} Q_i ≥ q^{c w}`. The proof is `unw_gen`'s, with these bounds among those of a piece
+  that has a term. A set of primes is a part of the resonant window's rest (`SieveTypeIIHM.typeII_resG`).
+* `unw_gen_lo`: `unw_gen_grp` with no sets.
 
 The file imports `SieveUnwGen.lean`.
 -/
@@ -25,10 +27,12 @@ namespace SieveUnwGen
 
 open Classical
 
-/-- **`unw_gen` with a lower bound on each prime's range.** As `unw_gen`, with numbers `lo i` such that wherever all
-the comparisons hold each `x_i ≥ 2q^{lo i}`: the estimate at each frequency (`hbox`) is asked for the scales with
-`Q_i ≥ q^{lo i}` besides `Q_i ≥ q^{e₁}`, for a piece whose scales are not so vanishes. -/
-theorem unw_gen_lo {ι κ : Type*} [DecidableEq κ] (K₀ J₀ c₀ : ℕ) {L e₁ E₀ Λ₁ : ℝ} (hL0 : 0 < L) (hL : L ≤ 5 / 2)
+/-- **`unw_gen` with a lower bound on each prime's range and on products of primes.** As `unw_gen`, with numbers
+`lo i` such that wherever all the comparisons hold each `x_i ≥ 2q^{lo i}`, and sets `G w` of the primes with numbers
+`c w` such that there `∏_{i∈G w} x_i ≥ 2^{|G w|}q^{c w}`: the estimate at each frequency (`hbox`) is asked for the
+scales with `Q_i ≥ q^{lo i}` and `∏_{i∈G w} Q_i ≥ q^{c w}` besides `Q_i ≥ q^{e₁}`, for a piece whose scales are not so
+vanishes (its primes are at most `2Q_i`). -/
+theorem unw_gen_grp {ι κ : Type*} [DecidableEq κ] (K₀ J₀ c₀ : ℕ) {L e₁ E₀ Λ₁ : ℝ} (hL0 : 0 < L) (hL : L ≤ 5 / 2)
     (he₁ : 0 < e₁) (hE₀ : 0 ≤ E₀) (hΛ₁ : 0 ≤ Λ₁) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
       ∀ (Xs : Finset ι) (nv : ι → ℕ) (cf : ι → ℂ) (A₀ : ℝ), 0 ≤ A₀ →
@@ -36,6 +40,7 @@ theorem unw_gen_lo {ι κ : Type*} [DecidableEq κ] (K₀ J₀ c₀ : ℕ) {L e�
       (T.card : ℝ) ≤ (3 + 4 * Real.log q) ^ c₀ → (∀ b ∈ T, 0 < Pb b) → (∀ m ∈ Xs, Pb (blk m) < (nv m : ℝ)) →
       (∀ b ∈ T, ∑ m ∈ Xs.filter (fun m => blk m = b), ‖cf m‖ ≤ Pb b * A₀) →
       ∀ (n : ℕ), n + 1 ≤ K₀ → ∀ lo : ℕ → ℝ,
+      ∀ (nb : ℕ) (G : Fin nb → Finset (Fin (n + 1))) (c : Fin nb → ℝ),
       ∀ {J : ℕ}, J ≤ J₀ → ∀ (φ : Fin J → ι → ℝ) (e : Fin J → Fin (n + 1) → ℝ)
         (Pr : Fin J → ι → (Fin (n + 1) → ℕ) → Prop), (∀ j i, |e j i| ≤ E₀) →
       (∀ j m x, (0 < φ j m + ∑ i, e j i * Real.log (x i) → Pr j m x) ∧
@@ -44,8 +49,10 @@ theorem unw_gen_lo {ι κ : Type*} [DecidableEq κ] (K₀ J₀ c₀ : ℕ) {L e�
       ∀ piv : Fin J → Fin (n + 1), (∀ j, e j (piv j) = 1 ∨ e j (piv j) = -1) →
       (∀ m ∈ Xs, ∀ x : Fin (n + 1) → ℕ, (∀ i, (x i).Prime) → (∀ j, Pr j m x) →
         (∀ i, 2 * (q : ℝ) ^ e₁ ≤ x i) ∧ (∀ i : Fin (n + 1), 2 * (q : ℝ) ^ lo i ≤ x i) ∧
+          (∀ w : Fin nb, 2 ^ (G w).card * (q : ℝ) ^ c w ≤ ∏ i ∈ G w, (x i : ℝ)) ∧
           (nv m : ℝ) * ∏ i, (x i : ℝ) ≤ 2 * (q : ℝ) ^ L) →
       (∀ b ∈ T, ∀ Q : ℕ → ℝ, (∀ j < n + 1, (q : ℝ) ^ e₁ ≤ Q j) → (∀ j < n + 1, (q : ℝ) ^ lo j ≤ Q j) →
+        (∀ w : Fin nb, (q : ℝ) ^ c w ≤ ∏ i ∈ G w, Q i) →
         ∏ j ∈ Finset.range (n + 1), Q j ≤ 2 ^ (K₀ + 1) * (q : ℝ) ^ L / Pb b →
         ∀ c' : ι → ℂ, (c' = cf ∨ c' = fun m => ((‖cf m‖ : ℝ) : ℂ)) → ∀ (ξ : Fin J → ℝ) (κ' : ℝ) (hh : ℕ → ℝ),
         (∀ j < n + 1, |hh j| ≤ (q : ℝ) ^ (1 / 100000 : ℝ)) →
@@ -64,8 +71,8 @@ theorem unw_gen_lo {ι κ : Type*} [DecidableEq κ] (K₀ J₀ c₀ : ℕ) {L e�
   obtain ⟨q₂, hq₂⟩ := Filter.eventually_atTop.1
     (tendsto_natCast_atTop_atTop.eventually (ev_log_pow_le (K₀ + c₀) (half_pos hδ)))
   refine ⟨δ / 2, half_pos hδ, max (max q₁ q₂) 2, ?_⟩
-  intro q _ hq a ha Xs nv cf A₀ hA0 blk T Pb hblk hTcard hPbpos hPblt hsumb n hn lo J hJ φ e Pr he hP hφ piv
-    hpiv hsupp hbox
+  intro q _ hq a ha Xs nv cf A₀ hA0 blk T Pb hblk hTcard hPbpos hPblt hsumb n hn lo nb G c J hJ φ e Pr he hP hφ
+    piv hpiv hsupp hbox
   have hq1 : q₁ ≤ q := le_trans (le_trans (le_max_left _ _) (le_max_left _ _)) hq
   have hq2 : q₂ ≤ q := le_trans (le_trans (le_max_right _ _) (le_max_left _ _)) hq
   have hq3 : 2 ≤ q := le_trans (le_max_right _ _) hq
@@ -89,7 +96,7 @@ theorem unw_gen_lo {ι κ : Type*} [DecidableEq κ] (K₀ J₀ c₀ : ℕ) {L e�
       intro j
       by_contra hj
       exact hne (by rw [Finset.prod_eq_zero (Finset.mem_univ j) (by simp [hj]), mul_zero])
-    have h2 := (hsupp m hm x hx hall).2.2
+    have h2 := (hsupp m hm x hx hall).2.2.2
     have hm1 : (1 : ℝ) ≤ nv m := by
       have h0 : (0 : ℝ) < nv m := lt_trans (hPbpos _ (hblk m hm)) (hPblt m hm)
       have h1 : 0 < nv m := by exact_mod_cast h0
@@ -216,9 +223,10 @@ theorem unw_gen_lo {ι κ : Type*} [DecidableEq κ] (K₀ J₀ c₀ : ℕ) {L e�
         mul_le_mul_of_nonneg_right hn' (by positivity)
       linarith
     by_cases hgood : (∀ j < n + 1, (q : ℝ) ^ e₁ ≤ Q j) ∧ (∀ j < n + 1, (q : ℝ) ^ lo j ≤ Q j) ∧
+        (∀ w : Fin nb, (q : ℝ) ^ c w ≤ ∏ i ∈ G w, Q i) ∧
         ∏ j ∈ Finset.range (n + 1), Q j ≤ 2 ^ (K₀ + 1) * (q : ℝ) ^ L / P'
-    · exact hq₁ q hq1 a ha Sb nv cf P' A₀ hP'pos hA0 (hsumb b hb) n (by omega) Q hgood.1 hgood.2.2 hJ φ e Pr he
-        hP hℓ piv hpiv (hbox b hb Q hgood.1 hgood.2.1 hgood.2.2)
+    · exact hq₁ q hq1 a ha Sb nv cf P' A₀ hP'pos hA0 (hsumb b hb) n (by omega) Q hgood.1 hgood.2.2.2 hJ φ e Pr
+        he hP hℓ piv hpiv (hbox b hb Q hgood.1 hgood.2.1 hgood.2.2.1 hgood.2.2.2)
     · have hz : ∀ mx ∈ Sb ×ˢ Fintype.piFinset (fun i : Fin (n + 1) => primesTo (Q i)),
           (cf mx.1 * ∏ i, ((SieveDyadic.bump ((mx.2 i : ℝ) / Q i) : ℝ) : ℂ)) *
             ∏ j, ((if Pr j mx.1 mx.2 then 1 else 0 : ℝ) : ℂ) = 0 := by
@@ -242,9 +250,9 @@ theorem unw_gen_lo {ι κ : Type*} [DecidableEq κ] (K₀ J₀ c₀ : ℕ) {L e�
             linarith
           rw [Finset.prod_eq_zero (Finset.mem_univ i) (by rw [hb0, Complex.ofReal_zero]), mul_zero, zero_mul]
         have hpr : ∀ i, (mx.2 i).Prime := fun i => ((mem_primesTo (hQpos i).le).1 (hx i)).2
-        obtain ⟨hlow, hlowlo, hhigh⟩ := hsupp mx.1 (Finset.mem_filter.1 hm).1 mx.2 hpr hall
+        obtain ⟨hlow, hlowlo, hgrp, hhigh⟩ := hsupp mx.1 (Finset.mem_filter.1 hm).1 mx.2 hpr hall
         apply hgood
-        refine ⟨fun j hj => ?_, fun j hj => ?_, ?_⟩
+        refine ⟨fun j hj => ?_, fun j hj => ?_, fun w => ?_, ?_⟩
         · have h1 := ((mem_primesTo (hQpos ⟨j, hj⟩).le).1 (hx ⟨j, hj⟩)).1
           have h2 := hlow ⟨j, hj⟩
           have : Q (⟨j, hj⟩ : Fin (n + 1)) = Q j := rfl
@@ -254,6 +262,16 @@ theorem unw_gen_lo {ι κ : Type*} [DecidableEq κ] (K₀ J₀ c₀ : ℕ) {L e�
           have : Q (⟨j, hj⟩ : Fin (n + 1)) = Q j := rfl
           have : lo (⟨j, hj⟩ : Fin (n + 1)) = lo j := rfl
           linarith
+        · -- a set of the primes: each is at most `2Q_i`
+          have hxQ : ∀ i ∈ G w, (mx.2 i : ℝ) ≤ 2 * Q i := fun i _ =>
+            ((mem_primesTo (hQpos i).le).1 (hx i)).1
+          have hprodG : ∏ i ∈ G w, (mx.2 i : ℝ) ≤ 2 ^ (G w).card * ∏ i ∈ G w, Q i := by
+            calc ∏ i ∈ G w, (mx.2 i : ℝ) ≤ ∏ i ∈ G w, (2 * Q i) :=
+                  Finset.prod_le_prod₀ (fun i _ => Nat.cast_nonneg _) hxQ
+              _ = 2 ^ (G w).card * ∏ i ∈ G w, Q i := by rw [Finset.prod_mul_distrib, Finset.prod_const]
+          have h2c : (0 : ℝ) < 2 ^ (G w).card := by positivity
+          have h1 := (hgrp w).trans hprodG
+          exact le_of_mul_le_mul_left h1 h2c
         · rw [← Fin.prod_univ_eq_prod_range]
           have hprodQ : ∏ i : Fin (n + 1), Q i ≤ ∏ i : Fin (n + 1), (2 * (mx.2 i : ℝ)) :=
             Finset.prod_le_prod₀ (fun i _ => (hQpos i).le) (fun i _ => by linarith [hbump i])
@@ -315,6 +333,47 @@ theorem unw_gen_lo {ι κ : Type*} [DecidableEq κ] (K₀ J₀ c₀ : ℕ) {L e�
         ring
 
 
+/-- **`unw_gen` with a lower bound on each prime's range.** `unw_gen_grp` with no sets of primes: the estimate at each
+frequency (`hbox`) is asked for the scales with `Q_i ≥ q^{lo i}` besides `Q_i ≥ q^{e₁}`. -/
+theorem unw_gen_lo {ι κ : Type*} [DecidableEq κ] (K₀ J₀ c₀ : ℕ) {L e₁ E₀ Λ₁ : ℝ} (hL0 : 0 < L) (hL : L ≤ 5 / 2)
+    (he₁ : 0 < e₁) (hE₀ : 0 ≤ E₀) (hΛ₁ : 0 ≤ Λ₁) :
+    ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
+      ∀ (Xs : Finset ι) (nv : ι → ℕ) (cf : ι → ℂ) (A₀ : ℝ), 0 ≤ A₀ →
+      ∀ (blk : ι → κ) (T : Finset κ) (Pb : κ → ℝ), (∀ m ∈ Xs, blk m ∈ T) →
+      (T.card : ℝ) ≤ (3 + 4 * Real.log q) ^ c₀ → (∀ b ∈ T, 0 < Pb b) → (∀ m ∈ Xs, Pb (blk m) < (nv m : ℝ)) →
+      (∀ b ∈ T, ∑ m ∈ Xs.filter (fun m => blk m = b), ‖cf m‖ ≤ Pb b * A₀) →
+      ∀ (n : ℕ), n + 1 ≤ K₀ → ∀ lo : ℕ → ℝ,
+      ∀ {J : ℕ}, J ≤ J₀ → ∀ (φ : Fin J → ι → ℝ) (e : Fin J → Fin (n + 1) → ℝ)
+        (Pr : Fin J → ι → (Fin (n + 1) → ℕ) → Prop), (∀ j i, |e j i| ≤ E₀) →
+      (∀ j m x, (0 < φ j m + ∑ i, e j i * Real.log (x i) → Pr j m x) ∧
+        (Pr j m x → 0 ≤ φ j m + ∑ i, e j i * Real.log (x i))) →
+      (∀ j, ∀ m ∈ Xs, φ j m ≤ Λ₁ * Real.log q) →
+      ∀ piv : Fin J → Fin (n + 1), (∀ j, e j (piv j) = 1 ∨ e j (piv j) = -1) →
+      (∀ m ∈ Xs, ∀ x : Fin (n + 1) → ℕ, (∀ i, (x i).Prime) → (∀ j, Pr j m x) →
+        (∀ i, 2 * (q : ℝ) ^ e₁ ≤ x i) ∧ (∀ i : Fin (n + 1), 2 * (q : ℝ) ^ lo i ≤ x i) ∧
+          (nv m : ℝ) * ∏ i, (x i : ℝ) ≤ 2 * (q : ℝ) ^ L) →
+      (∀ b ∈ T, ∀ Q : ℕ → ℝ, (∀ j < n + 1, (q : ℝ) ^ e₁ ≤ Q j) → (∀ j < n + 1, (q : ℝ) ^ lo j ≤ Q j) →
+        ∏ j ∈ Finset.range (n + 1), Q j ≤ 2 ^ (K₀ + 1) * (q : ℝ) ^ L / Pb b →
+        ∀ c' : ι → ℂ, (c' = cf ∨ c' = fun m => ((‖cf m‖ : ℝ) : ℂ)) → ∀ (ξ : Fin J → ℝ) (κ' : ℝ) (hh : ℕ → ℝ),
+        (∀ j < n + 1, |hh j| ≤ (q : ℝ) ^ (1 / 100000 : ℝ)) →
+        ∑ χ ∈ Finset.univ.filter (fun χ : DirichletCharacter ℂ q => χ ≠ 1),
+          ‖∑ m ∈ Xs.filter (fun m => blk m = b),
+              c' m * Complex.exp (2 * π * Complex.I * ((κ' + ∑ j, ξ j * φ j m : ℝ) : ℂ)) * χ (nv m)‖ *
+            ‖∏ j ∈ Finset.range (n + 1), SieveWeight.Sp χ SieveDyadic.bump (Q j) (hh j)‖ ≤
+          A₀ * (q : ℝ) ^ (L - 1 / 50000)) →
+      ‖Dsum q a (Xs ×ˢ Fintype.piFinset (fun _ : Fin (n + 1) => primesLe ⌊2 * (q : ℝ) ^ L⌋₊))
+          (fun mx => nv mx.1 * ∏ i, mx.2 i)
+          (fun mx => cf mx.1 * ∏ j, ((if Pr j mx.1 mx.2 then 1 else 0 : ℝ) : ℂ))‖ ≤
+        (q.totient : ℝ)⁻¹ * (A₀ * (q : ℝ) ^ (L - δ)) := by
+  obtain ⟨δ, hδ, q₀, h⟩ := unw_gen_grp (ι := ι) (κ := κ) K₀ J₀ c₀ hL0 hL he₁ hE₀ hΛ₁
+  refine ⟨δ, hδ, q₀, fun q _ hq a ha Xs nv cf A₀ hA0 blk T Pb hblk hTcard hPbpos hPblt hsumb n hn lo J hJ φ e Pr
+    he hP hφ piv hpiv hsupp hbox => ?_⟩
+  refine h q hq a ha Xs nv cf A₀ hA0 blk T Pb hblk hTcard hPbpos hPblt hsumb n hn lo 0 Fin.elim0 Fin.elim0 hJ φ e
+    Pr he hP hφ piv hpiv (fun m hm x hx hall => ?_) (fun b hb Q h1 h2 _ h3 => hbox b hb Q h1 h2 h3)
+  obtain ⟨h1, h2, h3⟩ := hsupp m hm x hx hall
+  exact ⟨h1, h2, fun w => Fin.elim0 w, h3⟩
+
 end SieveUnwGen
 
+#print axioms SieveUnwGen.unw_gen_grp
 #print axioms SieveUnwGen.unw_gen_lo

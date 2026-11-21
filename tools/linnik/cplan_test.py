@@ -7,7 +7,8 @@ planned by both, `row_job`'s search with the lazy hints found and the cell plann
 two are compared: the plan node by node, its cost, `W['calls']`, `W['fcalls']` and the search's counts. With
 `--conly` the C planner alone is timed. SETTINGS are those of the certificate's plan at 2100/1000 unless changed:
 `--L a/b`, `--h`, `--hF`, `--maxlen`, `--depth`, `--lam`, `--skip`, `--sec`, `--split`, `--exh`, `--split2`, and `--nopos`,
-`--noenergy`, `--noresF`, `--nocof`, `--nolv`, `--nolazy`, `--normerge`, `--noycorner`.
+`--noenergy`, `--noresF`, `--nocof`, `--nolv`, `--nolazy`, `--normerge`, `--noycorner`, and `--sif` (the cofactor in the
+rest whatever its number of primes, `Par(sif=True)`).
 
 With `--cache`, each cell kept by `hint_cert.py --cache` (with those settings) is planned again with `--cplan` (the C
 plan, then the Python cut with the kernel's mirror on every hint) and the two results are compared whole.
@@ -85,7 +86,7 @@ def settings(a):
                   skip=num('--skip', 3, int), sec=num('--sec', 3, int), energy='--noenergy' not in a, res=True,
                   resF='--noresF' not in a, cof='--nocof' not in a, lv='--nolv' not in a, lazy='--nolazy' not in a,
                   rmerge='--normerge' not in a, split=num('--split', 3, int), ycorner='--noycorner' not in a,
-                  exh=num('--exh', 2, int), split2=num('--split2', 0, int))
+                  exh=num('--exh', 2, int), split2=num('--split2', 0, int), sif='--sif' in a)
 
 
 def cells_test(par_, a):

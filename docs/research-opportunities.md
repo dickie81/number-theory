@@ -746,20 +746,19 @@ covers. The region does not close at `13/6`.
     (`Linnik21000.linnik_21000`, 16 November), with the window's test at the two corners of a box, cells
     of `0.003` over the frozen parts, boxes of two primes cut in two, and a plan that searches every configuration
     the kernel accepts over the frozen parts: `0.97717K`, on `9.01·10^7` steps.
-  - *The density exponent, length by length* (14 November; the question was a better density exponent, by any
-    method. The exponent of the density curve was not improved. What is here is the exponent that a sum of one
-    given length has, which is lower at most lengths, and what the model gets when each sum of the sieve is
-    counted at its own length: `harman_sieve.py --res`, with `lv` and `own`. The counts are from estimates
-    that are in Lean (orthogonality, the Halász–Montgomery inequality, Proposition 3.1 of Chen, Gupta and Li),
-    applied to powers of the sums. In Lean since: Proposition 3.1 for the powers of a prime's sum
-    (`SieveTypeIIHM.card_Sp_pow_large`, and in exponents `card_Sp_large_lv`), as a count of the window's
-    condition (`SieveTypeIIHM.ResCond`, `typeII_res`), and an upper end for each of the rest's exponents on a
-    box (`ResBox`); and the kernel's test with that count as two more choices for each term of the rest, a
-    convex bound checked at the two ends of each interval (`SieveResTest.resX`, sound:
-    `SieveResTest.resX_sound_cells`), which the search's tests call (`SieveAd.chkIR`). On three cells of the
-    first prime at `2.12` (`x^0.41`, `x^0.45`, `x^0.48`; cells `0.003`, both trees) the exact search costs
-    `0.01260K`, `0.01086K`, `0.01087K` with it, for `0.01510K`, `0.01300K`, `0.01181K` without. `own` is not
-    in Lean, and the values below are the model's).
+  - *The density exponent, length by length* (14 November; the question was a better density exponent, by any method.
+    The exponent of the density curve was not improved. What is here is the exponent that a sum of one given length
+    has, which is lower at most lengths, and what the model gets when each sum of the sieve is counted at its own
+    length: `harman_sieve.py --res`, with `lv` and `own`. The counts are from estimates that are in Lean
+    (orthogonality, the Halász–Montgomery inequality, Proposition 3.1 of Chen, Gupta and Li), applied to powers of the
+    sums. In Lean since: Proposition 3.1 for the powers of a prime's sum, and since 20 November of a product of prime
+    sums (`SieveTypeIIHM.card_prodSp_pow_large`, and in exponents `card_prodSp_large_lv`), as a count of the window's
+    condition (`SieveTypeIIHM.ResCond`, `typeII_res`), and an upper end for each of the rest's exponents on a box
+    (`ResBox`); and the kernel's test with that count as two more choices for each term of the rest, a convex bound
+    checked at the two ends of each interval (`SieveResTest.resX`, sound: `SieveResTest.resX_sound_cells`), which the
+    search's tests call (`SieveAd.chkIR`). On three cells of the first prime at `2.12` (`x^0.41`, `x^0.45`, `x^0.48`;
+    cells `0.003`, both trees) the exact search costs `0.01260K`, `0.01086K`, `0.01087K` with it, for `0.01510K`,
+    `0.01300K`, `0.01181K` without. `own` is not in Lean, and the values below are the model's).
 
     *Where `7/3` comes from.* A zero of `L(s, χ)` with `β ≥ σ` makes one piece of the zero detector large: a
     sum `Σ_{n ~ N} a_n χ(n) n^{−iγ}`, `|a_n| ⪅ 1`, of size at least `N^σ` and of a length `N = q^θ` that the

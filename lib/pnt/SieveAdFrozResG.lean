@@ -7,7 +7,7 @@ Plain statements. `SieveAdFrozRes.lean` evaluates the term of a chain's box over
 the resonant window's estimate on the full tuples `(a, y, c, y′)` of the term (`SieveTypeIIHM.full_res_exp`), the
 rest some of the frozen primes and of the chain's primes, each in its cell. The same argument works for any estimate
 of the full tuples with the rest in its cells, `SieveTypeIIHM.FullEst`: the window's on a box with the variable tied
-to the rest (`SieveTypeIIHM.fullEst_of_tight`) is one.
+to the rest (`SieveTypeIIHM.fullEst_of_tightG`) is one.
 
 * `evIF_frozP_gen`: **the term over `frozP … t` is evaluated** given `FullEst L κ n` for the region
   `q^{lo i} ≤ x_i ≤ q^{hi i}`, `lo`, `hi` the ends of the cells of a rest at injective positions `r` of the box.

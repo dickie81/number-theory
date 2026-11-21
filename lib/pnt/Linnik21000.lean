@@ -17,10 +17,10 @@ their zeros, whose condition on the rest's cells the kernel checks led by a hint
 `SieveResTest.resX`; `SieveAd.evI_resE`, `SieveTypeIIHM.typeII_res`): the counts of the characters at which a sum of
 the rest is large are its moments, the Halász–Montgomery inequality, the zeros' bins and Chen, Gupta and Li's
 Proposition 3.1 for its powers. So may a box of a tree over a frozen part, its rest among the frozen primes and the
-chain's (`SieveAd.evIF_froz_resT`). Where a box's cells leave room for one prime only as the cofactor of its
-numbers, that prime may be in the rest too, in the cell that the cells leave it (`SieveAd.chkIRC`, `SieveAd.chkIRF`;
-`SieveTypeIIHM.chain_res_cof`, `SieveAd.evIF_froz_resC`). The hint names the window's lines as well as its
-intervals' ends, the clamp's line and each term's, so the kernel checks them rather than picks them
+chain's (`SieveAd.evIF_froz_resT`). The cofactor of a box's numbers, free of primes below its least, may be in the
+rest too, one part whatever its number of primes, in the cell that the cells leave it (`SieveAd.chkIRC`,
+`SieveAd.chkIRF`; `SieveTypeIIHM.chain_res_sif`, `SieveAd.evIF_froz_sif`). The hint names the window's lines as well
+as its intervals' ends, the clamp's line and each term's, so the kernel checks them rather than picks them
 (`SieveResTest.resXH`). Where no rest passes, a box may be evaluated by the window's test at the two corners of the
 box of a rest's cells, the variable tied to the rest (`SieveAd.chkIRY`, `SieveAd.chkIRFY`, `SieveResTest.resYH`;
 `SieveAd.evI_resY`, `SieveAd.evIF_froz_resTY`). The sieve's decomposition is a tree of Buchstab steps with the

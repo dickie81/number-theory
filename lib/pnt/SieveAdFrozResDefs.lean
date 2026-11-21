@@ -7,8 +7,9 @@ same test applies to it: a rest among its primes, the frozen ones included, each
 kernel's side of the search with it:
 
 * `chkIRF`, `okIRF`: **the resonant window's test of the box `ch ++ β`**: `chkIR`, or with the chain's cofactor in
-  the rest at the bit after the box's cells, when the slab and the chain's cells make every multiple's chain cofactor
-  one prime, in the cell `(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo + 1)` of the chain's sums and least prime.
+  the rest at the bit after the box's cells, one part whatever its number of primes, when the slab and the chain's
+  cells put every multiple's chain cofactor in the cell `(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo + 1)` of the
+  chain's sums and least prime.
 * `frozResTestsC`: **the tests of a tree over a frozen part with the resonant window**: `okIRF` for an evaluation of
   kind `3`, `frozTestsC`'s otherwise.
 * `cfgIFR`: the configuration of an evaluation in a tree over a frozen part, from the hints: `0` and `cfgIF`'s
@@ -31,17 +32,15 @@ variable [SieveCert.IBPar]
 open SieveCert.IBPar (Lnum Lden)
 
 /-- **The resonant window's test of a box `ch ++ β` of a tree over a frozen part, with the chain's cofactor in the
-rest** at the bit after the box's cells: with the slab `(x^{e₁/DEN}, x^{e₂/DEN}]`, when the chain's upper ends (the
-box's less `β`'s) with `e₂` sum to at most `DEN − 2` and its lower ends with `e₁` and twice its least prime's reach
-`DEN + 1`, every multiple's chain cofactor is one prime, in the cell `(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo +
-1)`. Without the bit, `chkIR`. -/
+rest**, one part, at the bit after the box's cells: with the slab `(x^{e₁/DEN}, x^{e₂/DEN}]`, when the chain's upper
+ends (the box's less `β`'s) with `e₂` sum to at most `DEN − 2`, every multiple's chain cofactor is in the cell
+`(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo + 1)`. Without the bit, `chkIR`. -/
 noncomputable def chkIRF (e₁ e₂ : ℕ) (β bl : List Cell) (sr k h : ℕ) : Bool :=
   (fun slo shi =>
     rpass bl sr fun los hs ns ok n =>
       Nat.ble n 13 && ok && Nat.blt 0 ns &&
         cond (Nat.beq (Nat.land (Nat.shiftRight sr n) 1) 1)
           (Nat.ble (Nat.add (Nat.add e₂ shi) 2) DEN &&
-            Nat.ble (Nat.add DEN 1) (Nat.add (Nat.add e₁ slo) (Nat.mul 2 (headLo bl))) &&
             SieveResTest.resX Lnum Lden (los ++ [maxN (Nat.sub (Nat.sub (Nat.sub DEN e₂) shi) 1) (headLo bl)])
               (Nat.add hs (Nat.add (Nat.sub (Nat.sub DEN e₁) slo) 1)) k h)
           (SieveResTest.resX Lnum Lden los hs k h))

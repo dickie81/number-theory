@@ -230,7 +230,7 @@ theorem evIF_froz_resTH {e₁ e₂ s : ℕ} (β : List Cell) (hβl : β.length =
 set_option maxHeartbeats 4000000 in
 /-- **A box evaluated by the resonant window with its cofactor in the rest, under more atoms.** If `chkIRCH` passes
 the box with the rest `sr`, the term of the box is evaluated under `m` more atoms, uniformly in the atoms, when the
-box's atoms and those are at most `40`: by `chain_res_cof` with the cofactor's cell when the bit after the box's
+box's atoms and those are at most `40`: by `chain_res_sif` with the cofactor's cell when the bit after the box's
 cells is set, and by `evI_resEH` otherwise. -/
 theorem evI_resCEH (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk hh : ℕ)
     (hok : chkIRCH bl sr kk hh = true) {m : ℕ} (hm : 3 * min (k' + 1) 13 + m ≤ 40) :
@@ -254,7 +254,7 @@ theorem evI_resCEH (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk h
     exact evI_resEH bl k' h sr kk hh hok' hm
   rw [hbit, Bool.cond_true] at hcof
   simp only [Bool.and_eq_true, Nat.ble_eq] at hcof
-  obtain ⟨⟨hshi, hslo⟩, hT⟩ := hcof
+  obtain ⟨hshi, hT⟩ := hcof
   have hc := (cellsFrom_iff 1 bl).1 hcells
   set bx := boxFn bl (k' + 1) h with hbx
   have hbxc : ∀ i, 1 ≤ (bx i).1 ∧ (bx i).1 ≤ (bx i).2 ∧ (bx i).2 ≤ DEN := fun i => hc _ (boxFn_mem bl _ h i)
@@ -262,10 +262,10 @@ theorem evI_resCEH (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk h
   have hlos : loSum bl = ∑ i, (bx i).1 := by rw [loSum_eq, hbx, sum_boxFn (fun c => c.1) bl _ h]
   have hhis : hiSum bl = ∑ i, (bx i).2 := by rw [hiSum_eq, hbx, sum_boxFn (fun c => c.2) bl _ h]
   have hhead : headLo bl = (bx (Fin.last k')).1 := headLo_eq bl k' h
-  simp only [Nat.add_eq, Nat.sub_eq, Nat.mul_eq] at hT hshi hslo
-  rw [hlos] at hT hslo
+  simp only [Nat.add_eq, Nat.sub_eq] at hT hshi
+  rw [hlos] at hT
   rw [hhis] at hT hshi
-  rw [hhead] at hT hslo
+  rw [hhead] at hT
   -- the rest's cells and positions
   have hcsr : mList (fun c => c.1) bl sr = (ridx (k' + 1) sr).map fun i => (bx i).1 :=
     mList_eq (fun c => c.1) bl (k' + 1) h sr
@@ -344,9 +344,9 @@ theorem evI_resCEH (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk h
     fun m => by rw [hbx, sum_mset (fun c => c.2) bl _ h m]
   have hqx : ∀ (q : ℕ) (e : ℕ), (q : ℝ) ^ (κ * (e : ℝ)) = Xe q e := fun q e => by rw [hκdef, qpow_eq]; rfl
   intro η hη
-  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveTypeIIHM.chain_res_cof SieveCurveHx.ghx_le_one SieveCurveHx.ghx_half
+  obtain ⟨δ, hδ, q₀, hq₀⟩ := SieveTypeIIHM.chain_res_sif SieveCurveHx.ghx_le_one SieveCurveHx.ghx_half
     SieveCurveHx.counts_hx (e₀ := κ * ((1 : ℕ) : ℝ)) (by positivity) k' 40 (Λ₁ := L + 1) (by linarith)
-    (ρ₂ := κ * (hs : ℝ)) (ε := κ) (by positivity) hκ hLρ
+    (ρ₂ := κ * (hs : ℝ)) (ε := κ) (by positivity) hκ hLρ (lo := fun j => κ * (cs.getD j 0 : ℝ)) hres'
   filter_upwards [eventually_ge_atTop q₀, eventually_ge_atTop 2, le_Xq hδ hη, big_ev] with q hq hq2 hX hbig a ha E
     hEl hEt
   have : NeZero q := ⟨by omega⟩
@@ -358,8 +358,7 @@ theorem evI_resCEH (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk h
   have hφ : (0 : ℝ) ≤ (q.totient : ℝ)⁻¹ := by positivity
   have hthr : ThrOK q (specB q bx ++ E) :=
     thrOK_append (thrOK_specB hq1 hL0.le bx fun i => ⟨(hbxc i).2.1.trans (hbxc i).2.2, (hbxc i).2.2⟩) hEt
-  have hmain := hq₀ q hq a ha n r hr (fun j => κ * (cs.getD j 0 : ℝ)) hres'
-    ((specB q bx ++ E).map Atom.toG) (κ * ((mSum (fun c => c.1) bl sr + cl : ℕ) : ℝ))
+  have hmain := hq₀ q hq a ha r hr ((specB q bx ++ E).map Atom.toG)
     (by rw [List.length_map, List.length_append]; have := specB_length q bx; omega) (c_le_of_thrOK hq1 hthr)
     (fun rt hp hΩ => by
       obtain ⟨hsa, hcc⟩ := (sem_specB q bx rt).1
@@ -369,11 +368,11 @@ theorem evI_resCEH (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk h
           rw [hκdef, qpow_eq, qpow_eq]
           exact ⟨(hcc i).1, (hcc i).2.le⟩
       have hcx : ∀ i, Xe q (bx i).1 ≤ rt i ∧ (rt i : ℝ) < Xe q (bx i).2 := fun i => hcc i
-      obtain ⟨hf0, hf2, hf1⟩ := cof_facts hbig bx rt hcx (fun i => (hbxc i).2.1) hshi hslo
+      obtain ⟨hf0, hf1⟩ := cof_facts hbig bx rt hcx (fun i => (hbxc i).2.1) hshi
       have br := prod_set_bounds hq0 κ bx hcc' (mset (k' + 1) sr)
       rw [hslo' sr, hshi' sr] at br
       rw [himg]
-      refine ⟨hsa, fun i => ?_, fun j => ?_, hf0, hf2, fun y hy hylo hyhi => ?_⟩
+      refine ⟨hsa, fun i => ?_, fun j => ?_, hf0, fun y hy hylo hyhi => ?_⟩
       · rw [hκdef, qpow_eq]
         exact (pow_mono hx1 (hbxc i).1).trans (hcc i).1
       · show (q : ℝ) ^ (κ * (cs.getD (j : ℕ) 0 : ℝ)) ≤ rt (r j)
@@ -383,19 +382,7 @@ theorem evI_resCEH (bl : List Cell) (k' : ℕ) (h : bl.length = k' + 1) (sr kk h
         have hylo' : (q : ℝ) ^ (κ * (cs.getD (n + 1) 0 : ℝ)) ≤ y := by
           rw [hcsl, hqx]
           exact hyc
-        refine ⟨hylo', ?_, ?_⟩
-        · -- the rest's product from below
-          have h1 := br.1
-          rw [Nat.cast_mul]
-          calc (q : ℝ) ^ (κ * ((mSum (fun c => c.1) bl sr + cl : ℕ) : ℝ))
-              = (q : ℝ) ^ (κ * ((mSum (fun c => c.1) bl sr : ℕ) : ℝ)) * (q : ℝ) ^ (κ * (cl : ℝ)) := by
-                rw [← Real.rpow_add hq0]
-                congr 1
-                push_cast
-                ring
-            _ ≤ ((∏ i ∈ mset (k' + 1) sr, rt i : ℕ) : ℝ) * y := by
-                rw [hqx q cl]
-                exact mul_le_mul h1 hyc (Xe_pos hx0 _).le (Nat.cast_nonneg _)
+        refine ⟨hylo', ?_⟩
         · -- the rest's product from above
           have h2 := br.2
           rw [Nat.cast_mul]
@@ -461,7 +448,7 @@ theorem evIF_froz_resTCH {e₁ e₂ s : ℕ} (β : List Cell) (hβl : β.length 
     exact evIF_froz_resTH β hβl he₁ he₂ ch k' hch sr kk hh hok'
   rw [hbit, Bool.cond_true] at hcof
   simp only [Bool.and_eq_true, Nat.ble_eq] at hcof
-  obtain ⟨⟨hshi, hslo⟩, hT⟩ := hcof
+  obtain ⟨hshi, hT⟩ := hcof
   have hc := (cellsFrom_iff 1 (ch ++ β)).1 hcells
   have hlen : (ch ++ β).length = s + 1 + (k' + 1) := by rw [List.length_append, hch, hβl]; omega
   set βx := boxFn β (s + 1) hβl with hβx
@@ -488,10 +475,10 @@ theorem evIF_froz_resTCH {e₁ e₂ s : ℕ} (β : List Cell) (hβl : β.length 
     cases ch with
     | nil => simp at hch
     | cons c b => rfl
-  simp only [Nat.add_eq, Nat.sub_eq, Nat.mul_eq] at hT hshi hslo
-  rw [hlos] at hT hslo
+  simp only [Nat.add_eq, Nat.sub_eq] at hT hshi
+  rw [hlos] at hT
   rw [hhis] at hT hshi
-  rw [hhead] at hT hslo
+  rw [hhead] at hT
   -- the rest's cells and positions
   have hcsr : mList (fun c => c.1) (ch ++ β) sr = (ridx (s + 1 + (k' + 1)) sr).map fun i => (cx i).1 :=
     mList_eq (fun c => c.1) (ch ++ β) (s + 1 + (k' + 1)) hlen sr
@@ -563,7 +550,7 @@ theorem evIF_froz_resTCH {e₁ e₂ s : ℕ} (β : List Cell) (hβl : β.length 
     linarith
   have hshi' : ∑ i ∈ Finset.univ.image r, (Fin.append βx bx i).2 = mSum (fun c => c.2) (ch ++ β) sr := by
     rw [himg, ← hcxe, hcx, sum_mset (fun c => c.2) (ch ++ β) _ hlen sr]
-  refine evIF_froz_resC hβc he₁ he₂ hbc hshi hslo hκdef r hr (fun j => κ * (cs.getD j 0 : ℝ)) (fun j => ?_) ?_
+  refine evIF_froz_resC hβc he₁ he₂ hbc hshi hκdef r hr (fun j => κ * (cs.getD j 0 : ℝ)) (fun j => ?_) ?_
     (ρ₂ := κ * (hs : ℝ)) ?_ hLρ hres
   · show κ * (cs.getD (j : ℕ) 0 : ℝ) = κ * ((Fin.append βx bx (r j)).1 : ℝ)
     rw [hcsj j, hcxe]

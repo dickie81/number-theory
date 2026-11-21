@@ -6,7 +6,7 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 `SieveTypeIIHM.chain_res_exp` evaluates the term of a family of strictly decreasing chains by the resonant window:
 it writes the cofactor of each multiple out as its primes and applies `full_res_exp` to the full tuples, the rest
 at positions of the chain. The same argument works for any estimate of the full tuples with the rest in a region,
-`SieveTypeIIHM.FullEst`: the window's on a box with the variable tied to the rest (`fullEst_of_tight`) is one.
+`SieveTypeIIHM.FullEst`: the window's on a box with the variable tied to the rest (`fullEst_of_tightG`) is one.
 
 * `chain_res_gen`: **chains with a rest, by an estimate of the tuples.** Given `FullEst L e₀ n Reg`, for `k′`, `J₀`
   and `Λ₁ ≥ 0` there are `δ > 0` and `q₀` such that for `q ≥ q₀` and a unit `a` mod `q`: let `rt` run over the

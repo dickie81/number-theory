@@ -106,19 +106,34 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   exponent and the rest's: the characters are classed by their zeros' bin and the size of each prime sum of the
   rest, in steps of `10⁻⁶` of its exponent; a class's count is the least of the curve's and each large prime sum's
   moment count, and `bin_bound_exp` bounds the class;
-- `SieveUnwGen.unw_gen_lo` (`lib/pnt/SieveUnwLo.lean`): `SieveUnwGen.unw_gen` with a lower bound `x_i ≥ 2q^{lo i}`
-  on each prime of the family, so that the estimate at each frequency is asked for only on the scales
-  `Q_i ≥ q^{lo i}`; `SieveTypeIIHM.box_res`, `SieveTypeIIHM.typeII_gcmp_res` and `SieveTypeIIHM.chainTU_res`
-  (`lib/pnt/SieveResChain.lean`): `typeII_res` at each frequency for a polynomial over the integers cut into dyadic
-  blocks, the family with comparisons on its primes, and the chains of primes times a rough cofactor with the
-  cofactor as the variable and all the chain's primes as the rest, given `ResCond` at the cofactor's blocks and the
-  primes' scales. No certificate takes the chains this way, so `chainTU_res` is a result of a route that nothing
-  proves (Conditional results, below);
+- `SieveTypeIIHM.card_prodSp_large` and `SieveTypeIIHM.card_prodSp_large_lv` (`lib/pnt/SieveResProd.lean`): the
+  characters at which a product `G = ∏_{i<t} Sp(χ, Q_i, h_i)` of prime sums is at least `M^u`, `M = ∏Q_i`, counted as
+  for one prime sum of length `M`: by the `2k`-th moment of `G`, the polynomial of the products of one prime from each
+  range (a tuple of primes with a given product is one of `(kt)^{kt}`), at most `C q^{momExp k s u}` for
+  `s = log_q M`; and by Chen, Gupta and Li's Proposition 3.1 for `G^k`, whose range is that of a prime sum of length
+  `M^{1/t}` to the power `kt`, at most `C q^{lvExp k s u}`. `SieveTypeIIHM.typeII_resG`
+  (`lib/pnt/SieveResTypeII.lean`): `typeII_res` with the rest's prime sums grouped into nonempty parts (`grp`),
+  `ResCond` asked at the parts' exponents `log_q ∏_{j∈G_p} Q_j`: a part is one polynomial, at most
+  `2^{|G_p|}Q_p^{β+2δ}` in the bin of `β` and its levels counted by its own moment and powers' large values. So a
+  sifted cofactor, written out as its primes, is one part of the rest whatever its number of primes; `typeII_res` is
+  the case of one prime a part;
+- `SieveUnwGen.unw_gen_lo` (`lib/pnt/SieveUnwLo.lean`): `SieveUnwGen.unw_gen` with a lower bound `x_i ≥ 2q^{lo i}` on
+  each prime of the family, so that the estimate at each frequency is asked for only on the scales `Q_i ≥ q^{lo i}`,
+  and `SieveUnwGen.unw_gen_grp` with lower bounds on the products of groups of the primes,
+  `∏_{i∈G_w} x_i ≥ 2^{|G_w|}q^{c_w}`, on the products of the scales; `SieveTypeIIHM.box_res`,
+  `SieveTypeIIHM.typeII_gcmp_res` and `SieveTypeIIHM.chainTU_res` (`lib/pnt/SieveResChain.lean`): `typeII_res` at each
+  frequency for a polynomial over the integers cut into dyadic blocks, the family with comparisons on its primes, and
+  the chains of primes times a rough cofactor with the cofactor as the variable and all the chain's primes as the
+  rest, given `ResCond` at the cofactor's blocks and the primes' scales. No certificate takes the chains this way, so
+  `chainTU_res` is a result of a route that nothing proves (Conditional results, below);
 - `SieveTypeIIHM.box_res_gen` and `SieveTypeIIHM.chain_res_core` (`lib/pnt/SieveResFull.lean`): `typeII_res` for a
-  polynomial over a finite set with at most `D` elements for each value, and the families of tuples of primes in
-  no order (`SieveTwoChain.chain_two_core`'s) with one variable, the product of the entries outside a rest whose
-  entries have their own lower bounds. Through `full_res_bound` and `full_res_exp` they are in the proof of the
-  theorem at `2100/1000` (`Linnik21000.linnik_21000`);
+  polynomial over a finite set with at most `D` elements for each value, and the families of tuples of primes in no
+  order (`SieveTwoChain.chain_two_core`'s) with one variable, the product of the entries outside a rest whose entries
+  have their own lower bounds. `box_res_genG`, `chain_res_coreG`, `full_res_boundG` and `full_res_expG`: the same with
+  the rest grouped into parts (`typeII_resG`), each part's product at least `q^{lo p}`, and `full_res_boundG` the
+  tuples with product in `(⌊q^L⌋, ⌊2q^L⌋]`, in exponents `full_res_expG`. `box_res_gen`, `chain_res_core` and
+  `full_res_exp` are their case of one prime a part. Through `full_res_boundG` and `full_res_expG` the grouped forms
+  are in the proof of the theorem at `2100/1000` (`Linnik21000.linnik_21000`);
 - `SieveResTest.resT_sound` and `SieveResTest.resT_sound_cells` (`lib/pnt/SieveResTest.lean`; the test
   `SieveResTest.resT` in `lib/pnt/SieveResTestDefs.lean`, written by `tools/linnik/res_test.py`): the kernel's test
   of `ResBox` on the curve `ghx` for a box's rest, led by a hint, is sound. The test bounds, for every count
@@ -153,57 +168,61 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   `SieveAd.pr_of_partDR_at` (`lib/pnt/SieveAdFrozResTree.lean`; the tests `SieveAd.frozResTestsC`, the decoder
   `SieveAd.cfgIFR` and the search `SieveAd.altFDR` in `lib/pnt/SieveAdFrozResDefs.lean`): so the search whose trees
   over the frozen parts read the resonant window's test is sound;
-- `SieveTypeIIHM.chain_res_cof` (`lib/pnt/SieveResCof.lean`): `chain_res_exp` with the cofactor in the rest when it
-  is one prime: when no multiple is the chain's product itself and two primes at least the chain's last would
-  overshoot `N₂`, the term is the sum over the full tuples `(rt, y)` of one cofactor prime, and `full_res_exp` applies
-  with `y` in the rest, at least `q^{lo}` for the bound that `N₁ < ∏rt·y` gives. `SieveAd.evI_resCE` and
-  `SieveAd.resTestsFC_sound` (`lib/pnt/SieveAdResCof.lean`; the test `SieveAd.chkIRC`, the tests `SieveAd.resTestsFC`
-  in `lib/pnt/SieveAdResDefs.lean`): a box of the main tree whose upper ends sum
-  to at most `DEN − 2` and whose lower ends with twice its least prime's reach `DEN + 1` has its cofactor, one prime
-  in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)`, in the rest when the test's bit after the box's cells is
-  set; so the tests with it are sound. The certificate at `2100/1000` uses `chain_res_cof` through the hinted tests
-  (`SieveAd.resTestsFCH_sound`, below), so `resTestsFC_sound` is a result of a route that nothing proves
+- `SieveTypeIIHM.chain_res_sifG` and `SieveTypeIIHM.chain_res_sif` (`lib/pnt/SieveResSif.lean`): `chain_res_exp` with
+  the cofactor in the rest, whatever its number of primes: the multiples `∏rt·m` of a chain, `m` free of primes below
+  the chain's last, are the full tuples `(rt, y)` of `t` cofactor primes (none with `t = 0`, as `∏rt ≤ N₁`), and for
+  each `t ≥ 1` an estimate `FullEst` of the full tuples applies with the rest made of the chain's rest primes, each
+  its own part, and of all of `y`, one part (`SieveTypeIIHM.sifR`, `sifGrp`), at least `q^{lo}` for the bound that
+  `N₁ < ∏rt·m` gives. `chain_res_sif` takes the window's estimate, `full_res_expG` as `FullEst`
+  (`SieveTypeIIHM.fullEst_of_res`, `fullEst_sif_of_res`). `SieveAd.evI_resCE` and `SieveAd.resTestsFC_sound`
+  (`lib/pnt/SieveAdResCof.lean`; the test `SieveAd.chkIRC`, the tests `SieveAd.resTestsFC` in
+  `lib/pnt/SieveAdResDefs.lean`): a box of the main tree whose upper ends sum to at most `DEN − 2` has its cofactor,
+  in the cell `(max(DEN − Σhi − 1, lo₀), DEN − Σlo + 1)` (`SieveAd.cof_facts`), in the rest when the test's bit after
+  the box's cells is set; so the tests with it are sound. The certificate at `2100/1000` uses them through the hinted
+  tests (`SieveAd.resTestsFCH_sound`, below), so `resTestsFC_sound` is a result of a route that nothing proves
   (Conditional results, below);
-- `SieveAd.evIF_froz_resC` and `SieveAd.evIF_froz_resTC` (`lib/pnt/SieveAdFrozResCof.lean`; the test
-  `SieveAd.chkIRF` in `lib/pnt/SieveAdFrozResDefs.lean`): the same in the trees over the frozen parts. With the
-  frozen number in the slab `(x^{e₁/DEN}, x^{e₂/DEN}]`, a chain whose upper ends with `e₂` sum to at most `DEN − 2`
-  and whose lower ends with `e₁` and twice its least prime's reach `DEN + 1` has one prime as every multiple's chain
-  cofactor (`frozCof_facts`), in the cell `(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo + 1)`; the frozen tuples
-  `(a, y, c, y′)` have one prime `y′`, in the rest with the frozen primes and the chain's (`evIF_frozP_resC`).
-  `frozResTestsC` reads `chkIRF` (with the bit clear, `chkIR`), so `SieveAd.rules_frozResC` covers it;
-- `SieveResTest.resY_sound` (`lib/pnt/SieveResCorner.lean`; the test `SieveResTest.resY`, and `resYH` with its
-  hints in one number, in `lib/pnt/SieveResTestYDefs.lean`, written by `tools/linnik/res_test.py`): **the window's
-  test at the two corners of a box of cells**. `resX` tests the window at a corner that is no point of the box, the
-  rest's lower ends with the variable that the rest's upper ends leave. On a box the rest and the variable make up
-  `q^L`, so the condition is needed only with the variable tied to the rest, `SieveTypeIIHM.ResBoxT`
-  (`lib/pnt/SieveResTight.lean`): the rest's exponents in their cells and `Σ_j s_j + m ≥ L − 2·10⁻⁵`. `resY` gives
-  it from the bound at the box's upper corner, with the large values' thresholds of the cells and the variable
-  shorter by `1/11` of the box's width, and the bound with no clamp at its lower corner (`two_corner`: a class of
-  characters at a point of the box is carried to the upper corner with the sizes `t′ = 1/2 + (s/s′)(t − 1/2)`); the
-  record of an interval names the clamp's line and each term's bound, so the kernel does not look for them.
-  `SieveTypeIIHM.fullEst_of_tight` (`lib/pnt/SieveResTight.lean`): `ResBoxT` on a box gives the estimate of the
-  tuples of primes with the rest in its cells (`FullEst`, what `full_res_exp` gives): the family is cut by a
-  sub-cell of width `1/(4·10⁵(n + 1))` of each rest prime, a fixed number of families, and `full_res_exp` applies to
-  each (`resBox_of_tight`). The terms' evaluations with `FullEst` as a hypothesis, their proofs those of
-  `chain_res_exp`, `chain_res_cof`, `evIF_froz_res` and `evIF_froz_resC`: `SieveTypeIIHM.chain_res_gen`
-  (`lib/pnt/SieveResTermG.lean`), `chain_res_cofG` (`lib/pnt/SieveResCofG.lean`), `SieveAd.evIF_froz_gen`
-  (`lib/pnt/SieveAdFrozResG.lean`) and `evIF_froz_genC` (`lib/pnt/SieveAdFrozResCofG.lean`). In the search
-  (`lib/pnt/SieveAdResYDefs.lean`: the tests `SieveAd.chkIRY` of a box of the main tree and `chkIRFY` of a box
-  `ch ++ β` over a frozen part, each with the cofactor's cell when its bit is set; `resTestsFY`, `frozResTestsY`,
-  which read them for an evaluation of kind `4` and are `resTestsFC`, `frozResTestsC` otherwise; the decoders
-  `SieveAd.cfgIMY`, `cfgIFY`; the search `altFDY`): `SieveAd.resTestsFY_sound` (`lib/pnt/SieveAdResY.lean`), the
-  tests of the main tree are sound, and `SieveAd.pr_of_partDY_at` (`lib/pnt/SieveAdFrozResYTree.lean`, with
-  `evIF_froz_resTY` of `lib/pnt/SieveAdFrozResY.lean`), a part of the search whose trees over the frozen parts read
-  them bounds its term. The existing modules are unchanged. The certificate at `2100/1000` uses these tests with
-  the window's lines named by the hint (below). **A cut of any cell
-  of a box, at any point, in the search led by hints** (`lib/pnt/SieveAdCutDefs.lean`: `SieveAd.altC`, a cut read
-  where `stepD` reads its hinted bound, one bit, the cell's position and the exponent of the cut; `solveDS`, the
-  search with it at every depth; `flipTreeDYS` … `altFDYS`, the reversal whose trees are searched that way, a cut
-  there being of a cell of the chain): `SieveAd.pr_splitAt` and `pf_splitAt` (`lib/pnt/SieveAdCut.lean`), the
-  costs of the two boxes of a cut add, in the main tree and over a frozen part (`bd_split`, `bdF_split` at the
-  cell's index); `SieveAd.solveDS_sound`, by `stepD_sound` at each depth; and `SieveAd.pr_of_partDYS_at`, a part of
-  that search bounds its term. It is for boxes that the edge of a test's zone crosses: cut at the zone's edge,
-  the part inside is evaluated and only the rest is dropped or decomposed. No certificate uses it yet;
+- `SieveAd.evIF_froz_sif`, `SieveAd.evIF_froz_resC` and `SieveAd.evIF_froz_resTC` (`lib/pnt/SieveAdFrozResCof.lean`;
+  the test `SieveAd.chkIRF` in `lib/pnt/SieveAdFrozResDefs.lean`): the same in the trees over the frozen parts. With
+  the frozen number in the slab `(x^{e₁/DEN}, x^{e₂/DEN}]`, a chain whose upper ends with `e₂` sum to at most
+  `DEN − 2` has every multiple's chain cofactor in the cell `(max(DEN − e₂ − Σhi − 1, lo₀), DEN − e₁ − Σlo + 1)`
+  (`frozCof_facts`); the frozen tuples `(a, y, c, y′)` with `y′` of `u ≥ 1` primes have `y′` as one part of the rest
+  with the frozen primes and the chain's (`evIF_frozP_sif`, given `FullEst` for each `u`, and `evIF_froz_resC` with
+  the window's). `frozResTestsC` reads `chkIRF` (with the bit clear, `chkIR`), so `SieveAd.rules_frozResC` covers it;
+- `SieveResTest.resY_sound` (`lib/pnt/SieveResCorner.lean`; the test `SieveResTest.resY`, and `resYH` with its hints
+  in one number, in `lib/pnt/SieveResTestYDefs.lean`, written by `tools/linnik/res_test.py`): **the window's test at
+  the two corners of a box of cells**. `resX` tests the window at a corner that is no point of the box, the rest's
+  lower ends with the variable that the rest's upper ends leave. On a box the rest and the variable make up `q^L`, so
+  the condition is needed only with the variable tied to the rest, `SieveTypeIIHM.ResBoxT`
+  (`lib/pnt/SieveResTight.lean`): the rest's exponents in their cells and `Σ_j s_j + m ≥ L − 2·10⁻⁵`. `resY` gives it
+  from the bound at the box's upper corner, with the large values' thresholds of the cells and the variable shorter by
+  `1/11` of the box's width, and the bound with no clamp at its lower corner (`two_corner`: a class of characters at a
+  point of the box is carried to the upper corner with the sizes `t′ = 1/2 + (s/s′)(t − 1/2)`); the record of an
+  interval names the clamp's line and each term's bound, so the kernel does not look for them.
+  `SieveTypeIIHM.fullEst_of_tightG` (`lib/pnt/SieveResTight.lean`): `ResBoxT` on a box gives the estimate of the
+  tuples of primes with the rest's parts in their cells (`FullEst`, what `full_res_expG` gives): the family is cut by
+  sub-cells of the parts' products (`prodGeC`, `prodLtC`), a fixed number of families, and `full_res_expG` applies to
+  each (`resBox_of_tight`). Its cases for the window's test at the two corners (`lib/pnt/SieveAdResY.lean`):
+  `SieveAd.fullEst_of_resYH`, each prime its own part, and `SieveAd.fullEst_of_resYHS`, a chain's rest with a sifted
+  cofactor. The terms' evaluations with `FullEst` as a hypothesis, their proofs those of `chain_res_exp`,
+  `evIF_froz_res` and the sifted cofactor's: `SieveTypeIIHM.chain_res_gen` (`lib/pnt/SieveResTermG.lean`),
+  `chain_res_sifG`, `SieveAd.evIF_froz_gen` (`lib/pnt/SieveAdFrozResG.lean`) and `evIF_froz_genC`
+  (`lib/pnt/SieveAdFrozResCofG.lean`, by `evIF_froz_sif`). In the search (`lib/pnt/SieveAdResYDefs.lean`: the tests
+  `SieveAd.chkIRY` of a box of the main tree and `chkIRFY` of a box `ch ++ β` over a frozen part, each with the
+  cofactor's cell when its bit is set; `resTestsFY`, `frozResTestsY`, which read them for an evaluation of kind `4`
+  and are `resTestsFC`, `frozResTestsC` otherwise; the decoders `SieveAd.cfgIMY`, `cfgIFY`; the search `altFDY`):
+  `SieveAd.resTestsFY_sound` (`lib/pnt/SieveAdResY.lean`), the tests of the main tree are sound, and
+  `SieveAd.pr_of_partDY_at` (`lib/pnt/SieveAdFrozResYTree.lean`, with `evIF_froz_resTY` of
+  `lib/pnt/SieveAdFrozResY.lean`), a part of the search whose trees over the frozen parts read them bounds its term.
+  The existing modules are unchanged. The certificate at `2100/1000` uses these tests with the window's lines named by
+  the hint (below). **A cut of any cell of a box, at any point, in the search led by hints**
+  (`lib/pnt/SieveAdCutDefs.lean`: `SieveAd.altC`, a cut read where `stepD` reads its hinted bound, one bit, the cell's
+  position and the exponent of the cut; `solveDS`, the search with it at every depth; `flipTreeDYS` … `altFDYS`, the
+  reversal whose trees are searched that way, a cut there being of a cell of the chain): `SieveAd.pr_splitAt` and
+  `pf_splitAt` (`lib/pnt/SieveAdCut.lean`), the costs of the two boxes of a cut add, in the main tree and over a
+  frozen part (`bd_split`, `bdF_split` at the cell's index); `SieveAd.solveDS_sound`, by `stepD_sound` at each depth;
+  and `SieveAd.pr_of_partDYS_at`, a part of that search bounds its term. It is for boxes that the edge of a test's
+  zone crosses: cut at the zone's edge, the part inside is evaluated and only the rest is dropped or decomposed. No
+  certificate uses it yet;
 - `SieveResTest.resXH_sound_cells` (`lib/pnt/SieveResTestH.lean`; the test `SieveResTest.resXH` in
   `lib/pnt/SieveResTestHDefs.lean`, written by `tools/linnik/res_test.py`): `resX` with each interval's lines named
   by the hint. A record gives the interval's end, the line of the Halász–Montgomery clamp and each term's line;

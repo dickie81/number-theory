@@ -180,7 +180,6 @@ import SieveResLVTest
 import SieveResTight
 import SieveResCorner
 import SieveResTermG
-import SieveResCofG
 import SieveAdFrozResG
 import SieveAdFrozResCofG
 import SieveResTestYDefs
@@ -194,7 +193,6 @@ import SieveResTerm
 import SieveAdRes
 import SieveAdFrozRes
 import SieveAdFrozResTree
-import SieveResCof
 import SieveAdResCof
 import SieveAdFrozResCof
 import SieveAdResH
@@ -1018,8 +1016,6 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveTypeIIHM.sum_typeII_cls
 #print axioms SieveTypeIIHM.bin_bound_exp
 #print axioms SieveTypeIIHM.card_Sp_large
-#print axioms SieveTypeIIHM.card_Sp_pow_large
-#print axioms SieveTypeIIHM.card_Sp_large_lv
 #print axioms SieveTypeIIHM.typeII_res
 #print axioms SieveUnwGen.unw_gen_lo
 #print axioms SieveTypeIIHM.box_res
@@ -1042,7 +1038,7 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms SieveAd.evIF_froz_resT
 #print axioms SieveAd.rules_frozResC
 #print axioms SieveAd.pr_of_partDR_at
-#print axioms SieveTypeIIHM.chain_res_cof
+#print axioms SieveTypeIIHM.chain_res_sif
 #print axioms SieveAd.evI_resCE
 #print axioms SieveAd.resTestsFC_sound
 #print axioms SieveAd.evIF_froz_resC
@@ -1369,10 +1365,9 @@ certificate's bound and the theorem. -/
 #print axioms SieveTypeIIHM.ZoneOK4
 #print axioms SieveTypeIIHM.bin_bound_two4
 #print axioms SieveTypeIIHM.card_fiber_le_pow
-#print axioms SieveTypeIIHM.chain_res_cofG
+#print axioms SieveTypeIIHM.chain_res_sifG
 #print axioms SieveTypeIIHM.chain_res_gen
-#print axioms SieveTypeIIHM.fullEst_of_tight
-#print axioms SieveTypeIIHM.full_res_bound
+#print axioms SieveTypeIIHM.fullEst_of_tightG
 #print axioms SieveTypeIIHM.resBox_of_tight
 #print axioms SieveTypeIIHM.sum_bin_four_le
 #print axioms SieveTypeIIHM.sum_chars_dp_four_le
