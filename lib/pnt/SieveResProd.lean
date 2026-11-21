@@ -3,13 +3,13 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-`SieveResCount.card_Sp_large` and `SieveResLV.card_Sp_large_lv` count the characters at which one smoothed prime sum
-is large. This file counts them for a product `G(χ) = ∏_{i<t} Sp(χ, Q_i, y_i)` of such sums, taken as one polynomial
-of length `M = ∏Q_i`: a part of the resonant window's rest can then be a product of primes (a sifted cofactor
-written out as its primes), counted by its own sums as a prime sum of length `M` is. A product of prime sums over a
-finite index set `κ` is the polynomial of the products of one prime from each range, with coefficients at most
-`K^K F₀^K` for `K = |κ|` (a tuple of primes with a given product is a tuple of its prime factors), supported in
-`[∏Q_i/2, ∏2Q_i]`; and `G^k` is the product of the `kt` sums indexed by `Fin k × Fin t`. So:
+`SieveResCount.card_Sp_large` counts the characters at which one smoothed prime sum is large, by its moments. This
+file counts them for a product `G(χ) = ∏_{i<t} Sp(χ, Q_i, y_i)` of such sums, taken as one polynomial of length
+`M = ∏Q_i`: a part of the resonant window's rest can then be a product of primes (a sifted cofactor written out as
+its primes), counted by its own sums as a prime sum of length `M` is. A product of prime sums over a finite index
+set `κ` is the polynomial of the products of one prime from each range, with coefficients at most `K^K F₀^K` for
+`K = |κ|` (a tuple of primes with a given product is a tuple of its prime factors), supported in `[∏Q_i/2, ∏2Q_i]`;
+and `G^k` is the product of the `kt` sums indexed by `Fin k × Fin t`. So:
 
 * by orthogonality, `Σ_χ |G|^{2k} ≤ ((2^tM)^k + q)(kt)^{kt}(3F₀²)^{kt}M^k`, and the characters at which `|G| ≥ M^u`
   number at most `C q^{momExp k s u}` with `s = log_q M`, the count of one prime sum of length `M`;
@@ -21,8 +21,8 @@ finite index set `κ` is the polynomial of the products of one prime from each r
 * `norm_spProdCoeff_le`, `spProdCoeff_eq_zero`, `sum_spProdCoeff_sq_le`: the coefficients' bound, support and mean square.
 * `sum_chars_prod_Sp_sq_le`: `Σ_χ |∏_i Sp_i|² ≤ (∏⌊2Q_i⌋ + q)K^K F₀^K ∏F₀(2Q_i + 1)`.
 * `card_prodSp_large`, **the count by the moment**: `#{χ : M^u ≤ |G|} ≤ (2^{tk} + 1)(kt)^{kt}(3F₀²)^{kt} q^{momExp k s u}`.
-* `card_prodSp_pow_large`, **Chen, Gupta and Li's count for a product**: `SieveResLV.card_Sp_pow_large` for
-  `∏_{i∈κ} Sp_i`, with `(2K + 1)` dyadic blocks.
+* `card_prodSp_pow_large`, **Chen, Gupta and Li's count for a product**: Proposition 3.1 for `∏_{i∈κ} Sp_i`, a
+  polynomial cut in `(2K + 1)` dyadic blocks (`SieveResLV.lean`'s `lvB`).
 * `card_prodSp_large_lv`, **the count in exponents**: for `q` large, `#{χ : M^u ≤ |G|} ≤ C q^{lvExp k s u}`.
 
 The file imports `SieveResLV.lean`.
@@ -394,11 +394,11 @@ theorem card_prodSp_large [NeZero q] (hq : 1 < (q : ℝ)) {f0 : ℝ → ℝ} {F�
 /-! ### The count by the large values of a power -/
 
 /-- **The characters at which a product of smoothed prime sums is large, by Chen, Gupta and Li's Proposition 3.1.**
-`SieveResLV.card_Sp_pow_large` for a product `∏_{i∈κ} Sp χ f0 (Q i) (y i)` of `K = |κ| ≥ 1` sums with `Q_i > 0`:
-given the proposition and `0 < ε ≤ 1` there is `C ≥ 0` such that, with `X = ∏2Q_i` and `Y = ∏(Q_i/2)`, for
-`Y ≥ 2q^{2/3} + 2` and `X^{7/10}·D ≤ V ≤ (Y/2)^{4/5}`, `D = (2K+1)K^K F₁^K`,
-`#{χ : V ≤ |∏_i Sp_i|} ≤ (2K+1)·C·q^ε(qX)^ε·lvB q X (V/D)`. The product is a polynomial with coefficients at most
-`K^K F₁^K` supported in `[Y, X]`, `X = 4^K Y`, cut in `2K + 1` dyadic blocks. -/
+For a product `∏_{i∈κ} Sp χ f0 (Q i) (y i)` of `K = |κ| ≥ 1` sums with `Q_i > 0`: given the proposition and
+`0 < ε ≤ 1` there is `C ≥ 0` such that, with `X = ∏2Q_i` and `Y = ∏(Q_i/2)`, for `Y ≥ 2q^{2/3} + 2` and
+`X^{7/10}·D ≤ V ≤ (Y/2)^{4/5}`, `D = (2K+1)K^K F₁^K`, `#{χ : V ≤ |∏_i Sp_i|} ≤ (2K+1)·C·q^ε(qX)^ε·lvB q X (V/D)`.
+The product is a polynomial with coefficients at most `K^K F₁^K` supported in `[Y, X]`, `X = 4^K Y`, cut in `2K + 1`
+dyadic blocks. -/
 theorem card_prodSp_pow_large (hP : LinnikCGLLV.CGLProp31) {ε : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (q : ℕ) [NeZero q] (f0 : ℝ → ℝ) (F₁ : ℝ), 1 ≤ F₁ → (∀ u, |f0 u| ≤ F₁) →
       Function.support f0 ⊆ Set.Icc (1 / 2) 2 → ∀ {κ : Type} [Fintype κ] [DecidableEq κ] (Q y : κ → ℝ) (V : ℝ),
@@ -629,10 +629,10 @@ lemma rpow_inv_pow_mul {M : ℝ} (hM : 0 ≤ M) {t : ℕ} (ht : 1 ≤ t) (k : �
 /-- **The characters at which a product of prime sums is large, by the large values of its powers, in exponents.**
 Given Chen, Gupta and Li's Proposition 3.1 (`hP`), bounds `k_max` and `t_max` and `F₁ ≥ 1`, there are `C ≥ 1` and
 `q₀` such that for `q ≥ q₀`, `f0` with `|f0| ≤ F₁` and support in `[1/2, 2]`, `1 ≤ t ≤ t_max` scales `Q_i ≥ 4` with
-product `M` and `1 ≤ k ≤ k_max`: `#{χ : M^u ≤ |∏_i Sp χ f0 (Q i) (y i)|} ≤ C q^{lvExp k s u}`, `s = log_q M`, the count
-of `SieveResLV.card_Sp_large_lv` for one prime sum of length `M`. The power `G^k` is the product of `kt` sums
-(`card_prodSp_pow_large`), whose range is `[(Q'/2)^{kt}, (2Q')^{kt}]` for `Q' = M^{1/t}`, so the margins `lv_conds`,
-`lv_fac` and `lvB_le` apply at `Q'` and `kt`. -/
+product `M` and `1 ≤ k ≤ k_max`: `#{χ : M^u ≤ |∏_i Sp χ f0 (Q i) (y i)|} ≤ C q^{lvExp k s u}`, `s = log_q M`, the
+count of one prime sum of length `M`. The power `G^k` is the product of `kt` sums (`card_prodSp_pow_large`), whose
+range is `[(Q'/2)^{kt}, (2Q')^{kt}]` for `Q' = M^{1/t}`, so the margins `lv_conds`, `lv_fac` and `lvB_le` apply at
+`Q'` and `kt`. -/
 theorem card_prodSp_large_lv (hP : LinnikCGLLV.CGLProp31) (kmax tmax : ℕ) {F₁ : ℝ} (hF1 : 1 ≤ F₁) :
     ∃ C : ℝ, 1 ≤ C ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (f0 : ℝ → ℝ), (∀ u, |f0 u| ≤ F₁) →
       Function.support f0 ⊆ Set.Icc (1 / 2) 2 → ∀ (t : ℕ) (Q y : Fin t → ℝ) (k : ℕ) (u : ℝ), 1 ≤ t → t ≤ tmax →

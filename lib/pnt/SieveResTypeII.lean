@@ -3,15 +3,15 @@
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Proposition 3′ bounds `Σ_{χ≠1} |W(χ)|·|∏_j Sp_j(χ)|`. The bins of the characters' zeros class the characters: in the bin
-of `β` each prime sum is at most `Q_j^{β+w}`, and the bin has at most `(qT)^{g(β)}` characters. The resonant window
-classes the characters further, by the size of each prime sum: the level `ℓ_j` of `Sp_j(χ)` in steps of `τ = 10⁻⁶` of
-`log_{Q_j}` (`SieveTypeIIHM.lev`, capped at `10⁶`). A class `(i, ℓ)` has its prime sums at most `Q_j^{t_j}`,
-`t_j = min(β + w, τ(ℓ_j + 1))` (`β + w` at the cap), and at most as many characters as each prime sum has at least
-`Q_j^{τℓ_j}`: by the `2k`-th moment, `C_k q^{momExp k s_j (τℓ_j)}` (`SieveTypeIIHM.card_Sp_large`), and by the large
-values of its `k`-th power, `C q^{lvExp k s_j (τℓ_j)}` (Chen, Gupta and Li's Proposition 3.1:
-`SieveTypeIIHM.card_Sp_large_lv` with `LinnikCGLHB101.prop31`). The class's count exponent `γ` is the least of `g(β)`
-and these for `k` up to a bound, and `SieveTypeIIHM.bin_bound_exp` bounds the class with the rest's exponent
+Proposition 3′ bounds `Σ_{χ≠1} |W(χ)|·|∏_j Sp_j(χ)|`. The bins of the characters' zeros class the characters: in the
+bin of `β` each prime sum is at most `Q_j^{β+w}`, and the bin has at most `(qT)^{g(β)}` characters. The resonant
+window classes the characters further, by the size of each prime sum: the level `ℓ_j` of `Sp_j(χ)` in steps of
+`τ = 10⁻⁶` of `log_{Q_j}` (`SieveTypeIIHM.lev`, capped at `10⁶`). A class `(i, ℓ)` has its prime sums at most
+`Q_j^{t_j}`, `t_j = min(β + w, τ(ℓ_j + 1))` (`β + w` at the cap), and at most as many characters as each prime sum
+has at least `Q_j^{τℓ_j}`: by the `2k`-th moment, `C_k q^{momExp k s_j (τℓ_j)}` (`SieveTypeIIHM.card_part_large`),
+and by the large values of its `k`-th power, `C q^{lvExp k s_j (τℓ_j)}` (Chen, Gupta and Li's Proposition 3.1:
+`SieveTypeIIHM.card_part_large_lv` with `LinnikCGLHB101.prop31`). The class's count exponent `γ` is the least of
+`g(β)` and these for `k` up to a bound, and `SieveTypeIIHM.bin_bound_exp` bounds the class with the rest's exponent
 `Σ_j s_j(t_j − 1) + L − m` (the product of the scales is at most `2^{K₀}q^L/P`). The condition on the exponents is
 `ResCond`, the large `k` being covered by `momExp_mono_k` and by `lvExp_of_big`.
 

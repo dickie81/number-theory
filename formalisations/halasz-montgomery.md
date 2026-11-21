@@ -127,12 +127,13 @@ Summed over the bins these give the paper's Proposition 3′ for two polynomials
   rest, given `ResCond` at the cofactor's blocks and the primes' scales. No certificate takes the chains this way, so
   `chainTU_res` is a result of a route that nothing proves (Conditional results, below);
 - `SieveTypeIIHM.box_res_gen` and `SieveTypeIIHM.chain_res_core` (`lib/pnt/SieveResFull.lean`): `typeII_res` for a
-  polynomial over a finite set with at most `D` elements for each value, and the families of tuples of primes in
-  no order (`SieveTwoChain.chain_two_core`'s) with one variable, the product of the entries outside a rest whose
-  entries have their own lower bounds. Through `full_res_bound` and `full_res_exp` they are in the proof of the
-  theorem at `2100/1000` (`Linnik21000.linnik_21000`). `box_res_genG`, `chain_res_coreG`, `full_res_boundG` and
-  `full_res_expG`: the same with the rest grouped into parts (`typeII_resG`), each part's product at least
-  `q^{lo p}`; the four above are their case of one prime a part;
+  polynomial over a finite set with at most `D` elements for each value, and the families of tuples of primes in no
+  order (`SieveTwoChain.chain_two_core`'s) with one variable, the product of the entries outside a rest whose entries
+  have their own lower bounds. `box_res_genG`, `chain_res_coreG`, `full_res_boundG` and `full_res_expG`: the same with
+  the rest grouped into parts (`typeII_resG`), each part's product at least `q^{lo p}`, and `full_res_boundG` the
+  tuples with product in `(⌊q^L⌋, ⌊2q^L⌋]`, in exponents `full_res_expG`. `box_res_gen`, `chain_res_core` and
+  `full_res_exp` are their case of one prime a part. Through `full_res_boundG` and `full_res_expG` the grouped forms
+  are in the proof of the theorem at `2100/1000` (`Linnik21000.linnik_21000`);
 - `SieveResTest.resT_sound` and `SieveResTest.resT_sound_cells` (`lib/pnt/SieveResTest.lean`; the test
   `SieveResTest.resT` in `lib/pnt/SieveResTestDefs.lean`, written by `tools/linnik/res_test.py`): the kernel's test
   of `ResBox` on the curve `ghx` for a box's rest, led by a hint, is sound. The test bounds, for every count

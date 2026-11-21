@@ -612,10 +612,11 @@ follows.
   (`scripts/import_cone.py`: 482 modules). Between pull request 115 (15 November 2026) and that change the shared
   tests had brought `SieveCurve7D`, and with it this formalisation, into the cone.
 - **Theorem 1.1, at `21/10`** (`Linnik21000.linnik_21000`), uses Proposition 3.1 twice. In the resonant window
-  (`SieveTypeIIHM.typeII_res`) it counts the characters at which a power of a prime sum of the rest is large
-  (`SieveTypeIIHM.card_Sp_large_lv`, with the exponent `SieveTypeIIHM.lvExp`). In the estimate in two variables with
-  the fourth moment on the leaves' region (`SieveLeafTwo.typeIITwoAt_leafX`), which evaluates the leaves cut in
-  three, it enters through the curve `g7d` (`SieveCurve7D.counts_7d`): the thirty steps
+  (`SieveTypeIIHM.typeII_resG`, and `typeII_res`, its case of one prime sum a part) it counts the characters at which
+  a power of a part of the rest, a prime sum or a product of prime sums, is large (`SieveTypeIIHM.card_part_large_lv`,
+  from `SieveTypeIIHM.card_prodSp_large_lv`, with the exponent `SieveTypeIIHM.lvExp`). In the estimate in two
+  variables with the fourth moment on the leaves' region (`SieveLeafTwo.typeIITwoAt_leafX`), which evaluates the
+  leaves cut in three, it enters through the curve `g7d` (`SieveCurve7D.counts_7d`): the thirty steps
   `LinnikCGLSteps.charDensity_s0` … `charDensity_s29` on `[5/7, 131/168]` (next section).
 - Neither theorem uses their Theorem 1.2 or `CGLDensity`: `LinnikCGLDensity` is in neither import cone.
 

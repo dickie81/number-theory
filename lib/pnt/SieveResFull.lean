@@ -16,16 +16,16 @@ the integers with coefficients at most `(K + 1)^K`.
 * `chain_res_core`: **families of tuples of primes, by the resonant window**: `SieveTwoChain.chain_two_core` with
   one variable, the product of the entries outside the rest `r 0, …, r n`, in `(P, P′]`, each `z (r i) ≥ 2q^{lo i}`,
   given `ResCond` at the variable's blocks and the rest's scales.
-* `full_res_bound`: `SieveAd.full2_bound` with one variable: the tuples with product in `(⌊q^L⌋, ⌊2q^L⌋]` and the
-  rest's product in `(Ar, Br]`.
-* `box_res_genG`, `chain_res_coreG`, `full_res_boundG`, `full_res_expG`: the same with the rest's entries grouped by
-  `grp` into `K′` nonempty parts (`SieveTypeIIHM.typeII_resG`, `SieveUnwGen.unw_gen_grp`): each part `p` with a lower
-  bound `q^{lo p}` on the product of its entries, and `ResCondG`, or `ResBox` at the parts' exponents. A part of
-  several primes is a sifted cofactor written out as its primes; `box_res_gen`, `chain_res_core`, `full_res_bound` and
-  `full_res_exp` are the case of one entry in each part.
+* `box_res_genG`, `chain_res_coreG`: the same with the rest's entries grouped by `grp` into `K′` nonempty parts
+  (`SieveTypeIIHM.typeII_resG`, `SieveUnwGen.unw_gen_grp`): each part `p` with a lower bound `q^{lo p}` on the product
+  of its entries, and `ResCondG`. A part of several primes is a sifted cofactor written out as its primes;
+  `box_res_gen` and `chain_res_core` are the case of one entry in each part.
+* `full_res_boundG`: `SieveAd.full2_bound` with one variable: the tuples with product in `(⌊q^L⌋, ⌊2q^L⌋]` and the
+  rest's product in `(Ar, Br]`, its entries grouped into parts as in `chain_res_coreG`.
 * `ResBox g L K m_lo lo`, **the condition on a box**: `ResCond` at every exponent `m ≥ m_lo` of the variable and
-  every exponents `s j ≥ lo j` of the rest with `Σ s ≤ L`. `full_res_exp`: `full_res_bound` in exponents, the rest's
-  product in `[q^{ρ₁}, q^{ρ₂}]` and its entries `z (r i) ≥ q^{lo i}`, given `ResBox g L (n + 1) (L − ρ₂ − ε) (lo − ε)`.
+  every exponents `s j ≥ lo j` of the rest with `Σ s ≤ L`. `full_res_expG`: `full_res_boundG` in exponents, the
+  rest's product in `[q^{ρ₁}, q^{ρ₂}]` and each part's product at least `q^{lo p}`, given `ResBox` at the parts'
+  exponents. `full_res_exp` is its case of one entry in each part, given `ResBox g L (n + 1) (L − ρ₂ − ε) (lo − ε)`.
 
 The file imports `SieveResChain.lean` and `SieveTwoChain.lean`.
 -/
@@ -537,10 +537,10 @@ theorem chain_res_core {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (h
     rw [hsing p hp, Finset.card_singleton, Finset.prod_singleton, pow_one]
     exact h2 ⟨p, hp⟩
 /-- **Tuples of primes with product in `(⌊q^L⌋, ⌊2q^L⌋]`, by the resonant window, with the rest grouped into
-parts.** `full_res_bound` with `chain_res_coreG`: the parts' lower bounds and `ResCondG`. As `full_res_bound`: `SieveAd.full2_bound` with one
-variable: the rest `r 0, …, r n` with product in `(Ar, Br]` and each entry `z (r i) ≥ 2q^{lo i}`, the variable the
-product of the other entries, in `(⌊q^L⌋/Br, ⌊2q^L⌋/(Ar + 1)]`; `chain_res_core` applies when `ResCond` holds at
-`log_q P″` for `P″ ≥ ⌊q^L⌋/Br` and the rest's scales. -/
+parts.** `SieveAd.full2_bound` with one variable: the rest `r 0, …, r n` with product in `(Ar, Br]`, its entries
+grouped by `grp` into parts `p` with `∏_{grp i = p} z (r i) ≥ 2^{#p} q^{lo p}`, the variable the product of the other
+entries, in `(⌊q^L⌋/Br, ⌊2q^L⌋/(Ar + 1)]`; `chain_res_coreG` applies when `ResCondG` holds at `log_q P″` for
+`P″ ≥ ⌊q^L⌋/Br` and the rest's scales. -/
 theorem full_res_boundG {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 : g (1 / 2) = 1) (hcnt : CurveCounts g)
     (hL0 : 0 < L) (hL : L ≤ 5 / 2) {e₀ : ℝ} (he₀ : 0 < e₀) (K J₀ : ℕ) {Λ₁ : ℝ} (hΛ₁ : 0 ≤ Λ₁) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
@@ -590,41 +590,6 @@ theorem full_res_boundG {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (
   · exact le_trans (by exact_mod_cast hhi') hN₂le
 
 
-/-- **Tuples of primes with product in `(⌊q^L⌋, ⌊2q^L⌋]`, by the resonant window.** `SieveAd.full2_bound` with one
-variable: the rest `r 0, …, r n` with product in `(Ar, Br]` and each entry `z (r i) ≥ 2q^{lo i}`, the variable the
-product of the other entries, in `(⌊q^L⌋/Br, ⌊2q^L⌋/(Ar + 1)]`; `chain_res_core` applies when `ResCond` holds at
-`log_q P″` for `P″ ≥ ⌊q^L⌋/Br` and the rest's scales.
-`full_res_boundG` with each entry its own part. -/
-theorem full_res_bound {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 : g (1 / 2) = 1) (hcnt : CurveCounts g)
-    (hL0 : 0 < L) (hL : L ≤ 5 / 2) {e₀ : ℝ} (he₀ : 0 < e₀) (K J₀ : ℕ) {Λ₁ : ℝ} (hΛ₁ : 0 ≤ Λ₁) :
-    ∃ δ : ℝ, 0 < δ ∧ ∃ q₀ : ℕ, ∀ (q : ℕ) [NeZero q], q₀ ≤ q → ∀ (a : ZMod q), IsUnit a →
-      ∀ (n : ℕ) (r : Fin (n + 1) → Fin K), Function.Injective r → ∀ lo : ℕ → ℝ,
-      ∀ (Ω : List (GCmp K)) (Ar Br : ℕ), Ω.length ≤ J₀ → (∀ C ∈ Ω, C.c 0 ≤ Λ₁ * Real.log q) →
-      1 ≤ ⌊(q : ℝ) ^ L⌋₊ / Br →
-      (∀ P'' : ℕ, ⌊(q : ℝ) ^ L⌋₊ / Br ≤ P'' → ∀ Q : ℕ → ℝ, (∀ j < n + 1, (q : ℝ) ^ (e₀ / 2) ≤ Q j) →
-        (∀ j < n + 1, (q : ℝ) ^ lo j ≤ Q j) →
-        ∏ j ∈ Finset.range (n + 1), Q j ≤ 2 ^ (K + 1) * (q : ℝ) ^ L / (P'' : ℝ) →
-        ResCond g L (n + 1) (Real.logb q P'') (fun j => Real.logb q (Q j))) →
-      (∀ z : Fin K → ℕ, (∀ t, (z t).Prime) → (∀ C ∈ Ω, C.holds 0 z) →
-        (∀ t, (q : ℝ) ^ e₀ ≤ z t) ∧ (∀ i : Fin (n + 1), 2 * (q : ℝ) ^ lo i ≤ z (r i)) ∧
-          Ar < ∏ t ∈ Finset.univ.image r, z t ∧ ∏ t ∈ Finset.univ.image r, z t ≤ Br ∧
-          ⌊(q : ℝ) ^ L⌋₊ < ∏ t, z t ∧ ∏ t, z t ≤ ⌊2 * (q : ℝ) ^ L⌋₊) →
-      ‖∑ z ∈ RTg K ⌊2 * (q : ℝ) ^ L⌋₊ Ω, dw q a (∏ t, z t)‖ ≤ (q.totient : ℝ)⁻¹ * (q : ℝ) ^ (L - δ) := by
-  obtain ⟨δ, hδ, q₀, H⟩ := full_res_boundG hg1 hg0 hcnt hL0 hL he₀ K J₀ hΛ₁
-  refine ⟨δ, hδ, q₀, fun q _ hq a ha n r hr lo Ω Ar Br hΩlen hΩc hP1 hRes hreg => ?_⟩
-  have hsing : ∀ p (hp : p < n + 1), Finset.univ.filter (fun i : Fin (n + 1) => id (i : ℕ) = p) = {⟨p, hp⟩} := by
-    intro p hp
-    ext i
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, id, Finset.mem_singleton]
-    exact ⟨fun h => Fin.ext h, fun h => by rw [h]⟩
-  refine H q hq a ha n r hr (n + 1) id (fun j hj => hj) (fun p hp => ⟨p, hp, rfl⟩) lo Ω Ar Br hΩlen hΩc hP1
-    (fun P'' hP'' Q hQe hQlo hQP => resCondG_id (hRes P'' hP'' Q hQe (fun j hj => ?_) hQP)) (fun z hz hzΩ => ?_)
-  · have h1 := hQlo j hj
-    rwa [filter_id_eq hj, Finset.prod_singleton] at h1
-  · obtain ⟨h1, h2, h3⟩ := hreg z hz hzΩ
-    refine ⟨h1, fun p hp => ?_, h3⟩
-    rw [hsing p hp, Finset.card_singleton, Finset.prod_singleton, pow_one]
-    exact h2 ⟨p, hp⟩
 /-- **The resonant window's condition on a box**: `ResCond` at every exponent `m ≥ m_lo` of the variable and every
 exponents `s j ≥ lo j` of the rest with `Σ_j s_j ≤ L` and `Σ_j s_j + m ≤ L + 10⁻⁵` (the rest and the variable make
 up `q^L`: an upper bound of each `s j` on the box). -/
@@ -633,11 +598,10 @@ def ResBox (g : ℝ → ℝ) (L : ℝ) (K : ℕ) (mlo : ℝ) (lo : ℕ → ℝ) 
     ∑ j ∈ Finset.range K, s j + m ≤ L + 1 / 10 ^ 5 → ResCond g L K m s
 
 /-- **Tuples of primes with product in `(⌊q^L⌋, ⌊2q^L⌋]`, by the resonant window, in exponents, with the rest
-grouped into parts.** `full_res_exp` with `full_res_boundG`: each part `p` with `∏_{grp i = p} z (r i) ≥ q^{lo p}`, given
-`ResBox g L K′ (L − ρ₂ − ε) (lo − ε)` at the parts. As `full_res_exp`: `full_res_bound`
-with the rest's product in `[q^{ρ₁}, q^{ρ₂}]` and each rest entry `z (r i) ≥ q^{lo i}`, given
-`ResBox g L (n + 1) (L − ρ₂ − ε) (lo − ε)` for `ε > 0` with `L − ρ₂ − ε > 0`: the windows `(⌈q^{ρ₁}⌉ − 1, ⌊q^{ρ₂}⌋]`,
-the variable from `⌊q^L⌋/⌊q^{ρ₂}⌋ ≥ q^{L−ρ₂−ε}` on, and `Σ_j log_q Q_j ≤ L` once `2^{K+1} ≤ q^{L−ρ₂−ε}`. -/
+grouped into parts.** `full_res_boundG` with the rest's product in `[q^{ρ₁}, q^{ρ₂}]` and each part `p` with
+`∏_{grp i = p} z (r i) ≥ q^{lo p}`, given `ResBox g L K′ (L − ρ₂ − ε) (lo − ε)` at the parts for `ε > 0` with
+`L − ρ₂ − ε > 0`: the windows `(⌈q^{ρ₁}⌉ − 1, ⌊q^{ρ₂}⌋]`, the variable from `⌊q^L⌋/⌊q^{ρ₂}⌋ ≥ q^{L−ρ₂−ε}` on, and
+`Σ_j log_q Q_j ≤ L` once `2^{K+1} ≤ q^{L−ρ₂−ε}`. -/
 theorem full_res_expG {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg0 : g (1 / 2) = 1) (hcnt : CurveCounts g)
     (hL0 : 0 < L) (hL : L ≤ 5 / 2) {e₀ : ℝ} (he₀ : 0 < e₀) (K J₀ : ℕ) {Λ₁ : ℝ} (hΛ₁ : 0 ≤ Λ₁) {ρ₂ ε : ℝ}
     (hρ₂0 : 0 ≤ ρ₂) (hε : 0 < ε) (hLρ : 0 < L - ρ₂ - ε) :
@@ -784,8 +748,8 @@ theorem full_res_expG {g : ℝ → ℝ} {L : ℝ} (hg1 : ∀ σ, g σ ≤ 1) (hg
       omega
 
 
-/-- **Tuples of primes with product in `(⌊q^L⌋, ⌊2q^L⌋]`, by the resonant window, in exponents.** `full_res_bound`
-with the rest's product in `[q^{ρ₁}, q^{ρ₂}]` and each rest entry `z (r i) ≥ q^{lo i}`, given
+/-- **Tuples of primes with product in `(⌊q^L⌋, ⌊2q^L⌋]`, by the resonant window, in exponents.** The rest's
+product in `[q^{ρ₁}, q^{ρ₂}]` and each rest entry `z (r i) ≥ q^{lo i}`, given
 `ResBox g L (n + 1) (L − ρ₂ − ε) (lo − ε)` for `ε > 0` with `L − ρ₂ − ε > 0`: the windows `(⌈q^{ρ₁}⌉ − 1, ⌊q^{ρ₂}⌋]`,
 the variable from `⌊q^L⌋/⌊q^{ρ₂}⌋ ≥ q^{L−ρ₂−ε}` on, and `Σ_j log_q Q_j ≤ L` once `2^{K+1} ≤ q^{L−ρ₂−ε}`:
 `full_res_expG` with each entry its own part. -/
@@ -822,6 +786,5 @@ end SieveTypeIIHM
 
 #print axioms SieveTypeIIHM.box_res_gen
 #print axioms SieveTypeIIHM.chain_res_core
-#print axioms SieveTypeIIHM.full_res_bound
 #print axioms SieveTypeIIHM.full_res_exp
 #print axioms SieveTypeIIHM.full_res_expG
