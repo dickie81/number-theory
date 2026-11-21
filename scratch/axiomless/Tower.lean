@@ -154,7 +154,11 @@ def decExistsLT (P : Nat → Prop) [DecidablePred P] (n : Nat) : Decidable (∃ 
 
 `n / d` and `n % d` are computed by core's functions, which the kernel runs on numerals with GMP. Nothing is used
 about what they compute: the quotient and the remainder are only checked. If neither check succeeds (it cannot
-happen, but core's proof of that depends on `propext`), a bounded search decides. -/
+happen, but core's proof of that depends on `propext`), a bounded search decides.
+
+`decDvd` is an instance in this file only. As an instance everywhere it would be chosen over core's
+`Nat.decidable_dvd` in every file that imports this one, and the lemmas of Mathlib whose statements hold core's
+instance would stop applying to goals written there (LOG.md, entry 13). -/
 
 theorem dvd_iff_exists_lt {d n : Nat} : d ∣ n ↔ ∃ c, c < n + 1 ∧ n = d * c := by
   constructor
@@ -165,7 +169,7 @@ theorem dvd_iff_exists_lt {d n : Nat} : d ∣ n ↔ ∃ c, c < n + 1 ∧ n = d *
   · intro ⟨c, _, hc⟩
     exact ⟨c, hc⟩
 
-instance decDvd (d n : Nat) : Decidable (d ∣ n) :=
+local instance decDvd (d n : Nat) : Decidable (d ∣ n) :=
   if h : d * (n / d) = n then .isTrue ⟨n / d, h.symm⟩
   else if h' : 0 < n % d ∧ n % d < d ∧ d * (n / d) + n % d = n then .isFalse (not_dvd_of_rem h'.1 h'.2.1 h'.2.2)
   else
