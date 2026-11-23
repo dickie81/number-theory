@@ -10,13 +10,22 @@ from `main` on every push.
 | *Linnik's constant below the zero-density exponent: 21/10 from a zero-free half-plane*. Every reduced residue class mod `q` contains a prime `p ≤ Kq^{21/10}` (`Linnik21000.linnik_21000`), and a prime `p ≤ Kq^{43/20}` from the half-plane and Huxley's density estimate alone (`Linnik21500.linnik_21500`; an exponent above the `1/0.472 < 2.1187` that the half-plane gives with Harman's theorem of 2005), by Harman's sieve with a Type II estimate in two variables over the zeros' real parts and a decomposition by trees of Buchstab steps whose certificate the kernel follows by hints; for `21/10` also with a Type II estimate in one variable over the sizes of a term's own prime sums, counted with Chen, Gupta and Li's large values estimate, the leaves of a comparison cut in three, and the reversal of the terms of the sign `+`. Both hold in number: at least `c·x/(φ(q) log x)` primes of the class below every `x ≥ Kq^L` (`Linnik21000.count_21000`, `Linnik21500.count_21500`). | [Paper (PDF)](https://dickie81.github.io/number-theory/linnik-exponent.pdf) · [Supplement (PDF)](https://dickie81.github.io/number-theory/linnik-exponent-supplement.pdf) · [Source](papers/linnik-exponent/README.md) |
 | *A margin in Weil's criterion* (a first draft). Under RH the orbit's quadratic form, with Gram matrix `√(mn)·K_H(m/n)` computed from the primes, is at least `0.0577·x_N²` at every real `x`, so every Gram–Schmidt pivot after the first is at least `0.0577 > 1.249·K_H(1)` (`PivotSharp.pivot_ge_rh`). The proof applies Weil's explicit formula with a band-limited test function, Schur's test at the top vertex of the divisibility graph and an interval certificate. Hence RH holds if and only if every pivot is at least the first (`PivotSharp.rh_iff_orbitLattice`), and if and only if the form is at least `K_H(1)` at every nonzero integer vector (`PivotSharp.rh_iff_shortest`), which under RH makes `w_1` a shortest vector of the lattice the orbit spans. | [Paper (PDF)](https://dickie81.github.io/number-theory/orbit-lattice.pdf) · [Source](papers/orbit-lattice/README.md) |
 
+The library's Linnik exponent is `2 + η` under GRH for every Dirichlet `L`-function (`LinnikGRH.linnik_two`). GRH
+is proved by L. Alpöge's Lean archive (20 November 2026), which [`tools/rh/`](tools/rh/README.md) builds on the
+archive's own Lean and Mathlib, where the kernel accepts it with Lean's three standard axioms; the library does not
+import it, so in its Lean GRH stays a hypothesis. The Linnik paper's exponents `21/10` and `43/20` need no hypothesis.
+They rest on certificates that the kernel checks in about 62 hours of one core, which are opt-in: `lake build
+CheckLinnik` builds them and `lib/check/CheckLinnik.lean` prints the theorems' axioms, outside the default build and
+CI's build of a change, and a workflow of their own checks them every week.
+
 ## What is here
 
 - [`docs/account.md`](docs/account.md): the library on one page. What it proves, what that rests on, how much of
   number theory it covers, what a new input would give at once, and where the next results are.
 - `lib/`: the Lean library, built with Lake against Mathlib. [`docs/inventory.md`](docs/inventory.md) lists its
-  results: every theorem of the check files `lib/check/Check.lean`, `CheckAll.lean`, `CheckZeta23.lean` and
-  `CheckDH.lean`, with its headline. CI checks that the library keeps nothing that these theorems do not use.
+  results: every theorem of the check files `lib/check/Check.lean`, `CheckAll.lean`, `CheckZeta23.lean`,
+  `CheckDH.lean` and `CheckLinnik.lean`, with its headline. CI checks that the library keeps nothing that these
+  theorems do not use.
 - [`formalisations/`](formalisations/README.md): a note for each published result that a paper uses, and for a few
   others that the library formalises. Each note gives the result's source and attribution, and any differences
   between the Lean statement and the published one.
@@ -32,12 +41,13 @@ from `main` on every push.
 | Path | Contents |
 |---|---|
 | `lib/core` | The library's modules that need only Mathlib: 496 files. |
-| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 1877 files, 1225 of them the part and cell files of the certificates `SieveHint<tag>`. |
+| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 1877 files, 1225 of them the part and cell files of the certificates `SieveHint<tag>`. The certificates and the theorems on them, 1232 files, are opt-in: the Lake library `LinnikCert`, which only `CheckLinnik.lean` imports. |
 | `lib/dh` | The Davenport–Heilbronn function and its zeros: 68 files. |
 | `lib/zeta23` | The modules that also use `zeta23`: 10 files. |
 | `lib/vendor/pnt-plus`, `lib/vendor/zeta23` | Two upstream libraries, ported to this toolchain, each with its license and its port patch. See their READMEs. |
-| `lib/check/Check.lean` | The axioms of the papers' theorems. This is the default build target. |
-| `lib/check/CheckAll.lean` | The axioms of every final theorem of the library. Not built by default; CI builds it whenever it builds the Lean. |
+| `lib/check/Check.lean` | The axioms of the papers' theorems, but those on the Linnik certificates, and of the library's Linnik exponent under GRH. This is the default build target. |
+| `lib/check/CheckAll.lean` | The axioms of every final theorem of the library but those of `CheckLinnik`. Not built by default; CI builds it whenever it builds the Lean. |
+| `lib/check/CheckLinnik.lean` | The axioms of the Linnik paper's two theorems, at `21/10` and `43/20`, of its corollary in number and of their certificates' bounds. Opt-in: neither the default build nor CI's build of a change compiles the certificates. `lake build CheckLinnik` does, in about 62 hours of one core, and `.github/workflows/linnik.yml` builds and checks it every week and on request. |
 | `lib/check/CheckZeta23.lean` | The axioms of the final theorems of `lib/zeta23`, which `CheckAll` cannot import: zeta23's copies of PrimeNumberTheoremAnd's files declare the same names. Not built by default; CI builds it whenever it builds the Lean. |
 | `lib/check/CheckDH.lean` | The axioms of the final theorems of `lib/dh`. `CheckAll` does not import the layer, so that its build leaves out the layer's numerical certificates. Not built by default; CI builds it whenever it builds the Lean. |
 | `formalisations/` | The notes on the results from the literature. See its [README](formalisations/README.md), the index of the notes. |
@@ -57,9 +67,11 @@ scripts/build.sh                 # the default target, lib/check/Check.lean, and
 python3 scripts/check_axioms.py  # the papers' theorems depend only on Lean's standard axioms
 ```
 
-A cold build takes several hours, and the kernel's checks of the certificate need a lot of memory.
+A cold build of the default target takes several hours. The Linnik certificates are opt-in: `scripts/build.sh
+CheckLinnik` and `python3 scripts/check_axioms.py --linnik` build and check them, in about 62 hours of one core.
 [`docs/building.md`](docs/building.md) gives the memory limits and how the build script keeps within them, the other
-checks (among them that the sources contain no `sorry` and no declared axiom), and what CI and the site's workflow do.
+checks (among them that the sources contain no `sorry` and no declared axiom), and what CI, the certificates' workflow
+and the site's workflow do.
 
 ## License
 

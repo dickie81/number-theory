@@ -3,20 +3,23 @@
 Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`
 rewrites it, and CI checks that it is current (`--check`).
 
-`lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1853 theorems: the library's final results (those of the
-zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
-papers' theorems, of which there are 210, marked *paper*. Each line gives a theorem's name and the
-headline of its docstring, and links the note of `formalisations/` that names it, if one does.
+`lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
+and `lib/check/CheckLinnik.lean` print the axioms of 1854 theorems: the library's final results (those
+of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
+and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
+which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
+certificates: only `CheckLinnik` prints them, and only its build, which is opt-in, checks them
+(`docs/building.md`). Each line gives a theorem's name and the headline of its docstring, and links the
+note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 207 | 725 |
-| `lib/pnt` | 350 | 1015 |
+| `lib/pnt` | 350 | 1016 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
-## The results of `CheckAll`, `CheckZeta23`, `CheckDH` and `Check`
+## The results of `CheckAll`, `CheckZeta23`, `CheckDH`, `Check` and `CheckLinnik`
 
 ### `lib/core`
 
@@ -1609,26 +1612,26 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `Linnik21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints
 
-- `Linnik21000.tree21000`: The first term at `2100 / 1000` ([note](../formalisations/harman-sieve.md))
-- `Linnik21000.linnik_21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints ([note](../formalisations/chen-gupta-li-density.md))
+- `Linnik21000.tree21000`: The first term at `2100 / 1000` *paper* *opt-in* ([note](../formalisations/harman-sieve.md))
+- `Linnik21000.linnik_21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints *paper* *opt-in* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `Linnik21000Count`: The number of primes in a class at the exponent `2100/1000`
 
-- `Linnik21000.count_21000`: Primes in every class, in number, at the exponent `2100/1000` ([note](../formalisations/harman-sieve.md))
-- `Linnik21000.count_large_21000`: The primes of a class in `(q^L, 2q^L]` at `L = 2100/1000` ([note](../formalisations/harman-sieve.md))
+- `Linnik21000.count_21000`: Primes in every class, in number, at the exponent `2100/1000` *paper* *opt-in* ([note](../formalisations/harman-sieve.md))
+- `Linnik21000.count_large_21000`: The primes of a class in `(q^L, 2q^L]` at `L = 2100/1000` *paper* *opt-in* ([note](../formalisations/harman-sieve.md))
 
 #### `Linnik21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints
 
-- `Linnik21500.sound21500`: The tests at `2150 / 1000` are sound. *paper*
-- `Linnik21500.soundF21500`: The tests in one pass at `2150 / 1000` are sound *paper*
-- `Linnik21500.part21500`: A part of the search bounds its term *paper*
-- `Linnik21500.tree21500`: The first term at `2150 / 1000` *paper* ([note](../formalisations/harman-sieve.md))
-- `Linnik21500.linnik_21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints *paper* ([note](../formalisations/chen-gupta-li-density.md))
+- `Linnik21500.sound21500`: The tests at `2150 / 1000` are sound. *paper* *opt-in*
+- `Linnik21500.soundF21500`: The tests in one pass at `2150 / 1000` are sound *paper* *opt-in*
+- `Linnik21500.part21500`: A part of the search bounds its term *paper* *opt-in*
+- `Linnik21500.tree21500`: The first term at `2150 / 1000` *paper* *opt-in* ([note](../formalisations/harman-sieve.md))
+- `Linnik21500.linnik_21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints *paper* *opt-in* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `Linnik21500Count`: The number of primes in a class at the exponent `2150/1000`
 
-- `Linnik21500.count_21500`: Primes in every class, in number, at the exponent `2150/1000` *paper* ([note](../formalisations/harman-sieve.md))
-- `Linnik21500.count_large_21500`: The primes of a class in `(q^L, 2q^L]` at `L = 2150/1000` *paper* ([note](../formalisations/harman-sieve.md))
+- `Linnik21500.count_21500`: Primes in every class, in number, at the exponent `2150/1000` *paper* *opt-in* ([note](../formalisations/harman-sieve.md))
+- `Linnik21500.count_large_21500`: The primes of a class in `(q^L, 2q^L]` at `L = 2150/1000` *paper* *opt-in* ([note](../formalisations/harman-sieve.md))
 
 #### `LinnikAFE`: The approximate functional equation for `L(s, χ)²`
 
@@ -2061,7 +2064,8 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LinnikGRH`: GRH for every Dirichlet L-function gives the density hypothesis `CharDensity 2 0 1`, and so Linnik's exponent `2 + η`
 
 - `LinnikGRH.charDensity_two_of_GRH`: GRH for every Dirichlet character gives `Linnik.CharDensity 2 0 1`
-- `LinnikGRH.linnik_two_of_GRH`: The consequence
+- `LinnikGRH.linnik_two_of_GRH`: The consequence *paper*
+- `LinnikGRH.linnik_two`: Linnik's theorem with every exponent above `2`, from GRH as L. Alpöge's Lean archive proves it *paper* ([note](../formalisations/alpoge-rh.md))
 
 #### `LinnikGammaRatio`: Ratios of `Γ` on vertical lines, and the functional equation reflected to the modulus `q`
 
@@ -2977,9 +2981,9 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveHint21000R`: The route and the parts' bound at `L = 2100 / 1000`
 
-- `Linnik21000.sound21000`: The tests at `2100 / 1000` are sound.
-- `Linnik21000.soundF21000`: The tests in one pass with the resonant window, its lines named by the hint, the cofactor and the test at the two corners at `2100 / 1000` are sound.
-- `Linnik21000.part21000`: A part of the search bounds its term
+- `Linnik21000.sound21000`: The tests at `2100 / 1000` are sound. *paper* *opt-in*
+- `Linnik21000.soundF21000`: The tests in one pass with the resonant window, its lines named by the hint, the cofactor and the test at the two corners at `2100 / 1000` are sound. *paper* *opt-in*
+- `Linnik21000.part21000`: A part of the search bounds its term *paper* *opt-in*
 
 #### `SieveLeaf`: The leaves of Buchstab's tree, by the fundamental lemma
 

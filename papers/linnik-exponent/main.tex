@@ -1,7 +1,7 @@
 % The Linnik exponent paper: Theorem 1.1 (the exponent 21/10) and Theorem 1.2 (the exponent 43/20 from the half-plane
 % and Huxley's estimate alone). The claims table of Appendix A names the Lean theorem behind each claim;
-% lib/check/Check.lean prints the axioms of the theorems of Sections 2 to 7 and of Theorem 1.2 and Corollary 1.3 at
-% 43/20, and lib/check/CheckAll.lean those of Sections 8 to 10 and of Theorem 1.1 and Corollary 1.3 at 21/10. The paper
+% lib/check/Check.lean prints the axioms of the theorems of Sections 2 to 7, lib/check/CheckAll.lean those of 8 to 10,
+% and lib/check/CheckLinnik.lean, whose build is opt-in, those of Theorems 1.1 and 1.2 and Corollary 1.3. The paper
 % claims only its own steps: the results it uses from the literature are documented in formalisations/ and cited, not
 % restated as its own. supplement.tex holds the proofs of the prime sums' lemma and the kernel bound, of the family
 % lemmas in two variables, of Harman's comparisons in two variables and the leaves' lemma, and of the bound for rough
@@ -4822,13 +4822,15 @@ Corollary~\ref{cor:count} is \lean{Linnik21000.\allowbreak count\_21000} and
 integers. At $21/10$ the corollary uses the certificate of Theorem~\ref{thm:2110}.
 
 The file \file{lib/check/Check.lean}
-prints the axioms of Theorem~\ref{thm:4320}, of Corollary~\ref{cor:count} at $43/20$ and
-of the library's theorems that Appendix~\ref{app:claims} names for Sections~\ref{sec:inputs} to~\ref{sec:proof}, for
-the results from the literature and for the classical deduction;
-\file{lib/check/CheckAll.lean} prints those of Theorem~\ref{thm:2110}, of Corollary~\ref{cor:count} at $21/10$ and of
-the theorems named for Sections~\ref{sec:window} to~\ref{sec:certificate-b}. \file{scripts/check\_axioms.py} checks
-that they are \lean{propext}, \lean{Classical.choice} and \lean{Quot.sound} only. \file{lib/check/CheckAll.lean}
-imports the certificate at $21/10$, so that its build includes the certificate's files (below). The axioms of a theorem cover its
+prints the axioms of the library's theorems that Appendix~\ref{app:claims} names for Sections~\ref{sec:inputs}
+to~\ref{sec:proof}, for the results from the literature and for the classical deduction;
+\file{lib/check/CheckAll.lean} prints those of the theorems named for Sections~\ref{sec:window}
+to~\ref{sec:certificate-b}; and \file{lib/check/CheckLinnik.lean} prints those of Theorems~\ref{thm:2110}
+and~\ref{thm:4320}, of Corollary~\ref{cor:count} at both exponents and of Propositions~\ref{prop:certificate}
+and~\ref{prop:certificate-b}, the certificates. \file{scripts/check\_axioms.py} checks
+that they are \lean{propext}, \lean{Classical.choice} and \lean{Quot.sound} only. \file{lib/check/CheckLinnik.lean}
+imports both certificates, so that its build includes the certificates' files (below); that build is opt-in, outside
+the repository's default build. The axioms of a theorem cover its
 whole dependency
 cone, so a \lean{sorry} anywhere in it would appear as \lean{sorryAx}; the library's own sources contain no
 \lean{sorry}, no declared axiom and no \lean{native\_decide} (\file{scripts/check\_hygiene.py}).
@@ -4840,8 +4842,8 @@ evaluated in $1552$ parts of the certificate, in $17$ files that the kernel chec
 about $63$ minutes in all, and the $256$ Buchstab steps that join the parts are proved one by one. At $21/10$ it is
 evaluated in $107374$ parts, in $1150$ files that the kernel checks in $128$ to $349$ seconds each, about $61$ hours
 of one core in all, and the $29349$ Buchstab steps that join the parts are proved in $58$ files, in $24$ minutes in
-all. The repository's continuous integration builds these files in stages, with \file{lib/check/CheckAll.lean}
-(\S S5).
+all. The repository's continuous integration builds these files in stages, with \file{lib/check/CheckLinnik.lean},
+every week and on request rather than on every change (\S S5).
 
 The two theorems share Input~\ref{inp:half-plane}, the curve $g_{\mathrm H}$ and Sections~\ref{sec:type2}
 to~\ref{sec:decomp}, and differ in their tests. The tests of
@@ -5139,12 +5141,14 @@ rests on. The names against a claim state or prove it, and a mark (\S S$n$) poin
 that proves the step.
 
 The file \file{lib/check/Check.lean} prints the axioms of the theorems of the first, third and fourth blocks, and
-\file{lib/check/CheckAll.lean} those of the second; Section~\ref{sec:lean} says how they are checked. Where the table
+\file{lib/check/CheckAll.lean} those of the second, but for the two theorems, Corollary~\ref{cor:count} and
+Propositions~\ref{prop:certificate} and~\ref{prop:certificate-b} in the first two blocks, whose axioms
+\file{lib/check/CheckLinnik.lean} prints; Section~\ref{sec:lean} says how they are checked. Where the table
 elides steps with dots, \file{lib/check/Check.lean} prints the first and the last, and a theorem that uses every step,
 so all of them are in a dependency cone whose axioms are checked. For Huxley's fifteen steps on $[131/168, 5/6)$ that
 theorem is \lean{SieveCurveHx.counts\_hx}, in the cone of \lean{Linnik21500.linnik\_21500}; for the steps of $g^*$
 (those of Input~\ref{inp:cgl} from $0$ to $29$, and Ingham's from $0$ to $18$) it is \lean{SieveCurve7D.counts\_7d}.
-Dirichlet's theorem, \lean{Nat.forall\_exists\_prime\_gt\_and\_modEq}, is Mathlib's, and neither file prints it; it is
+Dirichlet's theorem, \lean{Nat.forall\_exists\_prime\_gt\_and\_modEq}, is Mathlib's, and no check file prints it; it is
 in the dependency cone of \lean{Linnik21500.linnik\_21500}, whose axioms are checked, and in that of
 \lean{Linnik21000.linnik\_21000}.
 

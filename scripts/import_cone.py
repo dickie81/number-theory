@@ -6,10 +6,11 @@
     python3 scripts/import_cone.py ROOT --all-modules  # also list every module of the cone
 
 It reads the `import` lines of lib/core, lib/pnt, lib/dh, lib/zeta23 and lib/check (the vendored libraries and
-Mathlib are leaves). For each root it prints the number of modules and source bytes of the cone, by layer, and the
-certificate part files (`lib/pnt/SieveCert<tag>P<k>.lean`, the heavy kernel checks) of the cone by certificate. Use it
-before adding an `import` to a module that the default build reaches: one import of a module whose own cone holds a
-certificate puts that certificate in the default build (`--why` shows the chain that does it).
+Mathlib are leaves). For each root it prints the number of modules and source bytes of the cone, by layer, its opt-in
+modules (`optional`), and its certificate part files (`lib/pnt/SieveHint<tag>P<k>.lean`, the heavy kernel checks) by
+certificate. Use it before adding an `import` to a module that the default build reaches: one import of a module whose
+own cone holds a certificate puts that certificate in the default build (`--why` shows the chain that does it), and
+`scripts/gen_lakefile.py` refuses an import of an opt-in module by any other module but `CheckLinnik`.
 """
 import collections
 import os
@@ -18,6 +19,21 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIRS = ["core", "pnt", "dh", "zeta23", "check"]
+# The opt-in modules: the Linnik paper's certificates, the plans of the searches that the kernel follows by hints
+# (`SieveHint<tag>`, its part files `…P<k>` and files of cells `…N<j>`), and the theorems that rest on them
+# (`Linnik<tag>`, `Linnik<tag>Count`).
+OPTIONAL = re.compile(r"SieveHint\w*|Linnik\d+(?:Count)?")
+# The checks of the opt-in modules, the only module that may import them.
+OPT_IN_CHECK = "CheckLinnik"
+# A certificate's part files, the heavy kernel checks (also `scripts/lean-slots.sh`).
+PART = re.compile(r"SieveHint\d+P\d+")
+
+
+def optional(names):
+    """The opt-in modules among `names`: the Linnik paper's certificates and the theorems that rest on them. They are
+    the Lake library `LinnikCert` (`scripts/gen_lakefile.py`), which only `lib/check/CheckLinnik.lean` imports, so that
+    neither the default build nor CI's build of a change compiles them (`scripts/lean_targets.py`)."""
+    return {m for m in names if OPTIONAL.fullmatch(m)}
 
 
 def sources():
@@ -75,10 +91,10 @@ def main(argv):
         c = cone(imports, [r])
         size = {m: os.path.getsize(os.path.join(ROOT, mods[m])) for m in c}
         layers = collections.Counter(mods[m].split(os.sep)[1] for m in c)
-        certs = collections.Counter(re.sub(r"P\d+$", "", m) for m in c if re.fullmatch(r"SieveCert\w*P\d+", m))
+        certs = collections.Counter(re.sub(r"P\d+$", "", m) for m in c if PART.fullmatch(m))
         print(f"{r}: {len(c)} modules, {sum(size.values()) / 1e6:.2f} MB of source; by layer: "
               + ", ".join(f"{k} {v}" for k, v in sorted(layers.items())))
-        print(f"  certificate part files: {sum(certs.values())}"
+        print(f"  opt-in modules: {len(optional(c))}; certificate part files: {sum(certs.values())}"
               + "".join(f"; {k}: {v}" for k, v in sorted(certs.items())))
         if "--all-modules" in argv:
             print("  " + " ".join(sorted(c)))

@@ -4,9 +4,13 @@ import Lean.Server.References
 /-!
 # The dead-code check's Lean side (`lake exe deadcode`)
 
-`deadcode OURS ROOTS ALLOW MODULE...` imports the modules `MODULE...` (check files) and prints one JSON object. `OURS`
-is a file of the library's own module names, one a line, `ROOTS` a file of the theorems that the check files print,
-and `ALLOW` a file of the roots that are conditional on purpose (results under GRH, say).
+`deadcode OURS ROOTS ALLOW EXTRA MODULE...` imports the modules `MODULE...` (check files) and prints one JSON object.
+`OURS` is a file of the library's own module names, one a line, `ROOTS` a file of the theorems that the check files
+print, `ALLOW` a file of the roots that are conditional on purpose (results under GRH, say), and `EXTRA` a file of
+names that modules outside the environment cite: the opt-in modules, which a run without them leaves out
+(`scripts/dead_code.py` reads the names from their sources; the file is empty when the run imports them). Each of
+them that the library's modules in the environment declare is walked as a source, and a root among them counts as
+used, by `(opt-in)`.
 It walks the constants that the roots use, through their types and values and through the names their sources cite
 (the `.ilean` files that Lake writes, which record, for each use of a constant, the declaration it is in: a lemma that
 `simp` applies by `rfl` appears in no proof term), transitively, within the library's own modules (the vendored
@@ -19,8 +23,8 @@ libraries, Mathlib and Lean cannot use the library's constants), and reports:
   the end of a chain of unused declarations, which a review reads first);
 * `roots`: for each root, its closed hypotheses (a binder of its statement, under `∀`, `∃` or `∧`, that is a
   proposition or an instance and mentions none of its variables, such as `RiemannHypothesis` or `[SieveCert.Grid]`),
-  a root without closed hypotheses, or in `ALLOW`, whose proof uses it (`usedBy`), or none, and any other root whose
-  proof uses it (`usedByAny`), or none.
+  a root without closed hypotheses, or in `ALLOW`, or a name of `EXTRA`, whose proof uses it (`usedBy`), or none, and
+  any other root whose proof uses it (`usedByAny`), or none.
 
 `scripts/dead_code.py` runs it on the check files and decides what fails.
 -/
@@ -145,8 +149,8 @@ end DeadCode
 
 open DeadCode in
 def main (args : List String) : IO UInt32 := do
-  let oursFile :: rootsFile :: allowFile :: mods := args
-    | IO.eprintln "usage: deadcode OURS ROOTS ALLOW MODULE..."; return 2
+  let oursFile :: rootsFile :: allowFile :: extraFile :: mods := args
+    | IO.eprintln "usage: deadcode OURS ROOTS ALLOW EXTRA MODULE..."; return 2
   initSearchPath (← findSysroot)
   let oursMods : Std.HashSet Name := (← readLines oursFile).foldl (fun s m => s.insert m.toName) {}
   let env ← importModules (mods.toArray.map fun m => { module := m.toName }) {} (trustLevel := 1024)
@@ -169,11 +173,21 @@ def main (args : List String) : IO UInt32 := do
   -- every root, with its closed hypotheses
   let hyps := roots.map fun n => (n, closedHyps env (env.find? n).get!.type)
   let allow : Std.HashSet Name := (← readLines allowFile).foldl (fun s m => s.insert m.toName) {}
-  let isSource (n : Name) := allow.contains n || (closedHyps env (env.find? n).get!.type).isEmpty
-  let sources := roots.filter isSource
+  -- the names that the opt-in modules cite, those of the library that the environment declares
+  let extra := (← readLines extraFile).map (·.toName) |>.filter fun n => (env.find? n).isSome && ours n
+  let extraSet : Std.HashSet Name := extra.foldl (fun s n => s.insert n) {}
+  let isSource (n : Name) :=
+    extraSet.contains n || allow.contains n || (closedHyps env (env.find? n).get!.type).isEmpty
   let rootSet : Std.HashSet Name := roots.foldl (fun s n => s.insert n) {}
+  let sources := roots.filter isSource ++ extra.filter (!rootSet.contains ·)
+  -- a root that the opt-in modules cite is used by them
+  let optIn := Name.mkSimple "(opt-in)"
+  let w : Walk := extra.foldl (fun (w : Walk) n =>
+    if rootSet.contains n then
+      { w with usedBy := w.usedBy.insert n optIn, usedByAny := w.usedByAny.insert n optIn }
+    else w) {}
   -- the sources first, so that a use by a source is seen as one; then the other roots
-  let w := walk env ours srcRefs rootSet sources isSource
+  let w := walk env ours srcRefs rootSet sources isSource w
   let w := walk env ours srcRefs rootSet (roots.filter (!isSource ·)) isSource w
   let live := w.seen
   -- the unreached constants that another unreached one uses

@@ -4,13 +4,13 @@
 # Usage: scripts/build.sh [arguments of lake build]
 #
 # Lake runs about as many module compiles at once as there are cores. The compiles of modules that import Mathlib
-# share its files, but each certificate part (`lib/pnt/SieveCert*P<k>.lean`) can use about 5 GiB of private memory,
-# and some kernel checks of lib/core/Cm* 3–8 GiB.
+# share its files, but each part file of the opt-in Linnik certificates (`lib/pnt/SieveHint<tag>P<k>.lean`, built only
+# for `CheckLinnik`) holds a long kernel check, and some kernel checks of lib/core/Cm* use 3–8 GiB.
 # This script points Lake at a copy of the toolchain in `.lake/sysroot`. The copy links to the real toolchain
 # throughout, except that its `lean` is `scripts/lean-slots.sh`. That wrapper lets at most LEAN_SLOTS module compiles
 # run at once (default: the number of cores), with at most LEAN_HEAVY heavy modules among them (default 2): the
-# certificate parts and the modules marked `-- heavy:`. A module marked `-- exclusive-heavy` takes all the heavy slots,
-# and one marked `-- alone:` takes every slot (see scripts/lean-slots.sh). It
+# certificate part files and the modules marked `-- heavy:`. A module marked `-- exclusive-heavy` takes all the heavy
+# slots, and one marked `-- alone:` takes every slot (see scripts/lean-slots.sh). It
 # also deletes each module's setup file after a successful compile. The compiler is the toolchain's own, so the build
 # and its traces are those of a plain `lake build`.
 #

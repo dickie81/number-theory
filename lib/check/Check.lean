@@ -1,13 +1,25 @@
-/- The axioms of the papers' theorems, the repository's default build target. Every line this file prints must be
-`[propext, Classical.choice, Quot.sound]` or a subset of them (`scripts/check_axioms.py`). -/
-import Linnik21500
-import Linnik21500Count
+/- The axioms of the papers' theorems and of the library's headline Linnik exponent, the repository's default build
+target. Every line this file prints must be `[propext, Classical.choice, Quot.sound]` or a subset of them
+(`scripts/check_axioms.py`). The Linnik paper's two theorems themselves, with its corollary in number and the bounds
+of their certificates, are printed by `CheckLinnik.lean`, which is opt-in: the certificates are in neither the
+default build nor CI's build of a change. -/
+import LinnikGRH
+import SieveAdPlainDir
+import SieveAdPlainFill
+import SieveAdCount
 import LinnikG7
 import PivotSharp
 import BallFlat
 import BallGap
 import BallUpperEta
 import OrbitWindow
+
+/- Linnik's theorem with every exponent above `2`: every reduced class modulo `q` holds a prime `p ≤ K·q^{2 + η}`
+under GRH for every Dirichlet `L`-function, the library's headline Linnik exponent. `LinnikGRH.linnik_two` takes GRH
+in the words of L. Alpöge's Lean archive (`LinnikGRH.DirichletRH`), which proves it and is checked on its own pins
+(`tools/rh/README.md`); in Lean GRH stays a hypothesis, and the archive is not imported. -/
+#print axioms LinnikGRH.linnik_two
+#print axioms LinnikGRH.linnik_two_of_GRH
 
 /- Linnik's theorem with exponent `L = 43/20` (`2150/1000`), with no hypothesis: Theorem 1.2 of the Linnik paper
 (`papers/linnik-exponent/main.tex`), and its form in number, the case `43/20` of the paper's Corollary 1.3: at least
@@ -18,13 +30,12 @@ largest prime, and its certificate, the plan of a search that the kernel follows
 been refereed is the zero-free half-plane `Re s > 11/12`, OpenAI's result, proved here along their companion preprint
 (`formalisations/openai-half-plane.md`); no estimate of Ingham's or of Chen, Gupta and Li's is in its proof: its tests
 are those of the namespace `SieveAd.Plain`, with the paper's conditions on the leaves of a comparison alone. The
-theorems of the first block of the paper's claims table (Appendix A), in its order: its own steps by section (Sections
-2 to 7), then the results of the literature it uses, each with a note in `formalisations/`, then the classical
-deduction it compares with. The paper's Theorem 1.1, at `21/10` (`Linnik21000.linnik_21000`), and the theorems of its
-Sections 8 to 10 are printed by `CheckAll.lean`: its certificate is too heavy for the default build. -/
-#print axioms Linnik21500.linnik_21500
-#print axioms Linnik21500.count_21500
-#print axioms Linnik21500.count_large_21500
+theorems of the first block of the paper's claims table (Appendix A) that need no certificate, in its order: its own
+steps by section (Sections 2 to 7), then the results of the literature it uses, each with a note in
+`formalisations/`, then the classical deduction it compares with. The theorem, its corollary and its certificate's
+bound (`Linnik21500.linnik_21500`, `Linnik21500.tree21500`) are printed by `CheckLinnik.lean`, and so are the paper's
+Theorem 1.1, at `21/10` (`Linnik21000.linnik_21000`), and its certificate's; the theorems of its Sections 8 to 10 are
+printed by `CheckAll.lean`. -/
 #print axioms SieveTypeIIGen.CurveCounts
 #print axioms SieveCurveHx.counts_hx
 #print axioms SieveCurveHx.ghx_le_one
@@ -145,10 +156,6 @@ Sections 8 to 10 are printed by `CheckAll.lean`: its certificate is too heavy fo
 #print axioms SieveAd.solveG_sound
 #print axioms SieveAd.Plain.solveD_sound
 #print axioms SieveAd.Plain.pr_of_partD
-#print axioms Linnik21500.tree21500
-#print axioms Linnik21500.part21500
-#print axioms Linnik21500.sound21500
-#print axioms Linnik21500.soundF21500
 #print axioms SieveAd.Plain.fillTestsF_eq
 #print axioms SieveAd.Plain.frozTestsC_okI
 #print axioms SieveAd.Plain.frozTestsC_okJ

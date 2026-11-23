@@ -2,9 +2,9 @@
 # The `lean` of scripts/build.sh's copy of the toolchain.
 #
 # A module compile (an invocation with `-o`) waits for one of LEAN_SLOTS slots. A heavy module also waits for one of
-# LEAN_HEAVY heavy slots. The heavy modules are the certificate parts (`SieveCert…P<k>.lean`), each of which can use
-# about 5 GiB of private memory, and the modules marked heavy (below). Every other invocation (`--githash`,
-# `--print-prefix`, …) goes straight to the real lean.
+# LEAN_HEAVY heavy slots. The heavy modules are the certificate part files (`SieveHint<tag>P<k>.lean`, the opt-in
+# Linnik certificates' kernel checks, as `import_cone.PART` names them) and the modules marked heavy (below). Every
+# other invocation (`--githash`, `--print-prefix`, …) goes straight to the real lean.
 #
 # A module is marked by a line of its source that starts with one of these (a `:` marker is followed by the reason):
 #   `-- heavy:`          it is heavy (the CmFinR* kernel checks of lib/core, about 3 GiB each);
@@ -42,7 +42,7 @@ heavy=0 excl=0 alone=0
 for a in "$@"; do
   case "$a" in
     *.lean)
-      case "$a" in *SieveCert*P[0-9]*.lean) heavy=1 ;; esac
+      case "${a##*/}" in SieveHint[0-9]*P[0-9]*.lean) heavy=1 ;; esac
       [ -f "$a" ] || continue
       case "$(grep -m1 -oE '^-- (heavy:|exclusive-heavy|alone:)' "$a")" in
         '-- heavy:') heavy=1 ;;

@@ -22,8 +22,8 @@ primary squarefree `n` with `U/2 ≤ N(n) ≤ 2U`, and all coefficients `β_n`,
 `Σ_k |Σ_n β_n(n/k)₂|² ≤ C(HU)^ε(H + U)Σ_n |β_n|²`.
 
 The theorem is in the proofs of `Linnik21500.linnik_21500` and `Linnik21000.linnik_21000`, the Linnik paper's
-Theorems 1.2 and 1.1, whose axioms are `propext`, `Classical.choice` and `Quot.sound` (`lib/check/Check.lean`; for
-`linnik_21000`, `lib/check/CheckAll.lean`), so it depends on those only.
+Theorems 1.2 and 1.1, whose axioms are `propext`, `Classical.choice` and `Quot.sound` (`lib/check/CheckLinnik.lean`,
+whose build is opt-in), so it depends on those only.
 
 ## Source
 

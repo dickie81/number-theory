@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Check the axioms of the papers' theorems: elaborate lib/check/Check.lean (with --all, CheckAll.lean; with
---zeta23, CheckZeta23.lean; with --dh, CheckDH.lean) after `lake build` and gate its output.
+--zeta23, CheckZeta23.lean; with --dh, CheckDH.lean; with --linnik, CheckLinnik.lean, the opt-in Linnik
+certificates'; or the check file that a NAME such as CheckDH gives) after `lake build` and gate its output.
 
 Every `#print axioms` line of the file must produce exactly one report, and every report must name only `propext`,
 `Classical.choice` and `Quot.sound` (any subset), or say that the declaration depends on no axioms. Any other axiom
 (`sorryAx`, `Lean.ofReduceBool`, a declared `axiom`) fails the check. Run from the repository root; it calls
-`lake env lean`, so the modules the file imports must be built first.
+`lake env lean`, so the modules the file imports must be built first (`lake build CheckLinnik` for --linnik).
 """
 import os
 import re
@@ -14,12 +15,15 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STD = {"propext", "Classical.choice", "Quot.sound"}
+FLAGS = {"--all": "CheckAll", "--zeta23": "CheckZeta23", "--dh": "CheckDH", "--linnik": "CheckLinnik"}
 
 
 def main():
-    name = ("CheckAll" if "--all" in sys.argv else "CheckZeta23" if "--zeta23" in sys.argv
-            else "CheckDH" if "--dh" in sys.argv else "Check")
+    names = [FLAGS.get(a, a) for a in sys.argv[1:]]
+    name = names[0] if names else "Check"
     path = os.path.join("lib", "check", name + ".lean")
+    if len(names) > 1 or not os.path.isfile(os.path.join(ROOT, path)):
+        sys.exit("usage: check_axioms.py [--all | --zeta23 | --dh | --linnik | NAME], NAME a file of lib/check")
     want = len(re.findall(r"^#print axioms ", open(os.path.join(ROOT, path), encoding="utf-8").read(), re.M))
     r = subprocess.run(["lake", "env", "lean", path], cwd=ROOT, capture_output=True, text=True)
     out = r.stdout + r.stderr

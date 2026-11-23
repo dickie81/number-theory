@@ -27,9 +27,11 @@ statement:
   2005 and Theorem 1.2 of 2008), with `B` read from the paper's table: stated, not formalised, and required to lie
   between Theorem 1.1's and Theorem 1.2's.
 Every theorem the page presents as a result must be printed by one of the check files `lib/check/Check.lean`,
-`CheckAll.lean`, `CheckZeta23.lean` and `CheckDH.lean`, whose axioms CI checks. The line `L = 1 + A/2`, where a Type II
-estimate in one variable on a window that sorts the characters by their zeros closes, is computed here, not read
-from the Lean.
+`CheckAll.lean`, `CheckZeta23.lean`, `CheckDH.lean` and `CheckLinnik.lean` (`inventory.CHECKS`), whose axioms CI
+checks: the first four on every change to the Lean, and `CheckLinnik.lean`, which prints the Linnik paper's two
+theorems and needs their certificates, in the opt-in build of `.github/workflows/linnik.yml`, every week and on
+request. The line `L = 1 + A/2`, where a Type II estimate in one variable on a window that sorts the characters by
+their zeros closes, is computed here, not read from the Lean.
 The numbers that are not theorems of the library (the literature's exponents) are read from the paper's sources. A
 change to the Lean or to the paper that the page does not follow makes this script fail; CI runs it with `--check`,
 and `scripts/build_site.py` runs it to write the page.
@@ -652,7 +654,8 @@ def main(argv):
         return 0
     if "--check" in argv:
         print(f"zeros_page: the page agrees with the Lean and the paper: {len(results)} theorems named as results, all "
-              f"printed by Check, CheckAll, CheckZeta23 or CheckDH; g*'s {len(data['g7d'])} pieces each counted by the "
+              f"printed by {', '.join(inventory.CHECKS[:-1])} or {inventory.CHECKS[-1]}; g*'s {len(data['g7d'])} "
+              f"pieces each counted by the "
               f"theorem counts_7d glues in, and g_H's {texts['nhx']} by the one counts_hx glues in; Linnik's exponents "
               f"{data['best']['t']} ({data['best']['lean']}) and {data['res']['t']} ({data['res']['lean']}), below "
               f"1 + A/2 = {data['floor']['t']}")

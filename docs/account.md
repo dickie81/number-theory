@@ -2,7 +2,8 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1724 printed theorems, and
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1854 printed theorems, marking *opt-in* the 14 that
+rest on the Linnik paper's certificates, whose build is opt-in (`lib/check/CheckLinnik.lean`), and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
 
@@ -11,7 +12,9 @@ that every Lean name and path on this page exists.
 A deep vertical slice, not a survey: the zeros of `ζ` and of Dirichlet `L`-functions, and what they say about primes.
 In that slice the library reaches current research (Guth and Maynard's large values estimate, Chen, Gupta and Li's
 density estimate, OpenAI's zero-free half-plane, Alpöge and Furman's two thirds of the zeros on the critical line) and
-proves a Linnik exponent of its own. Outside it the library has what its proofs needed and nothing more. By the
+proves Linnik exponents of its own: `21/10` and `43/20` with no hypothesis, on certificates whose build is opt-in, and
+`2 + η` under GRH, which L. Alpöge's Lean archive proves (an input, below). Outside it the library has what its proofs
+needed and nothing more. By the
 sections of MSC 2020's Number theory (11):
 
 | Section | Here |
@@ -21,7 +24,7 @@ sections of MSC 2020's Number theory (11):
 | 11L Exponential and character sums | What the routes need: mean and large values of Dirichlet polynomials, the Halász–Montgomery inequality, the quadratic large sieve over `ℤ[ω]`, Vinogradov's mean value theorem in a weak form |
 | 11F Automorphic forms | One object: Kubota's cubic theta function on hyperbolic 3-space, with Patterson's coefficients |
 | 11A, 11R, 11T Elementary, global fields, finite fields | Over `ℤ[ω]`: quadratic, cubic and sextic reciprocity, Gauss and Jacobi sums, Jacobi's congruence `C(2k, k) ≡ −L (mod p)` for `p = 3k + 1 = (L² + 27M²)/4`, `L ≡ 1 (mod 3)` (`CubicBinomial.choose_modEq`), the ideals of each norm. Quadratic fields: the splitting law, `ζ_K = ζ·L(s, χ_K)`, class numbers. The least quadratic non-residue |
-| 11Y Computational number theory | Certificates that the kernel checks: the sieve's loss (1136 parts), five zeros of the Davenport–Heilbronn function (the fifth, at height `24415`, from `24 000` terms that the kernel evaluates in ball arithmetic), explicit constants, the search of the class number one problem (`3 200 000` cases) |
+| 11Y Computational number theory | Certificates that the kernel checks: the Linnik sieve's two searches (108 926 parts in 1167 files, about 62 hours of one core, opt-in to build), five zeros of the Davenport–Heilbronn function (the fifth, at height `24415`, from `24 000` terms that the kernel evaluates in ball arithmetic), explicit constants, the search of the class number one problem (`3 200 000` cases) |
 | 11G Arithmetic algebraic geometry | Hasse's bound for every elliptic curve over a finite field of odd characteristic, by Manin's proof, and the Riemann hypothesis for it in every degree from the lattice of Manin's twist; for `y² = x³ + D`, the Frobenius as an Eisenstein integer of norm `q`; Gauss's count `p − 2 + L` of `x³ + y³ = 1` modulo `p` and the `p + 1 + L` points of the Fermat cubic, within `2√p` of `p + 1` (`FermatCubicCount.card_eq`, `FermatCubicCount.abs_sub_le`) |
 | 11E Forms | Jacobi's four-square theorem `r₄(n) = 8Σ_{d ∣ n, 4 ∤ d} d` (`JacobiFourSquares.r4_eq`), by Hirschhorn's proof from the triple product identity (`JacobiFourSquares.jtp`), and what it gives: `r₄` prime by prime (`FourSquareTeeth.r4_pow_mul`), the alternating lattice sum of `ℤ⁴` (`FourSquareTeeth.lseries_alt`), `ζ(2) = π²/6` from the points of `ℤ⁴` in balls (`FourSquareResidue.riemannZeta_two_of_lattice`), Siegel's formula `r₄(n) = π²n∏_p δ_p(n)` (`SiegelFour.siegel`), Jacobi's eight-square theorem (`JacobiEightSquares.r8_eq`) with `ζ(4) = π⁴/90` from the points of `ℤ⁸` in balls (`EightSquareResidue.riemannZeta_four_of_lattice`), the two-variable zeta function of Lagarias and Rains at `w = 4` (`TwoVariableZeta.Z_four`), and the lattices `x² + xy + y²` (hexagonal), `x² + 2y²` and `x² + xy + 2y²`, whose Epstein zeta functions are those of `ℚ(√−3)`, `ℚ(√−2)` and `ℚ(√−7)` and whose RH is `RH ∧ GRH(χ_d)` for `d = −3, −8, −7` (`EpsteinHexagonal.rh_hex_iff`, `EpsteinTwo.rh_iff`, `EpsteinSeven.rh_iff`); the flat rectangular lattices, whose Epstein zeta functions have a real zero in `(½, 1)` once `y > e²`, `x² + 58y²` among them (`EpsteinFlat.not_rh`, `EpsteinFlat.not_rh_fiftyEight`); and Weng's rank-2 zeta function of `ℚ`, which satisfies RH with no hypothesis (`WengRankTwo.rh_weng`); and congruences: the theta series of `x² + xy + y²`, `x² + xy + 2y²` and `x² + y²` agree with Eisenstein series modulo `3`, `7` and `4` (`SquaresCongruences.hex_modEq`, `SquaresCongruences.seven_modEq`, `SquaresCongruences.two_modEq`), and `r₈(n) ≡ 2r₄(n) (mod 64)` (`SquaresCongruences.r8_modEq`) |
 | 11P Additive number theory; partitions | Ramanujan's congruences `p(5n + 4) ≡ 0 (mod 5)` and `p(7n + 5) ≡ 0 (mod 7)`, and their analogues for coloured partitions, `p₋₃(3n + 2) ≡ 0 (mod 9)` among them, from Jacobi's cube identity and Mathlib's pentagonal number theorem (`RamanujanCongruences.ramanujan_five`, `RamanujanCongruences.ramanujan_seven`, `RamanujanCongruences.coloured_three_nine`), and they are the first members of four infinite families, uniform in the prime `ℓ`, from `η`, `η³`, `η⁴` and `η⁶` (`RamanujanFamilies.family_one`, `RamanujanFamilies.family_three`, `RamanujanFamilies.family_four`, `RamanujanFamilies.family_six`). No additive problems beyond the sums of four and eight squares of 11E |
@@ -37,7 +40,8 @@ fields with their class groups and the class number formula.
   theorem depends on `propext`, `Classical.choice` and `Quot.sound` only (`scripts/check_axioms.py`), the sources hold
   no `sorry`, `native_decide` or declared axiom (`scripts/check_hygiene.py`), every declaration is used by a
   printed theorem (`scripts/dead_code.py`), and the build emits no warning in the library's own sources
-  (`scripts/check_warnings.py`).
+  (`scripts/check_warnings.py`). For the Linnik paper's two theorems, whose certificates are opt-in, the workflow
+  `.github/workflows/linnik.yml` does the same every week, not CI on every change.
 - **Two vendored libraries**, PrimeNumberTheoremAnd and `zeta23`, which `scripts/check_vendor.py` checks against
   upstream and the port patches. PrimeNumberTheoremAnd's `Wiener.lean` keeps two upstream `sorry`s; no printed theorem
   uses them.
@@ -52,6 +56,13 @@ fields with their class groups and the class number formula.
   everything below is a theorem if Lean's kernel and Mathlib are sound. What is missing is review of the mathematics:
   OpenAI's own catalogue marks its Lean "unchecked", and no review of the Dirichlet case independent of OpenAI and this
   library is known.
+- **GRH, from L. Alpöge's Lean archive** (20 November 2026), an input that no referee has read either, proved but not
+  here: the archive proves RH and GRH for every Dirichlet `L`-function on its own pins (Lean 4.33.1, Mathlib
+  `0df444a`), and [`tools/rh/`](../tools/rh/README.md) builds it there, where the kernel accepts every constant and
+  the two theorems rest on `propext`, `Classical.choice` and `Quot.sound` alone. The library does not import it and
+  declares no axioms, so in its Lean GRH stays a hypothesis: the headline Linnik exponent, `2 + η`, is
+  `LinnikGRH.linnik_two`, under GRH in the archive's words (`LinnikGRH.DirichletRH`). The library is rebuilding the
+  archive's proof on its own stack ([`rh-rebuild.md`](rh-rebuild.md)).
 - **An input whose journal review is pending**: Alpöge and Furman's theorem that two thirds of the zeros of `ζ` lie on
   the critical line (arXiv:2608.13637), which `zeta23` proves with no hypothesis (`CriticalLine.two_thirds`). zeta23's
   [metadata](https://github.com/anthropics/formal-math/blob/fbdc36bbf17d20af3fd0447c6d1a8a02773c9844/zeta23/formalization.yaml)
@@ -96,7 +107,8 @@ result's note finds it unused; blank where neither has been checked.
 | `ψ(x) = x + O(x^{11/12+ε})` | `HalfPlanePNT.psi_isBigO_eleven_twelfths` | yes |
 | `ψ(x) = x + O(x·exp(−c(log x)^{3/5}(log log x)^{−1/5}))`, the strongest form known from refereed results | `PNTKV.PNT_KV` | no |
 | `ψ(x; q, a) = x/φ(q) + O(x^{11/12+η})` for every `q` and every `a` prime to `q`, at fixed `q` | `PNTProgressions.psiAP_isBigO` | yes |
-| Linnik: every class `a` mod `q` with `(a, q) = 1` holds a prime `p ≤ Kq^{2150/1000}`, below `13/6`, where the Type II estimate in one variable has no window: the search with the estimate in two variables alone, the rest of a term with no prime of the rest's size being a product of the primes of its comparison's own tree, and with the reversal of a term of three or five primes through its largest prime, the cofactor kept as one number, the kernel following the plan of the search by hints; from the half-plane and Huxley's estimate, with no input of Chen, Gupta and Li's: its tests have the paper's conditions on the leaves of a comparison alone (`SieveAd.Plain.fillTests`), so no module of that formalisation is in its import cone (the Linnik paper's Theorem 1.2) | `Linnik21500.linnik_21500` | yes |
+| Linnik under GRH, the library's headline exponent: every class `a` mod `q` with `(a, q) = 1` holds a prime `p ≤ Kq^{2+η}` for every `η > 0`, by the density estimate with `A = 2` that GRH gives; GRH is L. Alpöge's, an input (above), so in the Lean a hypothesis, stated as the archive states it | `LinnikGRH.linnik_two`, `LinnikGRH.linnik_two_of_GRH` | yes |
+| Linnik: every class `a` mod `q` with `(a, q) = 1` holds a prime `p ≤ Kq^{2150/1000}`, below `13/6`, where the Type II estimate in one variable has no window: the search with the estimate in two variables alone, the rest of a term with no prime of the rest's size being a product of the primes of its comparison's own tree, and with the reversal of a term of three or five primes through its largest prime, the cofactor kept as one number, the kernel following the plan of the search by hints; from the half-plane and Huxley's estimate, with no input of Chen, Gupta and Li's: its tests have the paper's conditions on the leaves of a comparison alone (`SieveAd.Plain.fillTests`), so no module of that formalisation is in its import cone (the Linnik paper's Theorem 1.2). Its certificate, like those of the next two rows, is opt-in to build (`lib/check/CheckLinnik.lean`) | `Linnik21500.linnik_21500` | yes |
 | The same with `p ≤ Kq^{2100/1000}`: that search with terms of the sign `+` reversed too, the leaves of a comparison cut in three (the fourth moment of the cofactor's polynomial), the resonant window in both trees, a Type II estimate in one variable that sorts the characters by the sizes of a rest's own prime sums as well as by their zeros, with Chen, Gupta and Li's large values of the powers and the cofactor in the rest when it is one prime, the window's test at the two corners of the box of a rest's cells where its test at one corner fails, the chains over the frozen parts on cells as fine as the main tree's, a box of two primes cut in two where that pays, and a plan that searches every configuration of the estimate in two variables that the kernel's tests accept over the frozen parts (the Linnik paper's Theorem 1.1) | `Linnik21000.linnik_21000` | yes |
 | In number, at `2150/1000` and at `2100/1000`: for every `q`, every `a` prime to `q` and every `x ≥ Kq^L` the class holds at least `c·x/(φ(q) log x)` primes `p ≤ x`, with `c > 0`. The searches prove the count at `x = q^L`, where the primes of the class in `(q^L, 2q^L]` number at least `(1 − C)/2` of `x/(φ(q) log x)` for large `q`, `C` the search's cost; the multiples of the modulus carry it to every `x`, which uses that the theorems hold for every modulus and every class (the Linnik paper's Corollary 1.3) | `Linnik21500.count_21500`, `Linnik21000.count_21000`, `Linnik21500.count_large_21500`, `Linnik21000.count_large_21000`, `SieveAd.count_of_large` | yes |
 | Linnik by density estimates and the classical deduction, with the exponents `12`, `4`, `17/6`, `36/13`, `87/35`, `12/5` and `2.3334`, each `+ η` | `Linnik.linnik_twelve`, `LinnikDensity.linnik_four`, `LinnikSubconvex.linnik_seventeen_sixths`, `LinnikIngham.linnik_thirtysix_thirteenths`, `LinnikHuxley.linnik_eighty_seven_thirty_fifths`, `LinnikTwelve.linnik_twelve_fifths`, `LinnikG7.linnik_g7d` | yes |
@@ -144,7 +156,7 @@ The estimates that the results above are built from, each stated for reuse:
 Of these, the mean values, the Halász–Montgomery inequality, Guth and Maynard's estimate, the log-derivative bound,
 Brun's lemma, the large sieve, the theta function, Vinogradov's mean value theorem and Weil's form do not use the
 half-plane. The certificate pipeline, `tools/linnik/`, turns a sieve decomposition into Lean files that the kernel
-checks by `decide +kernel`.
+checks by `decide +kernel`, in the opt-in build (`lib/check/CheckLinnik.lean`).
 
 ## What a new input buys at once
 
@@ -159,7 +171,7 @@ The deductions are stated for any input, against Mathlib's `ζ` and `LFunction`,
 | `ShortWeil.DensityXi (A + ε) B` for every `ε > 0` | primes in almost all intervals `(y, y + y^θ]` for `θ > 1 − 2/A` | `AlmostAll.almost_all_of_density` |
 | `\|ζ(1/2 + it)\| ≪ \|t\|^c` (`CrossCriteria.ZetaCritBound`) | the density exponent `2 + 4c` | `InghamDensity.densityXi_of_zetaCrit` |
 | RH | the Lindelöf hypothesis, and from it the density hypothesis | `Subconvexity.lindelof_of_RH`, `InghamDensity.densityHypothesis_of_lindelof` |
-| GRH for every `L(s, χ)` | Linnik's theorem with every exponent above `2` | `LinnikGRH.linnik_two_of_GRH` |
+| GRH for every `L(s, χ)`, which L. Alpöge's Lean archive proves (an input, above) | Linnik's theorem with every exponent above `2`: the library's headline Linnik exponent | `LinnikGRH.linnik_two_of_GRH`, and in the archive's words `LinnikGRH.linnik_two` |
 | Petrow and Young's Weyl bound for every `L(s, χ)`, uniformly (`LinnikWeyl.PYWeyl`) | Weyl's bound for `ζ`, and Huxley's exponents above `5/6` for the characters | `LinnikWeylBridge.weylBound_of_PYWeyl`, `LinnikStairs7.charDensity_hy_0`, `LinnikStairs7.charDensity_hy_top` |
 | that RH fails | `ψ(x) − x = Ω±(√x)` | `HalfPlaneJoinsPNT.psiOmegaSqrt_of_not_RH` |
 | the arb certificates `WeilForm.CertE` and `WeilForm.CertO`: lower bounds for 350 mode energies, and the definiteness of two Gram matrices | Weil's form positive on every real probe at supports `2a ≤ 1.6`, past the prime powers `2`, `3` and `4` | `WeilForm.weilQg_ge_both` |
@@ -223,9 +235,13 @@ In order of what is in reach.
    and not a proof, keeps Li's constant positive down to `θ ≈ 0.5182` once Guth and Maynard's estimate
    (`ZetaGMLV.gm_large_values`) joins Huxley's. A Lean proof below `0.52` would go below Li, resting on the half-plane
    as Linnik's exponent does: the sieve's main terms take the prime number theorem in short ranges from it.
-2. **Linnik's exponent.** The Linnik paper proves `43/20 = 2150/1000` (`Linnik21500.linnik_21500`, its Theorem 1.2)
+2. **Linnik's exponent.** With GRH from L. Alpöge's archive the library's exponent is `2 + η`
+   (`LinnikGRH.linnik_two`), what the density route gives at `A = 2`; an exponent below `2` for every modulus is not
+   known even under GRH, so any route to one is of the greatest interest. With no hypothesis, the Linnik paper proves
+   `43/20 = 2150/1000` (`Linnik21500.linnik_21500`, its Theorem 1.2)
    from the half-plane and Huxley's density estimate alone, and `21/10 = 2100/1000` (`Linnik21000.linnik_21000`, its
-   Theorem 1.1) from the half-plane, Chen, Gupta and Li's Proposition 3.1 and Ingham's and Huxley's density estimates.
+   Theorem 1.1) from the half-plane, Chen, Gupta and Li's Proposition 3.1 and Ingham's and Huxley's density estimates;
+   their certificates stay in the library, with a build that is opt-in (`lib/check/CheckLinnik.lean`).
    With the half-plane, Harman's
    theorem of 2005 on primes in a progression (refereed, not formalised) gives `1/0.472 < 2.1187`, below `43/20` and
    above `21/10` (the paper's Section 12). Both exponents are below
@@ -347,12 +363,14 @@ In order of what is in reach.
   and cannot be imported with `lib/pnt`; `lib/dh` is its own layer. Module names are flat, so after adding a module
   run `python3 scripts/gen_lakefile.py`.
 - **A new result.** Print its axioms in a check file: `lib/check/CheckAll.lean`, or `lib/check/Check.lean` for a
-  paper's. Another printed result must use it, or `formalisations/` must name it, or `scripts/dead_code.py` fails; a
+  paper's, or `lib/check/CheckLinnik.lean` for one that needs the opt-in Linnik certificates. Another printed result
+  must use it, or `formalisations/` must name it, or `scripts/dead_code.py` fails; a
   result under a hypothesis the library does not prove goes in a table "Conditional results" there. Then run
   `python3 scripts/inventory.py`, and update this page if the result changes a line of it.
 - **A result from the literature** gets a note in `formalisations/`: its source, its Lean statement, the differences,
   how it was done. A paper claims only its own steps ([papers](../papers/README.md)).
 - **The build.** Before importing a module into one the default build reaches, `python3 scripts/import_cone.py Check
   --why MODULE` shows what it brings, certificates included; certificates are generated by `tools/` and compared byte
-  for byte in CI. Memory and CI's stages are in [`building.md`](building.md).
+  for byte in CI. The Linnik certificates are opt-in: only `lib/check/CheckLinnik.lean` may import them, which
+  `scripts/gen_lakefile.py` checks. Memory, CI's stages and the opt-in build are in [`building.md`](building.md).
 - **Where to start.** This page, then the note of the area, then [`inventory.md`](inventory.md) for the names.

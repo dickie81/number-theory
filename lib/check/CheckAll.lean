@@ -1,5 +1,7 @@
-/- This file prints the axioms of every final theorem of the library. It is not built by default. Every line it
-prints must be `[propext, Classical.choice, Quot.sound]`, a subset of them, or none. -/
+/- This file prints the axioms of every final theorem of the library but those of the Linnik paper's certificates,
+which `CheckLinnik.lean` prints (they are opt-in), those of the zeta23 layer (`CheckZeta23.lean`) and those of
+`lib/dh` (`CheckDH.lean`). It is not built by default. Every line it prints must be
+`[propext, Classical.choice, Quot.sound]`, a subset of them, or none. -/
 import PrimeNumberTheoremAnd.Consequences
 import PNTKV
 import KaiserKV
@@ -329,13 +331,7 @@ import SieveMain2
 import LinnikCGLSteps
 import SieveCurve7D
 import SieveBox
-import SieveHint21500
-import Linnik21500
-import SieveHint21000
-import Linnik21000
 import SieveAdCount
-import Linnik21500Count
-import Linnik21000Count
 import LinnikG7
 import LinnikGRH
 import ShortPrimesHalfPlane
@@ -1304,26 +1300,16 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms LinnikCGLSteps.charDensity_inT
 #print axioms SieveCurve7D.counts_7d
 #print axioms SieveRough.shareBox
-#print axioms Linnik21500.tree21500
-#print axioms Linnik21500.linnik_21500
-#print axioms Linnik21000.tree21000
-#print axioms Linnik21000.linnik_21000
 #print axioms SieveAd.count_of_large
 #print axioms SieveAd.count_large_bd
 #print axioms SieveAd.count_bd
 #print axioms SieveAd.count_large_pr
 #print axioms SieveAd.count_pr
-#print axioms Linnik21500.count_21500
-#print axioms Linnik21500.count_large_21500
-#print axioms Linnik21000.count_21000
-#print axioms Linnik21000.count_large_21000
 /- The Linnik paper's Theorem 1.1, at `21/10` (`papers/linnik-exponent/main.tex`, Sections 8 to 10): the declarations
 of its claims table (Appendix A, second block) that no line above prints, in the table's order by name. The others
-of that block are printed above: the resonant window and its steps, the leaves' estimate, the tests' soundness, the
-certificate's bound and the theorem. -/
-#print axioms Linnik21000.part21000
-#print axioms Linnik21000.sound21000
-#print axioms Linnik21000.soundF21000
+of that block are printed above: the resonant window and its steps, the leaves' estimate and the tests' soundness.
+The theorem, its corollary in number and its certificate's bound and parts (`Linnik21000.linnik_21000`,
+`Linnik21000.tree21000`, `Linnik21000.part21000`) are printed by `CheckLinnik.lean`, which builds the certificate. -/
 #print axioms LinnikCGLStep.charDensity_cglGen
 #print axioms SieveAd.altFDYH
 #print axioms SieveAd.altFDYH_sound

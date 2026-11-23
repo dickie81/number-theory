@@ -10,6 +10,10 @@ The archive proves the Riemann hypothesis for `ζ` and for every Dirichlet `L`-f
 kernel accepts it, and its main theorems use only `propext`, `Classical.choice` and `Quot.sound`. It carries no
 licence, so nothing of it is in this repository.
 
+The library takes GRH from it as an input (`docs/account.md`), but not into its Lean, which does not import the archive
+and declares no axioms: there GRH stays a hypothesis, stated in the archive's words (`LinnikGRH.DirichletRH`). So the
+library's headline Linnik exponent, every exponent above `2`, is `LinnikGRH.linnik_two`, with that hypothesis.
+
 ## The library's proof, so far
 
 The library is rebuilding the proof from the top, written fresh from the mathematics, in its own style and on its own

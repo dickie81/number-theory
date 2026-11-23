@@ -345,6 +345,11 @@ Its main tools:
   (`SieveAd.card_units_above`) have their primes of `(Q^L, 2Q^L]` below `x`, in the class of `a` mod `q`, and
   apart; the constant is `c = (1 − C)/2^{L+2}`. The step uses that the theorems hold for every modulus and every
   class: with exceptional moduli it would not go through.
+
+  These theorems at `2150/1000` and `2100/1000`, with their certificates' bounds (`Linnik21500.tree21500`,
+  `Linnik21000.tree21000`), are printed by `lib/check/CheckLinnik.lean`, whose build is opt-in: neither the default
+  build nor CI's build of a change compiles the certificates' 1228 files (`docs/building.md`). The library's headline
+  Linnik exponent is `2 + η` under GRH (`LinnikGRH.linnik_two`).
 - `SieveDecomp.buchstab_pt`, Buchstab's identity at one `n`, which summed over a set `C` is
   `S(C_m, z) = S(C_m, w) − Σ_{w≤p<z} S(C_{mp}, p)` for `m` whose prime factors are at least `z ≥ w`, in the form
   that extends a tuple by one smaller prime.
@@ -366,8 +371,8 @@ share of a box, `SieveRough.shareBox`):
   to the `c` counted by `Ψ(x/W, z)` (`SieveDrop.card_le_Psi`). With `SieveRough.shareBox` it bounds a dropped box's
   term in `B` by `(β + δ)x/(φ(q) log x)` for every `δ > 0` and large `q`, `β` the box's share (`SieveAd.drop_bound`).
 
-These theorems are printed by `lib/check/Check.lean` or `lib/check/CheckAll.lean`, and their axioms are `propext`,
-`Classical.choice` and `Quot.sound` only.
+These theorems are printed by `lib/check/Check.lean`, `lib/check/CheckAll.lean` or, for the two theorems and their
+certificates, `lib/check/CheckLinnik.lean`, and their axioms are `propext`, `Classical.choice` and `Quot.sound` only.
 
 ## Source
 

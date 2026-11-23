@@ -7,9 +7,11 @@ Each paper has a directory here with its LaTeX source, `main.tex`, and a README,
 
 - **Every numbered result is a Lean theorem.** Each paper has a table that names the Lean theorem behind each of its numbered results. Historical remarks, comparisons with other methods and heuristics in a paper are not Lean theorems, and the paper says so.
   `lib/check/Check.lean` prints the axioms of those theorems, and `scripts/check_axioms.py` checks that they are
-  `propext`, `Classical.choice` and `Quot.sound` only. A theorem whose certificate is too heavy for the default build
-  is printed by `lib/check/CheckAll.lean` instead (`scripts/check_axioms.py --all`), and its paper says so: Theorem 1.1
-  of the Linnik paper, and the theorems of its Sections 8 to 10.
+  `propext`, `Classical.choice` and `Quot.sound` only. A theorem whose proof is too heavy for the default build is
+  printed by `lib/check/CheckAll.lean` instead (`scripts/check_axioms.py --all`), or, if it rests on the Linnik
+  certificates, whose build is opt-in, by `lib/check/CheckLinnik.lean` (`scripts/check_axioms.py --linnik`), and its
+  paper says so: the theorems of the Linnik paper's Sections 8 to 10 are in `CheckAll.lean`, and its Theorems 1.1
+  and 1.2 and Corollary 1.3 in `CheckLinnik.lean`.
 - **A paper claims only its own steps.** The results it uses from the literature are proved in `lib/` too. Each has a
   note in [`formalisations/`](../formalisations/README.md) with its source and the differences between the Lean
   statement and the published one. The paper cites the result to its source and to the note, and does not restate

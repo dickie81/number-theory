@@ -14,7 +14,7 @@ characters mod `q` and every choice of one point `|t_χ| ≤ T` for each `χ ∈
 `Σ_{χ∈R} |L(1/2 + it_χ, χ)|⁴ ≤ C(q(T + 2))^{1+ε}`. `LFunction` is Mathlib's `DirichletCharacter.LFunction`. The theorem
 is in the proofs of the Linnik paper's two theorems, `Linnik21500.linnik_21500` (Theorem 1.2) and
 `Linnik21000.linnik_21000` (Theorem 1.1), whose axioms are `propext`, `Classical.choice` and `Quot.sound`
-(`lib/check/Check.lean`; for `linnik_21000`, `lib/check/CheckAll.lean`), so it depends on those only.
+(`lib/check/CheckLinnik.lean`, whose build is opt-in), so it depends on those only.
 
 ## Source
 

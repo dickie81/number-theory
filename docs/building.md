@@ -12,7 +12,7 @@ checks, and what CI and the papers' site do.
 
 ```sh
 lake exe cache get               # Mathlib's prebuilt files
-scripts/build.sh                 # lake build, at most two certificate parts at once (see Memory)
+scripts/build.sh                 # lake build of the default target, with a limit on compiles at once (see Memory)
 python3 scripts/check_axioms.py  # the axioms of the papers' theorems
 ```
 
@@ -21,28 +21,50 @@ builds the same thing where memory allows. The two produce the same build, so ei
 If Mathlib's cache does not have the pinned commit, `lake build` builds Mathlib as well, which takes several hours.
 On 4 cores and 16 GB, a cold build of the default target takes several hours.
 
+### The opt-in certificates
+
+The Linnik paper's two theorems, at `21/10` and `43/20`, rest on certificates that the kernel checks: the plans of
+two searches, which it follows by hints. They are opt-in. Their files in `lib/pnt` (the 1228 `SieveHint*.lean`, with
+`Linnik21500.lean`, `Linnik21000.lean` and their two files `…Count.lean`: 1232 modules, 1.07 GB of source) are the Lake
+library `LinnikCert`, and only `lib/check/CheckLinnik.lean`, which prints the theorems' axioms, imports them. The
+default build does not compile them, nor does CI's build of a change (`scripts/lean_targets.py`), and
+`scripts/gen_lakefile.py` refuses an import of one by any other module, which would put them back. To build and check
+them:
+
+```sh
+scripts/build.sh CheckLinnik              # about 62 hours of one core (see Memory)
+python3 scripts/check_axioms.py --linnik  # the axioms of the Linnik paper's two theorems
+python3 scripts/dead_code.py --full       # after building every check file: the dead code, the certificates included
+```
+
+`.github/workflows/linnik.yml` does the same every week and on request (see CI). The steps of the two proofs that
+need no certificate stay in the default build (`Check.lean`) and in CI's (`CheckAll.lean`), and so does the
+library's headline Linnik exponent, `2 + η` under GRH (`LinnikGRH.linnik_two`).
+
 ### Memory
 
 A module that imports Mathlib maps Mathlib's files into memory, and that mapping is shared between compiles. The
-default build also has the part files of one certificate: the 17 of the Linnik paper's Theorem 1.2, at `43/20`
-(`lib/pnt/SieveHint21500P<k>.lean`, 1552 parts), about an hour of the kernel in all. The 1150 of the paper's
-Theorem 1.1, at `2100/1000` (`lib/pnt/SieveHint21000P<k>.lean`, 107 374 parts), about 61 hours of one core in CI's
-builds (the generator estimated 76), with the theorems of its cells in 58 files (`lib/pnt/SieveHint21000N<j>.lean`), are not in the
-default build: `scripts/build.sh CheckAll` builds them, and CI builds them in stages. Of Mathlib the
-parts import only `Mathlib.Data.Nat.Notation`. `scripts/lean-slots.sh` still honours a `-- exclusive-heavy` mark,
-which runs a part file with no other certificate part; no part file now carries it. The certificates at weaker
-exponents (`278/125`, `899/400`, `9/4`, `226/100`, `2165/1000`, `2140/1000`, `2135/1000`, `11/5`, `219/100`,
-`218/100`, `2115/1000` and others) and the stepping-stone modules only they used are no longer in the tree; they are
-in the git history (the last four at commit `76abe3c`).
+opt-in build has the part files of two certificates: the 17 of the Linnik paper's Theorem 1.2, at `43/20`
+(`lib/pnt/SieveHint21500P<k>.lean`, 1552 parts), about an hour of the kernel in all, and the 1150 of its Theorem 1.1,
+at `2100/1000` (`lib/pnt/SieveHint21000P<k>.lean`, 107 374 parts), about 61 hours of one core in CI's builds (the
+generator estimated 76), with the theorems of its cells in 58 files (`lib/pnt/SieveHint21000N<j>.lean`). Of Mathlib
+the parts import only `Mathlib.Data.Nat.Notation`. `scripts/lean-slots.sh` counts the part files as heavy modules,
+and still honours a `-- exclusive-heavy` mark, which runs a part file with no other heavy module; no part file now
+carries it. The certificates at weaker exponents (`278/125`, `899/400`, `9/4`, `226/100`, `2165/1000`, `2140/1000`,
+`2135/1000`, `11/5`, `219/100`, `218/100`, `2115/1000` and others) and the stepping-stone modules only they used are
+no longer in the tree; they are in the git history (the last four at commit `76abe3c`).
 
 Lake runs about as many compiles at once as there are cores, so a plain `lake build` on a machine with less than about
-5 GiB of memory per core can run out while it builds the certificates. `scripts/build.sh` runs Lake with a wrapper
-around `lean`, `scripts/lean-slots.sh`. The wrapper allows at most `LEAN_SLOTS` compiles at once (default: the number
-of cores) and at most `LEAN_HEAVY` certificate parts among them (default 2). It also deletes each module's setup file
-after its compile; Lake writes that file for the compile and does not read it again. It needs `flock`.
+5 GiB of memory per core can run out while it builds the certificates or the kernel checks of `lib/core/Cm*`.
+`scripts/build.sh` runs Lake with a wrapper around `lean`, `scripts/lean-slots.sh`. The wrapper allows at most
+`LEAN_SLOTS` compiles at once (default: the number of cores) and at most `LEAN_HEAVY` heavy modules among them
+(default 2): the certificates' part files and the modules marked `-- heavy:`. It also deletes each module's setup
+file after its compile; Lake writes that file for the compile and does not read it again. It needs `flock`.
 
-Two certificate parts at once can come close to the limit of a 16 GB machine: a compile killed with exit code 137 has
-run out of memory, and `LEAN_HEAVY=1 scripts/build.sh` finishes the build, keeping what is already built.
+Two heavy modules at once can come close to the limit of a 16 GB machine: a compile killed with exit code 137 has
+run out of memory, and `LEAN_HEAVY=1 scripts/build.sh` finishes the build, keeping what is already built. Until the
+certificates became opt-in, the wrapper's pattern of heavy modules did not name the `SieveHint` part files, so CI's
+runners (four cores, 16 GB) compiled them four at once; `linnik.yml` keeps that (`LEAN_HEAVY=4`).
 
 ### Module names and the lakefile
 
@@ -54,23 +76,23 @@ adding, removing or renaming a module.
 
 | Command | What it checks |
 |---|---|
-| `python3 scripts/check_axioms.py` | After `lake build`: every theorem in `lib/check/Check.lean` depends only on `propext`, `Classical.choice` and `Quot.sound`. With `--all` it checks `CheckAll.lean` instead, which must be built first with `lake build CheckAll`, with `--zeta23` `CheckZeta23.lean`, the axioms of the `lib/zeta23` layer's results, which `CheckAll` cannot import (`lake build CheckZeta23`), and with `--dh` `CheckDH.lean`, the axioms of the `lib/dh` layer's results (`lake build CheckDH`). |
+| `python3 scripts/check_axioms.py` | After `lake build`: every theorem in `lib/check/Check.lean` depends only on `propext`, `Classical.choice` and `Quot.sound`. With `--all` it checks `CheckAll.lean` instead, which must be built first with `lake build CheckAll`, with `--zeta23` `CheckZeta23.lean`, the axioms of the `lib/zeta23` layer's results, which `CheckAll` cannot import (`lake build CheckZeta23`), with `--dh` `CheckDH.lean`, the axioms of the `lib/dh` layer's results (`lake build CheckDH`), and with `--linnik` `CheckLinnik.lean`, the axioms of the Linnik paper's two theorems, which need the opt-in certificates (`lake build CheckLinnik`). A check file's name, such as `CheckDH`, does as well as its option. |
 | `python3 scripts/check_hygiene.py` | The library's own sources contain no `sorry`, `admit`, `native_decide`, declared `axiom`, `implemented_by`, `extern`, `unsafe`, `ofReduceBool`, `skipKernelTC` or `#exit`. |
-| `python3 scripts/gen_lakefile.py --check` | `lakefile.lean` matches `lib/`. |
-| `python3 scripts/inventory.py --check` | `docs/inventory.md` is what `scripts/inventory.py` writes from the sources: every theorem that `Check.lean`, `CheckAll.lean`, `CheckZeta23.lean` or `CheckDH.lean` prints, by module, with the headline of its docstring and its note in `formalisations/`. Run `python3 scripts/inventory.py` after changing those theorems, their docstrings or the notes. |
-| `python3 scripts/dead_code.py` | After `lake build Check CheckAll CheckZeta23 CheckDH deadcode`, in about a minute: the library keeps no code that its results do not use. `lake exe deadcode` (`scripts/lean/DeadCode.lean`) imports the check files and walks what the theorems they print use, through statements and proofs. The check fails if a declaration of `lib/core`, `lib/pnt`, `lib/dh`, `lib/zeta23` or `lib/check` is used by none of those theorems (Lean's generated declarations, macros and syntax aside), or a module by no check file; if a printed theorem has a closed hypothesis, a proposition or an instance that mentions none of its variables (such as `RiemannHypothesis` or `[SieveCert.Grid]`), and no unconditional theorem uses it, unless a table "Conditional results" of `formalisations/` lists it; and if a printed theorem that no other uses is neither a paper's (printed by `Check.lean`), nor on the page on the zeros, nor named in `formalisations/`. A result that nothing uses is kept only with its entry there. `--json OUT` also writes the findings, with each declaration's lines. |
+| `python3 scripts/gen_lakefile.py --check` | `lakefile.lean` matches `lib/`, and no module but `CheckLinnik` imports an opt-in module (`import_cone.optional`), which would put the Linnik certificates in the default build. |
+| `python3 scripts/inventory.py --check` | `docs/inventory.md` is what `scripts/inventory.py` writes from the sources: every theorem that `Check.lean`, `CheckAll.lean`, `CheckZeta23.lean`, `CheckDH.lean` or `CheckLinnik.lean` prints, by module, with the headline of its docstring and its note in `formalisations/`, those of `Check` and `CheckLinnik` marked *paper* and those that only `CheckLinnik` prints *opt-in*. Run `python3 scripts/inventory.py` after changing those theorems, their docstrings or the notes. |
+| `python3 scripts/dead_code.py` | After `lake build Check CheckAll CheckZeta23 CheckDH deadcode`, in about a minute: the library keeps no code that its results do not use. `lake exe deadcode` (`scripts/lean/DeadCode.lean`) imports the check files and walks what the theorems they print use, through statements and proofs. The check fails if a declaration of `lib/core`, `lib/pnt`, `lib/dh`, `lib/zeta23` or `lib/check` is used by none of those theorems (Lean's generated declarations, macros and syntax aside), or a module by no check file; if a printed theorem has a closed hypothesis, a proposition or an instance that mentions none of its variables (such as `RiemannHypothesis` or `[SieveCert.Grid]`), and no unconditional theorem uses it, unless a table "Conditional results" of `formalisations/` lists it; and if a printed theorem that no other uses is neither a paper's (printed by `Check.lean` or `CheckLinnik.lean`), nor on the page on the zeros, nor named in `formalisations/`. A result that nothing uses is kept only with its entry there. The opt-in modules and `CheckLinnik` are left out, and the library's declarations that their sources cite are walked in their place, so that what only the certificates use is not reported; with `--full`, after `lake build CheckLinnik` as well, `CheckLinnik` is imported with the others and nothing is left out. `--json OUT` also writes the findings, with each declaration's lines. |
 | `python3 scripts/check_warnings.py LOG` | After a build, on its output (`scripts/build.sh … 2>&1 \| tee LOG`): the build emits no warning located in a source of `lib/core`, `lib/pnt`, `lib/dh`, `lib/zeta23` or `lib/check`. Lake replays the messages of the modules it does not rebuild, so the log of any build lists the warnings of every module in it. The vendored libraries' warnings and Lake's note that a file importing Mathlib is not a module of Lean's module system do not count. It reads `lake env lean FILE`'s output too. |
 | `python3 scripts/check_account.py` | Every Lean name that `docs/account.md` quotes is declared in the library, and every file, path and relative link it gives exists. The page is written by hand: update it when a result it names changes, is renamed or is removed. |
-| `python3 scripts/zeros_page.py --check` | The site's page on the zeros (`site/zeros.html`) agrees with the Lean and the paper. The script reads each number the page shows from the statement of the theorem that proves it: the half-plane, the band of `ζ`'s zeros, the bounds for `Θ`, the Korobov–Vinogradov region, the range of `S(t) = O(log t)`, the bounded gaps between the ordinates of the zeros (`ZeroWindow.zero_in_window`), the shares of the zeros that are distinct, simple and on the line, the constants of the local zero count, the density exponents, the Linnik exponents (the density deduction's; the paper's two, whose modules must import their inputs, with Theorem 1.2's below `1 + A/2` at Chen, Gupta and Li's `A` and Theorem 1.1's below Theorem 1.2's; and the exponent under GRH, `LinnikGRH.linnik_two_of_GRH`, which must assume GRH and equal the density exponent of `LinnikGRH.charDensity_two_of_GRH`), and the curves `g*` and `g_H` with the theorem that `counts_7d` and `counts_hx` glue in for each piece (checked against the piece's range and exponent). Every theorem the page presents as a result must be printed by `Check.lean`, `CheckAll.lean`, `CheckZeta23.lean` or `CheckDH.lean`. The other numbers are read from the paper's sources, except `κ = Σ Λ(n)n^{−3/2}`, the local count's constant, and the line `L = 1 + A/2`, which the script computes. Without `--check` it writes the page, as `scripts/build_site.py` does. |
+| `python3 scripts/zeros_page.py --check` | The site's page on the zeros (`site/zeros.html`) agrees with the Lean and the paper. The script reads each number the page shows from the statement of the theorem that proves it: the half-plane, the band of `ζ`'s zeros, the bounds for `Θ`, the Korobov–Vinogradov region, the range of `S(t) = O(log t)`, the bounded gaps between the ordinates of the zeros (`ZeroWindow.zero_in_window`), the shares of the zeros that are distinct, simple and on the line, the constants of the local zero count, the density exponents, the Linnik exponents (the density deduction's; the paper's two, whose modules must import their inputs, with Theorem 1.2's below `1 + A/2` at Chen, Gupta and Li's `A` and Theorem 1.1's below Theorem 1.2's; and the exponent under GRH, `LinnikGRH.linnik_two_of_GRH`, which must assume GRH and equal the density exponent of `LinnikGRH.charDensity_two_of_GRH`), and the curves `g*` and `g_H` with the theorem that `counts_7d` and `counts_hx` glue in for each piece (checked against the piece's range and exponent). Every theorem the page presents as a result must be printed by `Check.lean`, `CheckAll.lean`, `CheckZeta23.lean`, `CheckDH.lean` or `CheckLinnik.lean` (the paper's two theorems, whose certificates are opt-in). The other numbers are read from the paper's sources, except `κ = Σ Λ(n)n^{−3/2}`, the local count's constant, and the line `L = 1 + A/2`, which the script computes. Without `--check` it writes the page, as `scripts/build_site.py` does. |
 | `python3 scripts/check_vendor.py` | `lib/vendor` holds the upstream files at the pinned commits with the port patches applied (needs network access). |
 | `python3 scripts/census.py MODULE CONSTANT` | After `lake build MODULE`: the library's modules whose declarations the proof of `CONSTANT` uses, with the count from each. |
 | `lake env lean --run scripts/lean/ClosureFingerprint.lean [MODULE THEOREM]` | Not a gate. After `lake build MODULE` (default `LinnikCGLDensity` and its `cglDensity`), in under a minute: one line for each constant the theorem depends on, with its kind, its universe parameters and the hashes of its type and value. Save the output before a change and compare it after: if it is unchanged, so are the theorem's constants, and its kernel checks (`scripts/kernel_check.sh`) need not run again. |
 | `lake env lean --run scripts/lean/StatementClosure.lean [MODULE THEOREM]` | Not a gate. After `lake build MODULE` (default `LinnikCGLDensity` and its `cglDensity`), in under a minute: the constants the theorem's statement depends on (its type, through types and the bodies of definitions, not proofs), those of PrimeNumberTheoremAnd that its proof names, and the constants of the proof that several modules declare, which make the number of modules the proof spans depend on the import order. It also counts the recursors of the proof's inductive types, which an export carries in full, to match the counts of the checkers that `scripts/kernel_check.sh` runs. |
 | `scripts/kernel_check.sh [MODULE THEOREM]` | Not a gate. After `lake build MODULE` (default `LinnikCGLDensity` and its `cglDensity`), it re-checks the theorem, with every constant it depends on, by the checkers the pinned toolchain ships. Lean's kernel, nanoda (only the three standard axioms permitted), con-leche and con-ron (`--verified`) check lean4export's export of it. `scripts/lean/ReplayClosure.lean` replays the same constants from the `.olean` files into an empty kernel environment. First it makes each of them reject a false theorem added without the kernel (`debug.skipKernelTC`), which `#print axioms` reports as depending on no axioms. About 13 minutes for `cglDensity` (formalisations/chen-gupta-li-density.md, "An audit of the chain"). |
-| `python3 tools/linnik/check_certificate.py` | The Lean files of the certificate at `43/20` in `lib/pnt` are the ones `tools/linnik` generates: `hint_cert.py 21500 --check --cplan` plans the search again with the C planner, runs every part through its mirror of the kernel's search, and compares `SieveHint21500.lean`, every `SieveHint21500P<k>.lean` and `Linnik21500.lean` with the tree byte for byte. The certificate at `21/10` is not checked here: its plan takes hours. `--inputs` lists the files that the check reads: the scripts it runs and those they import, the C planner, the files of `lib/pnt` they read when they start, and those whose names hold the certificate's tag. |
+| `python3 tools/linnik/check_certificate.py` | The Lean files of the certificate at `43/20` in `lib/pnt` are the ones `tools/linnik` generates: `hint_cert.py 21500 --check --cplan` plans the search again with the C planner, runs every part through its mirror of the kernel's search, and compares `SieveHint21500.lean`, every `SieveHint21500P<k>.lean` and `Linnik21500.lean` with the tree byte for byte. The certificate at `21/10` is not checked here: its plan takes hours. It needs no Lean build, so CI runs it on a change that can affect it, though the certificates' Lean build is opt-in. `--inputs` lists the files that the check reads: the scripts it runs and those they import, the C planner, the files of `lib/pnt` they read when they start, and those whose names hold the certificate's tag. |
 | `python3 tools/linnik/fig_density.py --check`, and the same for `fig_region.py` and `fig_cost.py` | The Linnik paper's three figures (`papers/linnik-exponent/fig-density.tex`, `fig-region.tex`, `fig-cost.tex`) are the files the scripts write from the Lean: the density exponents from the curves `ghx` and `g7d`, the region from `SieveTwoZone7D.Zone7d` at the two theorems' exponents, and the costs from the pieces of `Linnik21500.tree21500` and `Linnik21000.tree21000`. Each script stops if the Lean no longer has the shape or the numbers that its figure's labels state. CI does not run them. |
-| `python3 scripts/lean_targets.py BASE` | Not a gate: the Lake targets that CI's Lean build builds for the changes from `BASE` to `HEAD`: `Check`, `CheckAll`, `CheckZeta23`, `CheckDH`, and every module of `lib/` that the changes add or edit, the vendored libraries' included, with every module that imports one of them or a deleted module, directly or not, and every library that the changes add to `lakefile.lean`. Any other change to `lakefile.lean` outside its module lists, or a change to `lean-toolchain` or `lake-manifest.json`, gives every library instead, as does `--all`. |
-| `python3 scripts/import_cone.py [ROOT]` | Not a gate: the modules, source size and certificate part files in the import cone of `ROOT` (default `Check`, the default build), from the sources alone. `--why MODULE` prints the chain of imports that puts `MODULE` in the cone. |
+| `python3 scripts/lean_targets.py BASE` | Not a gate: the Lake targets that CI's Lean build builds for the changes from `BASE` to `HEAD`: `Check`, `CheckAll`, `CheckZeta23`, `CheckDH`, and every module of `lib/` that the changes add or edit, the vendored libraries' included, with every module that imports one of them or a deleted module, directly or not, and every library that the changes add to `lakefile.lean`. Any other change to `lakefile.lean` outside its module lists, or a change to `lean-toolchain` or `lake-manifest.json`, gives every library instead, as does `--all`. The opt-in part is never a target: the library `LinnikCert`, `CheckLinnik`, and their modules, edited or importing an edited one. |
+| `python3 scripts/import_cone.py [ROOT]` | Not a gate: the modules, source size, opt-in modules and certificate part files in the import cone of `ROOT` (default `Check`, the default build), from the sources alone. `--why MODULE` prints the chain of imports that puts `MODULE` in the cone. |
 
 ## CI
 
@@ -80,7 +102,7 @@ adding, removing or renaming a module.
   `zeros_page.py --check` and `check_vendor.py`.
 - **The certificates:** `check_certificate.py`, in a job of its own, only when the change edits a file that the
   check reads (`check_certificate.py --inputs`) or `ci.yml`, and on a manual run: a change to no other file can
-  change its outcome.
+  change its outcome. It regenerates the certificate's files, with no Lean build; their Lean build is opt-in (below).
 - **The papers:** the papers that the change touches are compiled with LaTeX, each `papers/<name>/main.tex` and then its
   supplement `papers/<name>/supplement.tex`. A paper counts as touched when the change edits a file in its directory
   other than Markdown. A change that touches no paper compiles none, and one that edits `ci.yml`,
@@ -92,8 +114,8 @@ adding, removing or renaming a module.
   the pull request closes. If every paper was compiled, the site is then built from them, as `pages.yml` builds it, and
   kept as the artifact `site`, so a pull request's page on the zeros can be looked at before it is published.
 - **The Lean build**, with a cache. On a pull request it runs only if the pull request changes `lib/`, the Lake
-  files, `lean-toolchain`, the build scripts or the workflow; on pushes to `main` it always runs. Mathlib's prebuilt
-  files come from Mathlib's own cache (`lake exe cache get`).
+  files, `lean-toolchain`, the build scripts, the dead-code check or the workflow; on pushes to `main` it always
+  runs. Mathlib's prebuilt files come from Mathlib's own cache (`lake exe cache get`).
   The library's build directory, `.lake/build`, is restored from the GitHub Actions cache and saved back after
   every stage, including a stage that fails or is cancelled. Lake then rebuilds only what changed. A cold build
   takes longer than one job may run (six hours), so the build runs in up to six chained stages, each continuing
@@ -105,13 +127,23 @@ adding, removing or renaming a module.
   building what it can break: `Check`, `CheckAll`, `CheckZeta23`, `CheckDH`, every module that the change adds or edits, and
   every module that imports one of them, directly or not. A pull request is compared with its base, a push to `main`
   with the commit it replaced; a manual run, or a change to the toolchain, to Mathlib's pin or to the lakefile's
-  settings, builds every library, and a change that only adds a library to the lakefile builds that library as well.
-  Every module is imported by a check file, which `dead_code.py` checks, so the four check files are the whole
-  library.
+  settings, builds every library but the opt-in ones, and a change that only adds a library to the lakefile builds
+  that library as well. Every module is imported by a check file, which `dead_code.py` checks, so the four check files
+  are the whole library but its opt-in part: the Linnik certificates, which only `CheckLinnik` imports and this build
+  never compiles. A change to a module that the certificates import is checked here against the names they cite
+  (`dead_code.py`), not by building them.
 
 The job **CI passed** summarises the others: it passes when each passed or was skipped, and fails if any failed or
 was cancelled. It is the check that `main`'s branch protection requires, so a pull request merges only when CI is
 green or skipped throughout. A new job must be added to its `needs`.
+
+`.github/workflows/linnik.yml` builds the opt-in part every Saturday and on a manual run, from the Actions tab: the
+targets `Check`, `CheckAll`, `CheckZeta23`, `CheckDH` and `CheckLinnik`, with the same action and stages as the Lean
+build above and a cache of its own (`lake-build-linnik`, which starts from CI's when it has none). The stage that
+finishes runs `check_axioms.py --linnik`, `dead_code.py --full` and `check_warnings.py`. A cold run builds about 62
+hours of one core of certificates; a run after one that finished rebuilds only what changed. It is not a job of
+`ci.yml`, so it is not part of **CI passed**: a change that breaks the certificates fails this workflow, not the pull
+request.
 
 ## The papers' site
 
