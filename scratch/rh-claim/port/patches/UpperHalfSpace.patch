@@ -1,0 +1,22 @@
+--- a/lib/core/UpperHalfSpace.lean
++++ b/lib/core/UpperHalfSpace.lean
+@@ -19,6 +19,10 @@
+ open Quaternion
+ open scoped ComplexConjugate
+ 
++-- `Quaternion` is an `abbrev` in the Mathlib that this file was written for and a `def` in the older one, where
++-- a quaternion written `⟨a, b, c, d⟩` is then not seen to be one when a lemma about quaternions is matched
++set_option backward.isDefEq.respectTransparency false
++
+ noncomputable section
+ 
+ namespace Eis
+@@ -76,7 +80,7 @@
+ theorem lin_uhsPt (c d z : ℂ) (v : ℝ) :
+     (c : ℍ) * uhsPt z v + (d : ℍ) =
+       ⟨(c * z + d).re, (c * z + d).im, c.re * v, c.im * v⟩ := by
+-  ext <;> simp [uhsPt, Quaternion.coeComplex, Complex.mul_re, Complex.mul_im]; ring
++  ext <;> simp [uhsPt, Quaternion.coeComplex, Complex.mul_re, Complex.mul_im] <;> ring
+ 
+ theorem normSq_lin_uhsPt (c d z : ℂ) (v : ℝ) :
+     normSq ((c : ℍ) * uhsPt z v + (d : ℍ)) = uhsDen c d z v := by

@@ -1,0 +1,12 @@
+--- a/lib/core/KubotaBallOp.lean
++++ b/lib/core/KubotaBallOp.lean
+@@ -122,8 +122,7 @@
+ /-- `(∫‖f‖² dν)^{1/2} = ‖f‖₂` as an extended number. -/
+ theorem lintegral_enorm_sq_rpow (f : Lp ℂ 2 (muR ρ)) :
+     (∫⁻ x, ‖f x‖ₑ ^ 2 ∂(muR ρ)) ^ (1 / 2 : ℝ) = eLpNorm f 2 (muR ρ) := by
+-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+-    (Lp.aestronglyMeasurable f)]
++  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top]
+   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
+ 
+ /-- The integrand of the form: `conj k(p, q)·conj f(q)·g(p)` at `x = (p, q)`. -/

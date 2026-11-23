@@ -1,0 +1,10 @@
+--- a/lib/core/EisensteinThirdTransfer.lean
++++ b/lib/core/EisensteinThirdTransfer.lean
+@@ -498,6 +498,7 @@
+ theorem add_le_one_add_mul {M C : ℝ} (hM : 0 ≤ M) (hC : 0 ≤ C) : M + C ≤ (1 + C) * (1 + M) := by
+   nlinarith [mul_nonneg hC hM]
+ 
++set_option maxHeartbeats 800000 in
+ open Classical in
+ /-- **The companion paper's Lemma 7.3** ("If the induction hypothesis (5.1) holds below, then
+ `𝒬_{ξ_1}(U) ≼ (Σ + M)‖U‖²`"), in the library's form: if the child mean squares satisfy the transfer

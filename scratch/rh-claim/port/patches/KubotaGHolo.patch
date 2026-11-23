@@ -1,0 +1,21 @@
+--- a/lib/core/KubotaGHolo.lean
++++ b/lib/core/KubotaGHolo.lean
+@@ -152,8 +152,7 @@
+ theorem eLpNorm_pseis_le {f : ℝ → ℂ} (hfm : Measurable f) {a D : ℝ} (ha : 0 < a) (hD : 0 ≤ D)
+     (h0 : ∀ v, 0 < v → v < a → f v = 0) (hf : ∀ v, 0 < v → ‖f v‖ ≤ D) :
+     eLpNorm (pseis f) 2 (muR rhoG) ≤ psC a ^ (1 / 2 : ℝ) * ENNReal.ofReal D := by
+-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+-    (measurable_pseis hfm).aestronglyMeasurable]
++  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top]
+   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
+   calc (∫⁻ p, ‖pseis f p‖ₑ ^ 2 ∂(muR rhoG)) ^ (1 / 2 : ℝ)
+       ≤ (psC a * ENNReal.ofReal D ^ 2) ^ (1 / 2 : ℝ) :=
+@@ -166,7 +165,7 @@
+ theorem memLp_pseis_of_vanish {f : ℝ → ℂ} (hfm : Measurable f) {a D : ℝ} (ha : 0 < a) (hD : 0 ≤ D)
+     (h0 : ∀ v, 0 < v → v < a → f v = 0) (hf : ∀ v, 0 < v → ‖f v‖ ≤ D) :
+     MemLp (pseis f) 2 (muR rhoG) := by
+-  rw [memLp_iff]
++  refine ⟨(measurable_pseis hfm).aestronglyMeasurable, ?_⟩
+   exact lt_of_le_of_lt (eLpNorm_pseis_le hfm ha hD h0 hf)
+     (ENNReal.mul_lt_top (ENNReal.rpow_lt_top_of_nonneg (by norm_num) (psC_lt_top a).ne)
+       ENNReal.ofReal_lt_top)

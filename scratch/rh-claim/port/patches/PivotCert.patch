@@ -1,0 +1,10 @@
+--- a/lib/core/PivotCert.lean
++++ b/lib/core/PivotCert.lean
+@@ -1212,6 +1212,7 @@
+     mul_le_mul_of_nonneg_right hup hd.le
+   linarith only [hA, hB, hmain, hrlo]
+ 
++set_option maxHeartbeats 1600000 in
+ /-- **R3**, `0 < s ≤ 1/2`: `φ(s) ≤ s²/3000` and `s²log(1/s) ≤ s`. -/
+ lemma region3 {s : ℝ} (hs : 0 < s) (hs' : s ≤ 1 / 2) :
+     PivotPhi.phi s * PivotMinor.lam s - PivotMinor.rr s ≤ PivotPhi.phi s * gR s := by

@@ -1,0 +1,10 @@
+--- a/lib/pnt/LinnikChar.lean
++++ b/lib/pnt/LinnikChar.lean
+@@ -391,6 +391,7 @@
+     _ ≤ ∫ t, C * (1 + t ^ 2)⁻¹ := setIntegral_le_integral hg (Eventually.of_forall fun t => by positivity)
+     _ = C * π := by rw [integral_const_mul, integral_univ_inv_one_add_sq]
+ 
++set_option maxHeartbeats 1600000 in
+ /-- **The bound for one character.** Let `χ ≠ 1` mod `q`, `½ ≤ θ ≤ 11/12`, `0 < δ ≤ 1/24`, `T ≥ 0` and
+ `x ≥ 1`. If `L(·, χ)` has no zero in `Re s > θ`, `|Im s| < T + 1`, then
+ `|S_χ(x)| ≤ M log(q + 2)(x^{θ+δ} + 2x^{11/12+δ}e^{−T/2})`, `M = Mc(θ, θ + δ) + Mc(11/12, 11/12 + δ)`: the line

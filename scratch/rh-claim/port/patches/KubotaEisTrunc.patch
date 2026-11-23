@@ -1,0 +1,13 @@
+--- a/lib/core/KubotaEisTrunc.lean
++++ b/lib/core/KubotaEisTrunc.lean
+@@ -260,8 +260,8 @@
+ /-- A measurable `u` with `∫|u|² dν < ∞` is in `L²(ν)`. -/
+ theorem memLp_two_of_lintegral {ρ : ℂ × ℝ → ℝ≥0∞} {u : ℂ × ℝ → ℂ} (hum : Measurable u)
+     (h : ∫⁻ q, ‖u q‖ₑ ^ 2 ∂(muR ρ) < ⊤) : MemLp u 2 (muR ρ) := by
+-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+-    hum.aestronglyMeasurable]
++  refine ⟨hum.aestronglyMeasurable, ?_⟩
++  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top]
+   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
+   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) h.ne
+ 

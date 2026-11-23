@@ -1,0 +1,11 @@
+--- a/lib/core/EisensteinCubicChar.lean
++++ b/lib/core/EisensteinCubicChar.lean
+@@ -183,7 +183,7 @@
+     Ideal.Quotient.mk P (cubChar P hP3 x) = (x : 𝓞 K ⧸ P) ^ m3 P ∧ cubChar P hP3 x ^ 3 = 1 := by
+   set r := (redEquiv3 P hP3).symm (powR3 P hP3 x)
+   have hval : cubChar P hP3 x = ((r : (𝓞 K)ˣ) : 𝓞 K) := by
+-    simp [cubChar, r]
++    simp [cubChar, r, MonoidHom.coe_coe]
+   have h := (redEquiv3 P hP3).apply_symm_apply (powR3 P hP3 x)
+   have h2 : red P (r : (𝓞 K)ˣ) = x ^ m3 P := congrArg Subtype.val h
+   refine ⟨?_, ?_⟩

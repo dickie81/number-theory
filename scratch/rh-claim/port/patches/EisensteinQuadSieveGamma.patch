@@ -1,0 +1,15 @@
+--- a/lib/core/EisensteinQuadSieveGamma.lean
++++ b/lib/core/EisensteinQuadSieveGamma.lean
+@@ -194,7 +194,11 @@
+   rw [show -(4 * s + u) = 4 * (-s - 1) + (4 - u) by ring, I_zpow_four_mul_add,
+     I_zpow_four_mul_add,
+     show 4 * s + u - (4 * q + r) = 4 * (s - q - 1) + (4 + u - r) by ring, I_zpow_four_mul_add]
+-  interval_cases r <;> interval_cases u <;> norm_num at h <;> norm_num <;> ring
++  interval_cases r <;> interval_cases u <;> norm_num at h <;> norm_num <;>
++    first
++    | ring1
++    | linear_combination (I ^ 3 - I) * Complex.I_sq
++    | linear_combination (I ^ 5 - I ^ 3 + I) * Complex.I_sq
+ 
+ /-- **`φ` in coordinates** (`quad_gauss_coords`):
+ `φ(a + bω) = 1 + i^{−b} + i^a + i^{b−a}`. -/

@@ -1,0 +1,10 @@
+--- a/lib/core/EisensteinCubeReduction.lean
++++ b/lib/core/EisensteinCubeReduction.lean
+@@ -607,6 +607,7 @@
+ 
+ end Final
+ 
++set_option maxHeartbeats 800000 in
+ /-- **Lemma 5.3, the cube reduction** (the companion paper's (5.7)), from the completed mean-square
+ estimate: for every `ε > 0` and `C₀ ≥ 1` there is a derivative order `J` such that, for every interval
+ `[α, β] ⊂ (0, ∞)`, uniformly in `ξ` and the smooth weight `W` supported in `[α, β]` with its first `J`

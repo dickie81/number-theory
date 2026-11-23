@@ -1,0 +1,75 @@
+--- a/lib/pnt/Landau.lean
++++ b/lib/pnt/Landau.lean
+@@ -134,7 +134,7 @@
+ lemma locF_analytic {s₀ : ℂ} {ρr : ℝ} (hpole : ∀ z : ℂ, ‖z‖ < 2 → s₀ + ρr * z ≠ 1) :
+     AnalyticOnNhd ℂ (locF s₀ ρr) (Metric.ball (0 : ℂ) 2) := by
+   intro z hz
+-  simp only [Metric.mem_ball, dist_zero_right] at hz
++  simp only [Metric.mem_ball, _root_.dist_zero_right] at hz
+   unfold locF
+   refine AnalyticAt.div_const ?_
+   exact AnalyticAt.fun_comp (analyticAt_riemannZeta (hpole z hz))
+@@ -144,13 +144,13 @@
+     (hne : f 0 ≠ 0) : (SetOfZeros 1 f).Finite := by
+   by_contra hinf; rw [Set.not_finite] at hinf
+   have zerosSubset : SetOfZeros 1 f ⊆ Metric.closedBall (0 : ℂ) 1 := fun _ hx => by
+-    simpa only [Metric.mem_closedBall, dist_zero_right] using hx.1
++    simpa only [Metric.mem_closedBall, _root_.dist_zero_right] using hx.1
+   obtain ⟨x, hxK, hacc⟩ :=
+     hinf.exists_accPt_of_subset_isCompact (isCompact_closedBall 0 1) zerosSubset
+   have hfeq : Set.EqOn f 0 (Metric.ball (0 : ℂ) 2) := by
+     refine AnalyticOnNhd.eqOn_zero_of_preconnected_of_mem_closure hf
+       Metric.isPreconnected_ball (z₀ := x) ?_ ?_
+-    · simp only [Metric.mem_ball, Metric.mem_closedBall, dist_zero_right] at hxK ⊢
++    · simp only [Metric.mem_ball, Metric.mem_closedBall, _root_.dist_zero_right] at hxK ⊢
+       linarith
+     · simp only [mem_closure_iff_clusterPt, ← accPt_principal_iff_clusterPt]
+       exact hacc.mono (principal_mono.mpr fun _ h => h.2)
+@@ -178,8 +178,8 @@
+   have hfA : AnalyticOnNhd ℂ f (Metric.closedBall (0 : ℂ) 1) := by
+     intro z hz
+     apply hfA2 z
+-    rw [Metric.mem_closedBall, dist_zero_right] at hz
+-    rw [Metric.mem_ball, dist_zero_right]; linarith
++    rw [Metric.mem_closedBall, _root_.dist_zero_right] at hz
++    rw [Metric.mem_ball, _root_.dist_zero_right]; linarith
+   have hfin : (SetOfZeros 1 f).Finite := finiteZeros_of_analytic hfA2 (by rw [hf0]; exact one_ne_zero)
+   have hfb : ∀ z : ℂ, ‖z‖ ≤ 3 / 4 → ‖f z‖ ≤ B := fun z hz => by
+     simp only [hfdef, locF, norm_div]
+@@ -252,14 +252,14 @@
+     have hnt : analyticOrderAt f zs ≠ ⊤ := by
+       refine hfA2.analyticOrderAt_ne_top_of_isPreconnected Metric.isPreconnected_ball
+         (Metric.mem_ball_self (by norm_num)) ?_ ?_
+-      · simp only [Metric.mem_ball, dist_zero_right]; linarith
++      · simp only [Metric.mem_ball, _root_.dist_zero_right]; linarith
+       · have h0 : locF s₀ ρr 0 ≠ 0 := by rw [← hfdef, hf0]; exact one_ne_zero
+         rw [(analyticOrderAt_eq_zero).mpr (Or.inr h0)]
+         exact ENat.zero_ne_top
+     have hn0 : analyticOrderAt f zs ≠ 0 := by
+       rw [Ne, analyticOrderAt_eq_zero, not_or, not_not, not_not]
+       refine ⟨hfA2 zs ?_, hfzs⟩
+-      simp only [Metric.mem_ball, dist_zero_right]; linarith
++      simp only [Metric.mem_ball, _root_.dist_zero_right]; linarith
+     unfold analyticOrderNatAt
+     by_contra h; rw [not_le] at h
+     have : (analyticOrderAt f zs).toNat = 0 := by omega
+@@ -898,8 +898,8 @@
+   have hfA : AnalyticOnNhd ℂ f (Metric.closedBall (0 : ℂ) 1) := by
+     intro w hw
+     apply hfA2 w
+-    rw [Metric.mem_closedBall, dist_zero_right] at hw
+-    rw [Metric.mem_ball, dist_zero_right]; linarith
++    rw [Metric.mem_closedBall, _root_.dist_zero_right] at hw
++    rw [Metric.mem_ball, _root_.dist_zero_right]; linarith
+   have hfin : (SetOfZeros 1 f).Finite := finiteZeros_of_analytic hfA2 (by rw [hf0]; exact one_ne_zero)
+   have hfb : ∀ w : ℂ, ‖w‖ ≤ 3 / 4 → ‖f w‖ ≤ B := fun w hw => by
+     simp only [hfdef, locF, norm_div]
+@@ -907,7 +907,7 @@
+     exact hbound w hw
+   have hfz : f z ≠ 0 := by simp only [hfdef, locF, div_ne_zero_iff]; exact ⟨hζz, hζ0⟩
+   have hzmem : z ∈ Metric.closedBall (0 : ℂ) (1 / 4) \ SetOfZeros (5 / 8) f := by
+-    refine ⟨by rw [Metric.mem_closedBall, dist_zero_right]; exact hz, fun h => hfz h.2⟩
++    refine ⟨by rw [Metric.mem_closedBall, _root_.dist_zero_right]; exact hz, fun h => hfz h.2⟩
+   have FB := FinalBound (B := B) (r' := 1 / 4) (r := 1 / 2) (R' := 5 / 8) (R := 3 / 4) hB
+     (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+     hfA hf0 hfin hfb hzmem

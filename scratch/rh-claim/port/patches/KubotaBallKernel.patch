@@ -1,0 +1,25 @@
+--- a/lib/core/KubotaBallKernel.lean
++++ b/lib/core/KubotaBallKernel.lean
+@@ -117,8 +117,8 @@
+ /-- The kernel function of an `L²` element is in `L²`. -/
+ theorem memLp_kfun (hρ : IsPU Γ ρ) (hχ : IsUChar Γ χ) {R : ℝ} (hR : 0 ≤ R)
+     (f : Lp ℂ 2 (muR ρ)) : MemLp (kfun Γ χ R ρ f) 2 (muR ρ) := by
+-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+-    (aestronglyMeasurable_kfun R f)]
++  refine ⟨aestronglyMeasurable_kfun R f, ?_⟩
++  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top]
+   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
+   refine ENNReal.rpow_lt_top_of_nonneg (by norm_num) (ne_of_lt ?_)
+   calc ∫⁻ p, ‖kfun Γ χ R ρ f p‖ₑ ^ 2 ∂(muR ρ)
+@@ -302,9 +302,8 @@
+ /-- `∫|u|² dν < ∞` for `u` in `L²(ν)`. -/
+ theorem lintegral_enorm_sq_lt_top_of_memLp {u : ℂ × ℝ → ℂ} (hum : Measurable u)
+     (hu2 : MemLp u 2 (muR ρ)) : ∫⁻ q, ‖u q‖ₑ ^ 2 ∂(muR ρ) < ⊤ := by
+-  have h := hu2
+-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+-    hum.aestronglyMeasurable] at h
++  have h := hu2.2
++  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top] at h
+   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two] at h
+   exact (ENNReal.rpow_lt_top_iff_of_pos (by norm_num)).1 h
+ 

@@ -1,0 +1,11 @@
+--- a/lib/core/EisensteinMeanSquareRowCol.lean
++++ b/lib/core/EisensteinMeanSquareRowCol.lean
+@@ -440,7 +440,7 @@
+ /-- `N(idl S) ≤ N(idl S')` for `S ⊆ S'`. -/
+ theorem absNorm_idl_mono {S S' : Finset Pr} (h : S ⊆ S') : absNorm (idl S) ≤ absNorm (idl S') := by
+   rw [absNorm_idl, absNorm_idl]
+-  exact Finset.prod_le_prod_of_subset_of_one_le h fun P _ _ => one_le_absNorm_Pr P
++  exact Finset.prod_le_prod_of_subset_of_one_le' h fun P _ _ => one_le_absNorm_Pr P
+ 
+ theorem mem_primesLe {Y : ℝ} {P : Pr} : P ∈ primesLe Y ↔ absNorm P.1 ≤ ⌊Y⌋₊ := by
+   unfold primesLe
