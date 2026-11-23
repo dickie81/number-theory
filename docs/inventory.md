@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1841 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1850 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 210, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 201 | 716 |
+| `lib/core` | 207 | 725 |
 | `lib/pnt` | 347 | 1012 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -437,6 +437,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `EpsteinTwo.rh_iff`: The Riemann hypothesis for `x² + 2y²` is RH for `ζ` and GRH for `χ₋₈` ([note](../formalisations/weil-positivity.md))
 - `EpsteinTwo.rh_iff_twins`: …and so it is Weil's twin criterion for `ζ_{ℚ(√−2)}` ([note](../formalisations/weil-positivity.md))
 
+#### `EuclidLattice`: Euclidean lattices and their slopes
+
+- `EuclidLattice.supClosed`: Saturated sums of sublattices of minimal slope at least `θ` have minimal slope at least `θ`. ([note](../formalisations/alpoge-rh.md))
+- `EuclidLattice.bost`: Bost's inequality ([note](../formalisations/alpoge-rh.md))
+- `EuclidLattice.frame`: Euclidean frames ([note](../formalisations/alpoge-rh.md))
+
 #### `EulerGammaBinet`: Euler's constant to seven digits, from Binet's formula
 
 - `Electron.eulerMascheroni_bounds`: Euler's constant to seven digits
@@ -491,6 +497,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.pole_overlap_identity`: The pole-overlap identity ([note](../formalisations/weil-positivity.md))
 - `WeilForm.simpleGround_of_gap`: Energy gap ⇒ simplicity ([note](../formalisations/weil-positivity.md))
+
+#### `GramVolume`: Volumes of parallelotopes
+
+- `GramVolume.vol_comp_le`: Hadamard's inequality for maps ([note](../formalisations/alpoge-rh.md))
 
 #### `GroundState`: Ground states of Weil's form: the structural facts
 
@@ -920,6 +930,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilForm.first_degeneracy_036`: Simplicity route, with its start discharged ([note](../formalisations/weil-positivity.md))
 - `WeilForm.not_simple_iff_secular`: The exact secular characterisation ([note](../formalisations/weil-positivity.md))
 
+#### `SlopeFrame`: The frame inequality for slopes
+
+- `SlopeFrame.frame_inequality`: The frame inequality ([note](../formalisations/alpoge-rh.md))
+
 #### `SquaresCongruences`: Congruences for sums of squares and the binary forms of class number one
 
 - `SquaresCongruences.odd_sigma_iff`: `σ(m)` is odd exactly when the odd number `m` is a square
@@ -1334,6 +1348,19 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `ZerosInfinite`: `ζ` has infinitely many nontrivial zeros
 
 - `ZerosInfinite.infinite_ZIdx`: `ζ` has infinitely many nontrivial zeros
+
+#### `ZetaBalance`: The balance identity for `ζ`
+
+- `ZetaBalance.Setting.balance`: Lemma B, the balance identity ([note](../formalisations/alpoge-rh.md))
+
+#### `ZetaFrame`: From lattices to the inert-prime gap
+
+- `ZetaBalance.riemannHypothesis_of_zetaLatticeBound`: The Riemann hypothesis from lattice data on windows ([note](../formalisations/alpoge-rh.md))
+
+#### `ZetaGap`: From the inert-prime gap to the Riemann hypothesis
+
+- `ZetaBalance.BalanceData.zeta_le`: Theorem Z ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.riemannHypothesis_of_zetaBalanceBound`: The Riemann hypothesis from balance data on windows ([note](../formalisations/alpoge-rh.md))
 
 #### `ZetaInputs`: Discharging the remaining classical inputs over the zeros of `ζ`
 

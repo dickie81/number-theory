@@ -47,8 +47,9 @@ library's licence.
 |---|---|---|---|---|
 | 1. The top | `HalfPlaneGRH` | 183 | about 130 | Done: `HalfPlaneGRH.rhAndGRH_of_zeroFreeRightOf`, with its converse `zeroFreeRightOf_half_iff` |
 | 2. Landau on windows | `WindowKernel`, `WindowPole`, `WindowNearest`, `LandauWindow`, `RampLaplace`, `WindowGRH` | about 1,600 | about 2,100 (the declarations `lemmaL` and `formB` name) | Done: `WindowGRH.rhAndGRH_of_windowBound` |
-| 3. Balance | | | `ChBalance`, `ChCore`, `ChTop`, `core_gm` | Next |
-| 4–6. | | | almost all of 10.7 million lines | Later |
+| 3. Balance, for `ζ` | `ZetaBalance`, `ZetaGap` | about 1,060 | about 4,000 (`ChBalance`, `ChCore`, `core_gm`) | Done: `ZetaBalance.riemannHypothesis_of_zetaBalanceBound` |
+| 4. Lattices | `SlopeFrame`, `GramVolume`, `EuclidLattice`, `ZetaFrame` | about 1,020 | about 6,600 (hermitian lattices, Bost, polygons, `TheoremF`), and `ch_top`, about 3,000 | Done for Euclidean lattices: `ZetaBalance.riemannHypothesis_of_zetaLatticeBound`. Hermitian lattices with heights averaged over places, later |
+| 5–6. | | | almost all of 10.7 million lines | Later |
 
 Library line counts include the documentation; the archive has none.
 
@@ -56,9 +57,23 @@ Library line counts include the documentation; the archive has none.
 `(WindowGRH.cyclic χ).G` is at most `C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large, for some `λ > 1` and
 `C`. The archive's core theorem proves this in the form `HasWindows {x | Gm x ≤ x^θ} (3/2)`, which is stronger.
 
-**For RH alone**, the frontier is a statement about `Λ` only. `WindowGRH.ZetaWindowBound` asks, for every
+**For RH alone**, step 2 leaves a statement about `Λ` only. `WindowGRH.ZetaWindowBound` asks, for every
 `θ > 1/2`, that `Σ_{n≤x} Λ(n)(x/n − 1) − x log x + (1 + γ)x ≤ C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large.
 `WindowGRH.riemannHypothesis_of_zetaWindowBound` gives Mathlib's `RiemannHypothesis` from it.
+
+**After step 3**, the frontier for RH is `ZetaBalance.ZetaBalanceBound`: for every `ε > 0`, balance data at every
+`x` of windows with `Y` arbitrarily large. It is the inert-prime gap averaged over translates, with the analytic
+inputs: errors at most `θy` beyond the thin scales, and three quadratic twists at most `x^{1/2+ε}` at `x`.
+`ZetaBalance.riemannHypothesis_of_zetaBalanceBound` gives RH from it. Like every frontier so far, it is equivalent to
+RH until the construction is formalised. What has grown is the formalised machinery.
+
+**After step 4**, the frontier for RH is `ZetaBalance.ZetaLatticeBound`. At each translate there is a frame of
+lattices (`SlopeFrame.Frame`) meeting the hypotheses of the frame inequality. The lattices' gain over the target covers
+the inert-prime gap (G), with small losses (Z). `ZetaBalance.riemannHypothesis_of_zetaLatticeBound` gives RH from it.
+- **Equivalent to the frontier after step 3.** Whenever the averaged gap bound holds, frames of rank one satisfy it.
+  Its content is how the gap is paid for: by slopes of lattices, through Bost's inequality and the frame inequality.
+- **A real cut needs more.** The frontier below it must say where (G) comes from: vanishing at inert primes, mass
+  formulas, and the sizes of the auxiliary primes.
 
 **What step 2 simplified against the archive.**
 - Landau's theorem on windows is proved once, for any finite family of characters with positive weights. The
@@ -79,8 +94,9 @@ Library line counts include the documentation; the archive has none.
   - the punctured neighbourhoods of `conj`, now Mathlib's `Homeomorph.map_punctured_nhds_eq`.
 - **Nowhere in the stack:** Landau's theorem on windows, the ramp transforms, the pole asymptotics, the
   nearest-pole geometry and the character families.
-- **Duplicated in heavy modules:** `RealDirichlet`, `RealCharHalfPlane`, `HalfPlaneJoinsChar` and
-  `LinnikCGLReflect` hold copies of five small lemmas of `HalfPlaneGRH`. They could import it instead.
+- **Duplicated in heavy modules:** five small lemmas of `HalfPlaneGRH` had seven copies in six other modules
+  (`RealCharHalfPlane`, `RealDirichlet`, `HalfPlaneJoinsChar`, `D2GS`, `LinnikAFE`, `LinnikCGLReflect`). Those
+  modules now import `HalfPlaneGRH` instead.
 
 ## Step 3, re-examined
 
@@ -97,12 +113,197 @@ windows) shows that it only converts between statements of the same strength.
 
 So formalising the balance layer as the archive does would make the frontier more complicated, not more classical.
 
+## The lattice layer, read
+
+A second reading (23 November 2026) found the archive's new idea under `ch_top`. It is Stepanov's method in
+Arakelov form.
+
+1. **Vanishing.** A period `B_u` is built from a chain of `m ≈ √x` theta lifts between definite unitary groups,
+   `U(X₀) → U(X₁) → … → U(X_m)`. It vanishes to high order at every place above an inert prime `p`. Each lift
+   adds one more order, and the gain per lift is exactly the ramp `(a/pᵉ − w)⁺` of the inert-prime sum, for odd `e`.
+2. **Degree.** Dividing out that vanishing gives a hermitian lattice `N_u` of algebraic modular forms whose
+   Arakelov slope rises by the whole ramp sum.
+3. **The cap.** A frame version of Bost's slope inequality (`TheoremF`) bounds the mean of `μ(N_u) − h(B_u)` by the
+   slope of one target lattice. That slope cancels.
+4. **The balance.** Order `m` against degree `m²` gives `m ≈ √x` and the square-root error.
+
+**The cleanest cut** sits just below `ch_top`. Call it the Arakelov–Stepanov frontier, for `ζ` alone. For all large
+`x` and every translate there are:
+- hermitian lattices `N_u` and `C` over a number field;
+- maps `B_u : N_u → C`;
+
+with three properties:
+- **gain beats excess:** `μ(N_u) − h(B_u) ≥ μ(C) + (the inert-prime gap) − E`;
+- **spread:** bounded spread of the slopes;
+- **frame:** an almost tight frame at one archimedean place.
+
+Above that cut everything is elementary or general theory:
+- the balance identity and the step from cosets to the family, about 4,000 archive lines;
+- hermitian lattices with Bost's inequality, Harder–Narasimhan polygons and the frame inequality, about 6,600;
+- the algebra of `ch_top`, about 3,000;
+- a classical choice of the auxiliary primes `q` and `d`, by Jutila's zero-density estimate and Page's theorem.
+
+Below it is the construction: the theta lifts and their periods, local divisibility (`LinkG`, 240,000 lines), the
+frame condition (`LinkS`, 105,000), slopes of modular forms (mass formulas), and a covolume bound (2.16 million).
+The theta side holds 5.75 million lines, 1.34 million of them formalised literature. Of the whole proof, 2.98
+million lines (29%) are the 176 published inputs.
+
+**Shortcuts it suggests** (inferred, not checked):
+- build the lattices concretely and drop the witness layers;
+- drop the literature the proof never reaches (Rallis, seesaw);
+- replace the toroidal covolume bound by a mass-formula computation, since only a lower bound on one slope is
+  needed;
+- for `ζ`, check whether the three quadratic twists, and with them `VWin`, `Row` and local Langlands, can be
+  avoided. That question decides several million lines.
+
+## Blueprint for steps 3 and 4, `ζ` alone
+
+Specifications read from the archive on 23 November 2026, and simplified.
+
+### Step 3: the balance (elementary)
+
+**Objects at scale `x`**, for `0 < ε < 1/52`:
+- **The primes.** `q ≡ 3 (mod 8)` and `d ≡ 7 (mod 16)` are primes with `(2/d) = (q/d) = 1`. The archive also asks
+  for bounds on their size, and that every odd prime `p ≤ Y^{ε/5}` divide `d + 1`.
+- **The group.** Fix `2^e ≈ x^{2+8ε}`, and let `A = (ℤ/2^{e+2})ˣ/{±1}`, cyclic of order `2^e`. Put
+  `Φ = {±1} × A`; it is `Gal(E/ℚ(√−d))` for `E = ℚ(√−q, √−d, ζ_{2^{e+2}} + ζ_{2^{e+2}}⁻¹)`.
+- **The partner.** For `n` prime to `2q`, `ρ_t(n) = ((−n/q), [n]_A·t) ∈ Φ`.
+- **Weights.** `w : Φ → (0, ∞)`.
+- **The inert sum.** `ASK(a,t,w) = Σ_{(n,2q)=1} Λ(n)(1 − χ_d(n))·(a/n − w(ρ_t(n)))⁺`, with `χ_d = (·/d)`. It counts
+  the prime powers inert in `ℚ(√−d)` and the powers of `d`.
+- **Its main term.** `MAIN(a,w) = a(log a − 1 − γ + L′/L(1,χ_d) − |Φ|⁻¹Σ_{ρ∈Φ} log w(ρ))`.
+- **The gap.** `gap(u₀) = Σ_{t∈TT} Σ_{j<m} [ASK(a_t, t, w_{u₀,j}) − MAIN(a_t, w_{u₀,j})]`.
+
+**The lemmas.**
+- **Lemma B, the balance identity.** `ASK − MAIN = |Φ|⁻¹ Σ_{ρ∈Φ} W(ρ) Σ_{χ∈Ĝ} conj χ(γ_t(ρ)) g_χ(a/W(ρ))`. Here:
+  - `Ĝ` is the set of Dirichlet characters `χ_d^α χ_q^β ξ`, with `ξ` an even character mod `2^{e+2}`;
+  - `g_χ` is the ramp error of the primitive `χ*`;
+  - `γ_t(ρ) = c·ρ·t⁻¹`.
+
+  The proof is orthogonality, the ramp identity, and `Σ_{g∉Φ} conj χ(g) = |Φ|(1[χ=1] − 1[χ=χ_d])`.
+
+  **Done** (`ZetaBalance.Setting.balance`, 728 lines), with real parts. It holds for every real `a`. It needs only `q`
+  and `d` prime, `q ≡ 3 (mod 4)` and `(2/d) = (q/d) = 1`: neither `q ≡ 3 (mod 8)` nor any congruence on `d`. The powers
+  of `d` need no case of their own. The key lemma is new: at a prime `p` prime to the level of `ψ`, the primitive
+  character of `ψ·D` takes the value `ψ*(p)·D*(p)` (`ZetaBalance.prim_mul_apply`).
+- **Lemma T, the thick part.** The thick classes are `Θ(u₀) = {(−1, s·u₀) : s ∈ T2}`. `Th(u₀,t)` is the part of
+  the identity at `Θ(u₀)`, with every thick weight replaced by one value. Then `Th(u₀,t) ≤ ASK − MAIN + (small)`.
+  Only this side is used. Two facts give it:
+  - a Lipschitz bound on `w·g_χ(a/w)` in `w`, from Chebyshev;
+  - `|g_χ(y)| ≤ θy` for `y` beyond the thin scales, for all `4|A|` characters. This cannot be dropped: every `ξ`
+    occurs on thin classes, and only the thick part is averaged.
+- **Lemma Avg.** Averaging over `u₀` translates `Θ(u₀)`, so it keeps only the characters trivial on `A`:
+  `Σ_{u₀} Th(u₀,t) = (r|T2|/2)·(Gz − g_{χ_d} + g_{χ_q} − g_{χ_qχ_d})(y)`, with `r` the thick value. The weights may vary
+  freely with `u₀` and `j`.
+- **Theorem Z.** The averaged gap bound with `m ≥ x^{1/2−ε}`, `|T2| ≥ x^{−ε}|A|` and bounds on the three twists gives
+  `Gz(x) ≤ x^{1/2+O(ε)}`. On windows this is `ZetaWindowBound` (Theorem E).
+
+**What the archive does** (`ch_core`, `core_gm`, `ch_top`, read on 23 November 2026).
+- It measures the thick weights against one `b = exp(x^ε)`, with integer `a_t` and `|a_t/b − x| ≤ 1`.
+- So it must move each `a_t/b` to `x`. That needs a Lipschitz bound on `Gz`, from Mertens, and on the twists, from a
+  bound on `L′/L(1, χ)`.
+- `ch_top` bounds the gap at every translate, though only the average is used.
+- `q` and `d` are fixed once per window, not at each `x`.
+- The analytic inputs are proved, not cited: a mean-square argument over `q` and `d` (about 4,300 lines) gives the
+  twist bounds, zero-free boxes and the thin-class bounds. Jutila and Page are stated, but only for a route the main
+  theorem does not use.
+
+**Ours** (`ZetaGap`, in progress) is simpler.
+- It measures the thick weights for the translate `t` against `a_t/x`. Then the averaged identity evaluates every
+  error at `x` itself. So it needs:
+  - no Lipschitz bound on `Gz`, and no Mertens;
+  - no bound on `L′/L(1, χ)`;
+  - the twists bounded only at the point `x`.
+- It needs no `b`, `k`, `X′`, `b′` or `Bracket`.
+- All losses are powers `x^ε`. The frontier asks only the averaged gap bound, `Σ_u gap(u) ≤ |A|·x^ε·Σ_t a_t`, and
+  Theorem Z gives `Gz(x) ≤ 7x^{1/2+3ε}`.
+- The archive's data meet these conditions for large `x`. The spread of its `a_t` is far below what the thick weights
+  allow.
+
+### Step 4: slopes
+
+**Lattices.** A hermitian `O_K`-lattice, for `K` totally complex, can be taken as a Euclidean ℤ-lattice with an
+`O_K`-action, using only `O_K`-stable saturated sublattices. Its degree is `−log covol`, and
+`μ = 2·deg/rk_ℤ − log 2 + log|d_K|/[K:ℚ]`. The height of a map is `h(φ) = n_∞⁻¹Σ_v log‖φ_v‖²`.
+
+**What is used of them.**
+- **(P1)** Additivity of degree on quotients.
+- **(P2)** Monotonicity in equal rank.
+- **(P3)** `μ(ψΛ) ≥ μ(Λ) − h(ψ)`, from Hadamard's inequality.
+- **(P4)** The rank of a sublattice is read at any one place.
+- **Bost's inequality**, in the form (B1): `μ_min(A) − h(φ) ≤ μ_min(φA)`. Its proof uses quotients and (P3) only.
+
+No finiteness theorem for sublattices is needed. Approximate maximisers of `deg − θ·rk` suffice, because rank is
+strictly monotone on saturated sublattices.
+
+**The frame inequality**, in sharp form with rank spreading.
+- **Rank spreading (RS):** sublattices of total corank at most `ε′Σr_i` have images of corank at most
+  `(α + βε′)·rk C`.
+- **Hypotheses:**
+  - `s·Σr_i ≤ Σr_i(μ(N_i) − h_i)`;
+  - `μ_max(N_i) − h_i ≤ s + u`;
+  - `s − μ_min(C) ≤ HH`.
+- **Conclusion:** `μ(C) ≥ s − βu·log(1 + HH/u) − α·HH`.
+- **Proof:** sublattices nearly maximising `deg − θ·rk`, then Markov, then (B1) on images, then Abel summation. No
+  slope polygon is needed.
+- **Done:** `SlopeFrame.frame_inequality` (216 lines) proves this over abstract lattices of sublattices. It assumes
+  rank and degree with rank strictly monotone, Bost's inequality on images, closure under sums, and rank spreading.
+
+**The frontier for `ζ`.** For all large `x` in windows, there are lattices `N_u`, `C` and maps `B_u` with:
+- **(G):** `s ≥ μ(C) + gap − E`, on average over translates and words;
+- **(R)**, the range condition;
+- **(RS)**;
+- **(Z):** `E + βU·log(1 + HH/U) + α·HH ≤ x^{C₀ε}·B`.
+
+The frame inequality then gives the averaged gap bound.
+
+**What `ch_top` is** (read on 23 November 2026). It touches no lattice: it is algebra on real numbers under eleven
+numeric hypotheses. The frame inequality has already been applied, once per translate `u`.
+- **The frame at `u`.** Each translate has its own words `ω`. Each word has a lattice `N_ω`, the vanishing part of the
+  algebraic modular forms of its theta chain. All map into one target `C_u`, the dual of a lattice of periods, by
+  `B_ω`.
+- **Over what.** The lattices are hermitian over a totally complex Galois field `K`.
+- **Heights.** These are averaged over the infinite places, `h(φ) = n_∞⁻¹Σ_v log‖φ_v‖²`, and Bost's inequality is used
+  in that averaged form.
+- **Slopes.** `μ = 2·deg/rk_ℤ − log 2 + log|d_K|/[K:ℚ]`, as above.
+- **(G) is six inequalities, summed.**
+  - The vanishing at inert primes raises `μ(N_ω)` above the slope of the modular forms.
+  - The gain dominates the inert-prime sum.
+  - The slope of `C`, the sizes of auxiliary primes and the split primes give `MAIN`, once the forced vanishing,
+    `log(g₀g₁)`, `v` and `π` cancel.
+  - The weights `w_{u,j}(ρ) = e_j(τ)`, the Harish-Chandra parameters, reach the lattices only through the sizes of the
+    auxiliary primes.
+- **(RS)** holds at one complex place, for nearly orthogonal periods. It gives `α = (1 − δ)⁻¹(η + 4√e)` and
+  `β = 4(1 − δ)⁻¹`.
+
+**The cleanest cut**, per translate `u`, is a frame `N_{u,ω} → C_u` with Bost's inequality, closure under sums and
+(RS). Put `s_u` for the rank-weighted mean of `μ(N_{u,ω}) − h_{u,ω}`, and let `U_u > 0` and `H_u ≥ 0` bound the range:
+`μ_max(N_{u,ω}) − h_{u,ω} ≤ s_u + U_u`, and `μ_min(C_u) ≥ s_u − H_u`. Then:
+- **(G)** `Σ_u gap(u) ≤ Σ_u (s_u − μ(C_u)) + E`;
+- **(Z)** `E + Σ_u (α H_u + β U_u log(1 + H_u/U_u)) ≤ |A|·x^ε·Σ_t a_t`.
+
+The frame inequality at each `u` gives the averaged gap bound of `ZetaGap.BalanceData`. Against the archive:
+- (G) is needed only on average over translates, not at each;
+- its cancelling pairs merge;
+- the archive's `−log|W|` slack goes, since closure under sums is exact here;
+- (B1) comes from Hadamard place by place (`GramVolume`) rather than by rescaling.
+
+**Order of work.**
+1. **In parallel:** Lemma B with its objects, and the abstract frame inequality.
+2. **Then:**
+   - Lemmas T and Avg and Theorems Z and E, giving the frontier after step 3;
+   - the concrete lattices for the abstract frame inequality;
+   - the `ζ` form of `ch_top`.
+
 ## Next
 
-Read the lattice layer, for `ζ` alone first, and find the cleanest statement just below the balance layer that the
-lattice argument proves. Then decide the shape of steps 3 and 4 together. For RH alone the archive's apparatus
-shrinks: the family is `{ζ}`, the design of translates is vacuous, and three quadratic twists remain. The building
-blocks for the balance identity are already in Mathlib and the library:
+Steps 3 and 4 together take the frontier down to the Arakelov–Stepanov statement for `ζ`.
+- **Step 3**, the balance for `ζ`, is elementary. Frobenius classes in the abelian fields involved are residue
+  classes, so it can be written with Dirichlet characters and residue classes instead of Galois groups.
+- **Step 4** needs new infrastructure: hermitian lattices over number fields, Arakelov slopes, Harder–Narasimhan
+  polygons, Bost's slope inequality and its frame version. Mathlib has none of it.
+
+The building blocks for the balance identity are already in Mathlib and the library:
 - `sum_hom_units` with `MulChar.mulCharEquiv`;
 - `vonMangoldt.residueClass`;
 - `conductor_zpow_dvd`;
