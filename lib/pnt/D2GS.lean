@@ -1,5 +1,6 @@
 import Mathlib
 import SquarefreeCount
+import HalfPlaneGRH
 
 /-!
 # Real quadratic and imaginary quadratic fundamental discriminants: GS Lemma 4.1 and moments
@@ -147,17 +148,13 @@ end Gauss
 
 variable {q : ℕ} [NeZero q]
 
-omit [NeZero q] in
-theorem isPrimitive_inv {χ : DirichletCharacter ℂ q} (hχ : χ.IsPrimitive) : χ⁻¹.IsPrimitive := by
-  rw [isPrimitive_def, conductor_inv]; exact hχ
-
 /-- `‖τ(χ)‖² = q` for primitive `χ`. -/
 theorem norm_gaussSum_sq {χ : DirichletCharacter ℂ q} (hχ : χ.IsPrimitive) :
     ‖gaussSum χ stdAddChar‖ ^ 2 = q := by
   have he := isPrimitive_stdAddChar q
   have h1 := gaussSum_mul_gaussSum_inv hχ he
   have hst : star (gaussSum χ stdAddChar) = χ (-1) * gaussSum χ⁻¹ stdAddChar := by
-    rw [star_gaussSum_eq, AddChar.inv_mulShift, gaussSum_mulShift_of_isPrimitive _ (isPrimitive_inv hχ),
+    rw [star_gaussSum_eq, AddChar.inv_mulShift, gaussSum_mulShift_of_isPrimitive _ (HalfPlaneGRH.isPrimitive_inv hχ),
       inv_inv]
   have hsq : χ (-1) * χ (-1) = 1 := by rw [← map_mul]; simp
   have : gaussSum χ stdAddChar * star (gaussSum χ stdAddChar) = q := by
@@ -182,7 +179,7 @@ theorem norm_geom_le {z : ℂ} (hz : ‖z‖ = 1) (h1 : z ≠ 1) (M N : ℕ) :
 theorem polya_vinogradov {ψ : DirichletCharacter ℂ q} (hψ : ψ.IsPrimitive) (hq : 1 < q) (M N : ℕ) :
     ‖∑ n ∈ Ico M (M + N), ψ n‖ ≤ Real.sqrt q * (1 + Real.log q) := by
   set χ := ψ⁻¹ with hχdef
-  have hχ : χ.IsPrimitive := isPrimitive_inv hψ
+  have hχ : χ.IsPrimitive := HalfPlaneGRH.isPrimitive_inv hψ
   have hψχ : ψ = χ⁻¹ := by rw [hχdef, inv_inv]
   set τ := gaussSum χ stdAddChar
   have hqR : (0:ℝ) < q := by exact_mod_cast (show 0 < q by omega)

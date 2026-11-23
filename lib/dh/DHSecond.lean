@@ -47,7 +47,7 @@ def dh2Lam (s : ℂ) : ℂ :=
 `εε' = 1`. -/
 theorem dh2Lam_one_sub (hχ : χ ≠ 1) (hprim : χ.IsPrimitive) (s : ℂ) :
     dh2Lam χ (1 - s) = -dh2Lam χ s := by
-  have hprim' := isPrimitive_inv χ hprim
+  have hprim' := HalfPlaneGRH.isPrimitive_inv hprim
   have heps := rootNumber_mul_rootNumber_inv χ hχ hprim
   have h1 := hprim.completedLFunction_one_sub s
   have h2 := hprim'.completedLFunction_one_sub s

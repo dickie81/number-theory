@@ -50,6 +50,7 @@ The file imports `LinnikCGLMellin.lean` and `LinnikReflect.lean`.
 
 import LinnikCGLMellin
 import LinnikReflect
+import HalfPlaneGRH
 
 open Complex Set Real Filter Topology MeasureTheory
 
@@ -297,17 +298,11 @@ lemma differentiable_Eu {f : ℕ} (ψ : DirichletCharacter ℂ f) (q : ℕ) : Di
 instance conductor_neZero {q : ℕ} [NeZero q] (ψ : DirichletCharacter ℂ q) : NeZero ψ.conductor :=
   ⟨ψ.conductor_ne_zero⟩
 
-lemma primitiveCharacter_ne_one {q : ℕ} [NeZero q] {ψ : DirichletCharacter ℂ q} (hψ : ψ ≠ 1) :
-    ψ.primitiveCharacter ≠ 1 := by
-  intro h
-  apply hψ
-  rw [← changeLevel_primitiveCharacter ψ, h, changeLevel_one]
-
 /-- `L(s, χ) = L(s, ψ)E(s)` for `χ ≠ 1` and `ψ` its primitive character (Mathlib's `LFunction_changeLevel`). -/
 lemma LFunction_eq_prim_mul_Eu {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (s : ℂ) :
     LFunction χ s = LFunction χ.primitiveCharacter s * Eu χ.primitiveCharacter q s := by
   have h := LFunction_changeLevel χ.conductor_dvd_level χ.primitiveCharacter (s := s)
-    (Or.inl (primitiveCharacter_ne_one hχ))
+    (Or.inl (HalfPlaneGRH.primitiveCharacter_ne_one hχ))
   rw [changeLevel_primitiveCharacter] at h
   exact h
 
@@ -317,7 +312,7 @@ lemma LFunction_reflected {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (
     LFunction χ s =
       Phi χ.primitiveCharacter q s * LFunction χ⁻¹ (1 - s) * Eu χ.primitiveCharacter q s := by
   rw [LFunction_eq_prim_mul_Eu hχ s, LFunction_eq_Phi χ.conductor_dvd_level χ.primitiveCharacter_isPrimitive
-    (primitiveCharacter_ne_one hχ) hs, changeLevel_primitiveCharacter]
+    (HalfPlaneGRH.primitiveCharacter_ne_one hχ) hs, changeLevel_primitiveCharacter]
 
 /-! ### Contour shifts -/
 

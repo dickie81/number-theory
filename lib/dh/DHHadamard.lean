@@ -115,7 +115,7 @@ theorem one_le_KDH : 1 ≤ KDH χ := by
 theorem norm_XiDH_le (hχ1 : χ ≠ 1) (hprim : χ.IsPrimitive) (t : ℂ) :
     ‖XiDH χ t‖ ≤ KDH χ * Real.exp (36 * ‖t‖ ^ (3 / 2 : ℝ)) := by
   have h1 := norm_XiC_le' hχ1 hprim t
-  have h2 := norm_XiC_le' (inv_ne_one.2 hχ1) (isPrimitive_inv χ hprim) t
+  have h2 := norm_XiC_le' (inv_ne_one.2 hχ1) (HalfPlaneGRH.isPrimitive_inv hprim) t
   have he : 0 < Real.exp (36 * ‖t‖ ^ (3 / 2 : ℝ)) := Real.exp_pos _
   calc ‖XiDH χ t‖ = ‖(1 + rootNumber χ⁻¹) * XiC χ t + (1 + rootNumber χ) * XiC χ⁻¹ t‖ := rfl
     _ ≤ ‖1 + rootNumber χ⁻¹‖ * ‖XiC χ t‖ + ‖1 + rootNumber χ‖ * ‖XiC χ⁻¹ t‖ := by
@@ -130,7 +130,7 @@ theorem norm_XiDH_le (hχ1 : χ ≠ 1) (hprim : χ.IsPrimitive) (t : ℂ) :
 theorem XiDH_zero_eq (hχ1 : χ ≠ 1) (hprim : χ.IsPrimitive) :
     XiDH χ 0 = 2 * (1 + rootNumber χ⁻¹) * LamG χ (1 / 2) := by
   have heps := rootNumber_mul_rootNumber_inv χ hχ1 hprim
-  have hFE := LamG_one_sub' (isPrimitive_inv χ hprim) (1 / 2)
+  have hFE := LamG_one_sub' (HalfPlaneGRH.isPrimitive_inv hprim) (1 / 2)
   rw [inv_inv, show (1 : ℂ) - 1 / 2 = 1 / 2 by norm_num] at hFE
   show (1 + rootNumber χ⁻¹) * LamG χ (1 / 2 + I * 0) + (1 + rootNumber χ) * LamG χ⁻¹ (1 / 2 + I * 0) = _
   rw [mul_zero, add_zero, hFE]

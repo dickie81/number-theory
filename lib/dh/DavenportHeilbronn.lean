@@ -217,7 +217,7 @@ theorem completedLFunction_two_ne_zero (hχ : χ ≠ 1) : completedLFunction χ 
 `s = 2`, where `Λ(2, χ) ≠ 0`. -/
 theorem rootNumber_mul_rootNumber_inv (hχ : χ ≠ 1) (hprim : χ.IsPrimitive) :
     rootNumber χ * rootNumber χ⁻¹ = 1 := by
-  have hprim' := isPrimitive_inv χ hprim
+  have hprim' := HalfPlaneGRH.isPrimitive_inv hprim
   have h1 := hprim.completedLFunction_one_sub (1 - 2)
   have h2 := hprim'.completedLFunction_one_sub 2
   rw [inv_inv] at h2
@@ -246,7 +246,7 @@ def XiDH (t : ℂ) : ℂ := dhLam χ (1 / 2 + I * t)
 `χ` and `χ⁻¹` and `εε' = 1`. -/
 theorem dhLam_one_sub (hχ : χ ≠ 1) (hprim : χ.IsPrimitive) (s : ℂ) :
     dhLam χ (1 - s) = dhLam χ s := by
-  have hprim' := isPrimitive_inv χ hprim
+  have hprim' := HalfPlaneGRH.isPrimitive_inv hprim
   have heps := rootNumber_mul_rootNumber_inv χ hχ hprim
   have h1 := hprim.completedLFunction_one_sub s
   have h2 := hprim'.completedLFunction_one_sub s

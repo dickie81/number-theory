@@ -2,6 +2,7 @@ import Mathlib
 import DirichletOmega
 import XiBounds
 import LFunctionGrowth
+import HalfPlaneGRH
 
 /-! # Real primitive Dirichlet characters: a zero, and a positivity criterion
 
@@ -214,16 +215,11 @@ theorem gammaFactor_shift (χ : DirichletCharacter ℂ N) :
   · exact ⟨0, by norm_num, fun s => by rw [h.gammaFactor_def]; simp⟩
   · exact ⟨1, le_rfl, fun s => by rw [h.gammaFactor_def]; simp⟩
 
-omit [NeZero N] in
-theorem gammaFactor_ne_zero {s : ℂ} (hs : 0 < s.re) : gammaFactor χ s ≠ 0 := by
-  obtain ⟨δ, -, hδ⟩ := gammaFactor_shift χ
-  rw [hδ]; exact Gammaℝ_ne_zero_of_re_pos (by simp; positivity)
-
 theorem completed_eq_mul {s : ℂ} (hs : 0 < s.re) :
     completedLFunction χ s = gammaFactor χ s * LFunction χ s := by
   have hs0 : s ≠ 0 := fun h => by rw [h, zero_re] at hs; exact lt_irrefl _ hs
   rw [LFunction_eq_completed_div_gammaFactor χ s (Or.inl hs0)]
-  field_simp [gammaFactor_ne_zero hs]
+  field_simp [HalfPlaneGRH.gammaFactor_ne_zero χ hs]
 
 /-- `Λ*(s) = N^{s/2}Λ(s, χ)`. -/
 def LamG (χ : DirichletCharacter ℂ N) (s : ℂ) : ℂ := (N : ℂ) ^ (s / 2) * completedLFunction χ s
@@ -233,11 +229,6 @@ theorem natCast_ne_zero' : (N : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (NeZero.ne N)
 theorem differentiable_LamG (hχ1 : χ ≠ 1) : Differentiable ℂ (LamG χ) :=
   ((differentiable_id.div_const 2).const_cpow (Or.inl natCast_ne_zero')).mul
     (differentiable_completedLFunction hχ1)
-
-omit [NeZero N] in
-/-- `χ⁻¹` is primitive when `χ` is. -/
-theorem isPrimitive_inv (χ : DirichletCharacter ℂ N) (hprim : χ.IsPrimitive) : χ⁻¹.IsPrimitive := by
-  unfold IsPrimitive at *; rw [conductor_inv]; exact hprim
 
 /-- **`Λ*(1 − s, χ) = ε_χ Λ*(s, χ⁻¹)`** for primitive `χ`. -/
 theorem LamG_one_sub' (hprim : χ.IsPrimitive) (s : ℂ) :
@@ -469,7 +460,7 @@ theorem exists_zero_of_primitive (hχ1 : χ ≠ 1) (hq : χ.IsQuadratic) (hprim 
       rcases mul_eq_zero.1 hv with h | h
       · rw [cpow_eq_zero_iff] at h; exact natCast_ne_zero' h.1
       · rcases mul_eq_zero.1 h with h | h
-        · exact gammaFactor_ne_zero (by linarith) h
+        · exact HalfPlaneGRH.gammaFactor_ne_zero _ (by linarith) h
         · linarith [hlt v h]
     rcases le_total (1 / 2) w.re with h | h
     · exact key w hw h
@@ -525,7 +516,7 @@ theorem exists_zero_of_primitive (hχ1 : χ ≠ 1) (hq : χ.IsQuadratic) (hprim 
 theorem LamG_ne_zero {s : ℂ} (hs : 0 < s.re) (hL : LFunction χ s ≠ 0) : LamG χ s ≠ 0 := by
   unfold LamG; rw [completed_eq_mul hs]
   exact mul_ne_zero (by rw [Ne, cpow_eq_zero_iff]; exact fun h => natCast_ne_zero' h.1)
-    (mul_ne_zero (gammaFactor_ne_zero hs) hL)
+    (mul_ne_zero (HalfPlaneGRH.gammaFactor_ne_zero _ hs) hL)
 
 /-- **Hadamard's product for `Λ*(½ + iz)Λ*(½ − iz)`** (genus 0 in `z²`), for primitive real `χ`
 with `L(½, χ) ≠ 0`: `f(z) = f(0)Π(1 − z²/u)` over the zeros `u` of `f(√w)`. -/
