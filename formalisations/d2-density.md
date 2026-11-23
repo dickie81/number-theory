@@ -277,7 +277,9 @@ theorem GSTail.logDeriv_one_tail {η : ℝ} (hη : 0 < η) (hη' : η < 1 / 24) 
 
 and `GSTail.tail_pos`, `GSTail.tail_neg`, the same for the primitive `χ_D` above with `χ_D(n) = (D|n)`, uniformly in
 `D`. Proof: partial summation for the tail `n > y` at `σ > 1` (`Littlewood.norm_LSeries_le_of_sum_le`), with
-`|ψ(t, χ) − ψ(y, χ)| ≤ 2C log(N + 2) t^{11/12+η} ≤ 2C log(N + 2) y^{2η−1/12} t^{1−η}`, then `σ → 1⁺`. Lean uses only
+`|ψ(t, χ) − ψ(y, χ)| ≤ 2C log(N + 2) t^{11/12+η} ≤ 2C log(N + 2) y^{2η−1/12} t^{1−η}`, then `σ → 1⁺`. That argument is
+`GSTail.tail_le_of_sum_le`, for any sequence whose `L`-series is continuous at `1`; the library also uses it for `ζ`
+(`ZetaBalance.mertens_error_le`, [alpoge-rh.md](alpoge-rh.md)). Lean uses only
 the standard axioms, since the library proves the half-plane; the result is conditional in the sense that it
 rests on that input, and must be cited so.
 

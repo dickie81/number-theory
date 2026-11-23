@@ -13,7 +13,9 @@ licence, so nothing of it is in this repository.
 ## The library's proof, so far
 
 The library is rebuilding the proof from the top, written fresh from the mathematics, in its own style and on its own
-Lean and Mathlib (`docs/rh-rebuild.md`). Two steps are done.
+Lean and Mathlib (`docs/rh-rebuild.md`). Steps 1 and 2 are done for `ζ` and every Dirichlet `L`-function. Steps 3
+and 4 are done for `ζ`, and so are both analytic inputs, the thin scales and the twists, conditionally on the
+half-plane `Re s > 11/12`.
 
 - **The top.** `HalfPlaneGRH.rhAndGRH_of_zeroFreeRightOf`: if no primitive Dirichlet `L`-function vanishes on
   `Re s > 1/2`, the Riemann hypothesis holds for `ζ` (Mathlib's `RiemannHypothesis`) and every zero of every
@@ -42,15 +44,42 @@ Lean and Mathlib (`docs/rh-rebuild.md`). Two steps are done.
     over the prime powers inert in `ℚ(√−d)`, in the classes `ρ_t(n) = ((−n/q), [n]_A·t)`. That sum, less its main term,
     is an exact combination of the ramp errors `g_χ` of the characters `χ_d^α χ_q^β ξ`, with `ξ` a character of `A`.
   - **Theorem Z**, `ZetaBalance.BalanceData.zeta_le`. Average the identity over the translates `u ∈ A`, keeping only
-    the classes where the weights are near `a_t/x`. Only the characters trivial on `A` survive. So a bound on the
-    averaged gap gives `Σ_{n≤x} Λ(n)(x/n − 1) − x log x + (1 + γ)x ≤ 7x^{1/2+3ε}`. The analytic inputs are bounds on
-    the errors `g_χ`, at large arguments and for three quadratic twists at `x`.
+    the classes where the weights (`ZetaBalance.Weights`) are near `a_t/x`. Only the characters trivial on `A` survive.
+    So a bound on the averaged gap gives `Σ_{n≤x} Λ(n)(x/n − 1) − x log x + (1 + γ)x ≤ 7x^{1/2+3ε}`. The analytic
+    inputs are two properties of the setting: it is thin at `X` (`ZetaBalance.Setting.Thin`), with every `g_χ(y)` at
+    most `θy` for `y ≥ X`, and its twists are small (`ZetaBalance.Setting.Twists`), with the three quadratic twists at
+    most `x^{1/2+ε}` at `x`.
 
 - **Lattices** (step 4). `ZetaBalance.riemannHypothesis_of_zetaLatticeBound`: the Riemann hypothesis follows from
   `ZetaBalance.ZetaLatticeBound`. At each translate there is a frame of lattices meeting the hypotheses of the frame
   inequality. Its gain over the target covers the gap (G), with small losses (Z). That frontier is satisfied by frames
   of rank one whenever the averaged gap bound holds. What is new is how the gap is paid for: by slopes of lattices,
   through the two results below.
+
+- **The thin scales**, CONDITIONAL on the half-plane `Re s > 11/12` ([openai-half-plane.md](openai-half-plane.md)).
+  `ZetaBalance.thin_of_large`: for `x` large, every setting is thin at `(Nx)^{log x}`. So
+  `ZetaBalance.riemannHypothesis_of_zetaTwistBound` gives the Riemann hypothesis from `ZetaBalance.ZetaTwistBound`,
+  the frontier after step 4 with that input proved. It rests on `ZetaBalance.norm_rampErr_le`:
+  `‖g_χ(y)‖ ≤ C log(N + 2) y^{11/12+2η}` for every primitive `χ` mod `N`. For `χ ≠ 1` this comes from the library's
+  bounds, uniform in the modulus, on `ψ(y, χ)` (`lib/pnt/ChiUniform.lean`) and on the tail of `L′/L(1, χ)`
+  (`GSTail.logDeriv_one_tail`). For `ζ` it comes from Mertens' theorem with a power saving,
+  `Σ_{n≤y} Λ(n)/n = log y − γ + O(y^{2η−1/12})` (`ZetaBalance.mertens_error_le`). That is the unconditional
+  `GSTail.tail_le_of_sum_le` applied to `Λ − 1`, whose `L`-series `−ζ′/ζ(s) − ζ(s)` takes the value `−2γ` at `s = 1`.
+
+- **The twists**, CONDITIONAL on the half-plane. `ZetaTwist.exists_winPair_twists`: for `0 < ε ≤ 1/2` and `A ≥ 1`,
+  every large `Y` has a pair of primes `(q, d)` with the arithmetic the lattice side needs (`ZetaTwist.WinPair`), whose
+  quadratic twists `χ_q`, `χ_d` and `χ_qχ_d` have ramp errors at most `y^{1/2+ε}` at every `y ∈ [Y, Y^A]`. As in the
+  archive, the bound comes from a mean square over a family of primes (`TwistFamily`), not from zeros near the critical
+  line. The diagonal of the mean square is small, and its off-diagonal terms are sums of a Jacobi character over the
+  primes of a progression, bounded uniformly in the modulus (`lib/pnt/PrimeCharSums.lean`). A discrete Sobolev step
+  and Markov's inequality (`MeanSquareSup.card_bad_le`) then make the bound uniform on the window for most of the
+  family. The half-plane takes the place of the archive's prime number theorem in progressions with exceptional
+  zeros.
+- **The pair-first frontier.** `ZetaBalance.riemannHypothesis_of_zetaPairBound`: the Riemann hypothesis follows,
+  conditionally on the half-plane, from `ZetaBalance.ZetaPairBound`, which is the construction alone. At arbitrarily
+  small `ε`, for every large `Y`, every pair with that arithmetic has a sub-window `[Y′, Y′²]` of `[Y, Y^A]` on which
+  every `x` has lattice data in a setting with that pair. The three twists of a setting are the ramp errors of `χ_d`,
+  `χ_q` and `χ_qχ_d` (`ZetaBalance.Setting.twists_of_le`), as `χ_qχ_d` is primitive (`ZetaTwist.chiQD_isPrimitive`).
 
 - **The frame inequality**, `SlopeFrame.frame_inequality`. Sources `N_i` map to one target `C`. Suppose Bost's slope
   inequality holds on the images, and the images spread their ranks. Then the mean slope of the `N_i`, less the heights
@@ -93,5 +122,7 @@ The steps were written from the mathematics. Parts were written by helpers given
 |---|---|---|
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function | `WindowGRH.WindowBound`: for every primitive `χ` and `θ > 1/2`, the weighted error of the ramp sums of the cyclic family of `χ` is at most `C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large | `WindowGRH.rhAndGRH_of_windowBound` |
 | The Riemann hypothesis | `WindowGRH.ZetaWindowBound`: for every `θ > 1/2`, `Σ_{n≤x} Λ(n)(x/n − 1) − x log x + (1 + γ)x ≤ C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large | `WindowGRH.riemannHypothesis_of_zetaWindowBound` |
-| The Riemann hypothesis | `ZetaBalance.ZetaLatticeBound`: for every `ε > 0`, on windows `[Y, Y^λ]` with `Y` arbitrarily large, every `x` has lattice data (`ZetaBalance.LatticeData x ε`): balance inputs and, at each translate, a frame meeting the hypotheses of the frame inequality, whose gain covers the inert-prime gap (G) with small losses (Z) | `ZetaBalance.riemannHypothesis_of_zetaLatticeBound` |
-| The Riemann hypothesis | `ZetaBalance.ZetaBalanceBound`: for every `ε > 0`, on windows `[Y, Y^λ]` with `Y` arbitrarily large, every `x` has balance data (`ZetaBalance.BalanceData x ε`). That is: weights whose inert-prime gap, averaged over translates, is at most `x^ε Σ_t a_t`, with `m ≥ x^{1/2−ε}` words, thick classes of density at least `x^{−ε}`, the errors at most `θy` beyond the thin scales, and three quadratic twists at most `x^{1/2+ε}` at `x` | `ZetaBalance.riemannHypothesis_of_zetaBalanceBound` |
+| The Riemann hypothesis, also resting on the half-plane `Re s > 11/12` for `ζ` and every Dirichlet `L`-function, a result formalised in the library that no referee has read ([openai-half-plane.md](openai-half-plane.md)) | `ZetaBalance.ZetaPairBound`, the construction alone: for every `ε₀ > 0` there are `ε ∈ (0, ε₀)` and `A ≥ 1` such that, for every large `Y`, every pair of primes `(q, d)` meeting `ZetaTwist.WinPair ε Y` has a sub-window `[Y′, Y′²]`, with `Y ≤ Y′ ≤ Y^{A/2}`, at every `x` of which a setting `S` with `S.q = q` and `S.d = d` has lattice data (`ZetaBalance.LatticeData S x ε X`) whose thin classes lie beyond `X = (Nx)^{log x}` | `ZetaBalance.riemannHypothesis_of_zetaPairBound` |
+| The Riemann hypothesis, also resting on the half-plane `Re s > 11/12` for `ζ` and every Dirichlet `L`-function, a result formalised in the library that no referee has read ([openai-half-plane.md](openai-half-plane.md)) | `ZetaBalance.ZetaTwistBound`: for every `ε > 0`, on windows `[Y, Y^λ]` with `Y` arbitrarily large, every `x` has a setting `S` with small twists (`ZetaBalance.Setting.Twists`) and lattice data (`ZetaBalance.LatticeData S x ε X`) whose thin classes lie beyond `X = (Nx)^{log x}` | `ZetaBalance.riemannHypothesis_of_zetaTwistBound` |
+| The Riemann hypothesis | `ZetaBalance.ZetaLatticeBound`: for every `ε > 0`, on windows `[Y, Y^λ]` with `Y` arbitrarily large, every `x` has a setting `S` thin at some `X` (`ZetaBalance.Setting.Thin`), with small twists (`ZetaBalance.Setting.Twists`), and lattice data (`ZetaBalance.LatticeData S x ε X`): weights and, at each translate, a frame meeting the hypotheses of the frame inequality, whose gain covers the inert-prime gap (G) with small losses (Z) | `ZetaBalance.riemannHypothesis_of_zetaLatticeBound` |
+| The Riemann hypothesis | `ZetaBalance.ZetaBalanceBound`: for every `ε > 0`, on windows `[Y, Y^λ]` with `Y` arbitrarily large, every `x` has a setting `S` thin at some `X`, with small twists, and balance data (`ZetaBalance.BalanceData S x ε X`). The setting is thin when the errors are at most `θy` for `y ≥ X`, with `8|A|x²θ ≤ 1`, and its twists are small when the three quadratic twists are at most `x^{1/2+ε}` at `x`. The balance data are weights (`ZetaBalance.Weights`) whose inert-prime gap, averaged over translates, is at most `x^ε Σ_t a_t`, with `m ≥ x^{1/2−ε}` words, thick classes of density at least `x^{−ε}`, and `a_t/w ≥ X` on the thin classes | `ZetaBalance.riemannHypothesis_of_zetaBalanceBound` |

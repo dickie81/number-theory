@@ -1258,7 +1258,8 @@ and the inventory would carry them.
    range `q ≤ (log x)^B` is known.
 4. **Mertens' theorems with a power saving:** `Σ_{n ≤ x} Λ(n)/n = log x − γ + O(x^{−1/12+η})` and
    `Σ_{p ≤ x} 1/p = log log x + M + O(x^{−1/12+η})`, by partial summation from
-   `HalfPlanePNT.psi_isBigO_eleven_twelfths`.
+   `HalfPlanePNT.psi_isBigO_eleven_twelfths`. The first is done: `ZetaBalance.mertens_error_le`, through the general
+   tail lemma `GSTail.tail_le_of_sum_le`.
 5. **`k`-free numbers:** `Q_k(x) = x/ζ(k) + O(x^{1/(k+1−Θ)+η})`, the argument of `SquarefreeCount` with `d^k` in
    place of `d²`.
 6. **Pell's equation** and **`p = x² + 27y²`**: already in `account.md`'s within-reach list.

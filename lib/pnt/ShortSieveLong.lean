@@ -1,4 +1,5 @@
 import HalfPlaneFinal
+import PsiExplicit
 import SieveRough
 
 /-!
@@ -32,9 +33,8 @@ Plain statements.
 
 The proof:
 
-* `abs_theta_sub_le`: `|θ(t) − t| ≤ C t^{11/12+ε}` for every `t ≥ 1`, from the `O` bound for `ψ`, Mathlib's
-  `ψ − θ ≤ 2√t log t` (`Chebyshev.psi_sub_theta_le`) and `log t ≤ 4t^{1/4}`, and `θ(t) ≤ t log 4` below the range of
-  the `O` bound. `abs_theta_sub_theta_le` is the difference of the bounds at `X` and `X − H`.
+* `abs_theta_sub_theta_le`: the difference at `X` and `X − H` of `|θ(t) − t| ≤ C t^{11/12+ε}` for every `t ≥ 1`
+  (`PsiExplicit.abs_theta_sub_le`).
 * `card_primes_short`: `Σ_{X−H<p≤X} log p = θ(X) − θ(X − H)` (`sum_log_primes`), and every `log p` lies in
   `(log(X/2), log X]`, so no partial summation is needed. With `η = (1/12 − σ)/2`,
   `C X^{11/12+η} ≤ (ε/2)X^{1−σ} ≤ (ε/2)H` for large `X`, and `(1 + ε/2) log 2 ≤ (ε/2) log(X/2)` turns the division by
@@ -56,70 +56,12 @@ namespace ShortSieveLong
 
 /-! ### `θ` on short intervals -/
 
-/-- From the library's prime number theorem, for `ε > 0` there is `C ≥ 0` with `|θ(t) − t| ≤ C t^{11/12+ε}` for every
-`t ≥ 1`. -/
-theorem abs_theta_sub_le {ε : ℝ} (hε : 0 < ε) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ t : ℝ, 1 ≤ t → |θ t - t| ≤ C * t ^ ((11 : ℝ) / 12 + ε) := by
-  obtain ⟨C₁, hC₁⟩ := (HalfPlanePNT.psi_isBigO_eleven_twelfths hε).bound
-  obtain ⟨T, hT⟩ := Filter.eventually_atTop.1 hC₁
-  set a : ℝ := (11 : ℝ) / 12 + ε with ha
-  set T' : ℝ := max T 1 with hT'
-  have hT'1 : 1 ≤ T' := le_max_right _ _
-  refine ⟨max C₁ 0 + 8 + 2 * T', by positivity, fun t ht => ?_⟩
-  have ht0 : 0 < t := by linarith
-  have hta : 1 ≤ t ^ a := Real.one_le_rpow ht (by positivity)
-  have e : (max C₁ 0 + 8 + 2 * T') * t ^ a = max C₁ 0 * t ^ a + 8 * t ^ a + 2 * T' * t ^ a := by ring
-  rw [e]
-  have hC0 : 0 ≤ max C₁ 0 * t ^ a := mul_nonneg (le_max_right _ _) (by positivity)
-  have hT0 : 0 ≤ 2 * T' * t ^ a := by positivity
-  by_cases htT : T ≤ t
-  · -- the range of the `O` bound
-    have h1 : |ψ t - t| ≤ max C₁ 0 * t ^ a := by
-      have := hT t htT
-      simp only [Pi.sub_apply, id, Real.norm_eq_abs] at this
-      rw [abs_of_pos (Real.rpow_pos_of_pos ht0 _)] at this
-      exact this.trans (mul_le_mul_of_nonneg_right (le_max_left _ _) (by positivity))
-    have h2 : 0 ≤ ψ t - θ t := sub_nonneg.2 (Chebyshev.theta_le_psi t)
-    have h3 : ψ t - θ t ≤ 2 * √t * Real.log t := Chebyshev.psi_sub_theta_le ht
-    -- `2√t log t ≤ 8t^{3/4} ≤ 8t^a`
-    have hlog : Real.log t ≤ t ^ ((1 : ℝ) / 4) / (1 / 4) := Real.log_le_rpow_div ht0.le (by norm_num)
-    have hsq : √t = t ^ ((1 : ℝ) / 2) := Real.sqrt_eq_rpow t
-    have h34 : t ^ ((1 : ℝ) / 2) * t ^ ((1 : ℝ) / 4) = t ^ ((3 : ℝ) / 4) := by
-      rw [← Real.rpow_add ht0]; norm_num
-    have h3a : t ^ ((3 : ℝ) / 4) ≤ t ^ a := Real.rpow_le_rpow_of_exponent_le ht (by rw [ha]; linarith)
-    have h4 : 2 * √t * Real.log t ≤ 8 * t ^ a := by
-      calc 2 * √t * Real.log t ≤ 2 * √t * (t ^ ((1 : ℝ) / 4) / (1 / 4)) :=
-            mul_le_mul_of_nonneg_left hlog (by positivity)
-        _ = 8 * (t ^ ((1 : ℝ) / 2) * t ^ ((1 : ℝ) / 4)) := by rw [hsq]; ring
-        _ = 8 * t ^ ((3 : ℝ) / 4) := by rw [h34]
-        _ ≤ 8 * t ^ a := by linarith
-    have h5 : |θ t - t| ≤ |ψ t - t| + (ψ t - θ t) := by
-      have e' : θ t - t = (ψ t - t) - (ψ t - θ t) := by ring
-      rw [e']
-      calc |(ψ t - t) - (ψ t - θ t)| ≤ |ψ t - t| + |ψ t - θ t| := abs_sub _ _
-        _ = |ψ t - t| + (ψ t - θ t) := by rw [abs_of_nonneg h2]
-    linarith
-  · -- below it, `|θ(t) − t| ≤ 2t ≤ 2T'`
-    have htT' : t ≤ T' := (not_le.1 htT).le.trans (le_max_left _ _)
-    have hθ0 := Chebyshev.theta_nonneg t
-    have hθ4 : θ t ≤ Real.log 4 * t := Chebyshev.theta_le_log4_mul_x ht0.le
-    have hl4 : Real.log 4 < 2 := by
-      have := Real.log_two_lt_d9
-      have h4 : Real.log 4 = 2 * Real.log 2 := by
-        rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.log_pow]; norm_num
-      rw [h4]; norm_num at this; linarith
-    have h1 : |θ t - t| ≤ 2 * T' := by
-      rw [abs_le]; constructor <;> nlinarith
-    have h2 : 2 * T' ≤ 2 * T' * t ^ a := le_mul_of_one_le_right (by positivity) hta
-    have h3 : 0 ≤ 8 * t ^ a := by positivity
-    linarith
-
 /-- **`θ` on short intervals.** For `ε > 0` there is `C ≥ 0` with `|θ(X) − θ(X − H) − H| ≤ C X^{11/12+ε}` for all
 `X ≥ 1` and `0 ≤ H ≤ X`. -/
 theorem abs_theta_sub_theta_le {ε : ℝ} (hε : 0 < ε) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ X H : ℝ, 1 ≤ X → 0 ≤ H → H ≤ X →
       |θ X - θ (X - H) - H| ≤ C * X ^ ((11 : ℝ) / 12 + ε) := by
-  obtain ⟨C, hC0, hC⟩ := abs_theta_sub_le hε
+  obtain ⟨C, hC0, hC⟩ := PsiExplicit.abs_theta_sub_le hε
   refine ⟨2 * C + 1, by positivity, fun X H hX hH hHX => ?_⟩
   set a : ℝ := (11 : ℝ) / 12 + ε with ha
   have hXa : 1 ≤ X ^ a := Real.one_le_rpow hX (by positivity)

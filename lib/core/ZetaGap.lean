@@ -13,11 +13,15 @@ The weights are split by the thick classes `Θ(u) = {(−1, s·u) : s ∈ T2}`.
 * **The thick part** (`Setting.Th`) is the part of the balance identity at `Θ(u)`, with every weight replaced by
   `a_t/x`. Its average over `u ∈ A` keeps only the characters trivial on `A` (`Setting.sum_Th`):
   `(a_t|T2|/2x)·Re(Gz + g_{χq} − g_{χd} − g_{χqχd})(x)`.
+* **The analytic inputs**, two properties of the setting. It is *thin* at `X` (`Setting.Thin`) when every error is at
+  most `θy` for `y ≥ X`, with `8|A|x²θ ≤ 1`. Its *twists* are small (`Setting.Twists`) when the three twists are at
+  most `x^{1/2+ε}` at `x`.
 * **Lemma T** (`Setting.Th_le`): the thick part is at most `ASK − MAIN + a_t/x²`. On thick classes the weights are
   within `δ` of `a_t/x`, and `w·g_χ(a/w)` is Lipschitz in `w` (`Setting.norm_mul_g_sub_le`, from Chebyshev). On thin
-  classes `a_t/w ≥ Y`, where every `g_χ(y)` is at most `θy`.
-* **Theorem Z** (`BalanceData.zeta_le`): with `m ≥ x^{1/2−ε}` words, `|T2| ≥ x^{−ε}|A|`, the three twists at most
-  `x^{1/2+ε}` at `x`, and the averaged gap at most `x^ε Σ_t a_t`, `Gz(x) ≤ 7x^{1/2+3ε}`.
+  classes `a_t/w ≥ X`, where the setting is thin.
+* **Theorem Z** (`BalanceData.zeta_le`): take weights (`Weights`) with `m ≥ x^{1/2−ε}` words and `|T2| ≥ x^{−ε}|A|`,
+  whose averaged gap is at most `x^ε Σ_t a_t` (`BalanceData`), in a setting thin at `X` with small twists. Then
+  `Gz(x) ≤ 7x^{1/2+3ε}`.
 * **Theorem E** (`zetaWindowBound_of_zetaBalanceBound`): such data on windows give `WindowGRH.ZetaWindowBound`, hence
   the Riemann hypothesis (`riemannHypothesis_of_zetaBalanceBound`).
 
@@ -122,18 +126,27 @@ theorem norm_mul_g_sub_le (χ : Dual S.e) {a w w' : ℝ} (ha : 0 ≤ a) (hw : 0 
 noncomputable def thickSet (T2 : Finset (A S.e)) (u : A S.e) : Finset (Φ S.e) :=
   T2.image fun s => (-1, s * u)
 
+/-- **The thin scales**: the setting is thin at `X` for `x` when every error is at most `θy` for `y ≥ X`, with
+`8|A|x²θ ≤ 1`. -/
+def Thin (x X : ℝ) : Prop :=
+  ∃ θ : ℝ, (∀ χ, ∀ y ≥ X, ‖S.g χ y‖ ≤ θ * y) ∧ 8 * Fintype.card (A S.e) * x ^ 2 * θ ≤ 1
+
+/-- **The twists**: the three quadratic twists `g_{χq}`, `g_{χd}` and `g_{χqχd}` are at most `x^{1/2+ε}` at `x`. -/
+def Twists (x ε : ℝ) : Prop :=
+  ∀ α β : Bool, (α || β) = true → ‖S.g (α, β, 1) x‖ ≤ x ^ (1 / 2 + ε)
+
 /-- The thick part of the balance identity at `(u, t)`: the classes `Θ(u)`, every weight replaced by `r`, the
 errors evaluated at `y`. -/
 noncomputable def Th (T2 : Finset (A S.e)) (u t : A S.e) (r y : ℝ) : ℝ :=
   ((Fintype.card (Φ S.e) : ℂ)⁻¹ * ∑ s ∈ T2, (r : ℂ) * ∑ χ, conj (eval χ (γ t (-1, s * u))) * S.g χ y).re
 
 /-- **Lemma T**: the thick part, with weights `a/x` and errors at `x`, is at most `ASK − MAIN + a/x²`, when the thick
-weights are within `δ` of `a/x` and every thin class has `a/W ≥ Y`, where the errors are at most `θy`. -/
-theorem Th_le (T2 : Finset (A S.e)) (u t : A S.e) {a x δ Y θ : ℝ} (W : Φ S.e → ℝ) (hW : ∀ ρ, 0 < W ρ)
+weights are within `δ` of `a/x` and every thin class has `a/W ≥ X`, where the setting is thin. -/
+theorem Th_le (T2 : Finset (A S.e)) (u t : A S.e) {a x δ X : ℝ} (W : Φ S.e → ℝ) (hW : ∀ ρ, 0 < W ρ)
     (ha : 0 < a) (hx : 1 ≤ x) (hthick : ∀ s ∈ T2, |W (-1, s * u) - a / x| ≤ δ)
-    (hδ : 64 * Fintype.card (A S.e) * x ^ 3 * δ ≤ a) (hthin : ∀ ρ ∉ S.thickSet T2 u, Y ≤ a / W ρ)
-    (hscale : ∀ χ, ∀ y ≥ Y, ‖S.g χ y‖ ≤ θ * y) (hθ : 8 * Fintype.card (A S.e) * x ^ 2 * θ ≤ 1) :
-    S.Th T2 u t (a / x) x ≤ S.ASK a t W - S.MAIN a W + a / x ^ 2 := by
+    (hδ : 64 * Fintype.card (A S.e) * x ^ 3 * δ ≤ a) (hthin : ∀ ρ ∉ S.thickSet T2 u, X ≤ a / W ρ)
+    (hT : S.Thin x X) : S.Th T2 u t (a / x) x ≤ S.ASK a t W - S.MAIN a W + a / x ^ 2 := by
+  obtain ⟨θ, hscale, hθ⟩ := hT
   have hx0 : 0 < x := by linarith
   have hA : (1 : ℝ) ≤ Fintype.card (A S.e) := Nat.one_le_cast.2 Fintype.card_pos
   rw [S.balance a t W hW, Th, ← sub_le_iff_le_add', ← sub_re, ← mul_sub]
@@ -168,7 +181,7 @@ theorem Th_le (T2 : Finset (A S.e)) (u t : A S.e) {a x δ Y θ : ℝ} (W : Φ S.
       gcongr
     · rw [le_div_iff₀ (by positivity)]
       linarith
-  · -- a thin class: `a/W ≥ Y`, so each error is at most `θa/W`
+  · -- a thin class: `a/W ≥ X`, so each error is at most `θa/W`
     rw [norm_mul, norm_real, Real.norm_of_nonneg (hW ρ).le]
     refine (mul_le_mul_of_nonneg_left (norm_sum_conj_eval_mul_le _ _ fun χ =>
       hscale χ _ (hthin ρ (Finset.mem_compl.1 hρ))) (hW ρ).le).trans ?_
@@ -203,12 +216,9 @@ theorem sum_Th (T2 : Finset (A S.e)) (t : A S.e) (r y : ℝ) :
 
 end Setting
 
-/-- **The balance inputs for `ζ` at `x`**, with losses `x^ε`: a setting, `m` words, translates `TT`, thick classes
-`T2`, scales `a_t` and weights `w_{u,j}`, with the analytic inputs: every error is at most `θy` for `y ≥ Y`, and the
-three twists are at most `x^{1/2+ε}` at `x`. -/
-structure BalanceInput (x ε : ℝ) where
-  /-- The primes `q`, `d` and the exponent `e`. -/
-  S : Setting
+/-- **The weights for `ζ` at `x`** in the setting `S`, with losses `x^ε` and thin classes beyond `X`: `m` words,
+translates `TT`, thick classes `T2`, scales `a_t` and weights `w_{u,j}`. -/
+structure Weights (S : Setting) (x ε X : ℝ) where
   /-- The number of words. -/
   m : ℕ
   /-- The translates `t`. -/
@@ -221,10 +231,6 @@ structure BalanceInput (x ε : ℝ) where
   w : A S.e → Fin m → Φ S.e → ℝ
   /-- How far thick weights may be from `a_t/x`. -/
   δ : ℝ
-  /-- Where the thin classes start. -/
-  Y : ℝ
-  /-- The size of the errors beyond `Y`, relative to `y`. -/
-  θ : ℝ
   /-- The weights are positive. -/
   w_pos : ∀ u j ρ, 0 < w u j ρ
   /-- The scales are positive. -/
@@ -233,14 +239,8 @@ structure BalanceInput (x ε : ℝ) where
   thick_near : ∀ t ∈ TT, ∀ u j, ∀ s ∈ T2, |w u j (-1, s * u) - a t / x| ≤ δ
   /-- `δ` is small: `64|A|x³δ ≤ a_t`. -/
   thick_small : ∀ t ∈ TT, 64 * Fintype.card (A S.e) * x ^ 3 * δ ≤ a t
-  /-- On the thin classes, `a_t/w ≥ Y`. -/
-  thin_far : ∀ t ∈ TT, ∀ u j, ∀ ρ ∉ S.thickSet T2 u, Y ≤ a t / w u j ρ
-  /-- Every error is at most `θy` for `y ≥ Y`. -/
-  scales : ∀ χ, ∀ y ≥ Y, ‖S.g χ y‖ ≤ θ * y
-  /-- `θ` is small: `8|A|x²θ ≤ 1`. -/
-  scales_small : 8 * Fintype.card (A S.e) * x ^ 2 * θ ≤ 1
-  /-- The three twists are at most `x^{1/2+ε}` at `x`. -/
-  twists : ∀ α β : Bool, (α || β) = true → ‖S.g (α, β, 1) x‖ ≤ x ^ (1 / 2 + ε)
+  /-- On the thin classes, `a_t/w ≥ X`. -/
+  thin_far : ∀ t ∈ TT, ∀ u j, ∀ ρ ∉ S.thickSet T2 u, X ≤ a t / w u j ρ
   /-- At least `x^{1/2−ε}` words. -/
   words : x ^ (1 / 2 - ε) ≤ m
   /-- At least `x^{−ε}|A|` thick classes. -/
@@ -248,23 +248,25 @@ structure BalanceInput (x ε : ℝ) where
   /-- There is a translate. -/
   TT_nonempty : TT.Nonempty
 
-/-- **The balance data for `ζ` at `x`**: balance inputs whose gap, averaged over the translates `u`, is at most
+/-- **The balance data for `ζ` at `x`**: weights whose gap, averaged over the translates `u`, is at most
 `x^ε Σ_t a_t`. -/
-structure BalanceData (x ε : ℝ) extends BalanceInput x ε where
+structure BalanceData (S : Setting) (x ε X : ℝ) extends Weights S x ε X where
   /-- The gap, averaged over `u`, is at most `x^ε Σ_t a_t`. -/
   gap_le : ∑ u, S.gap TT m a w u ≤ Fintype.card (A S.e) * x ^ ε * ∑ t ∈ TT, a t
 
-/-- **Theorem Z**: balance data at `x` bound the error of `ζ`'s ramp sum by `7x^{1/2+3ε}`. -/
-theorem BalanceData.zeta_le {x ε : ℝ} (D : BalanceData x ε) (hx : 1 ≤ x) (hε : 0 ≤ ε) :
+/-- **Theorem Z**: balance data at `x`, in a setting thin at `X` with small twists, bound the error of `ζ`'s ramp sum
+by `7x^{1/2+3ε}`. -/
+theorem BalanceData.zeta_le {S : Setting} {x ε X : ℝ} (D : BalanceData S x ε X) (hthin : S.Thin x X)
+    (htw : S.Twists x ε) (hx : 1 ≤ x) (hε : 0 ≤ ε) :
     ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, Λ n * (x / n - 1) - x * Real.log x + (1 + Real.eulerMascheroniConstant) * x ≤
       7 * x ^ (1 / 2 + 3 * ε) := by
-  obtain ⟨⟨S, m, TT, T2, a, w, δ, Y, θ, w_pos, a_pos, thick_near, thick_small, thin_far, scales, scales_small,
-    twists, words, thick_card, TT_nonempty⟩, gap_le⟩ := D
+  obtain ⟨⟨m, TT, T2, a, w, δ, w_pos, a_pos, thick_near, thick_small, thin_far, words, thick_card, TT_nonempty⟩,
+    gap_le⟩ := D
   have hx0 : 0 < x := by linarith
   -- Lemma T at every `u`, `j` and `t ∈ TT`, summed, with Lemma Avg on the left
   have key := Finset.sum_le_sum fun u (_ : u ∈ Finset.univ) => Finset.sum_le_sum fun t ht =>
     Finset.sum_le_sum fun j (_ : j ∈ Finset.univ) => S.Th_le T2 u t (w u j) (w_pos u j) (a_pos t ht) hx
-      (thick_near t ht u j) (thick_small t ht) (thin_far t ht u j) scales scales_small
+      (thick_near t ht u j) (thick_small t ht) (thin_far t ht u j) hthin
   have hL : ∑ u, ∑ t ∈ TT, (m : ℝ) * S.Th T2 u t (a t / x) x = m * T2.card / (2 * x) * (∑ t ∈ TT, a t) *
       (S.g (false, false, 1) x + S.g (false, true, 1) x - S.g (true, false, 1) x - S.g (true, true, 1) x).re := by
     rw [Finset.sum_comm, Finset.mul_sum, Finset.sum_mul]
@@ -310,13 +312,14 @@ theorem BalanceData.zeta_le {x ε : ℝ} (D : BalanceData x ε) (hx : 1 ≤ x) (
   rw [← S.g_one_re]
   simp only [add_re, sub_re] at hR
   linarith [neg_le_of_abs_le (abs_re_le_norm (S.g (false, true, 1) x)), re_le_norm (S.g (true, false, 1) x),
-    re_le_norm (S.g (true, true, 1) x), twists false true rfl, twists true false rfl, twists true true rfl,
+    re_le_norm (S.g (true, true, 1) x), htw false true rfl, htw true false rfl, htw true true rfl,
     Real.rpow_le_rpow_of_exponent_le hx (by linarith : 1 / 2 + ε ≤ 1 / 2 + 3 * ε)]
 
-/-- **The frontier for `ζ` after step 3**: for every `ε > 0`, balance data at every `x` of windows `[Y, Y^λ]` with `Y`
-arbitrarily large. -/
+/-- **The frontier for `ζ` after step 3**: for every `ε > 0`, at every `x` of windows `[Y, Y^λ]` with `Y` arbitrarily
+large, a setting thin at some `X`, with small twists, and balance data. -/
 def ZetaBalanceBound : Prop :=
-  ∀ ε > 0, ∃ lam > (1 : ℝ), ∀ Y₀ : ℝ, ∃ Y ≥ Y₀, ∀ x ∈ Set.Icc Y (Y ^ lam), Nonempty (BalanceData x ε)
+  ∀ ε > 0, ∃ lam > (1 : ℝ), ∀ Y₀ : ℝ, ∃ Y ≥ Y₀, ∀ x ∈ Set.Icc Y (Y ^ lam),
+    ∃ (S : Setting) (X : ℝ), S.Thin x X ∧ S.Twists x ε ∧ Nonempty (BalanceData S x ε X)
 
 /-- **Theorem E**: the frontier after step 3 gives the windowed bound for `ζ`. -/
 theorem zetaWindowBound_of_zetaBalanceBound (h : ZetaBalanceBound) : WindowGRH.ZetaWindowBound := by
@@ -325,8 +328,8 @@ theorem zetaWindowBound_of_zetaBalanceBound (h : ZetaBalanceBound) : WindowGRH.Z
   refine ⟨lam, by exact_mod_cast hlam, 7, fun Y₀ => ?_⟩
   obtain ⟨Y, hY₀, hYx⟩ := hY (max Y₀ 1)
   refine ⟨Y, (le_max_left _ _).trans hY₀, fun x hx => ?_⟩
-  obtain ⟨D⟩ := hYx x (by simpa using hx)
-  have := D.zeta_le ((le_max_right _ _).trans (hY₀.trans hx.1)) (by linarith)
+  obtain ⟨S, X, hthin, htw, ⟨D⟩⟩ := hYx x (by simpa using hx)
+  have := D.zeta_le hthin htw ((le_max_right _ _).trans (hY₀.trans hx.1)) (by linarith)
   rwa [show 1 / 2 + 3 * ((θ - 1 / 2) / 3) = θ by ring] at this
 
 /-- **The Riemann hypothesis from balance data on windows.** -/

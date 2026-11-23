@@ -448,6 +448,8 @@ import ParityGround
 import WindowGRH
 import ZetaFrame
 import EuclidLattice
+import ZetaThin
+import ZetaPair
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -2217,6 +2219,9 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms EuclidLattice.supClosed
 #print axioms EuclidLattice.frame
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
+#print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound
+#print axioms ZetaTwist.exists_winPair_twists
+#print axioms ZetaBalance.riemannHypothesis_of_zetaPairBound
 
 /-! ### What `cglDensity` uses
 

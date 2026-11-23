@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1850 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1853 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 210, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
@@ -12,7 +12,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 207 | 725 |
-| `lib/pnt` | 347 | 1012 |
+| `lib/pnt` | 350 | 1015 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -3420,6 +3420,18 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ZetaKernel.hm_duality_pts`: The Halász–Montgomery duality inequality at points
 - `ZetaKernel.norm_kz_le`: The kernel bound ([note](../formalisations/zeta-density.md))
 - `ZetaKernel.power_count_pts`: Large values of a power at well-spaced heights
+
+#### `ZetaPair`: The pair-first frontier for `ζ` — CONDITIONAL on the half-plane
+
+- `ZetaBalance.riemannHypothesis_of_zetaPairBound`: CONDITIONAL. The Riemann hypothesis from the pair-first frontier ([note](../formalisations/alpoge-rh.md))
+
+#### `ZetaThin`: The thin scales for `ζ` — CONDITIONAL on the half-plane
+
+- `ZetaBalance.riemannHypothesis_of_zetaTwistBound`: CONDITIONAL. The Riemann hypothesis from lattice data with small twists ([note](../formalisations/alpoge-rh.md))
+
+#### `ZetaTwist`: A pair of primes with small quadratic twists on a window — CONDITIONAL on the half-plane
+
+- `ZetaTwist.exists_winPair_twists`: CONDITIONAL. The twists for `ζ` ([note](../formalisations/alpoge-rh.md))
 
 ### `lib/dh`
 
