@@ -445,6 +445,7 @@ import OddMargin2
 import GsMain
 import V3Gen
 import ParityGround
+import WindowGRH
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -2201,6 +2202,9 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms V3Gen.coer_vprime
 #print axioms V3Gen.pos_vprime
 #print axioms WeilOdd.L05_mixed
+#print axioms HalfPlaneGRH.zeroFreeRightOf_half_iff
+#print axioms LandauWindow.re_le_of_windows
+#print axioms WindowGRH.rhAndGRH_of_windowBound
 
 /-! ### What `cglDensity` uses
 

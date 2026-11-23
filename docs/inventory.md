@@ -4,14 +4,14 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1837 theorems: the library's final results (those of the
+`lib/check/Check.lean` print the axioms of 1840 theorems: the library's final results (those of the
 zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
 papers' theorems, of which there are 210, marked *paper*. Each line gives a theorem's name and the
 headline of its docstring, and links the note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 198 | 712 |
+| `lib/core` | 201 | 715 |
 | `lib/pnt` | 347 | 1012 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -535,6 +535,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.rh_of_D_and_realRooted_proved`: §11 item 1 ⇒ RH with Hadamard's factorisation proved ([note](../formalisations/weil-positivity.md))
 
+#### `HalfPlaneGRH`: The Riemann hypothesis for `ζ` and every Dirichlet `L`-function, from a zero-free half-plane
+
+- `HalfPlaneGRH.zeroFreeRightOf_half_iff`: The half-plane at `1/2` is equivalent to the Riemann hypothesis for `ζ` and every Dirichlet `L`-function ([note](../formalisations/alpoge-rh.md))
+
 #### `HalfPlaneJoinsChar`: The band for every `L(s, χ)` and the twin-form rates at `11/12`
 
 - `HalfPlaneJoins.LFunction_band_eleven_twelfths`: The band `|2 Re ρ − 1| ≤ 5/6` for every `L(s, χ)`, `χ ≠ 1`
@@ -628,6 +632,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `LagariasCriterion.lagarias_upto_5040`: Lagarias's inequality for `1 ≤ n ≤ 5040` ([note](../formalisations/lagarias-criterion.md))
 - `LagariasCriterion.lagarias_criterion`: Lagarias's criterion ([note](../formalisations/lagarias-criterion.md))
+
+#### `LandauWindow`: Landau's theorem on windows
+
+- `LandauWindow.re_le_of_windows`: Landau's theorem on windows ([note](../formalisations/alpoge-rh.md))
 
 #### `LatticeCount`: The ball tower from counting integer points
 
@@ -1290,6 +1298,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WindowForm.gram_pos`: A positive-definite Gram matrix makes the form strictly positive on every nonzero combination of the basis
 - `WindowForm.quadruple_sum`: The off-line quadruple.
 - `WindowForm.offline_negative`: The mechanism of positivity loss
+
+#### `WindowGRH`: The Riemann hypothesis from a windowed bound on smoothed prime sums
+
+- `WindowGRH.rhAndGRH_of_windowBound`: The Riemann hypothesis for `ζ` and every Dirichlet `L`-function, from the frontier `WindowBound` ([note](../formalisations/alpoge-rh.md))
 
 #### `XiBounds`: The order of `Ξ`, from Riemann's theta kernel
 
