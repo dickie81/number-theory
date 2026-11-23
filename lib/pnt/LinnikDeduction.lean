@@ -14,11 +14,12 @@ estimate is a displayed hypothesis; the zero-free region the argument uses beyon
   Mathlib's `DirichletCharacter.sum_char_inv_mul_char_eq`.
 * `re_Sx_one_ge`: `Re S_1(x) ≥ e^{−1}(ψ(x) − ω(q) log x)` for `x ≥ 1` (
   `PNTProgressions.sum_not_coprime_le`).
-* `SAP_le_of_noPrime`: if no prime `p ≤ Y` lies in the class of `a`, then `S(x; q, a) ≤ 2√Y log Y + 96x³e^{−Y/(2x)}`
-  (Mathlib's `Chebyshev.psi_sub_theta_le` and `hasSum_zeta_two`).
-* `error_le`: `Σ_{χ ≠ 1} |S_χ(x)|` under `CharDensity`. Each character is bounded by `norm_Sx_le` at its level, the
-  least `θ_j = min(½ + jδ/2, 11/12)` with no zero in `Re s > θ_j`, `|Im s| < T + 1` (`level`), and the characters of
-  level `j + 1` are counted by `CharDensity` at `σ = θ_j` and height `T + 1`.
+* `sum_SAP_le_of_noPrime`, `SAP_le_of_noPrime`: if no prime `p ≤ Y` lies in a class of a set `B`, then
+  `Σ_{a ∈ B} S(x; q, a) ≤ 2√Y log Y + 96x³e^{−Y/(2x)}` (Mathlib's `Chebyshev.psi_sub_theta_le` and `hasSum_zeta_two`);
+  `SAP_le_of_noPrime` is the case of one class.
+* `sum_level_le`, `error_le`: `Σ_{χ ≠ 1} |S_χ(x)|` under `CharDensity`. Each character is bounded by `norm_Sx_le` at
+  its level, the least `θ_j = min(½ + jδ/2, 11/12)` with no zero in `Re s > θ_j`, `|Im s| < T + 1` (`level`), and
+  `sum_level_le` counts the characters of level `j + 1` by `CharDensity` at `σ = θ_j` and height `T + 1`.
 * `total_le`, `prime_in_class`: at `T = 2 log x + 2` and `Y = 10x log x`, with `q^{A+η₀} ≤ x`, the error terms total
   at most `Ktot x^{1−c₀}`, `c₀ = η₀/(48(A + 1))`, against the main term `e^{−1}x/4` from `ψ(x) ≥ x/4` (
   `LeastNonresidue.psi_ge_quarter`).
@@ -182,7 +183,7 @@ theorem re_Sx_one_ge (q : ℕ) [NeZero q] {x : ℝ} (hx : 1 ≤ x) :
     _ ≤ ∑ n ∈ Finset.Icc 1 N, g n := Finset.sum_le_sum hlow
     _ ≤ ∑' n, g n := hpart
 
-/-! ### A class with no small prime -/
+/-! ### The classes with no small prime -/
 
 /-- `Λ(n)e^{−n/x} ≤ 48x³e^{−Y/(2x)}/n²` for `n > Y ≥ 0`: `Λ(n) ≤ n` and `y³e^{−y} ≤ 3!` at `y = n/(2x)`. -/
 lemma tail_term_le {x Y : ℝ} (hx : 0 < x) (hY : 0 ≤ Y) {n : ℕ} (hn : Y < n) :
@@ -209,72 +210,81 @@ lemma tail_term_le {x Y : ℝ} (hx : 0 < x) (hY : 0 ≤ Y) {n : ℕ} (hn : Y < n
     _ ≤ 8 * x ^ 3 * 6 * Real.exp (-(Y / (2 * x))) := by gcongr
     _ = 48 * x ^ 3 * Real.exp (-(Y / (2 * x))) := by ring
 
-/-- **A class with no prime up to `Y`**: if no prime `p ≤ Y` lies in the class `a`, then
-`S(x; q, a) ≤ 2√Y log Y + 96x³e^{−Y/(2x)}`: the prime powers up to `Y` give at most `ψ(Y) − θ(Y)`
-(Mathlib's `Chebyshev.psi_sub_theta_le`), and the terms beyond `Y` at most `Σ_n 48x³e^{−Y/(2x)}/n²`. -/
-theorem SAP_le_of_noPrime (q : ℕ) (a : ZMod q) {x Y : ℝ} (hx : 0 < x) (hY : 1 ≤ Y)
-    (hno : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ Y → (p : ZMod q) ≠ a) :
-    SAP q a x ≤ 2 * √Y * Real.log Y + 96 * x ^ 3 * Real.exp (-(Y / (2 * x))) := by
+/-- **The classes with no prime up to `Y`**: if no prime `p ≤ Y` lies in a class of `B`, then
+`Σ_{a ∈ B} S(x; q, a) ≤ 2√Y log Y + 96x³e^{−Y/(2x)}`. The terms of those classes up to `Y` are prime powers, at most
+`ψ(Y) − θ(Y)` in all (Mathlib's `Chebyshev.psi_sub_theta_le`), and those beyond `Y` at most `Σ_n 48x³e^{−Y/(2x)}/n²`
+(`tail_term_le`). -/
+theorem sum_SAP_le_of_noPrime (q : ℕ) (B : Finset (ZMod q)) {x Y : ℝ} (hx : 0 < x) (hY : 1 ≤ Y)
+    (hno : ∀ a ∈ B, ∀ p : ℕ, p.Prime → (p : ℝ) ≤ Y → (p : ZMod q) ≠ a) :
+    ∑ a ∈ B, SAP q a x ≤ 2 * √Y * Real.log Y + 96 * x ^ 3 * Real.exp (-(Y / (2 * x))) := by
+  set g : ℕ → ℝ := fun n => Λ n * Real.exp (-((n : ℝ) / x)) with hg
   set f₁ : ℕ → ℝ := fun n => if n ∈ (Finset.Ioc 0 ⌊Y⌋₊).filter (fun n => ¬ n.Prime) then Λ n else 0 with hf₁
-  set f₂ : ℕ → ℝ := fun n => if Y < n then Λ n * Real.exp (-((n : ℝ) / x)) else 0 with hf₂
+  set f₂ : ℕ → ℝ := fun n => if Y < n then g n else 0 with hf₂
   set K : ℝ := 48 * x ^ 3 * Real.exp (-(Y / (2 * x))) with hK
   have hK0 : 0 ≤ K := by positivity
+  have hg0 : ∀ n, 0 ≤ g n := fun n => mul_nonneg vonMangoldt_nonneg (Real.exp_pos _).le
   have hf₁s : Summable f₁ := summable_of_ne_finset_zero (s := (Finset.Ioc 0 ⌊Y⌋₊).filter (fun n => ¬ n.Prime))
     fun n hn => by simp only [hf₁]; rw [ite_eq_right hn]
-  have hf₂le : ∀ n, f₂ n ≤ K * (1 / (n : ℝ) ^ 2) := by
-    intro n
+  have hf₂le : ∀ n, f₂ n ≤ K * (1 / (n : ℝ) ^ 2) := fun n => by
     simp only [hf₂]
     split_ifs with h
     · exact tail_term_le hx (by linarith) h
     · positivity
   have hf₂0 : ∀ n, 0 ≤ f₂ n := fun n => by
     simp only [hf₂]; split_ifs
-    · exact mul_nonneg vonMangoldt_nonneg (Real.exp_pos _).le
+    · exact hg0 n
     · exact le_rfl
   have hzeta : HasSum (fun n : ℕ => K * (1 / (n : ℝ) ^ 2)) (K * (π ^ 2 / 6)) := hasSum_zeta_two.mul_left K
   have hf₂s : Summable f₂ := Summable.of_nonneg_of_le hf₂0 hf₂le hzeta.summable
-  have hpt : ∀ n : ℕ, (if (n : ZMod q) = a then Λ n * Real.exp (-((n : ℝ) / x)) else 0) ≤ f₁ n + f₂ n := by
+  -- the terms of the classes of `B` at each `n`
+  have hpt : ∀ n : ℕ, ∑ a ∈ B, (if (n : ZMod q) = a then g n else 0) ≤ f₁ n + f₂ n := by
     intro n
     have h10 : 0 ≤ f₁ n := by
       simp only [hf₁]; split_ifs
       · exact vonMangoldt_nonneg
       · exact le_rfl
-    by_cases hnY : Y < n
-    · have : f₂ n = Λ n * Real.exp (-((n : ℝ) / x)) := by simp only [hf₂]; rw [ite_eq_left hnY]
-      split_ifs
-      · linarith
-      · linarith [hf₂0 n]
-    · split_ifs with ha
-      · by_cases hΛ : Λ n = 0
-        · rw [hΛ, zero_mul]; linarith [hf₂0 n]
-        · have hn0 : n ≠ 0 := fun h => hΛ (by rw [h]; exact ArithmeticFunction.map_zero)
-          have hnp : ¬ n.Prime := fun hp => hno n hp (not_lt.1 hnY) ha
-          have hmem : n ∈ (Finset.Ioc 0 ⌊Y⌋₊).filter (fun n => ¬ n.Prime) := by
-            rw [Finset.mem_filter, Finset.mem_Ioc]
-            exact ⟨⟨Nat.pos_of_ne_zero hn0, Nat.le_floor (not_lt.1 hnY)⟩, hnp⟩
-          have : f₁ n = Λ n := by simp only [hf₁]; rw [ite_eq_left hmem]
-          have he : Real.exp (-((n : ℝ) / x)) ≤ 1 := Real.exp_le_one_iff.2 (by
-            have : 0 ≤ (n : ℝ) / x := by positivity
-            linarith)
-          have := mul_le_mul_of_nonneg_left he (vonMangoldt_nonneg (n := n))
+    rw [Finset.sum_ite_eq]
+    split_ifs with hn
+    · by_cases hnY : Y < n
+      · have : f₂ n = g n := by simp only [hf₂]; rw [ite_eq_left hnY]
+        linarith
+      · rcases eq_or_ne (Λ n) 0 with hΛ | hΛ
+        · have : g n = 0 := by simp only [hg, hΛ, zero_mul]
           linarith [hf₂0 n]
-      · linarith [hf₂0 n]
+        · have hn0 : n ≠ 0 := fun h => hΛ (by rw [h]; exact ArithmeticFunction.map_zero)
+          have hnp : ¬ n.Prime := fun hp => hno _ hn n hp (not_lt.1 hnY) rfl
+          have hmem : n ∈ (Finset.Ioc 0 ⌊Y⌋₊).filter (fun n => ¬ n.Prime) :=
+            Finset.mem_filter.2 ⟨Finset.mem_Ioc.2 ⟨Nat.pos_of_ne_zero hn0, Nat.le_floor (not_lt.1 hnY)⟩, hnp⟩
+          have h1 : f₁ n = Λ n := by simp only [hf₁]; rw [ite_eq_left hmem]
+          have h2 : g n ≤ Λ n := mul_le_of_le_one_right vonMangoldt_nonneg
+            (Real.exp_le_one_iff.2 (by have : 0 ≤ (n : ℝ) / x := by positivity
+                                       linarith))
+          linarith [hf₂0 n]
+    · linarith [hf₂0 n]
   have hsum1 : ∑' n, f₁ n = ψ Y - θ Y := by
     rw [tsum_eq_sum (s := (Finset.Ioc 0 ⌊Y⌋₊).filter (fun n => ¬ n.Prime)) fun n hn => by
       simp only [hf₁]; rw [ite_eq_right hn], Chebyshev.psi_sub_theta_eq_sum_not_prime]
-    refine Finset.sum_congr rfl fun n hn => ?_
-    simp only [hf₁]; rw [ite_eq_left hn]
+    exact Finset.sum_congr rfl fun n hn => by simp only [hf₁]; rw [ite_eq_left hn]
   have hsum2 : ∑' n, f₂ n ≤ 96 * x ^ 3 * Real.exp (-(Y / (2 * x))) := by
     refine (Summable.tsum_le_tsum hf₂le hf₂s hzeta.summable).trans ?_
     rw [hzeta.tsum_eq]
     have hpi : π ^ 2 / 6 ≤ 2 := by have := Real.pi_lt_d2; nlinarith [Real.pi_pos]
     calc K * (π ^ 2 / 6) ≤ K * 2 := by gcongr
       _ = 96 * x ^ 3 * Real.exp (-(Y / (2 * x))) := by rw [hK]; ring
-  calc SAP q a x ≤ ∑' n, (f₁ n + f₂ n) :=
-        Summable.tsum_le_tsum hpt (summable_SAP_term q a hx) (hf₁s.add hf₂s)
+  -- the sum over the classes of `B` is one series
+  have hs : ∀ a ∈ B, Summable fun n : ℕ => if (n : ZMod q) = a then g n else 0 := fun a _ => summable_SAP_term q a hx
+  calc ∑ a ∈ B, SAP q a x = ∑' n : ℕ, ∑ a ∈ B, (if (n : ZMod q) = a then g n else 0) :=
+        (Summable.tsum_finsetSum hs).symm
+    _ ≤ ∑' n, (f₁ n + f₂ n) := Summable.tsum_le_tsum hpt (summable_sum hs) (hf₁s.add hf₂s)
     _ = ∑' n, f₁ n + ∑' n, f₂ n := hf₁s.tsum_add hf₂s
-    _ ≤ 2 * √Y * Real.log Y + 96 * x ^ 3 * Real.exp (-(Y / (2 * x))) := by
-        rw [hsum1]; linarith [Chebyshev.psi_sub_theta_le hY]
+    _ ≤ _ := by rw [hsum1]; linarith [Chebyshev.psi_sub_theta_le hY]
+
+/-- **A class with no prime up to `Y`**: if no prime `p ≤ Y` lies in the class `a`, then
+`S(x; q, a) ≤ 2√Y log Y + 96x³e^{−Y/(2x)}`: `sum_SAP_le_of_noPrime` at `B = {a}`. -/
+theorem SAP_le_of_noPrime (q : ℕ) (a : ZMod q) {x Y : ℝ} (hx : 0 < x) (hY : 1 ≤ Y)
+    (hno : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ Y → (p : ZMod q) ≠ a) :
+    SAP q a x ≤ 2 * √Y * Real.log Y + 96 * x ^ 3 * Real.exp (-(Y / (2 * x))) := by
+  simpa using sum_SAP_le_of_noPrime q {a} hx hY (by simpa using hno)
 
 end
 
@@ -370,6 +380,46 @@ lemma not_ZF_of_level {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (T : 
   unfold level at hlt
   exact Nat.find_min (exists_level χ T hδ) hlt (Or.inr h)
 
+/-- **The count by levels.** Under `CharDensity A B C`, for `δ > 0`, `T ≥ 1`, `b ≥ 0` on the levels and `w ≥ 0`:
+`Σ_{χ ≠ 1} (b(level χ) + w) ≤ q(b(0) + w) + Σ_{j < J} C(q(T + 1))^{A(1−θ_j)}(log q(T + 1))^B b(j + 1)`. There are at
+most `φ(q) ≤ q` characters, and those of level `j + 1` have a zero in `Re s > θ_j`, `|Im s| < T + 1`, so `CharDensity`
+at `σ = θ_j` and height `T + 1` counts them. -/
+lemma sum_level_le {A B C : ℝ} (hD : CharDensity A B C) (q : ℕ) [NeZero q] {δ T : ℝ} (hδ : 0 < δ) (hT : 1 ≤ T)
+    {b : ℕ → ℝ} {w : ℝ} (hb : ∀ j, 0 ≤ b j) (hw : 0 ≤ w) :
+    ∑ χ ∈ Finset.univ.filter (fun χ : DirichletCharacter ℂ q => χ ≠ 1), (b (level χ T hδ) + w) ≤
+      q * (b 0 + w) + ∑ j ∈ Finset.range (nlev δ), C * ((q : ℝ) * (T + 1)) ^ (A * (1 - lev δ j)) *
+        Real.log ((q : ℝ) * (T + 1)) ^ B * b (j + 1) := by
+  classical
+  set S := Finset.univ.filter (fun χ : DirichletCharacter ℂ q => χ ≠ 1)
+  set F : ℕ → Finset (DirichletCharacter ℂ q) := fun j => S.filter (fun χ => level χ T hδ = j)
+  have hcard : ∀ R : Finset (DirichletCharacter ℂ q), (R.card : ℝ) ≤ q := fun R => by
+    have h : Fintype.card (DirichletCharacter ℂ q) = q.totient := by
+      rw [← Nat.card_eq_fintype_card]; exact card_eq_totient_of_hasEnoughRootsOfUnity ℂ q
+    exact_mod_cast (Finset.card_le_univ R).trans (h ▸ Nat.totient_le q)
+  have hmaps : ∀ χ ∈ S, level χ T hδ ∈ Finset.range (nlev δ + 1) :=
+    fun χ _ => Finset.mem_range.2 (Nat.lt_succ_of_le (level_le χ T hδ))
+  have hfib : ∑ χ ∈ S, b (level χ T hδ) = ∑ j ∈ Finset.range (nlev δ + 1), ((F j).card : ℝ) * b j := by
+    rw [← Finset.sum_fiberwise_of_maps_to hmaps]
+    refine Finset.sum_congr rfl fun j _ => ?_
+    rw [← nsmul_eq_mul, ← Finset.sum_const]
+    exact Finset.sum_congr rfl fun χ hχ => by rw [(Finset.mem_filter.1 hχ).2]
+  have hcount : ∀ j ∈ Finset.range (nlev δ), ((F (j + 1)).card : ℝ) ≤
+      C * ((q : ℝ) * (T + 1)) ^ (A * (1 - lev δ j)) * Real.log ((q : ℝ) * (T + 1)) ^ B := by
+    intro j _
+    refine le_trans ?_ (hD q (lev δ j) (T + 1) (half_le_lev hδ.le j) (by linarith [lev_le δ j]) (by linarith))
+    exact_mod_cast Finset.card_le_card fun χ hχ => by
+      have hχ' := Finset.mem_filter.1 hχ
+      have hnz := not_ZF_of_level T hδ hχ'.2
+      simp only [ZF, not_forall, not_not, exists_prop] at hnz
+      obtain ⟨s, hs1, hs2, hs3⟩ := hnz
+      exact Finset.mem_filter.2 ⟨Finset.mem_univ _, s, hs1.le, hs2.le, hs3⟩
+  have h1 : ∑ j ∈ Finset.range (nlev δ), ((F (j + 1)).card : ℝ) * b (j + 1) ≤
+      ∑ j ∈ Finset.range (nlev δ), C * ((q : ℝ) * (T + 1)) ^ (A * (1 - lev δ j)) *
+        Real.log ((q : ℝ) * (T + 1)) ^ B * b (j + 1) :=
+    Finset.sum_le_sum fun j hj => mul_le_mul_of_nonneg_right (hcount j hj) (hb (j + 1))
+  rw [Finset.sum_add_distrib, Finset.sum_const, nsmul_eq_mul, hfib, Finset.sum_range_succ']
+  linarith [mul_le_mul_of_nonneg_right (hcard (F 0)) (hb 0), mul_le_mul_of_nonneg_right (hcard S) hw]
+
 /-! ### The characters other than the trivial one -/
 
 /-- The constant of `error_le`: `Σ_{j ≤ J} Mc(θ_j, θ_j + δ) + Mc(11/12, 11/12 + δ)`. -/
@@ -393,8 +443,8 @@ lemma Mstar_pos {δ : ℝ} (hδ : 0 < δ) (hδ1 : δ ≤ 1 / 24) : 0 < Mstar δ 
 /-- **The characters other than the trivial one.** Under `CharDensity A B C`, for
 `0 < δ ≤ 1/24`, `T ≥ 1` and `x ≥ 1`, with `ℓ = log(q + 2)`:
 `Σ_{χ ≠ 1} |S_χ(x)| ≤ M* ℓ (q x^{1/2+δ} + Σ_{1 ≤ j ≤ J} C(q(T + 1))^{A(1−θ_{j−1})}(log q(T + 1))^B x^{θ_j+δ}
-+ 2q x^{11/12+δ}e^{−T/2})`. The characters of level `j ≥ 1` have a zero in `Re s > θ_{j−1}`, `|Im s| < T + 1`, and
-`norm_Sx_le` bounds each character at its level. -/
++ 2q x^{11/12+δ}e^{−T/2})`. `norm_Sx_le` bounds a character of level `j` by `M* ℓ (x^{θ_j+δ} + 2x^{11/12+δ}e^{−T/2})`,
+and `sum_level_le` counts the characters of each level. -/
 theorem error_le {A B C : ℝ} (hD : CharDensity A B C)
     (q : ℕ) [NeZero q] {δ T x : ℝ} (hδ : 0 < δ) (hδ1 : δ ≤ 1 / 24) (hT : 1 ≤ T) (hx : 1 ≤ x) :
     ∑ χ ∈ Finset.univ.filter (fun χ : DirichletCharacter ℂ q => χ ≠ 1), ‖Sx χ x‖ ≤
@@ -402,11 +452,10 @@ theorem error_le {A B C : ℝ} (hD : CharDensity A B C)
         ∑ j ∈ Finset.range (nlev δ), C * ((q : ℝ) * (T + 1)) ^ (A * (1 - lev δ j)) *
           Real.log ((q : ℝ) * (T + 1)) ^ B * x ^ (lev δ (j + 1) + δ) +
         2 * q * x ^ (11 / 12 + δ) * Real.exp (-T / 2)) := by
-  classical
-  set S := Finset.univ.filter (fun χ : DirichletCharacter ℂ q => χ ≠ 1) with hS
-  set M := Mstar δ with hM
-  set ℓ := Real.log (q + 2) with hℓ
-  set E := Real.exp (-T / 2) with hE
+  set S := Finset.univ.filter (fun χ : DirichletCharacter ℂ q => χ ≠ 1)
+  set M := Mstar δ
+  set ℓ := Real.log (q + 2)
+  set E := Real.exp (-T / 2)
   have hM0 : 0 < M := Mstar_pos hδ hδ1
   have hℓ0 : 0 ≤ ℓ := by have := one_le_log_add_two q; linarith
   have hE0 : 0 ≤ E := (Real.exp_pos _).le
@@ -421,70 +470,15 @@ theorem error_le {A B C : ℝ} (hD : CharDensity A B C)
     have hb : 0 ≤ x ^ (lev δ (level χ T hδ) + δ) + 2 * x ^ (11 / 12 + δ) * E := by positivity
     have := Mc_le_Mstar hδ hδ1 hle
     gcongr
-  -- the fibres
-  set F : ℕ → Finset (DirichletCharacter ℂ q) := fun j => S.filter (fun χ => level χ T hδ = j) with hF
-  have hmaps : ∀ χ ∈ S, level χ T hδ ∈ Finset.range (nlev δ + 1) :=
-    fun χ _ => Finset.mem_range.2 (Nat.lt_succ_of_le (level_le χ T hδ))
-  have hfib := Finset.sum_fiberwise_of_maps_to hmaps (fun χ => ‖Sx χ x‖)
-  have hcardS : (S.card : ℝ) ≤ q := by
-    have h1 : S.card ≤ Fintype.card (DirichletCharacter ℂ q) := Finset.card_le_univ S
-    have h2 : Fintype.card (DirichletCharacter ℂ q) = q.totient := by
-      rw [← Nat.card_eq_fintype_card]; exact card_eq_totient_of_hasEnoughRootsOfUnity ℂ q
-    exact_mod_cast h1.trans (h2 ▸ Nat.totient_le q)
-  have hcardF : ∑ j ∈ Finset.range (nlev δ + 1), ((F j).card : ℝ) = S.card := by
-    have := Finset.card_eq_sum_card_fiberwise hmaps
-    exact_mod_cast this.symm
-  -- the bound on each fibre
-  have hfibre : ∀ j ∈ Finset.range (nlev δ + 1), ∑ χ ∈ F j, ‖Sx χ x‖ ≤
-      ((F j).card : ℝ) * (M * ℓ * (x ^ (lev δ j + δ) + 2 * x ^ (11 / 12 + δ) * E)) := by
-    intro j _
-    rw [← nsmul_eq_mul]
-    refine Finset.sum_le_card_nsmul _ _ _ fun χ hχ => ?_
-    have hχ' := Finset.mem_filter.1 hχ
-    have := hchar χ hχ'.1
-    rwa [hχ'.2] at this
-  -- the count of each fibre of level `j + 1`
-  have hcount : ∀ j ∈ Finset.range (nlev δ), ((F (j + 1)).card : ℝ) ≤
-      C * ((q : ℝ) * (T + 1)) ^ (A * (1 - lev δ j)) * Real.log ((q : ℝ) * (T + 1)) ^ B := by
-    intro j _
-    refine le_trans ?_ (hD q (lev δ j) (T + 1) (half_le_lev hδ.le j) (by linarith [lev_le δ j]) (by linarith))
-    exact_mod_cast Finset.card_le_card fun χ hχ => by
-      have hχ' := Finset.mem_filter.1 hχ
-      have hnz := not_ZF_of_level T hδ hχ'.2
-      simp only [ZF, not_forall, not_not, exists_prop] at hnz
-      obtain ⟨s, hs1, hs2, hs3⟩ := hnz
-      exact Finset.mem_filter.2 ⟨Finset.mem_univ _, s, hs1.le, hs2.le, hs3⟩
-  have hF0 : ((F 0).card : ℝ) ≤ q := by
-    refine le_trans ?_ hcardS
-    exact_mod_cast Finset.card_le_card (Finset.filter_subset _ _)
-  -- assemble
-  have hsplit : ∑ j ∈ Finset.range (nlev δ + 1),
-      ((F j).card : ℝ) * (M * ℓ * (x ^ (lev δ j + δ) + 2 * x ^ (11 / 12 + δ) * E)) =
-      M * ℓ * (∑ j ∈ Finset.range (nlev δ + 1), ((F j).card : ℝ) * x ^ (lev δ j + δ)) +
-        M * ℓ * (2 * x ^ (11 / 12 + δ) * E) * ∑ j ∈ Finset.range (nlev δ + 1), ((F j).card : ℝ) := by
-    rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
-    exact Finset.sum_congr rfl fun j _ => by ring
-  have hfirst : ∑ j ∈ Finset.range (nlev δ + 1), ((F j).card : ℝ) * x ^ (lev δ j + δ) ≤
-      (q : ℝ) * x ^ (1 / 2 + δ) + ∑ j ∈ Finset.range (nlev δ), C * ((q : ℝ) * (T + 1)) ^ (A * (1 - lev δ j)) *
-          Real.log ((q : ℝ) * (T + 1)) ^ B * x ^ (lev δ (j + 1) + δ) := by
-    rw [Finset.sum_range_succ', lev_zero, add_comm]
-    gcongr with j hj
-    exact hcount j hj
-  calc ∑ χ ∈ S, ‖Sx χ x‖ = ∑ j ∈ Finset.range (nlev δ + 1), ∑ χ ∈ F j, ‖Sx χ x‖ := hfib.symm
-    _ ≤ ∑ j ∈ Finset.range (nlev δ + 1),
-          ((F j).card : ℝ) * (M * ℓ * (x ^ (lev δ j + δ) + 2 * x ^ (11 / 12 + δ) * E)) :=
-        Finset.sum_le_sum hfibre
-    _ = M * ℓ * (∑ j ∈ Finset.range (nlev δ + 1), ((F j).card : ℝ) * x ^ (lev δ j + δ)) +
-        M * ℓ * (2 * x ^ (11 / 12 + δ) * E) * ∑ j ∈ Finset.range (nlev δ + 1), ((F j).card : ℝ) := hsplit
-    _ ≤ M * ℓ * ((q : ℝ) * x ^ (1 / 2 + δ) + ∑ j ∈ Finset.range (nlev δ), C * ((q : ℝ) * (T + 1)) ^
-          (A * (1 - lev δ j)) * Real.log ((q : ℝ) * (T + 1)) ^ B * x ^ (lev δ (j + 1) + δ)) +
-        M * ℓ * (2 * x ^ (11 / 12 + δ) * E) * q := by
-        rw [hcardF]
-        have : 0 ≤ M * ℓ * (2 * x ^ (11 / 12 + δ) * E) := by positivity
-        gcongr
-    _ = M * ℓ * ((q : ℝ) * x ^ (1 / 2 + δ) + ∑ j ∈ Finset.range (nlev δ), C * ((q : ℝ) * (T + 1)) ^
-          (A * (1 - lev δ j)) * Real.log ((q : ℝ) * (T + 1)) ^ B * x ^ (lev δ (j + 1) + δ) +
-          2 * q * x ^ (11 / 12 + δ) * E) := by ring
+  -- the characters of each level
+  calc ∑ χ ∈ S, ‖Sx χ x‖ ≤ M * ℓ * ∑ χ ∈ S, (x ^ (lev δ (level χ T hδ) + δ) + 2 * x ^ (11 / 12 + δ) * E) := by
+        rw [Finset.mul_sum]; exact Finset.sum_le_sum hchar
+    _ ≤ M * ℓ * (q * (x ^ (lev δ 0 + δ) + 2 * x ^ (11 / 12 + δ) * E) + ∑ j ∈ Finset.range (nlev δ),
+          C * ((q : ℝ) * (T + 1)) ^ (A * (1 - lev δ j)) * Real.log ((q : ℝ) * (T + 1)) ^ B *
+            x ^ (lev δ (j + 1) + δ)) :=
+        mul_le_mul_of_nonneg_left (sum_level_le hD q hδ hT (b := fun j => x ^ (lev δ j + δ))
+          (fun j => by positivity) (by positivity)) (by positivity)
+    _ = _ := by rw [lev_zero]; ring
 
 /-! ### The sizes -/
 

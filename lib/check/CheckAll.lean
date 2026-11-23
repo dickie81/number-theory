@@ -334,6 +334,7 @@ import SieveBox
 import SieveAdCount
 import LinnikG7
 import LinnikGRH
+import LinnikAlmostAll
 import ShortPrimesHalfPlane
 import LinnikWeylBridge
 import ZetaHuxley
@@ -446,6 +447,7 @@ import ZetaFrame
 import EuclidLattice
 import ZetaThin
 import ZetaPair
+import RHJoinsLinnik
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -1473,6 +1475,21 @@ The theorem, its corollary in number and its certificate's bound and parts (`Lin
 #print axioms ShortPrimesHalfPlane.zeroFreeXi_of_halfplane
 #print axioms LinnikWeylBridge.weylBound_of_PYWeyl
 
+/- Primes in almost all reduced classes (`LinnikAlmostAll`), the classical deduction in mean square: from a density
+estimate `CharDensity A B C`, all the reduced classes mod `q` but `Kφ(q)q^{−c}` hold a prime `p ≤ Kq^{A/2+η}`. Under
+GRH the exponent is `1 + η`; from the curve `g7d` it is `11667/10000 + η`, CONDITIONAL on the half-plane and on Chen,
+Gupta and Li's Proposition 3.1. Under GRH, a bound of Turán's type: all classes but `Kq^{1−δ+η}` hold a prime
+`p ≤ Kq^{1+δ}`, `0 < δ ≤ 1`. These hold for almost all classes, not every class; each is named in
+`formalisations/README.md`. -/
+#print axioms LinnikAlmostAll.sum_norm_sq_eq
+#print axioms LinnikAlmostAll.card_bad_le
+#print axioms LinnikAlmostAll.error_sq_le
+#print axioms LinnikAlmostAll.almostAll_of_charDensity
+#print axioms LinnikAlmostAll.almostAll_one_of_GRH
+#print axioms LinnikAlmostAll.almostAll_one
+#print axioms LinnikAlmostAll.almostAll_g7d
+#print axioms LinnikAlmostAll.almostAll_turan
+
 /- Results that no paper uses and nothing else printed here uses, kept for their own sake: each is named in
 `formalisations/` (`scripts/dead_code.py`). -/
 #print axioms BallTower.ballVol_lt_five
@@ -2199,15 +2216,22 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ZetaBalance.Setting.balance
 #print axioms ZetaBalance.BalanceData.zeta_le
 #print axioms ZetaBalance.riemannHypothesis_of_zetaBalanceBound
+#print axioms ZetaBalance.BalanceData.cyclicG_le
+#print axioms ZetaBalance.rhAndGRH_of_balanceBound
 #print axioms SlopeFrame.frame_inequality
 #print axioms GramVolume.vol_comp_le
 #print axioms EuclidLattice.bost
 #print axioms EuclidLattice.supClosed
 #print axioms EuclidLattice.frame
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
+#print axioms ZetaBalance.rhAndGRH_of_latticeBound
 #print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound
 #print axioms ZetaTwist.exists_winPair_twists
+#print axioms ZetaTwist.exists_winPair_twists_one
+#print axioms TwistFamily.exists_good_fin
 #print axioms ZetaBalance.riemannHypothesis_of_zetaPairBound
+#print axioms ZetaBalance.rhAndGRH_of_pairBound
+#print axioms LinnikGRH.dirichletRH_of_rhAndGRH
 
 /-! ### What `cglDensity` uses
 

@@ -47,9 +47,9 @@ library's licence.
 |---|---|---|---|---|
 | 1. The top | `HalfPlaneGRH` | 183 | about 130 | Done: `HalfPlaneGRH.rhAndGRH_of_zeroFreeRightOf`, with its converse `zeroFreeRightOf_half_iff` |
 | 2. Landau on windows | `WindowKernel`, `WindowPole`, `WindowNearest`, `LandauWindow`, `RampLaplace`, `WindowGRH` | about 1,600 | about 2,100 (the declarations `lemmaL` and `formB` name) | Done: `WindowGRH.rhAndGRH_of_windowBound` |
-| 3. Balance, for `ζ` | `ZetaBalance`, `ZetaGap` | about 1,070 | about 4,000 (`ChBalance`, `ChCore`, `core_gm`) | Done: `ZetaBalance.riemannHypothesis_of_zetaBalanceBound` |
-| 4. Lattices | `SlopeFrame`, `GramVolume`, `EuclidLattice`, `ZetaFrame` | about 1,030 | about 6,600 (hermitian lattices, Bost, polygons, `TheoremF`), and `ch_top`, about 3,000 | Done for Euclidean lattices: `ZetaBalance.riemannHypothesis_of_zetaLatticeBound`. Hermitian lattices with heights averaged over places, later |
-| The analytic inputs, for `ζ` | `PsiExplicit`, `ZetaThin`, `PrimeCharSums`, `MeanSquareSup`, `TwistFamily`, `ZetaTwist`, `ZetaPair` | about 2,260 | about 28,000 for the twists, mostly a prime number theorem in progressions | Done, conditionally on the half-plane `Re s > 11/12`: `ZetaBalance.riemannHypothesis_of_zetaPairBound` |
+| 3. Balance | `ZetaBalance`, `ZetaGap` | about 1,520 | about 4,000 (`ChBalance`, `ChCore`, `core_gm`) | Done for `ζ` and every primitive `χ`: `ZetaBalance.riemannHypothesis_of_zetaBalanceBound`, `ZetaBalance.rhAndGRH_of_balanceBound` |
+| 4. Lattices | `SlopeFrame`, `GramVolume`, `EuclidLattice`, `ZetaFrame` | about 1,060 | about 6,600 (hermitian lattices, Bost, polygons, `TheoremF`), and `ch_top`, about 3,000 | Done for Euclidean lattices, for `ζ` and every primitive `χ`: `ZetaBalance.riemannHypothesis_of_zetaLatticeBound`, `ZetaBalance.rhAndGRH_of_latticeBound`. Hermitian lattices with heights averaged over places, later |
+| The analytic inputs | `PsiExplicit`, `ZetaThin`, `PrimeCharSums`, `MeanSquareSup`, `TwistFamily`, `ZetaTwist`, `ZetaPair` | about 2,410 | about 28,000 for the twists, mostly a prime number theorem in progressions | Done for `ζ` and every primitive `χ`, conditionally on the half-plane `Re s > 11/12`: `ZetaBalance.riemannHypothesis_of_zetaPairBound`, `ZetaBalance.rhAndGRH_of_pairBound` |
 | 5–6. | | | almost all of 10.7 million lines | Later |
 
 Library line counts include the documentation; the archive has none.
@@ -63,7 +63,7 @@ Library line counts include the documentation; the archive has none.
 `WindowGRH.riemannHypothesis_of_zetaWindowBound` gives Mathlib's `RiemannHypothesis` from it.
 
 **After step 3**, the frontier for RH is `ZetaBalance.ZetaBalanceBound`: for every `ε > 0`, balance data
-(`ZetaBalance.BalanceData S x ε X`) at every `x` of windows with `Y` arbitrarily large. It is the inert-prime gap
+(`ZetaBalance.BalanceData S 1 x ε X`) at every `x` of windows with `Y` arbitrarily large. It is the inert-prime gap
 averaged over translates, with the analytic inputs as separate hypotheses: the setting is thin at `X`
 (`ZetaBalance.Setting.Thin`, errors at most `θy` for `y ≥ X`), and its twists are small (`ZetaBalance.Setting.Twists`,
 the three quadratic twists at most `x^{1/2+ε}` at `x`). `ZetaBalance.riemannHypothesis_of_zetaBalanceBound` gives RH
@@ -78,6 +78,13 @@ the inert-prime gap (G), with small losses (Z). `ZetaBalance.riemannHypothesis_o
 - **A real cut needs more.** The frontier below it must say where (G) comes from: vanishing at inert primes, mass
   formulas, and the sizes of the auxiliary primes.
 
+**For every primitive `χ`**, steps 3 and 4 leave `ZetaBalance.BalanceBound` and `ZetaBalance.LatticeBound`: the same
+data for each primitive `χ`, in a setting with a character `κ` of `A` lifting `χ`, averaged over the kernel `A₀` of
+`κ`, with translates carrying the shares of the cyclic family, and with the `3o` twists as the analytic input.
+`ZetaBalance.rhAndGRH_of_balanceBound` and `ZetaBalance.rhAndGRH_of_latticeBound` give the Riemann hypothesis for `ζ`
+and every Dirichlet `L`-function, through `WindowGRH.rhAndGRH_of_windowBound`. `ζ` is the case `χ = 1`, `κ = 1`
+(section "Steps 3 and 4 for every primitive character").
+
 **With the thin scales proved**, conditionally on the half-plane `Re s > 11/12`, the frontier for RH is
 `ZetaBalance.ZetaTwistBound`: lattice data with small twists, the thin classes beyond `(Nx)^{log x}`.
 `ZetaBalance.riemannHypothesis_of_zetaTwistBound` gives RH from it.
@@ -86,6 +93,11 @@ the inert-prime gap (G), with small losses (Z). `ZetaBalance.riemannHypothesis_o
 `ZetaBalance.ZetaPairBound`, the construction alone. At arbitrarily small `ε`, for every large `Y`, every pair of
 primes `(q, d)` with the arithmetic of `ZetaTwist.WinPair` has a sub-window `[Y′, Y′²]` of `[Y, Y^A]` on which every
 `x` has lattice data in a setting with that pair. `ZetaBalance.riemannHypothesis_of_zetaPairBound` gives RH from it.
+
+**For RH and GRH**, conditionally on the half-plane, the frontier is `ZetaBalance.PairBound`: the same for every
+primitive `χ`, in settings with a character `κ` of `A` lifting `χ`. `ZetaBalance.rhAndGRH_of_pairBound` gives the
+Riemann hypothesis for `ζ` and every Dirichlet `L`-function from it, and `LinnikGRH.dirichletRH_of_rhAndGRH` turns that
+into the hypothesis of the library's results under GRH (`LinnikGRH.linnik_two`, `LinnikAlmostAll.almostAll_one`).
 
 **What step 2 simplified against the archive.**
 - Landau's theorem on windows is proved once, for any finite family of characters with positive weights. The
@@ -323,20 +335,27 @@ use it are conditional on it, as the library's own D2 modules say.
   - So every thin class beyond `(N x)^{log x}` is covered. The archive's zero-free boxes near `s = 1` and its checks of
     small conductors are not needed.
 - **Twists** (`PrimeCharSums`, `MeanSquareSup`, `TwistFamily`, `ZetaTwist`). Done: `ZetaTwist.exists_winPair_twists`.
-  For `0 < ε ≤ 1/2` and `A ≥ 1`, every large `Y` has a pair `(q, d)` meeting `ZetaTwist.WinPair ε Y` whose twists
-  `χ_q`, `χ_d`, `χ_qχ_d` have `|g_χ(y)| ≤ y^{1/2+ε}` at every `y ∈ [Y, Y^A]`. As in the archive, this comes from a
-  mean square over a family of primes, not from zeros near the critical line.
+  Let `χ` be a character of order `o`. For `0 < ε ≤ 1/2` and `A ≥ 1`, every large `Y` has a pair `(q, d)` meeting
+  `ZetaTwist.WinPair ε Y` whose `3o` twists `χ_d^α χ_q^β χ^k` (`ZetaTwist.twist`), `(α, β) ≠ (0, 0)` and `k < o`, have
+  `|g(y)| ≤ y^{1/2+ε}` at every `y ∈ [Y, Y^A]`, `g` the ramp error of the primitive character. For `ζ` these are `χ_q`,
+  `χ_d` and `χ_qχ_d` (`ZetaTwist.exists_winPair_twists_one`). As in the archive, this comes from a mean square over a
+  family of primes, not from zeros near the critical line.
   - Write `g_χ(y) = −Σ_{n≤Z} Λ(n)χ(n)min(1, y/n) + y·(L′/L(1, χ) + Σ_{n≤Z} χΛ(n)/n)` (`PrimeCharSums.rampErr_eq`).
     The second term is a tail, small by `GSTail`.
   - The mean square of the first sum over the primes of a progression is dominated by its diagonal, `y` times a power
     of `log y`. The off-diagonal terms are sums of a Jacobi character over those primes, small by the uniform prime
     number theorem for characters (`PrimeCharSums.norm_sum_Ioc_modEq_le`).
   - The same holds for its increments in `y`. A discrete Sobolev step and Markov's inequality
-    (`MeanSquareSup.card_bad_le`) then give most of the family a bound uniform in `y ∈ [Y, Y^A]`
-    (`TwistFamily.exists_good`). This is done for `q`, then for `d` given `q`.
+    (`MeanSquareSup.card_bad_le`) then give most of the family a bound uniform in `y ∈ [Y, Y^A]`, for finitely many
+    complex weights at once (`TwistFamily.exists_good_fin`). This is done for `q`, with the `o` weights `χ^k`, then
+    for `d` given `q`, with the `2o` weights `χ^k` and `χ^kχ_q`.
+  - The primitive character of a twist is its weight times the Jacobi symbol at every `n` prime to `f·q·d`
+    (`ZetaTwist.prim_twist_apply`). The other `n`, the prime powers of `fqd` and of the family's modulus, weigh
+    `O(z log³Y)` in all, far below `√Y`, so no formula at those primes is needed. The twist is not trivial, as the
+    conductor of `χ_d` or of `χ_q` cannot divide that of the other factors (`ZetaTwist.twist_ne_one`).
   - The archive spends about 28,000 lines here, mostly on a prime number theorem in progressions that copes with
     exceptional zeros. The half-plane removes that, together with Siegel, Page and Deuring–Heilbronn. The library's
-    four modules take about 1,770 lines.
+    four modules take about 1,900 lines.
 - **The shape of the frontier.** The lattice side fixes the pair `(q, d)` from the window's base and then chooses its
   sub-window. That is why the twist bound must hold uniformly on `[Y, Y^A]`. The lattice side needs only arithmetic
   of the pair (`ZetaTwist.WinPair`):
@@ -345,9 +364,11 @@ use it are conditional on it, as the library's own D2 modules say.
 
   So the frontier for `ζ`, `ZetaBalance.ZetaPairBound` (`ZetaPair`), quantifies over every such pair, as the archive's
   own window input does. It is the construction alone: every `x` of a sub-window `[Y′, Y′²]` of `[Y, Y^A]` has lattice
-  data in a setting with that pair. `ZetaBalance.riemannHypothesis_of_zetaPairBound` gives RH from it. On the way, the
-  three twists of a setting become the ramp errors of `χ_d`, `χ_q` and `χ_qχ_d`, as `χ_qχ_d` is primitive
-  (`ZetaTwist.chiQD_isPrimitive`).
+  data in a setting with that pair. `ZetaBalance.riemannHypothesis_of_zetaPairBound` gives RH from it, and
+  `ZetaBalance.PairBound`, the same for every primitive `χ` with `κ` lifting `χ`, gives RH and GRH
+  (`ZetaBalance.rhAndGRH_of_pairBound`). On the way, the `3o` twists of a setting become the ramp errors of the
+  concrete twists: for `κ` lifting `χ`, `D_{(α,β,κ^k)}` is `χ_d^α χ_q^β χ^k` changed from the level `f·q·d` to `N`
+  (`ZetaBalance.Setting.Lifts.g_twist`). For `ζ`, `κ = 1` lifts the character mod `1`.
 - **The modules.** Line counts include the documentation.
 
   | Module | Lines | Content |
@@ -356,19 +377,62 @@ use it are conditional on it, as the library's own D2 modules say.
   | `ZetaThin` | 284 | the thin scales |
   | `PrimeCharSums` | 413 | sums of a character over the primes of a progression, uniformly in the modulus; the ramp error at a cutoff |
   | `MeanSquareSup` | 90 | discrete Sobolev and Markov: few members of a family are bad anywhere on an interval |
-  | `TwistFamily` | 873 | the mean square over a family of primes, and a member good on the whole window |
-  | `ZetaTwist` | 391 | the pair `(q, d)` with small twists on `[Y, Y^A]` |
-  | `ZetaPair` | 146 | the twists as concrete characters, and RH from `ZetaBalance.ZetaPairBound` |
+  | `TwistFamily` | 852 | the mean square over a family of primes, and a member good on the whole window for finitely many weights |
+  | `ZetaTwist` | 550 | the pair `(q, d)` whose `3o` twists of `χ` are small on `[Y, Y^A]`; for `ζ`, `χ_q`, `χ_d` and `χ_qχ_d` |
+  | `ZetaPair` | 159 | the twists of a setting as concrete characters; RH and GRH from `ZetaBalance.PairBound`, RH from `ZetaBalance.ZetaPairBound` |
+
+## Steps 3 and 4 for every primitive character
+
+Done on 23 November 2026, by generalising `ZetaBalance`, `ZetaGap` and `ZetaFrame` in place; the names below are in
+the namespace `ZetaBalance`. `ζ` is the case `χ = 1`.
+
+- **The setting** (`ZetaBalance.Setting`). It takes primes `q ≡ 3 (mod 4)` and `d` with `(2/d) = (q/d) = 1`, a modulus
+  `QS` prime to `q` whose every prime `p` has `(p/d) = 1`, and any subgroup `K` of `(ℤ/QS)ˣ`. Then `A = (ℤ/QS)ˣ/K`, and
+  the level is `N = QS·q·d`. The archive's choices are instances: `QS` a common multiple of `2^{e+2}` and `f`, and
+  `K = {u ≡ ±1 (mod 2^{e+2}) : χ(u) = 1}`. The exponent `e` is no longer part of the setting.
+- **Lemma B** (`Setting.balance`) keeps its form. `ASK` runs over `n` prime to `QS·q`, and `ξ̃` is the lift of `ξ` to a
+  character mod `QS`. The primes of `QS·q` contribute `0` to the kernel, as `(p/d) = 1` there. `χ* = 1` only for
+  `χ = 1`, since `ξ̃*` vanishes at a prime of `QS` unless `ξ = 1` (`Setting.eq_one_of_prim_lift`).
+- **The parity twist is not needed.** Lemma B never uses that `c = (−1, −1, 1)` is complex conjugation, so it holds as
+  it stands for odd `χ`, where `[−1]_A ≠ 1`. The archive's twist of the Artin map only fixes coordinates. Taking
+  `(−1, −1, [−1]_A)` for `c` replaces each translate `t` by `[−1]_A t`, which multiplies the `k`-th share below by
+  `χ(−1)^k`. The frontiers ask for the shares in the coordinates of Lemma B.
+- **Lemma Avg** (`Setting.sum_Th`). Let `κ` be a character of `A` of order `o`, with kernel `A₀`, and let `T2 ⊆ A₀`.
+  Then `Σ_{u ∈ A₀} Th(u, t) = (r|T2|/2o)·Re Σ_{k<o} κ(t)^k Σ_{α,β} (−1)^α g_{(α,β,κ^k)}(y)`. The kept characters are
+  not counted. Since `1[κ(u) = 1] = o⁻¹ Σ_{k<o} κ(u)^k`, orthogonality keeps exactly the `κ^k` (`sum_dual_sum_A₀`).
+- **Theorem Z** (`BalanceData.cyclicG_le`). The translates carry shares:
+  `|Σ_t a_t κ(t)^k − Σ_t a_t/(3o + 1)| ≤ x^{ε−1} Σ_t a_t` for `0 < k < o`. Assume the gap averaged over `A₀` is
+  bounded as for `ζ`, the setting is thin, the `3o` twists are at most `x^{1/2+ε}` at `x` (`Setting.Twists`), and the
+  kept errors `g_{(0,0,κ^k)}(x)` are at most `x^{3/2+ε}`. Then
+  `Re g_1(x) + (3o + 1)⁻¹ Σ_{0<k<o} Re g_{κ^k}(x) ≤ (9o − 2)x^{1/2+3ε}`. For `ζ` this is `7x^{1/2+3ε}`, as before.
+  The kept errors bound the share errors; a crude bound gives them for large `x` (`eventually_norm_rampErr_le`, from
+  `Λ(n) ≤ log x` and `Σ_{n≤x} 1/n ≤ 1 + log x`).
+- **The cyclic family** (`Setting.Lifts.cyclicG_eq`). Say `κ` lifts `χ` (`Setting.Lifts`) when `f ∣ QS` and `κ̃ = χ` at
+  level `QS`. Then `κ^k` lifts `χ^k`, and the weighted error is `(WindowGRH.cyclic χ).G(x)`.
+- **The frontiers**, `BalanceBound` and `LatticeBound`, ask for this data for every primitive `χ`. Frames are needed
+  only at `u ∈ A₀`, and (G) and (Z) are summed over `A₀`.
+- **The thin scales carry over.** `thin_of_large` holds for every setting, so for every `χ`, conditionally on the
+  half-plane.
+- **The twists for every `χ`** (`ZetaTwist.exists_winPair_twists`, section "The analytic inputs"). The archive's
+  `ψ_kχ_q`, `ψ_kχ_d` and `ψ_kχ_qχ_d`, `ψ_k = (χ^k)*`, have the primitive characters of the library's twists
+  `χ_d^α χ_q^β χ^k` at level `f·q·d` (`ZetaTwist.twist`), and these are the characters of a setting in which `κ` lifts
+  `χ` (`Setting.Lifts.g_twist`). No primitive character `ψ_k` is formed: the weights of the mean square are the
+  values of `χ^k`, which agree with those of `ψ_k` at every `n` prime to `f`.
+- **The pair-first frontier for every `χ`** (`ZetaPair`): `PairBound`, and `rhAndGRH_of_pairBound`, conditionally on
+  the half-plane. Done on 23 November 2026, with no change to `lib/core`. The pair `(q, d)` is chosen for `χ`, and the
+  settings asked for exist once `Y` is large: their modulus `QS` must be a multiple of `f` whose every prime `p` has
+  `(p/d) = 1`, and a pair of `ZetaTwist.WinPair` has `(p/d) = 1` for every prime `p ≤ Y^{ε/5}`, by quadratic
+  reciprocity, as `d ≡ −1` modulo every odd one and `d ≡ 7 (mod 16)`.
+- **Linnik's exponent.** `HalfPlaneGRH.RHandGRH` covers every character, primitive or not, so it is GRH in the words of
+  the library's results under it (`LinnikGRH.dirichletRH_of_rhAndGRH`, in `RHJoinsLinnik`): `PairBound` gives
+  `LinnikGRH.linnik_two` and `LinnikAlmostAll.almostAll_one`, conditionally on the half-plane.
 
 ## Next
 
-For `ζ`, every step above the construction is done. RH follows from `ZetaBalance.ZetaPairBound`. That frontier asks
-only for the construction: lattice data on a sub-window, for every pair `(q, d)` with the archive's arithmetic.
-Remaining, in order:
+For `ζ` and every Dirichlet `L`-function, every step above the construction is done. RH and GRH follow from
+`ZetaBalance.PairBound`, and RH alone from `ZetaBalance.ZetaPairBound`. These frontiers ask only for the construction:
+lattice data on a sub-window, for every pair `(q, d)` with the archive's arithmetic. Remaining, in order:
 
-- **GRH.** Redo steps 3 and 4 and the analytic inputs for the cyclic family of every primitive character, with the
-  weights `1/(3o + 1)`, the kept characters and the subgroups `A₀` of `ch_core` and `core_gm`. Steps 1 and 2 already
-  cover every character.
 - **Hermitian lattices.** Euclidean lattices with an action of `O_K` and heights averaged over the places, as the
   archive's frames use, with Bost's inequality place by place (`GramVolume`).
 - **A cut with content.** Split the gain (G) into the archive's statements: vanishing at inert primes, the slopes of

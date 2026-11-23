@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1854 printed theorems, marking *opt-in* the 14 that
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1869 printed theorems, marking *opt-in* the 14 that
 rest on the Linnik paper's certificates, whose build is opt-in (`lib/check/CheckLinnik.lean`), and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
@@ -62,7 +62,9 @@ fields with their class groups and the class number formula.
   the two theorems rest on `propext`, `Classical.choice` and `Quot.sound` alone. The library does not import it and
   declares no axioms, so in its Lean GRH stays a hypothesis: the headline Linnik exponent, `2 + η`, is
   `LinnikGRH.linnik_two`, under GRH in the archive's words (`LinnikGRH.DirichletRH`). The library is rebuilding the
-  archive's proof on its own stack ([`rh-rebuild.md`](rh-rebuild.md)).
+  archive's proof on its own stack ([`rh-rebuild.md`](rh-rebuild.md)); the rebuild's frontier `ZetaBalance.PairBound`
+  gives that hypothesis, conditionally on the half-plane (`ZetaBalance.rhAndGRH_of_pairBound`,
+  `LinnikGRH.dirichletRH_of_rhAndGRH`).
 - **An input whose journal review is pending**: Alpöge and Furman's theorem that two thirds of the zeros of `ζ` lie on
   the critical line (arXiv:2608.13637), which `zeta23` proves with no hypothesis (`CriticalLine.two_thirds`). zeta23's
   [metadata](https://github.com/anthropics/formal-math/blob/fbdc36bbf17d20af3fd0447c6d1a8a02773c9844/zeta23/formalization.yaml)
@@ -112,6 +114,7 @@ result's note finds it unused; blank where neither has been checked.
 | The same with `p ≤ Kq^{2100/1000}`: that search with terms of the sign `+` reversed too, the leaves of a comparison cut in three (the fourth moment of the cofactor's polynomial), the resonant window in both trees, a Type II estimate in one variable that sorts the characters by the sizes of a rest's own prime sums as well as by their zeros, with Chen, Gupta and Li's large values of the powers and the cofactor in the rest when it is one prime, the window's test at the two corners of the box of a rest's cells where its test at one corner fails, the chains over the frozen parts on cells as fine as the main tree's, a box of two primes cut in two where that pays, and a plan that searches every configuration of the estimate in two variables that the kernel's tests accept over the frozen parts (the Linnik paper's Theorem 1.1) | `Linnik21000.linnik_21000` | yes |
 | In number, at `2150/1000` and at `2100/1000`: for every `q`, every `a` prime to `q` and every `x ≥ Kq^L` the class holds at least `c·x/(φ(q) log x)` primes `p ≤ x`, with `c > 0`. The searches prove the count at `x = q^L`, where the primes of the class in `(q^L, 2q^L]` number at least `(1 − C)/2` of `x/(φ(q) log x)` for large `q`, `C` the search's cost; the multiples of the modulus carry it to every `x`, which uses that the theorems hold for every modulus and every class (the Linnik paper's Corollary 1.3) | `Linnik21500.count_21500`, `Linnik21000.count_21000`, `Linnik21500.count_large_21500`, `Linnik21000.count_large_21000`, `SieveAd.count_of_large` | yes |
 | Linnik by density estimates and the classical deduction, with the exponents `12`, `4`, `17/6`, `36/13`, `87/35`, `12/5` and `2.3334`, each `+ η` | `Linnik.linnik_twelve`, `LinnikDensity.linnik_four`, `LinnikSubconvex.linnik_seventeen_sixths`, `LinnikIngham.linnik_thirtysix_thirteenths`, `LinnikHuxley.linnik_eighty_seven_thirty_fifths`, `LinnikTwelve.linnik_twelve_fifths`, `LinnikG7.linnik_g7d` | yes |
+| Linnik for almost all classes, below exponent `2`: for every `η > 0`, all the reduced classes mod `q` but at most `Kφ(q)q^{−c}` hold a prime `p ≤ Kq^{1+η}` under GRH (L. Alpöge's, an input, above; in the Lean a hypothesis), and a prime `p ≤ Kq^{11667/10000+η}` from the curve `g*`, which rests on the half-plane and on Chen, Gupta and Li's Proposition 3.1 (the two inputs above); from a density exponent `A`, the exponent `A/2 + η`. Under GRH, with GRH's `√x` for every character, a bound of Turán's type: for `0 < δ ≤ 1`, all the classes but `Kq^{1−δ+η}` hold a prime `p ≤ Kq^{1+δ}`, so at `δ = 1 − κ` all but `Kq^{κ+η}` hold one below `Kq^{2−κ}`. These hold for almost all classes, not every class. The method is classical, the deduction above in mean square over the classes (under GRH it is P. Turán's argument); the exponent `1.1667` was not found in the literature by a quick search, and is not claimed as new | `LinnikAlmostAll.almostAll_one`, `LinnikAlmostAll.almostAll_one_of_GRH`, `LinnikAlmostAll.almostAll_turan`, `LinnikAlmostAll.almostAll_g7d`, `LinnikAlmostAll.almostAll_of_charDensity` | yes |
 | A prime in `(y, y + y^θ]` for every large `y`, `θ > 17/30`; and for all `y ∈ [X, 2X]` outside a set of measure `X^{1−δ}`, `θ > 2/15` | `ZetaGMDensity.short_primes_seventeen_thirtieths`, `ZetaGMDensity.almost_all_short_primes_two_fifteenths` | yes |
 | In terms of `Θ`: `limsup log\|ψ(x) − x\|/log x = Θ`, the same for `M(x)`, `Σ μ(n)n^{−s}` converges exactly on `Re s > Θ`, and a prime in `(y, y + y^θ]` for `θ > 2Θ/(1 + 2Θ)` | `PsiExponent.limsup_expo`, `MertensExponent.limsup_mexpo`, `MertensExponent.moebiusAbscissa_eq_Theta`, `InghamDensity.short_primes_Theta` | |
 | `ψ(x) − x`, `M(x)` and the prime races mod 3, 4, 7 and 8 are `Ω±(x^θ)` for every `θ < 1/2` | `PsiOmega.psi_omega_half`, `PsiOmega.mertens_omega_half`, `PsiOmega.race_three_half`, `PsiOmega.race_four_half`, `WeilTwinGeneral.race_seven_half`, `PsiOmega.race_eight_half` | no |
@@ -166,7 +169,7 @@ The deductions are stated for any input, against Mathlib's `ζ` and `LFunction`,
 |---|---|---|
 | no zero of `ζ` on `Re s > β`, for some `β < 1` | the errors of `ψ`, `M` and `Σ d_k` at `x^{β+η}`, and of the squarefree count at `x^{1/(3−β)+η}` | `HalfPlanePNT.psi_isBigO_of_zeroFree`, `MertensExponent.mertens_isBigO_of_zeroFree`, `DivisorExponent.divisor_isBigO_of_zeroFree`, `SquarefreeCount.squarefree_isBigO_of_zeroFree` |
 | the same for `L(s, χ)`, `χ ≠ 1` | `ψ(x, χ) = O(x^{β+η})` | `ChiPNT.psiChi_isBigO_of_zeroFree` |
-| a density estimate `Linnik.CharDensity A B C` over the characters, `A ≥ 2` | Linnik's theorem with every exponent above `A` | `Linnik.linnik_of_charDensity` |
+| a density estimate `Linnik.CharDensity A B C` over the characters, `A ≥ 2` | Linnik's theorem with every exponent above `A`, and for almost all classes every exponent above `A/2` | `Linnik.linnik_of_charDensity`, `LinnikAlmostAll.almostAll_of_charDensity` |
 | `ShortWeil.DensityXi A B` and a zero-free region `ShortWeil.ZeroFreeXi α` for `ζ` | a prime in `(y, y + y^θ]` for `θ > max(1/2, 1 − 1/A)` | `ShortWeil.short_primes_of_density` |
 | `ShortWeil.DensityXi (A + ε) B` for every `ε > 0` | primes in almost all intervals `(y, y + y^θ]` for `θ > 1 − 2/A` | `AlmostAll.almost_all_of_density` |
 | `\|ζ(1/2 + it)\| ≪ \|t\|^c` (`CrossCriteria.ZetaCritBound`) | the density exponent `2 + 4c` | `InghamDensity.densityXi_of_zetaCrit` |
@@ -237,7 +240,10 @@ In order of what is in reach.
    as Linnik's exponent does: the sieve's main terms take the prime number theorem in short ranges from it.
 2. **Linnik's exponent.** With GRH from L. Alpöge's archive the library's exponent is `2 + η`
    (`LinnikGRH.linnik_two`), what the density route gives at `A = 2`; an exponent below `2` for every modulus is not
-   known even under GRH, so any route to one is of the greatest interest. With no hypothesis, the Linnik paper proves
+   known even under GRH, so any route to one is of the greatest interest. For almost all classes the library is below
+   `2`: `1 + η` under GRH and `11667/10000 + η` from the curve `g*`, for all classes but `Kφ(q)q^{−c}` of them
+   (`LinnikAlmostAll.almostAll_one`, `LinnikAlmostAll.almostAll_g7d`); and under GRH all classes but `Kq^{κ+η}` have
+   a prime below `Kq^{2−κ}` (`LinnikAlmostAll.almostAll_turan`). With no hypothesis, the Linnik paper proves
    `43/20 = 2150/1000` (`Linnik21500.linnik_21500`, its Theorem 1.2)
    from the half-plane and Huxley's density estimate alone, and `21/10 = 2100/1000` (`Linnik21000.linnik_21000`, its
    Theorem 1.1) from the half-plane, Chen, Gupta and Li's Proposition 3.1 and Ingham's and Huxley's density estimates;

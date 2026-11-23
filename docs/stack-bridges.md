@@ -1,8 +1,9 @@
-# Four bridges between parts of the library
+# Five bridges between parts of the library
 
-Four small modules in `lib/pnt` state an implication between two parts of the library that had no import between
-them. Each proves an implication that is known or elementary; what the modules add is the machine-checked link. None of
-them is imported by `lib/check/Check.lean` or by a paper; their axioms are printed in `lib/check/CheckAll.lean`.
+Five small modules in `lib/pnt` state an implication between two parts of the library that had no import between
+them. Each proves an implication that is known or elementary; what the modules add is the machine-checked link. Their
+axioms are printed in `lib/check/CheckAll.lean`. `LinnikGRH` is also imported by `lib/check/Check.lean`, which prints
+its Linnik theorem first: GRH counts as proved for this repository, through L. Alpöge's archive (`docs/account.md`).
 
 ## `LinnikGRH`: GRH for every Dirichlet L-function gives Linnik's exponent `2 + η`
 
@@ -24,6 +25,20 @@ character is counted at `σ > 1/2`, and at most `φ(q)` characters at `σ = 1/2`
 `linnik_of_charDensity` (`hA : 2 ≤ A`). `linnik_of_charDensity` also uses the zero-free half-plane
 `Eis.LFunction_ne_zero_of_re_gt`, so this is not a statement independent of it. The unconditional exponents of the Linnik
 paper are different statements.
+
+## `RHJoinsLinnik`: the rebuild's GRH is GRH as Alpöge's archive states it
+
+```lean
+theorem LinnikGRH.dirichletRH_of_rhAndGRH (h : HalfPlaneGRH.RHandGRH) : LinnikGRH.DirichletRH
+```
+
+It joins the library's rebuild of Alpöge's proof (`docs/rh-rebuild.md`) to `LinnikGRH`. The rebuild concludes
+`HalfPlaneGRH.RHandGRH`, from its frontier `ZetaBalance.PairBound` (`ZetaBalance.rhAndGRH_of_pairBound`).
+`LinnikGRH.DirichletRH` is GRH in the archive's words.
+
+*Implication.* `HalfPlaneGRH` has already passed from primitive characters to every character, through the Euler
+factors, so the lemma is one line. With it, `LinnikGRH.linnik_two` and `LinnikAlmostAll.almostAll_one` follow from the
+rebuild's frontier.
 
 ## `ShortPrimesHalfPlane`: the zero-free region of the short-primes theorems from the half-plane
 

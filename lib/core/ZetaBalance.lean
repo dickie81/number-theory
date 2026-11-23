@@ -2,26 +2,31 @@ import Mathlib
 import WindowGRH
 
 /-!
-# The balance identity for `ζ`
+# The balance identity
 
-A step of the library's proof of the Riemann hypothesis (`docs/rh-rebuild.md`, "Blueprint for steps 3 and 4"):
-Lemma B, an exact identity between a sum over the prime powers inert in `ℚ(√−d)` and the ramp errors
-(`WindowGRH.rampErr`) of a family of Dirichlet characters of level `N = 2^{e+2} q d`.
+A step of the library's proof of the Riemann hypothesis for `ζ` and every Dirichlet `L`-function
+(`docs/rh-rebuild.md`, "Blueprint for steps 3 and 4"): Lemma B, an exact identity between a sum over the prime powers
+inert in `ℚ(√−d)` and the ramp errors (`WindowGRH.rampErr`) of a family of Dirichlet characters of level
+`N = QS·q·d`.
 
-**The setting** (`Setting`): primes `q` and `d` with `q ≡ 3 (mod 4)` and `(2/d) = (q/d) = 1`, and `e ∈ ℕ`.
+**The setting** (`Setting`): primes `q` and `d` with `q ≡ 3 (mod 4)` and `(2/d) = (q/d) = 1`; a modulus `QS` prime to
+`q` whose every prime `p` has `(p/d) = 1`; and a subgroup `K` of `(ℤ/QS)ˣ`. The archive takes `QS = 2^{e+2}` and
+`K = {±1}` for `ζ`, and for a primitive `χ` mod `f` a common multiple `QS` of `2^{e+2}` and `f` with
+`K = {u ≡ ±1 (mod 2^{e+2}) : χ(u) = 1}`. Lemma B needs none of that: it holds for every `QS` and `K` as above.
 
-**The group.** `A = (ℤ/2^{e+2})ˣ/{±1}` (`A`), `Φ = {±1} × A` (`Φ`) and `G = {±1} × Φ` (`G`), in which `Φ` is the
+**The group.** `A = (ℤ/QS)ˣ/K` (`Setting.A`), `Φ = {±1} × A` (`Φ`) and `G = {±1} × Φ` (`G`), in which `Φ` is the
 subgroup `{1} × Φ` of index `2`. The class of `n` prime to `N` is `[n] = ((n/d), (n/q), [n]_A)`, with `[n]_A` the
-class in `A` (`clsA`). For `t ∈ A`, `n` prime to `2q` has the partner `ρ_t(n) = ((−n/q), [n]_A t) ∈ Φ`
+class in `A` (`Setting.clsA`). For `t ∈ A`, `n` prime to `QS·q` has the partner `ρ_t(n) = ((−n/q), [n]_A t) ∈ Φ`
 (`Setting.partner`), and `ρ ∈ Φ` the image `γ_t(ρ) = c ρ (1, 1, t)⁻¹ ∉ Φ` (`γ`), with `c = (−1, −1, 1)` (`c`).
 
 **The characters** of `G` are the triples `χ = (α, β, ξ)` (`Dual`), `α, β ∈ {0, 1}` (as `false`, `true`) and
 `ξ : A → ℂˣ`, with `χ(s_d, s_q, u) = s_d^α s_q^β ξ(u)` (`eval`). The Dirichlet character `D_χ = χ_d^α χ_q^β ξ̃` mod
-`N` (`Setting.D`), with `χ_p = (·/p)` (`legChar`) and `ξ̃(n) = ξ([n]_A)` (`lift`), has `D_χ(n) = χ([n])` for `n`
-prime to `N`. Its error is `g_χ = rampErr χ*` (`Setting.g`), `χ*` the primitive character inducing `D_χ`.
+`N` (`Setting.D`), with `χ_p = (·/p)` (`legChar`) and `ξ̃(n) = ξ([n]_A)` mod `QS` (`Setting.lift`), has
+`D_χ(n) = χ([n])` for `n` prime to `N`. Its error is `g_χ = rampErr χ*` (`Setting.g`), `χ*` the primitive character
+inducing `D_χ`.
 
 **The sums.** For `a ∈ ℝ` and weights `W : Φ → (0, ∞)`:
-* `ASK(a, t, W) = Σ_{(n, 2q) = 1} Λ(n)(1 − χ_d(n))(a/n − W(ρ_t(n)))⁺` (`Setting.ASK`), a finite sum;
+* `ASK(a, t, W) = Σ_{(n, QS·q) = 1} Λ(n)(1 − χ_d(n))(a/n − W(ρ_t(n)))⁺` (`Setting.ASK`), a finite sum;
 * `MAIN(a, W) = a(log a − 1 − γ + Re L'/L(1, χ_d) − |Φ|⁻¹ Σ_{ρ ∈ Φ} log W(ρ))` (`Setting.MAIN`);
 * the gap `Σ_{t ∈ TT} Σ_{j < m} [ASK(a_t, t, w_{u₀,j}) − MAIN(a_t, w_{u₀,j})]` (`Setting.gap`), for later use.
 
@@ -30,31 +35,37 @@ prime to `N`. Its error is `g_χ = rampErr χ*` (`Setting.g`), `χ*` the primiti
 
 **The proof.** `W·g_χ(a/W)` is the ramp sum `Σ_n Λ(n) χ*(n) (a/n − W)⁺` plus a main term (`Setting.mul_g`).
 
-1. *`χ*` at prime powers* (`Setting.prim_D`): `χ*(n) = (χ_d^α)*(n) (χ_q^β)*(n) ξ̃*(n)`. At a prime `p`, a factor
-   whose level is prime to `p` splits off the primitive character (`prim_mul_apply`), and the remaining factor
-   keeps its primitive character under the change of level.
+1. *`χ*` at prime powers* (`Setting.prim_D`): `χ*(n) = (χ_d^α)*(n) (χ_q^β)*(n) ξ̃*(n)`. The levels `d`, `q` and `QS`
+   are prime to each other. At a prime `p`, a factor whose level is prime to `p` splits off the primitive character
+   (`prim_mul_apply`), and the remaining factor keeps its primitive character under the change of level.
 2. *The kernel* (`Setting.kernel`). So at `ρ = (s, u)` the sum `Σ_χ conj χ(γ_t(ρ)) χ*(n)` factorises as
-   `(1 − χ_d(n))(1 − s χ_q(n)) Σ_ξ conj ξ(u t⁻¹) ξ̃*(n)`. For `n` a power of `2` or of `q` the first factor
-   vanishes, as `(2/d) = (q/d) = 1`. For `n` prime to `2q` the second factor is `2·1[s = (−n/q)]`, as
-   `(−1/q) = −1`, and the third `|A|·1[u = [n]_A t]`, by orthogonality on `A` (`sum_conj_mul`). So the kernel is
-   `|Φ|(1 − χ_d(n))·1[ρ = ρ_t(n)]`, and the ramp sums add up to `|Φ|·ASK`. The powers of `d` need no case of
-   their own: there `χ_d(n) = 0`.
+   `(1 − χ_d(n))(1 − s χ_q(n)) Σ_ξ conj ξ(u t⁻¹) ξ̃*(n)`. For `n` a power of a prime dividing `QS·q` the first factor
+   vanishes, as `(q/d) = 1` and `(p/d) = 1` for `p ∣ QS`. For `n` prime to `QS·q` the second factor is
+   `2·1[s = (−n/q)]`, as `(−1/q) = −1`, and the third `|A|·1[u = [n]_A t]`, by orthogonality on `A`
+   (`sum_conj_mul`). So the kernel is `|Φ|(1 − χ_d(n))·1[ρ = ρ_t(n)]`, and the ramp sums add up to `|Φ|·ASK`. The
+   powers of `d` need no case of their own: there `χ_d(n) = 0`.
 3. *The main terms* (`Setting.sum_main`). `Σ_{ρ ∈ Φ} conj χ(γ_t(ρ))` is `|Φ|`, `−|Φ|` or `0` as `χ = 1`,
    `χ = (1, 0, 1)` or neither (`sum_conj_eval_γ`), and `χ* = 1` only for `χ = 1` (`Setting.D_eq_one_iff`, from
-   step 1 at `d`, `q` and `2`). The `L'/L(1, χ*)` terms leave `−|Φ| a L'/L(1, χ_d)` (`Setting.LFunction_D_d`),
-   and the `χ = 1` terms `Σ_ρ ((1 + γ)a − a log(a/W(ρ)))`: together `−|Φ|·MAIN`.
+   step 1 at `d`, at `q` and at the primes of `QS`). The `L'/L(1, χ*)` terms leave `−|Φ| a L'/L(1, χ_d)`
+   (`Setting.LFunction_D_d`), and the `χ = 1` terms `Σ_ρ ((1 + γ)a − a log(a/W(ρ)))`: together `−|Φ|·MAIN`.
 
 **Design.** `A` is the quotient group, and its characters are the homomorphisms `A →* ℂˣ`; their orthogonality
-comes from Mathlib's duality for finite abelian groups (`sum_dual_apply`). The signs are `ℤˣ`, and the characters
+comes from Mathlib's duality for finite abelian groups (`sum_dual_apply`). The objects that need only a finite
+abelian group (`Φ`, `G`, `Dual`, `γ`, orthogonality) are stated for any. The signs are `ℤˣ`, and the characters
 of `{±1}` are indexed by `Bool`. Lemma B is stated with real parts, and `MAIN` takes `Re L'/L(1, χ_d)`: the proof
 computes the right side in `ℂ` as `ASK − MAIN` with `L'/L(1, χ_d)` in place of its real part. That `L'/L(1, χ_d)`
 is real, as `χ_d` is, is not needed.
 
-**Against the blueprint.**
-* `d ≡ 3 (mod 4)` is not used. It makes `c` the class `[−1]` (through `(−1/d) = −1`) and, with `q ≡ 3 (mod 4)`,
-  gives `(d/q) = −1`. But `γ_t` is defined from `c = (−1, −1, 1)` directly, and at `n = dⁱ` the sign factor
+**Against the blueprint and the archive.**
+* `d ≡ 3 (mod 4)` is not used. It gives `(−1/d) = −1`, which makes `c` the class `[−1]` when `−1 ∈ K`, and, with
+  `q ≡ 3 (mod 4)`, `(d/q) = −1`. But `γ_t` is defined from `c = (−1, −1, 1)` directly, and at `n = dⁱ` the sign factor
   `1 + s(−dⁱ/q)` is `2·1[s = (−dⁱ/q)]` whatever `(d/q)` is.
-* `q ≠ d` and `d ≠ 2` follow from `(q/d) = (2/d) = 1`, and `q ≠ 2` from `q ≡ 3 (mod 4)`.
+* For an odd `χ`, `−1 ∉ K`, so `[−1]_A ≠ 1` and complex conjugation, `(−1, −1, [−1]_A)`, is not `c`; the archive
+  twists its Artin map so that it is. Lemma B never uses `[−1] = c`: it is an identity for the `c` above whatever `K`
+  is, so it needs no twist. Taking `(−1, −1, [−1]_A)` instead of `c` would only replace the translate `t` by
+  `[−1]_A t`, on both sides.
+* `q ≠ d` and `d ≠ 2` follow from `(q/d) = (2/d) = 1`, `q ≠ 2` from `q ≡ 3 (mod 4)`, and `d ∤ QS` from
+  `(p/d) = 1` for `p ∣ QS`.
 * `a > 0` is not needed.
 -/
 
@@ -182,147 +193,112 @@ theorem prim_legPow {p : ℕ} [Fact p.Prime] (hp : p ≠ 2) (α : Bool) (n : ℕ
   · exact prim_one_apply n
   · exact prim_apply_of_isPrimitive (legChar_isPrimitive hp) n
 
-/-! ## The group `A` and its characters -/
+/-! ## The characters of a finite abelian group -/
 
-/-- `A = (ℤ/2^{e+2})ˣ/{±1}`, cyclic of order `2^e`. -/
-def A (e : ℕ) : Type := (ZMod (2 ^ (e + 2)))ˣ ⧸ Subgroup.zpowers (-1 : (ZMod (2 ^ (e + 2)))ˣ)
+section Characters
 
-noncomputable instance (e : ℕ) : CommGroup (A e) := QuotientGroup.Quotient.commGroup _
-instance (e : ℕ) : Finite (A e) :=
-  inferInstanceAs (Finite ((ZMod (2 ^ (e + 2)))ˣ ⧸ Subgroup.zpowers (-1 : (ZMod (2 ^ (e + 2)))ˣ)))
-noncomputable instance (e : ℕ) : Fintype (A e) := Fintype.ofFinite _
-noncomputable instance (e : ℕ) : DecidableEq (A e) := Classical.decEq _
-noncomputable instance (e : ℕ) : Fintype (A e →* ℂˣ) := Fintype.ofFinite _
-
-/-- The quotient map `(ℤ/2^{e+2})ˣ → A`. -/
-noncomputable def mkA (e : ℕ) : (ZMod (2 ^ (e + 2)))ˣ →* A e := QuotientGroup.mk' _
-
-/-- The quotient map is onto. -/
-theorem mkA_surjective (e : ℕ) : Function.Surjective (mkA e) := QuotientGroup.mk'_surjective _
-
-/-- The class `[n]_A` of an odd `n` (and `1` for an even `n`). -/
-noncomputable def clsA (e n : ℕ) : A e := if h : IsUnit (n : ZMod (2 ^ (e + 2))) then mkA e h.unit else 1
-
-/-- `ξ̃`, the character mod `2^{e+2}` with `ξ̃(n) = ξ([n]_A)` for odd `n`; it is even. -/
-noncomputable def lift {e : ℕ} (ξ : A e →* ℂˣ) : DirichletCharacter ℂ (2 ^ (e + 2)) :=
-  MulChar.ofUnitHom (ξ.comp (mkA e))
-
-/-- `ξ̃(n) = ξ([n]_A)` for odd `n`. -/
-theorem lift_apply {e : ℕ} (ξ : A e →* ℂˣ) {n : ℕ} (hn : IsUnit (n : ZMod (2 ^ (e + 2)))) :
-    lift ξ n = ξ (clsA e n) := by
-  conv_lhs => rw [← hn.unit_spec]
-  rw [clsA, dite_eq_left hn, lift, MulChar.ofUnitHom_coe]
-  rfl
-
-/-- `1̃ = 1`. -/
-theorem lift_one (e : ℕ) : lift (1 : A e →* ℂˣ) = 1 :=
-  MulChar.ext fun u => by simp [lift]
-
-/-- `ξ̃ = 1` only for `ξ = 1`. -/
-theorem eq_one_of_lift_eq_one {e : ℕ} {ξ : A e →* ℂˣ} (h : lift ξ = 1) : ξ = 1 := by
-  ext a
-  obtain ⟨u, rfl⟩ := mkA_surjective e a
-  have := congr_arg (fun ψ : DirichletCharacter ℂ _ => ψ u) h
-  simpa [lift, MulChar.ofUnitHom_coe] using this
-
-/-- `ξ̃*(2) = 0` unless `ξ = 1`: the conductor of `ξ̃` is a power of `2`. -/
-theorem eq_one_of_prim_lift_two {e : ℕ} {ξ : A e →* ℂˣ} (h : (lift ξ).primitiveCharacter (2 : ℕ) ≠ 0) :
-    ξ = 1 := by
-  refine eq_one_of_lift_eq_one (eq_one_iff_conductor_eq_one.2 ?_)
-  have h1 := (apply_ne_zero_iff (lift ξ).primitiveCharacter ((2 : ℕ) : ℤ)).1 (by simpa using h)
-  have h2 : Nat.Coprime 2 (lift ξ).conductor := Nat.isCoprime_iff_coprime.1 h1
-  exact Nat.Coprime.eq_one_of_dvd (Nat.Coprime.pow_left (e + 2) h2).symm (lift ξ).conductor_dvd_level
-
-/-- `A` has `|A|` characters. -/
-theorem card_dual (e : ℕ) : Fintype.card (A e →* ℂˣ) = Fintype.card (A e) := by
-  rw [← Nat.card_eq_fintype_card, ← Nat.card_eq_fintype_card,
-    CommGroup.card_monoidHom_of_hasEnoughRootsOfUnity]
-
-/-- `Σ_ξ ξ(a) = |A|·1[a = 1]`, over the characters `ξ` of `A`. -/
-theorem sum_dual_apply {e : ℕ} (a : A e) :
-    ∑ ξ : A e →* ℂˣ, (ξ a : ℂ) = if a = 1 then (Fintype.card (A e) : ℂ) else 0 := by
-  split_ifs with ha
-  · subst ha
-    simp only [map_one, Units.val_one, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one, card_dual]
-  · obtain ⟨ψ, hψ⟩ := CommGroup.exists_apply_ne_one_of_hasEnoughRootsOfUnity (A e) ℂ ha
-    refine eq_zero_of_mul_eq_self_left (fun h => hψ (Units.ext h)) ?_
-    rw [Finset.mul_sum]
-    exact Fintype.sum_bijective _ (Group.mulLeft_bijective ψ) _ _ fun ξ => by simp
+variable {A : Type*} [CommGroup A] [Fintype A]
 
 /-- `ξ(a)` is a root of unity, of norm `1`. -/
-theorem norm_apply {e : ℕ} (ξ : A e →* ℂˣ) (a : A e) : ‖(ξ a : ℂ)‖ = 1 :=
+theorem norm_apply (ξ : A →* ℂˣ) (a : A) : ‖(ξ a : ℂ)‖ = 1 :=
   ((Units.coeHom ℂ).comp ξ |>.isOfFinOrder (isOfFinOrder_of_finite a)).norm_eq_one
 
 /-- `conj ξ(a) = ξ(a⁻¹)`. -/
-theorem conj_apply {e : ℕ} (ξ : A e →* ℂˣ) (a : A e) : conj (ξ a : ℂ) = ξ a⁻¹ := by
+theorem conj_apply (ξ : A →* ℂˣ) (a : A) : conj (ξ a : ℂ) = ξ a⁻¹ := by
   rw [← Complex.inv_eq_conj (norm_apply ξ a), map_inv, Units.val_inv_eq_inv_val]
 
-/-- **Orthogonality on `A`**: `Σ_ξ conj ξ(v) ξ(w) = |A|·1[v = w]`. -/
-theorem sum_conj_mul {e : ℕ} (v w : A e) :
-    ∑ ξ : A e →* ℂˣ, conj (ξ v : ℂ) * ξ w = if v = w then (Fintype.card (A e) : ℂ) else 0 := by
-  simp only [conj_apply, ← Units.val_mul, ← map_mul, sum_dual_apply, inv_mul_eq_one]
-
 /-- `Σ_u ξ(u) = |A|·1[ξ = 1]`, over `u ∈ A`. -/
-theorem sum_apply_dual {e : ℕ} (ξ : A e →* ℂˣ) :
-    ∑ u, (ξ u : ℂ) = if ξ = 1 then (Fintype.card (A e) : ℂ) else 0 := by
+theorem sum_apply_dual (ξ : A →* ℂˣ) :
+    ∑ u, (ξ u : ℂ) = if ξ = 1 then (Fintype.card A : ℂ) else 0 := by
   split_ifs with h
   · simp [h]
   · exact sum_hom_units_eq_zero ((Units.coeHom ℂ).comp ξ) fun h' =>
       h (MonoidHom.ext fun u => Units.ext (by simpa using DFunLike.congr_fun h' u))
 
 /-- `Σ_u conj ξ(u v) = |A|·1[ξ = 1]`, over `u ∈ A`. -/
-theorem sum_conj_apply_mul {e : ℕ} (ξ : A e →* ℂˣ) (v : A e) :
-    ∑ u, conj (ξ (u * v) : ℂ) = if ξ = 1 then (Fintype.card (A e) : ℂ) else 0 := by
+theorem sum_conj_apply_mul (ξ : A →* ℂˣ) (v : A) :
+    ∑ u, conj (ξ (u * v) : ℂ) = if ξ = 1 then (Fintype.card A : ℂ) else 0 := by
   rw [← map_sum, Fintype.sum_bijective _ (Group.mulRight_bijective v) _ (fun w => (ξ w : ℂ)) fun _ => rfl,
     sum_apply_dual]
   split_ifs <;> simp
 
+variable [Fintype (A →* ℂˣ)]
+
+/-- `A` has `|A|` characters. -/
+theorem card_dual : Fintype.card (A →* ℂˣ) = Fintype.card A := by
+  rw [← Nat.card_eq_fintype_card, ← Nat.card_eq_fintype_card,
+    CommGroup.card_monoidHom_of_hasEnoughRootsOfUnity]
+
+variable [DecidableEq A]
+
+/-- `Σ_ξ ξ(a) = |A|·1[a = 1]`, over the characters `ξ` of `A`. -/
+theorem sum_dual_apply (a : A) :
+    ∑ ξ : A →* ℂˣ, (ξ a : ℂ) = if a = 1 then (Fintype.card A : ℂ) else 0 := by
+  split_ifs with ha
+  · subst ha
+    simp only [map_one, Units.val_one, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one, card_dual]
+  · obtain ⟨ψ, hψ⟩ := CommGroup.exists_apply_ne_one_of_hasEnoughRootsOfUnity A ℂ ha
+    refine eq_zero_of_mul_eq_self_left (fun h => hψ (Units.ext h)) ?_
+    rw [Finset.mul_sum]
+    exact Fintype.sum_bijective _ (Group.mulLeft_bijective ψ) _ _ fun ξ => by simp
+
+/-- **Orthogonality on `A`**: `Σ_ξ conj ξ(v) ξ(w) = |A|·1[v = w]`. -/
+theorem sum_conj_mul (v w : A) :
+    ∑ ξ : A →* ℂˣ, conj (ξ v : ℂ) * ξ w = if v = w then (Fintype.card A : ℂ) else 0 := by
+  simp only [conj_apply, ← Units.val_mul, ← map_mul, sum_dual_apply, inv_mul_eq_one]
+
+end Characters
+
 /-! ## `Φ`, `G` and the characters of `G` -/
 
 /-- `Φ = {±1} × A`. -/
-abbrev Φ (e : ℕ) := ℤˣ × A e
+abbrev Φ (A : Type*) := ℤˣ × A
 
 /-- `G = {±1} × Φ = {±1} × {±1} × A`; `Φ` is its subgroup `{1} × Φ`, of index `2`. -/
-abbrev G (e : ℕ) := ℤˣ × Φ e
+abbrev G (A : Type*) := ℤˣ × Φ A
 
-/-- `c = (−1, −1, 1)`, the class of `−1` when `d ≡ q ≡ 3 (mod 4)`. -/
-noncomputable def c (e : ℕ) : G e := (-1, -1, 1)
+section Group
+
+variable {A : Type*} [CommGroup A]
+
+/-- `c = (−1, −1, 1)`, the class of `−1` when `d ≡ q ≡ 3 (mod 4)` and `−1 ∈ K`. -/
+def c (A : Type*) [CommGroup A] : G A := (-1, -1, 1)
 
 /-- `γ_t(ρ) = c·ρ·(1, 1, t)⁻¹`, which lies outside `Φ`. -/
-noncomputable def γ {e : ℕ} (t : A e) (ρ : Φ e) : G e := c e * (1, ρ) * (1, 1, t)⁻¹
+def γ (t : A) (ρ : Φ A) : G A := c A * (1, ρ) * (1, 1, t)⁻¹
 
 /-- `γ_t(1, s, u) = (−1, −s, u t⁻¹)`. -/
-theorem γ_apply {e : ℕ} (t : A e) (s : ℤˣ) (u : A e) : γ t (s, u) = (-1, -s, u * t⁻¹) := by
+theorem γ_apply (t : A) (s : ℤˣ) (u : A) : γ t (s, u) = (-1, -s, u * t⁻¹) := by
   simp [γ, c]
 
 /-- The characters of `G`: triples `(α, β, ξ)`, with `α, β ∈ {0, 1}` (`false`, `true`) and `ξ` a character
 of `A`. -/
-abbrev Dual (e : ℕ) := Bool × Bool × (A e →* ℂˣ)
+abbrev Dual (A : Type*) [CommGroup A] := Bool × Bool × (A →* ℂˣ)
 
 /-- `σ^α` for `σ ∈ {±1}` and `α ∈ {0, 1}`. -/
 def sgnPow (α : Bool) (σ : ℤˣ) : ℂ := if α then ((σ : ℤ) : ℂ) else 1
 
 /-- `χ(s_d, s_q, u) = s_d^α s_q^β ξ(u)` for `χ = (α, β, ξ)`. -/
-def eval {e : ℕ} (χ : Dual e) (g : G e) : ℂ := sgnPow χ.1 g.1 * sgnPow χ.2.1 g.2.1 * (χ.2.2 g.2.2 : ℂ)
+def eval (χ : Dual A) (g : G A) : ℂ := sgnPow χ.1 g.1 * sgnPow χ.2.1 g.2.1 * (χ.2.2 g.2.2 : ℂ)
 
 /-- `conj χ(γ_t(1, s, u)) = (−1)^α (−s)^β conj ξ(u t⁻¹)`. -/
-theorem conj_eval_γ {e : ℕ} (χ : Dual e) (t : A e) (s : ℤˣ) (u : A e) :
+theorem conj_eval_γ (χ : Dual A) (t : A) (s : ℤˣ) (u : A) :
     conj (eval χ (γ t (s, u))) = sgnPow χ.1 (-1) * sgnPow χ.2.1 (-s) * conj (χ.2.2 (u * t⁻¹) : ℂ) := by
   have h : ∀ (α : Bool) (σ : ℤˣ), conj (sgnPow α σ) = sgnPow α σ := fun α σ => by
     cases α <;> simp [sgnPow]
   rw [γ_apply, eval, map_mul, map_mul, h, h]
 
 /-- A sum over the characters of `G` of a product of functions of `α`, of `β` and of `ξ`. -/
-theorem sum_dual_mul {e : ℕ} (f g : Bool → ℂ) (h : (A e →* ℂˣ) → ℂ) :
-    ∑ χ : Dual e, f χ.1 * g χ.2.1 * h χ.2.2 = (f true + f false) * (g true + g false) * ∑ ξ, h ξ := by
+theorem sum_dual_mul [Fintype (A →* ℂˣ)] (f g : Bool → ℂ) (h : (A →* ℂˣ) → ℂ) :
+    ∑ χ : Dual A, f χ.1 * g χ.2.1 * h χ.2.2 = (f true + f false) * (g true + g false) * ∑ ξ, h ξ := by
   simp only [Fintype.sum_prod_type, Fintype.sum_bool, ← Finset.mul_sum]
   ring
 
 /-- **The main-term coefficient**: `Σ_{ρ ∈ Φ} conj χ(γ_t(ρ)) = Σ_{g ∉ Φ} conj χ(g)` is `|Φ|` at `χ = 1`, `−|Φ|` at
 `χ = (1, 0, 1)` (which gives `χ_d`), and `0` otherwise. -/
-theorem sum_conj_eval_γ {e : ℕ} (χ : Dual e) (t : A e) :
-    ∑ ρ : Φ e, conj (eval χ (γ t ρ)) =
-      if χ.2.1 = false ∧ χ.2.2 = 1 then sgnPow χ.1 (-1) * Fintype.card (Φ e) else 0 := by
+theorem sum_conj_eval_γ [Fintype A] (χ : Dual A) (t : A) :
+    ∑ ρ : Φ A, conj (eval χ (γ t ρ)) =
+      if χ.2.1 = false ∧ χ.2.2 = 1 then sgnPow χ.1 (-1) * Fintype.card (Φ A) else 0 := by
   have hs : ∑ s : ℤˣ, sgnPow χ.2.1 (-s) = if χ.2.1 = false then 2 else 0 := by
     rw [UnitsInt.univ, Finset.sum_pair (by decide)]
     cases χ.2.1 <;> norm_num [sgnPow]
@@ -331,6 +307,8 @@ theorem sum_conj_eval_γ {e : ℕ} (χ : Dual e) (t : A e) :
     Fintype.card_units_int]
   by_cases hβ : χ.2.1 = false <;> by_cases hξ : χ.2.2 = 1 <;> simp [hβ, hξ]
   ring
+
+end Group
 
 /-! ## Signs -/
 
@@ -350,22 +328,94 @@ theorem units_mul_add_one (s σ : ℤˣ) : ((s : ℤ) : ℂ) * ((σ : ℤ) : ℂ
 
 /-! ## The setting -/
 
-/-- The setting of Lemma B: primes `q` and `d` with `q ≡ 3 (mod 4)` and `(2/d) = (q/d) = 1`, and `e ∈ ℕ`. -/
+/-- The setting of Lemma B: primes `q` and `d` with `q ≡ 3 (mod 4)` and `(2/d) = (q/d) = 1`, a modulus `QS` prime to
+`q` whose every prime `p` has `(p/d) = 1` (it splits in `ℚ(√−d)` when `d ≡ 3 (mod 4)`), and a subgroup `K` of
+`(ℤ/QS)ˣ`. -/
 structure Setting where
+  /-- The prime `q`. -/
   q : ℕ
+  /-- The prime `d`. -/
   d : ℕ
-  e : ℕ
+  /-- The modulus `QS` of `A`. -/
+  QS : ℕ
+  /-- The subgroup `K` of `(ℤ/QS)ˣ`, with `A = (ℤ/QS)ˣ/K`. -/
+  K : Subgroup (ZMod QS)ˣ
   [q_prime : Fact q.Prime]
   [d_prime : Fact d.Prime]
+  [QS_neZero : NeZero QS]
+  /-- `q ≡ 3 (mod 4)`. -/
   q_mod_four : q % 4 = 3
+  /-- `(2/d) = 1`. -/
   two_mod_d : legendreSym d 2 = 1
+  /-- `(q/d) = 1`. -/
   q_mod_d : legendreSym d q = 1
+  /-- `q ∤ QS`. -/
+  q_coprime : q.Coprime QS
+  /-- Every prime `p ∣ QS` has `(p/d) = 1`. -/
+  split : ∀ p : ℕ, p.Prime → p ∣ QS → legendreSym d p = 1
 
-attribute [instance] Setting.q_prime Setting.d_prime
+attribute [instance] Setting.q_prime Setting.d_prime Setting.QS_neZero
 
 namespace Setting
 
 variable (S : Setting)
+
+/-! ### The group `A` and its characters -/
+
+/-- `A = (ℤ/QS)ˣ/K`. -/
+def A : Type := (ZMod S.QS)ˣ ⧸ S.K
+
+noncomputable instance : CommGroup S.A := QuotientGroup.Quotient.commGroup _
+instance : Finite S.A := inferInstanceAs (Finite ((ZMod S.QS)ˣ ⧸ S.K))
+noncomputable instance : Fintype S.A := Fintype.ofFinite _
+noncomputable instance : DecidableEq S.A := Classical.decEq _
+noncomputable instance : Fintype (S.A →* ℂˣ) := Fintype.ofFinite _
+
+/-- The quotient map `(ℤ/QS)ˣ → A`. -/
+noncomputable def mkA : (ZMod S.QS)ˣ →* S.A := QuotientGroup.mk' _
+
+/-- The quotient map is onto. -/
+theorem mkA_surjective : Function.Surjective S.mkA := QuotientGroup.mk'_surjective _
+
+/-- The class `[n]_A` of `n` prime to `QS` (and `1` for the others). -/
+noncomputable def clsA (n : ℕ) : S.A := if h : IsUnit (n : ZMod S.QS) then S.mkA h.unit else 1
+
+/-- `ξ̃`, the character mod `QS` with `ξ̃(n) = ξ([n]_A)` for `n` prime to `QS`. -/
+noncomputable def lift (ξ : S.A →* ℂˣ) : DirichletCharacter ℂ S.QS :=
+  MulChar.ofUnitHom (ξ.comp S.mkA)
+
+/-- `ξ̃(n) = ξ([n]_A)` for `n` prime to `QS`. -/
+theorem lift_apply (ξ : S.A →* ℂˣ) {n : ℕ} (hn : IsUnit (n : ZMod S.QS)) : S.lift ξ n = ξ (S.clsA n) := by
+  conv_lhs => rw [← hn.unit_spec]
+  rw [clsA, dite_eq_left hn, lift, MulChar.ofUnitHom_coe]
+  rfl
+
+/-- `1̃ = 1`. -/
+theorem lift_one : S.lift 1 = 1 :=
+  MulChar.ext fun u => by simp [lift]
+
+/-- `ξ̃^k = (ξ^k)~`. -/
+theorem lift_pow (ξ : S.A →* ℂˣ) (k : ℕ) : S.lift (ξ ^ k) = S.lift ξ ^ k :=
+  MulChar.ext fun u => by simp [lift, MulChar.pow_apply_coe]
+
+/-- `ξ̃ = 1` only for `ξ = 1`. -/
+theorem eq_one_of_lift_eq_one {ξ : S.A →* ℂˣ} (h : S.lift ξ = 1) : ξ = 1 := by
+  ext a
+  obtain ⟨u, rfl⟩ := S.mkA_surjective a
+  have := congr_arg (fun ψ : DirichletCharacter ℂ _ => ψ u) h
+  simpa [lift, MulChar.ofUnitHom_coe] using this
+
+/-- `ξ̃*` vanishes at a prime of `QS` unless `ξ = 1`: otherwise the conductor of `ξ̃`, a divisor of `QS`, would be
+prime to `QS`. -/
+theorem eq_one_of_prim_lift {ξ : S.A →* ℂˣ}
+    (h : ∀ p : ℕ, p.Prime → p ∣ S.QS → (S.lift ξ).primitiveCharacter p ≠ 0) : ξ = 1 := by
+  refine S.eq_one_of_lift_eq_one (eq_one_iff_conductor_eq_one.2 ?_)
+  refine Nat.Coprime.eq_one_of_dvd (Nat.coprime_of_dvd fun p hp hpQ hpc => ?_).symm
+    (S.lift ξ).conductor_dvd_level
+  have h1 := (apply_ne_zero_iff (S.lift ξ).primitiveCharacter (p : ℤ)).1 (by simpa using h p hp hpQ)
+  exact (Nat.Prime.coprime_iff_not_dvd hp).1 (Nat.isCoprime_iff_coprime.1 h1) hpc
+
+/-! ### The primes and the level -/
 
 /-- `q` is odd. -/
 theorem q_ne_two : S.q ≠ 2 := fun h => by have := S.q_mod_four; omega
@@ -385,12 +435,20 @@ theorem q_ne_d : S.q ≠ S.d := fun h => by
   rw [(legendreSym.eq_zero_iff S.d S.q).2 h0] at this
   exact zero_ne_one this
 
-/-- The level `N = 2^{e+2} q d`. -/
-def N : ℕ := 2 ^ (S.e + 2) * S.q * S.d
+/-- `q ∤ QS`. -/
+theorem q_not_dvd : ¬ S.q ∣ S.QS := (Nat.Prime.coprime_iff_not_dvd Fact.out).1 S.q_coprime
+
+/-- `d ∤ QS`, as `(d/d) = 0`. -/
+theorem d_not_dvd : ¬ S.d ∣ S.QS := fun h => by
+  have := S.split S.d Fact.out h
+  rw [(legendreSym.eq_zero_iff S.d S.d).2 (by simp)] at this
+  exact zero_ne_one this
+
+/-- The level `N = QS·q·d`. -/
+def N : ℕ := S.QS * S.q * S.d
 
 instance : NeZero S.N :=
-  ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (pow_ne_zero _ two_ne_zero) (Fact.out : S.q.Prime).ne_zero)
-    (Fact.out : S.d.Prime).ne_zero⟩
+  ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (NeZero.ne _) (Fact.out : S.q.Prime).ne_zero) (Fact.out : S.d.Prime).ne_zero⟩
 
 /-- `d ∣ N`. -/
 theorem d_dvd_N : S.d ∣ S.N := dvd_mul_left _ _
@@ -398,46 +456,46 @@ theorem d_dvd_N : S.d ∣ S.N := dvd_mul_left _ _
 /-- `q ∣ N`. -/
 theorem q_dvd_N : S.q ∣ S.N := (dvd_mul_left _ _).mul_right _
 
-/-- `2^{e+2} ∣ N`. -/
-theorem two_dvd_N : 2 ^ (S.e + 2) ∣ S.N := (dvd_mul_right _ _).mul_right _
+/-- `QS ∣ N`. -/
+theorem QS_dvd_N : S.QS ∣ S.N := (dvd_mul_right _ _).mul_right _
 
-/-- The partner `ρ_t(n) = ((−n/q), [n]_A t) ∈ Φ` of `n` prime to `2q`. -/
-noncomputable def partner (t : A S.e) (n : ℕ) : Φ S.e := (sgn S.q (-n), clsA S.e n * t)
+/-! ### The sums -/
+
+/-- The partner `ρ_t(n) = ((−n/q), [n]_A t) ∈ Φ` of `n` prime to `QS·q`. -/
+noncomputable def partner (t : S.A) (n : ℕ) : Φ S.A := (sgn S.q (-n), S.clsA n * t)
 
 /-- `D_χ = χ_d^α χ_q^β ξ̃` at level `N`, for `χ = (α, β, ξ)`. -/
-noncomputable def D (χ : Dual S.e) : DirichletCharacter ℂ S.N :=
+noncomputable def D (χ : Dual S.A) : DirichletCharacter ℂ S.N :=
   changeLevel S.d_dvd_N (legPow S.d χ.1) * changeLevel S.q_dvd_N (legPow S.q χ.2.1) *
-    changeLevel S.two_dvd_N (lift χ.2.2)
+    changeLevel S.QS_dvd_N (S.lift χ.2.2)
 
 /-- The error `g_χ`: `WindowGRH.rampErr` of the primitive character `χ*` inducing `D_χ`. -/
-noncomputable def g (χ : Dual S.e) (y : ℝ) : ℂ := WindowGRH.rampErr (S.D χ).primitiveCharacter y
+noncomputable def g (χ : Dual S.A) (y : ℝ) : ℂ := WindowGRH.rampErr (S.D χ).primitiveCharacter y
 
-/-- `ASK(a, t, W) = Σ_{(n, 2q) = 1} Λ(n)(1 − χ_d(n))(a/n − W(ρ_t(n)))⁺`, a finite sum. -/
-noncomputable def ASK (a : ℝ) (t : A S.e) (W : Φ S.e → ℝ) : ℝ :=
-  ∑' n : ℕ, if n.Coprime (2 * S.q) then Λ n * (1 - legendreSym S.d n) * max (a / n - W (S.partner t n)) 0 else 0
+/-- `ASK(a, t, W) = Σ_{(n, QS·q) = 1} Λ(n)(1 − χ_d(n))(a/n − W(ρ_t(n)))⁺`, a finite sum. -/
+noncomputable def ASK (a : ℝ) (t : S.A) (W : Φ S.A → ℝ) : ℝ :=
+  ∑' n : ℕ, if n.Coprime (S.QS * S.q) then Λ n * (1 - legendreSym S.d n) * max (a / n - W (S.partner t n)) 0
+    else 0
 
 /-- `MAIN(a, W) = a(log a − 1 − γ + Re L'/L(1, χ_d) − |Φ|⁻¹ Σ_{ρ ∈ Φ} log W(ρ))`. -/
-noncomputable def MAIN (a : ℝ) (W : Φ S.e → ℝ) : ℝ :=
+noncomputable def MAIN (a : ℝ) (W : Φ S.A → ℝ) : ℝ :=
   a * (Real.log a - 1 - Real.eulerMascheroniConstant + (logDeriv (LFunction (legChar S.d)) 1).re -
-    (Fintype.card (Φ S.e) : ℝ)⁻¹ * ∑ ρ, Real.log (W ρ))
+    (Fintype.card (Φ S.A) : ℝ)⁻¹ * ∑ ρ, Real.log (W ρ))
 
 /-- The gap `Σ_{t ∈ TT} Σ_{j < m} [ASK(a_t, t, w_{u₀, j}) − MAIN(a_t, w_{u₀, j})]`. -/
-noncomputable def gap (TT : Finset (A S.e)) (m : ℕ) (a : A S.e → ℝ) (w : A S.e → Fin m → Φ S.e → ℝ)
-    (u₀ : A S.e) : ℝ :=
+noncomputable def gap (TT : Finset S.A) (m : ℕ) (a : S.A → ℝ) (w : S.A → Fin m → Φ S.A → ℝ) (u₀ : S.A) : ℝ :=
   ∑ t ∈ TT, ∑ j, (S.ASK (a t) t (w u₀ j) - S.MAIN (a t) (w u₀ j))
 
 /-! ### Primitive values -/
 
 /-- **`χ*` at prime powers**: `χ*(n) = (χ_d^α)*(n) (χ_q^β)*(n) ξ̃*(n)`. At a prime `p`, each factor of level prime
 to `p` splits off (`prim_mul_apply`), and the remaining one keeps its primitive character. -/
-theorem prim_D (χ : Dual S.e) {n : ℕ} (hn : IsPrimePow n) :
+theorem prim_D (χ : Dual S.A) {n : ℕ} (hn : IsPrimePow n) :
     (S.D χ).primitiveCharacter n = (legPow S.d χ.1).primitiveCharacter n *
-      (legPow S.q χ.2.1).primitiveCharacter n * (lift χ.2.2).primitiveCharacter n := by
+      (legPow S.q χ.2.1).primitiveCharacter n * (S.lift χ.2.2).primitiveCharacter n := by
   obtain ⟨p, k, hp, -, rfl⟩ := (isPrimePow_nat_iff _).1 hn
   simp only [Nat.cast_pow, map_pow, ← mul_pow]
   congr 1
-  have hnd : ∀ {r : ℕ}, r.Prime → r ≠ 2 → ¬ r ∣ 2 ^ (S.e + 2) := fun hr hr2 h =>
-    hr2 ((Nat.prime_dvd_prime_iff_eq hr Nat.prime_two).1 (hr.dvd_of_dvd_pow h))
   have hqp : S.q.Prime := Fact.out
   have hdp : S.d.Prime := Fact.out
   unfold D
@@ -445,20 +503,20 @@ theorem prim_D (χ : Dual S.e) {n : ℕ} (hn : IsPrimePow n) :
   · subst hpd
     rw [show ∀ x y z : DirichletCharacter ℂ S.N, x * y * z = y * (z * x) from fun x y z => by ac_rfl,
       prim_mul_apply _ _ _ hp fun h => S.q_ne_d ((Nat.prime_dvd_prime_iff_eq hp hqp).1 h).symm,
-      prim_mul_apply _ _ _ hp (hnd hp S.d_ne_two), prim_changeLevel]
+      prim_mul_apply _ _ _ hp S.d_not_dvd, prim_changeLevel]
     ring
   by_cases hpq : p = S.q
   · subst hpq
     rw [show ∀ x y z : DirichletCharacter ℂ S.N, x * y * z = x * (z * y) from fun x y z => by ac_rfl,
       prim_mul_apply _ _ _ hp fun h => S.q_ne_d ((Nat.prime_dvd_prime_iff_eq hp hdp).1 h),
-      prim_mul_apply _ _ _ hp (hnd hp S.q_ne_two), prim_changeLevel]
+      prim_mul_apply _ _ _ hp S.q_not_dvd, prim_changeLevel]
     ring
   · rw [mul_assoc, prim_mul_apply _ _ _ hp fun h => hpd ((Nat.prime_dvd_prime_iff_eq hp hdp).1 h),
       prim_mul_apply _ _ _ hp fun h => hpq ((Nat.prime_dvd_prime_iff_eq hp hqp).1 h), prim_changeLevel]
     ring
 
-/-- `D_χ = 1` only for `χ = 1`: otherwise `χ*` vanishes at `d`, at `q` or at `2`. -/
-theorem D_eq_one_iff (χ : Dual S.e) : S.D χ = 1 ↔ χ = (false, false, 1) := by
+/-- `D_χ = 1` only for `χ = 1`: otherwise `χ*` vanishes at `d`, at `q` or at a prime of `QS`. -/
+theorem D_eq_one_iff (χ : Dual S.A) : S.D χ = 1 ↔ χ = (false, false, 1) := by
   constructor
   · intro h
     have hc : (S.D χ).conductor = 1 := eq_one_iff_conductor_eq_one.1 h
@@ -468,10 +526,12 @@ theorem D_eq_one_iff (χ : Dual S.e) : S.D χ = 1 ↔ χ = (false, false, 1) := 
       simpa using this
     have hd := hne (Fact.out : S.d.Prime)
     have hq := hne (Fact.out : S.q.Prime)
-    have h2 := hne Nat.prime_two
     rw [S.prim_D χ (Fact.out : S.d.Prime).isPrimePow, prim_legPow S.d_ne_two] at hd
     rw [S.prim_D χ (Fact.out : S.q.Prime).isPrimePow, prim_legPow S.q_ne_two (n := S.q)] at hq
-    rw [S.prim_D χ Nat.prime_two.isPrimePow] at h2
+    have hξ : χ.2.2 = 1 := S.eq_one_of_prim_lift fun p hp _ => by
+      have h2 := hne hp
+      rw [S.prim_D χ hp.isPrimePow] at h2
+      exact right_ne_zero_of_mul h2
     obtain ⟨α, β, ξ⟩ := χ
     have hα : α = false := by
       cases α
@@ -481,7 +541,8 @@ theorem D_eq_one_iff (χ : Dual S.e) : S.D χ = 1 ↔ χ = (false, false, 1) := 
       cases β
       · rfl
       · simp [legChar_zero] at hq
-    rw [hα, hβ, eq_one_of_prim_lift_two (ξ := ξ) (right_ne_zero_of_mul h2)]
+    simp only at hξ
+    rw [hα, hβ, hξ]
   · rintro rfl
     simp [D, legPow, lift_one]
 
@@ -496,40 +557,38 @@ theorem LFunction_D_d : LFunction (S.D (true, false, 1)).primitiveCharacter = LF
 /-! ### The kernel -/
 
 /-- **The kernel**: for a prime power `n` and `ρ ∈ Φ`, `Σ_χ conj χ(γ_t(ρ)) χ*(n)` is `|Φ|(1 − χ_d(n))` if `n` is
-prime to `2q` and `ρ = ρ_t(n)`, and `0` otherwise. -/
-theorem kernel (t : A S.e) (ρ : Φ S.e) {n : ℕ} (hn : IsPrimePow n) :
-    ∑ χ : Dual S.e, conj (eval χ (γ t ρ)) * (S.D χ).primitiveCharacter n =
-      Fintype.card (Φ S.e) * if n.Coprime (2 * S.q) ∧ ρ = S.partner t n then 1 - legChar S.d n else 0 := by
+prime to `QS·q` and `ρ = ρ_t(n)`, and `0` otherwise. -/
+theorem kernel (t : S.A) (ρ : Φ S.A) {n : ℕ} (hn : IsPrimePow n) :
+    ∑ χ : Dual S.A, conj (eval χ (γ t ρ)) * (S.D χ).primitiveCharacter n =
+      Fintype.card (Φ S.A) * if n.Coprime (S.QS * S.q) ∧ ρ = S.partner t n then 1 - legChar S.d n else 0 := by
   obtain ⟨s, u⟩ := ρ
-  have hfac : ∀ χ : Dual S.e, conj (eval χ (γ t (s, u))) * (S.D χ).primitiveCharacter n =
+  have hfac : ∀ χ : Dual S.A, conj (eval χ (γ t (s, u))) * (S.D χ).primitiveCharacter n =
       sgnPow χ.1 (-1) * (legPow S.d χ.1).primitiveCharacter n *
       (sgnPow χ.2.1 (-s) * (legPow S.q χ.2.1).primitiveCharacter n) *
-      (conj (χ.2.2 (u * t⁻¹) : ℂ) * (lift χ.2.2).primitiveCharacter n) := fun χ => by
+      (conj (χ.2.2 (u * t⁻¹) : ℂ) * (S.lift χ.2.2).primitiveCharacter n) := fun χ => by
     rw [conj_eval_γ, S.prim_D χ hn]
     ring
   rw [Finset.sum_congr rfl fun χ _ => hfac χ,
     sum_dual_mul (fun α => sgnPow α (-1) * (legPow S.d α).primitiveCharacter n)
       (fun β => sgnPow β (-s) * (legPow S.q β).primitiveCharacter n)
-      (fun ξ => conj (ξ (u * t⁻¹) : ℂ) * (lift ξ).primitiveCharacter n)]
+      (fun ξ => conj (ξ (u * t⁻¹) : ℂ) * (S.lift ξ).primitiveCharacter n)]
   simp only [sgnPow, prim_legPow S.d_ne_two, prim_legPow S.q_ne_two, ite_true, Bool.false_eq_true, ite_false,
     Units.val_neg, Units.val_one, Int.cast_neg, Int.cast_one, one_mul]
-  by_cases hc : n.Coprime (2 * S.q)
-  · -- `n` prime to `2q`
-    obtain ⟨hc2, hcq⟩ := Nat.coprime_mul_iff_right.1 hc
-    have hunit : IsUnit (n : ZMod (2 ^ (S.e + 2))) :=
-      (ZMod.isUnit_iff_coprime _ _).2 (Nat.Coprime.pow_right _ hc2)
+  by_cases hc : n.Coprime (S.QS * S.q)
+  · -- `n` prime to `QS·q`
+    obtain ⟨hcQ, hcq⟩ := Nat.coprime_mul_iff_right.1 hc
+    have hunit : IsUnit (n : ZMod S.QS) := (ZMod.isUnit_iff_coprime _ _).2 hcQ
     have hq0 : (n : ZMod S.q) ≠ 0 := by
       rw [Ne, ZMod.natCast_eq_zero_iff]
       exact fun h => (Nat.Prime.coprime_iff_not_dvd (Fact.out : S.q.Prime)).1 hcq.symm h
-    have hξ : ∑ ξ : A S.e →* ℂˣ, conj (ξ (u * t⁻¹) : ℂ) * (lift ξ).primitiveCharacter n =
-        if u * t⁻¹ = clsA S.e n then (Fintype.card (A S.e) : ℂ) else 0 := by
+    have hξ : ∑ ξ : S.A →* ℂˣ, conj (ξ (u * t⁻¹) : ℂ) * (S.lift ξ).primitiveCharacter n =
+        if u * t⁻¹ = S.clsA n then (Fintype.card S.A : ℂ) else 0 := by
       rw [← sum_conj_mul]
       refine Finset.sum_congr rfl fun ξ _ => ?_
-      have hcop : IsCoprime (n : ℤ) (2 ^ (S.e + 2) : ℕ) :=
-        Nat.isCoprime_iff_coprime.2 (Nat.Coprime.pow_right _ hc2)
-      have := primitiveCharacter_apply_of_isCoprime (lift ξ) hcop
+      have hcop : IsCoprime (n : ℤ) (S.QS : ℕ) := Nat.isCoprime_iff_coprime.2 hcQ
+      have := primitiveCharacter_apply_of_isCoprime (S.lift ξ) hcop
       simp only [Int.cast_natCast] at this
-      rw [this, lift_apply ξ hunit]
+      rw [this, S.lift_apply ξ hunit]
     -- `(−n/q) = −(n/q)`, as `q ≡ 3 (mod 4)`
     have hsgn : legChar S.q n = -((sgn S.q (-n) : ℤ) : ℂ) := by
       have hq0' : ((-n : ℤ) : ZMod S.q) ≠ 0 := by push_cast; exact neg_ne_zero.2 hq0
@@ -543,20 +602,17 @@ theorem kernel (t : A S.e) (ρ : Φ S.e) {n : ℕ} (hn : IsPrimePow n) :
     simp only [partner, Prod.mk.injEq, mul_inv_eq_iff_eq_mul]
     split_ifs <;> simp_all
     ring
-  · -- `n` a power of `2` or of `q`: `χ_d(n) = 1`
+  · -- `n` a power of a prime of `QS·q`: `χ_d(n) = 1`
     obtain ⟨p, k, hp, -, rfl⟩ := (isPrimePow_nat_iff _).1 hn
-    have hp2q : p = 2 ∨ p = S.q := by
-      have : p ∣ 2 * S.q := by
-        by_contra h
-        exact hc (Nat.Coprime.pow_left _ ((Nat.Prime.coprime_iff_not_dvd hp).2 h))
-      rcases (Nat.Prime.dvd_mul hp).1 this with h | h
-      · exact Or.inl ((Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).1 h)
-      · exact Or.inr ((Nat.prime_dvd_prime_iff_eq hp (Fact.out : S.q.Prime)).1 h)
+    have hpQq : p ∣ S.QS * S.q := by
+      by_contra h
+      exact hc (Nat.Coprime.pow_left _ ((Nat.Prime.coprime_iff_not_dvd hp).2 h))
     have h1 : legChar S.d (p ^ k : ℕ) = 1 := by
       rw [Nat.cast_pow, map_pow, legChar_natCast]
-      rcases hp2q with rfl | rfl
-      · simp only [Nat.cast_ofNat, S.two_mod_d, Int.cast_one, one_pow]
-      · simp only [S.q_mod_d, Int.cast_one, one_pow]
+      rcases (Nat.Prime.dvd_mul hp).1 hpQq with h | h
+      · simp only [S.split p hp h, Int.cast_one, one_pow]
+      · rw [(Nat.prime_dvd_prime_iff_eq hp (Fact.out : S.q.Prime)).1 h]
+        simp only [S.q_mod_d, Int.cast_one, one_pow]
     rw [h1, ite_eq_right (fun h => hc h.1)]
     ring
 
@@ -575,7 +631,7 @@ theorem rampSum_eq_sum (f : ℕ → ℂ) {y : ℝ} {K : ℕ} (hK : ⌊y⌋₊ �
 
 /-- `W·g_χ(a/W)` is the ramp sum `Σ_{n ≤ K} Λ(n) χ*(n) (a/n − W)⁺` plus the main term: `(1 + γ)a − a log(a/W)` if
 `χ* = 1`, and `a·L'/L(1, χ*)` otherwise. -/
-theorem mul_g (χ : Dual S.e) {a w : ℝ} (hw : 0 < w) {K : ℕ} (hK : ⌊a / w⌋₊ ≤ K) :
+theorem mul_g (χ : Dual S.A) {a w : ℝ} (hw : 0 < w) {K : ℕ} (hK : ⌊a / w⌋₊ ≤ K) :
     (w : ℂ) * S.g χ (a / w) = ∑ n ∈ Finset.Icc 1 K,
       (Λ n : ℂ) * (S.D χ).primitiveCharacter n * ((max (a / n - w) 0 : ℝ) : ℂ) +
       if (S.D χ).primitiveCharacter = 1 then
@@ -606,19 +662,19 @@ theorem mul_g (χ : Dual S.e) {a w : ℝ} (hw : 0 < w) {K : ℕ} (hK : ⌊a / w�
 
 /-- **The main terms**: summed over `ρ ∈ Φ` and `χ`, they leave
 `Σ_ρ ((1 + γ)a − a log(a/W(ρ))) − |Φ| a L'/L(1, χ_d)`. -/
-theorem sum_main (t : A S.e) (a : ℝ) (W : Φ S.e → ℝ) :
-    ∑ ρ, ∑ χ : Dual S.e, conj (eval χ (γ t ρ)) * (if (S.D χ).primitiveCharacter = 1 then
+theorem sum_main (t : S.A) (a : ℝ) (W : Φ S.A → ℝ) :
+    ∑ ρ, ∑ χ : Dual S.A, conj (eval χ (γ t ρ)) * (if (S.D χ).primitiveCharacter = 1 then
         (((1 + Real.eulerMascheroniConstant) * a - a * Real.log (a / W ρ) : ℝ) : ℂ)
       else (a : ℂ) * logDeriv (LFunction (S.D χ).primitiveCharacter) 1) =
     ∑ ρ, (((1 + Real.eulerMascheroniConstant) * a - a * Real.log (a / W ρ) : ℝ) : ℂ) -
-      Fintype.card (Φ S.e) * a * logDeriv (LFunction (legChar S.d)) 1 := by
+      Fintype.card (Φ S.A) * a * logDeriv (LFunction (legChar S.d)) 1 := by
   rw [Finset.sum_comm]
-  have hχ : ∀ χ : Dual S.e, ∑ ρ, conj (eval χ (γ t ρ)) * (if (S.D χ).primitiveCharacter = 1 then
+  have hχ : ∀ χ : Dual S.A, ∑ ρ, conj (eval χ (γ t ρ)) * (if (S.D χ).primitiveCharacter = 1 then
         (((1 + Real.eulerMascheroniConstant) * a - a * Real.log (a / W ρ) : ℝ) : ℂ)
       else (a : ℂ) * logDeriv (LFunction (S.D χ).primitiveCharacter) 1) =
       (if χ = (false, false, 1) then
         ∑ ρ, (((1 + Real.eulerMascheroniConstant) * a - a * Real.log (a / W ρ) : ℝ) : ℂ) else 0) +
-      (if χ = (true, false, 1) then -(Fintype.card (Φ S.e) * a * logDeriv (LFunction (legChar S.d)) 1)
+      (if χ = (true, false, 1) then -(Fintype.card (Φ S.A) * a * logDeriv (LFunction (legChar S.d)) 1)
         else 0) := by
     intro χ
     by_cases h1 : χ = (false, false, 1)
@@ -647,17 +703,17 @@ theorem sum_main (t : A S.e) (a : ℝ) (W : Φ S.e → ℝ) :
 
 /-- **Lemma B, the balance identity**: for `a ∈ ℝ`, `t ∈ A` and `W : Φ → (0, ∞)`,
 `ASK(a, t, W) − MAIN(a, W) = Re |Φ|⁻¹ Σ_{ρ ∈ Φ} W(ρ) Σ_χ conj χ(γ_t(ρ)) g_χ(a/W(ρ))`. -/
-theorem balance (a : ℝ) (t : A S.e) (W : Φ S.e → ℝ) (hW : ∀ ρ, 0 < W ρ) :
-    S.ASK a t W - S.MAIN a W = ((Fintype.card (Φ S.e) : ℂ)⁻¹ *
+theorem balance (a : ℝ) (t : S.A) (W : Φ S.A → ℝ) (hW : ∀ ρ, 0 < W ρ) :
+    S.ASK a t W - S.MAIN a W = ((Fintype.card (Φ S.A) : ℂ)⁻¹ *
       ∑ ρ, (W ρ : ℂ) * ∑ χ, conj (eval χ (γ t ρ)) * S.g χ (a / W ρ)).re := by
   set K := ∑ ρ, ⌊a / W ρ⌋₊
   have hK : ∀ ρ, ⌊a / W ρ⌋₊ ≤ K := fun ρ =>
     Finset.single_le_sum (f := fun ρ => ⌊a / W ρ⌋₊) (fun _ _ => Nat.zero_le _) (Finset.mem_univ ρ)
-  set M : Dual S.e → Φ S.e → ℂ := fun χ ρ => if (S.D χ).primitiveCharacter = 1 then
+  set M : Dual S.A → Φ S.A → ℂ := fun χ ρ => if (S.D χ).primitiveCharacter = 1 then
       (((1 + Real.eulerMascheroniConstant) * a - a * Real.log (a / W ρ) : ℝ) : ℂ)
     else (a : ℂ) * logDeriv (LFunction (S.D χ).primitiveCharacter) 1
   -- `ASK` as a finite sum
-  have hASK : S.ASK a t W = ∑ n ∈ Finset.Icc 1 K, if n.Coprime (2 * S.q) then
+  have hASK : S.ASK a t W = ∑ n ∈ Finset.Icc 1 K, if n.Coprime (S.QS * S.q) then
       Λ n * (1 - legendreSym S.d n) * max (a / n - W (S.partner t n)) 0 else 0 := by
     refine tsum_eq_sum fun n hn => ?_
     split_ifs with hc
@@ -684,10 +740,10 @@ theorem balance (a : ℝ) (t : A S.e) (W : Φ S.e → ℝ) (hW : ∀ ρ, 0 < W �
   -- the ramp parts: the kernel
   have h2 : ∑ ρ, ∑ n ∈ Finset.Icc 1 K, (Λ n : ℂ) * ((max (a / n - W ρ) 0 : ℝ) : ℂ) *
       ∑ χ, conj (eval χ (γ t ρ)) * (S.D χ).primitiveCharacter n =
-      Fintype.card (Φ S.e) * (S.ASK a t W : ℂ) := by
+      Fintype.card (Φ S.A) * (S.ASK a t W : ℂ) := by
     have hterm : ∀ ρ n, (Λ n : ℂ) * ((max (a / n - W ρ) 0 : ℝ) : ℂ) *
         ∑ χ, conj (eval χ (γ t ρ)) * (S.D χ).primitiveCharacter n =
-        Fintype.card (Φ S.e) * if n.Coprime (2 * S.q) ∧ ρ = S.partner t n then
+        Fintype.card (Φ S.A) * if n.Coprime (S.QS * S.q) ∧ ρ = S.partner t n then
           ((Λ n * (1 - legendreSym S.d n) * max (a / n - W (S.partner t n)) 0 : ℝ) : ℂ) else 0 := by
       intro ρ n
       by_cases hΛ : Λ n = 0
@@ -701,7 +757,7 @@ theorem balance (a : ℝ) (t : A S.e) (W : Φ S.e → ℝ) (hW : ∀ ρ, 0 < W �
     rw [Finset.sum_comm, hASK, ofReal_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun n _ => ?_
     rw [Finset.sum_congr rfl fun ρ _ => hterm ρ n, ← Finset.mul_sum]
-    by_cases hc : n.Coprime (2 * S.q)
+    by_cases hc : n.Coprime (S.QS * S.q)
     · simp only [and_iff_right hc, ite_eq_left hc, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     · simp [hc]
   rw [Finset.sum_congr rfl fun ρ _ => h1 ρ, Finset.sum_add_distrib, h2, S.sum_main t a W]
@@ -711,8 +767,8 @@ theorem balance (a : ℝ) (t : A S.e) (W : Φ S.e → ℝ) (hW : ∀ ρ, 0 < W �
     · rw [Real.log_div ha (hW ρ).ne']
       ring
   -- real parts: everything but `L'/L(1, χ_d)` is real
-  set c : ℝ := (Fintype.card (Φ S.e) : ℝ)
-  have hc : (Fintype.card (Φ S.e) : ℂ) = (c : ℂ) := by simp [c]
+  set c : ℝ := (Fintype.card (Φ S.A) : ℝ)
+  have hc : (Fintype.card (Φ S.A) : ℂ) = (c : ℂ) := by simp [c]
   have hc0 : c ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
   rw [hc, ← ofReal_sum, show (c : ℂ) * a * logDeriv (LFunction (legChar S.d)) 1 =
     ((c * a : ℝ) : ℂ) * logDeriv (LFunction (legChar S.d)) 1 by push_cast; ring, ← ofReal_inv, ← ofReal_mul,

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1854 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1869 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,8 +14,8 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 207 | 725 |
-| `lib/pnt` | 350 | 1016 |
+| `lib/core` | 207 | 728 |
+| `lib/pnt` | 353 | 1028 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1352,18 +1352,21 @@ note of `formalisations/` that names it, if one does.
 
 - `ZerosInfinite.infinite_ZIdx`: `ζ` has infinitely many nontrivial zeros
 
-#### `ZetaBalance`: The balance identity for `ζ`
+#### `ZetaBalance`: The balance identity
 
 - `ZetaBalance.Setting.balance`: Lemma B, the balance identity ([note](../formalisations/alpoge-rh.md))
 
 #### `ZetaFrame`: From lattices to the inert-prime gap
 
 - `ZetaBalance.riemannHypothesis_of_zetaLatticeBound`: The Riemann hypothesis from lattice data on windows ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.rhAndGRH_of_latticeBound`: The Riemann hypothesis for `ζ` and every Dirichlet `L`-function from lattice data on windows ([note](../formalisations/alpoge-rh.md))
 
-#### `ZetaGap`: From the inert-prime gap to the Riemann hypothesis
+#### `ZetaGap`: From the inert-prime gap to the Riemann hypothesis for `ζ` and every Dirichlet `L`-function
 
-- `ZetaBalance.BalanceData.zeta_le`: Theorem Z ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.BalanceData.cyclicG_le`: Theorem Z ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.BalanceData.zeta_le`: Theorem Z for `ζ` ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.riemannHypothesis_of_zetaBalanceBound`: The Riemann hypothesis from balance data on windows ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.rhAndGRH_of_balanceBound`: The Riemann hypothesis for `ζ` and every Dirichlet `L`-function from balance data on windows ([note](../formalisations/alpoge-rh.md))
 
 #### `ZetaInputs`: Discharging the remaining classical inputs over the zeros of `ζ`
 
@@ -1638,6 +1641,17 @@ note of `formalisations/` that names it, if one does.
 - `LinnikGamma.norm_gammaFactor_ratio_le`: The ratio of two values of the Archimedean factor
 - `LinnikGamma.verticalIntegral_sub_eq`: Moving the line of integration across a simple pole at `0` ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikGamma.afe`: The approximate functional equation for `L(s, χ)²` ([note](../formalisations/hybrid-fourth-moment.md))
+
+#### `LinnikAlmostAll`: Primes in almost all reduced classes: below `q^{1+η}` under GRH, and `q^{1.1667+η}` from the curve `g7d`
+
+- `LinnikAlmostAll.sum_norm_sq_eq`: Parseval over the classes
+- `LinnikAlmostAll.card_bad_le`: Counting the classes with no small prime, by Parseval
+- `LinnikAlmostAll.error_sq_le`: The characters other than the trivial one, in mean square
+- `LinnikAlmostAll.almostAll_of_charDensity`: Primes in almost all reduced classes, from a density estimate
+- `LinnikAlmostAll.almostAll_one_of_GRH`: Primes in almost all classes under GRH, below `q^{1+η}`
+- `LinnikAlmostAll.almostAll_one`: Primes in almost all classes below `q^{1+η}`, from GRH as L. Alpöge's Lean archive proves it ([note](../formalisations/alpoge-rh.md))
+- `LinnikAlmostAll.almostAll_g7d`: CONDITIONAL. Primes in almost all classes below `q^{11667/10000+η}`, from the curve `g7d`
+- `LinnikAlmostAll.almostAll_turan`: All the classes but `Kq^{1−δ+η}` have a prime below `Kq^{1+δ}`, under GRH as L. Alpöge's Lean archive proves it
 
 #### `LinnikBuckets`: The off-diagonal pairs in dyadic buckets of the analytic conductor
 
@@ -2401,6 +2415,10 @@ note of `formalisations/` that names it, if one does.
 
 - `QuantMoments.moment_quant_pos`: Quantitative moments, positive fundamental discriminants ([note](../formalisations/d2-density.md))
 - `QuantMoments.moment_quant_neg`: Quantitative moments, negative fundamental discriminants ([note](../formalisations/d2-density.md))
+
+#### `RHJoinsLinnik`: The rebuild's Riemann hypothesis, in the words of the Linnik results
+
+- `LinnikGRH.dirichletRH_of_rhAndGRH`: GRH from the rebuild, in the archive's words ([note](../formalisations/alpoge-rh.md))
 
 #### `RandModel`: Lamzouri's random model for `L'/L(1, χ_D)` (milestone B2, unconditional)
 
@@ -3378,6 +3396,10 @@ note of `formalisations/` that names it, if one does.
 - `TwinKV.twins_lower_cut`: The lower bound with a free cutoff `u`
 - `TwinKV.twins_lower_KV_sharp`: The twin form with the PNT exponent
 
+#### `TwistFamily`: A family of primes whose quadratic twists are small on a window — CONDITIONAL on the half-plane
+
+- `TwistFamily.exists_good_fin`: CONDITIONAL. A member good for finitely many complex weights ([note](../formalisations/alpoge-rh.md))
+
 #### `ZetaAFE`: The approximate functional equation for `ξ(s)²`
 
 - `ZetaFourth.afe_xi`: The approximate functional equation for `ξ(s)²`
@@ -3425,17 +3447,19 @@ note of `formalisations/` that names it, if one does.
 - `ZetaKernel.norm_kz_le`: The kernel bound ([note](../formalisations/zeta-density.md))
 - `ZetaKernel.power_count_pts`: Large values of a power at well-spaced heights
 
-#### `ZetaPair`: The pair-first frontier for `ζ` — CONDITIONAL on the half-plane
+#### `ZetaPair`: The pair-first frontiers — CONDITIONAL on the half-plane
 
+- `ZetaBalance.rhAndGRH_of_pairBound`: CONDITIONAL. The Riemann hypothesis for `ζ` and every Dirichlet `L`-function from the pair-first frontier ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.riemannHypothesis_of_zetaPairBound`: CONDITIONAL. The Riemann hypothesis from the pair-first frontier ([note](../formalisations/alpoge-rh.md))
 
 #### `ZetaThin`: The thin scales for `ζ` — CONDITIONAL on the half-plane
 
 - `ZetaBalance.riemannHypothesis_of_zetaTwistBound`: CONDITIONAL. The Riemann hypothesis from lattice data with small twists ([note](../formalisations/alpoge-rh.md))
 
-#### `ZetaTwist`: A pair of primes with small quadratic twists on a window — CONDITIONAL on the half-plane
+#### `ZetaTwist`: A pair of primes with small twists on a window — CONDITIONAL on the half-plane
 
-- `ZetaTwist.exists_winPair_twists`: CONDITIONAL. The twists for `ζ` ([note](../formalisations/alpoge-rh.md))
+- `ZetaTwist.exists_winPair_twists`: CONDITIONAL. The twists for every character ([note](../formalisations/alpoge-rh.md))
+- `ZetaTwist.exists_winPair_twists_one`: CONDITIONAL. The twists for `ζ` ([note](../formalisations/alpoge-rh.md))
 
 ### `lib/dh`
 

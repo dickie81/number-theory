@@ -7,7 +7,8 @@ import ZetaBalance
 
 A step of the library's proof of the Riemann hypothesis (`docs/rh-rebuild.md`, "The analytic inputs": the twists). The
 generic lemma behind `ZetaTwist.exists_winPair_twists`: in a family of primes `d` in a progression, most members have
-a twisted prime sum of square-root size, uniformly on a window `[Y, Y^A]`.
+a twisted prime sum of square-root size, uniformly on a window `[Y, Y^A]`, and this for finitely many complex weights
+at once, as the twists `ψχ` of GRH need.
 
 **CONDITIONAL.** The results here whose doc comments say CONDITIONAL use the half-plane `Re s > 11/12` for `ζ` and every
 Dirichlet `L`-function (`Eis.LFunction_ne_zero_of_re_gt`), an input formalised in the library that no referee has read
@@ -16,12 +17,12 @@ Dirichlet `L`-function (`Eis.LFunction_ne_zero_of_re_gt`), an input formalised i
 input, and must be cited as conditional on it.
 
 **The family.** For `M` with `4 ∣ M`, `r` prime to `M` and `L ≥ 0`, `family M r L` is the set `P` of primes `d ≡ r (M)`
-with `e^{L/2} < d ≤ e^L`. For a weight `b` with `|b| ≤ 1` and a cutoff `Z`, the free part of `d` is
-`T_d(y) = Σ_{n ≤ Z, (n, M) = 1} Λ(n) b(n) min(1, y/n) J(n | d)` (`free`), with `J` the Jacobi symbol.
+with `e^{L/2} < d ≤ e^L`. For a complex weight `b` with `‖b‖ ≤ 1` and a cutoff `Z`, the free part of `d` is
+`T_d(y) = Σ_{n ≤ Z, (n, M) = 1} Λ(n) b(n) min(1, y/n) J(n | d)` (`freeC`), with `J` the Jacobi symbol.
 
-* **The mean square** (`sum_sq_free_le`). Expanding `Σ_{d ∈ P} (Σ_n c(n)J(n | d))²` (`sum_sq_le`), a pair `(n, m)` with
+* **The mean square** (`sum_sq_free_le`). Expanding `Σ_{d ∈ P} ‖Σ_n c(n)J(n | d)‖²` (`sum_sq_le`), a pair `(n, m)` with
   `nm` a square is bounded by `|P|`, and the others are sums of a character over `P`.
-  - **Diagonal** (`sum_isSquare_le`). With `|c(n)| ≤ tΛ(n)/√n`, the square pairs weigh at most `t²·4 log²Z (1 + log Z)`:
+  - **Diagonal** (`sum_isSquare_le`). With `‖c(n)‖ ≤ tΛ(n)/√n`, the square pairs weigh at most `t²·4 log²Z (1 + log Z)`:
     for `nm = j²`, `Σ_{nm = j²} Λ(n)Λ(m) ≤ (log j²)²` (Mathlib's `vonMangoldt_sum`).
   - **Off-diagonal** (`abs_sum_family_le`). For `nm` prime to `M` and not a square, reciprocity
     (`jacobiSym.quadratic_reciprocity'`) gives `J(n | d)J(m | d) = σ·J(d | nm)`, with a sign `σ` fixed by `d ≡ r (4)`.
@@ -30,19 +31,21 @@ with `e^{L/2} < d ≤ e^L`. For a weight `b` with `|b| ≤ 1` and a cutoff `Z`, 
     `α = 11/12 + 1/48` (`PrimeCharSums.norm_sum_Ioc_modEq_le`).
 * **The size of the family** (`large_family`). Under `100(log M + 100 log W) ≤ L`, `|P| ≥ e^{31L/32}/(64M)`
   (`PrimeCharSums.card_Ioc_modEq_ge`), which beats the off-diagonal terms for `Z ≤ W^48`.
-* **Sobolev and Markov** (`card_bad_quarter`). `MeanSquareSup.card_bad_le` with `M₀(k) = kD` and `M₁(k) = D/k`, where
-  the increments `T_d(k + 1) − T_d(k)` have coefficients at most `Λ(n)/√(kn)`; its bound is `≤ D K₀^{−ε}(2 + 4ζ(1 + ε))`
-  (`bound_le`). So at most a quarter of `P` has `T_d(k)² > k^{1+2ε}/16` for some integer `k ∈ [⌊Y⌋, ⌊Y^A⌋ + 1]`.
-* **From integers to all `y`** (`abs_free_le`). `T_d` is affine between consecutive integers (`free_eq`), so a good `d`
-  has `|T_d(y)| ≤ y^{1/2+ε}/2` on `[Y, Y^A]`.
-* **The main result** (`exists_good`). For `Y` large, uniformly in `M`, `r`, `L` with `100(log M + 100A log Y) ≤ L` and
-  in two weights `b₁`, `b₂`, some `d ∈ P` is good for both. The cutoff is `Z = ⌊Y^{48A}⌋`.
+* **Sobolev and Markov** (`card_bad_le`). `MeanSquareSup.card_bad_le` with `M₀(k) = kD` and `M₁(k) = D/k`, where
+  the increments `T_d(k + 1) − T_d(k)` have coefficients at most `Λ(n)/√(kn)` (`norm_coef_le`, `abs_min_sub_le`); its
+  bound is `≤ D K₀^{−ε}(2 + 4ζ(1 + ε))` (`bound_le`). It counts the `d` with `‖T_d(k)‖² > k^{1+2ε}/16` for some integer
+  `k ∈ [⌊Y⌋, ⌊Y^A⌋ + 1]`: for `Y` large, at most `|P|/(2W + 2)` of them.
+* **From integers to all `y`** (`norm_freeC_le`). `T_d` is affine between consecutive integers (`freeC_eq`), so a good
+  `d` has `‖T_d(y)‖ ≤ y^{1/2+ε}/2` on `[Y, Y^A]`.
+* **The main result** (`exists_good_fin`). For `Y` large in terms of `ε`, `A` and the number `W` of weights, uniformly
+  in `M`, `r`, `L` with `100(log M + 100A log Y) ≤ L` and in the complex weights, some `d ∈ P` is good for all of them.
+  The cutoff is `Z = ⌊Y^{48A}⌋`.
 
-`ZetaTwist` applies it twice, and passes from `T_d` to the ramp errors.
+`ZetaTwist` applies `exists_good_fin` twice, and passes from `T_d` to the ramp errors.
 -/
 
 open Finset DirichletCharacter ZetaBalance
-open scoped ArithmeticFunction.vonMangoldt
+open scoped ArithmeticFunction.vonMangoldt ComplexConjugate
 
 namespace TwistFamily
 
@@ -59,28 +62,37 @@ lemma mem_family {M r d : ℕ} {L : ℝ} (h : d ∈ family M r L) :
   refine ⟨hp, hr, (Real.lt_log_iff_exp_lt hd0).2 (Nat.lt_of_floor_lt h1), (Real.log_le_iff_le_exp hd0).2 ?_⟩
   exact (Nat.cast_le.2 h2).trans (Nat.floor_le (Real.exp_pos _).le)
 
-/-- The free part `T_d(y) = Σ_{n ≤ Z, (n, M) = 1} Λ(n) b(n) min(1, y/n) J(n | d)`. -/
-noncomputable def free (M Z : ℕ) (b : ℕ → ℝ) (d : ℕ) (y : ℝ) : ℝ :=
-  ∑ n ∈ Icc 1 Z with n.Coprime M, Λ n * b n * min 1 (y / n) * (jacobiSym n d : ℝ)
+/-- The free part `T_d(y) = Σ_{n ≤ Z, (n, M) = 1} Λ(n) b(n) min(1, y/n) J(n | d)`, for a complex weight `b`. -/
+noncomputable def freeC (M Z : ℕ) (b : ℕ → ℂ) (d : ℕ) (y : ℝ) : ℂ :=
+  ∑ n ∈ Icc 1 Z with n.Coprime M, (Λ n : ℂ) * b n * (min 1 (y / n) : ℝ) * jacobiSym n d
 
 /-! ### The mean square, expanded -/
 
 /-- **The mean square, expanded.** For real `f` with `|f| ≤ 1`, the mean square over `P` of `Σ_{n ∈ I} c(n) f(n, d)` is
-at most `|P|` times the sum of `|c(n)c(m)|` over the `bad` pairs, plus `E (Σ_n |c(n)|)²`, if every other pair has
-`|Σ_{d ∈ P} f(n, d) f(m, d)| ≤ E`. -/
-lemma sum_sq_le {ι : Type*} (P : Finset ι) (I : Finset ℕ) (c : ℕ → ℝ) (f : ℕ → ι → ℝ)
+at most `|P|` times the sum of `‖c(n)c(m)‖` over the `bad` pairs, plus `E (Σ_n ‖c(n)‖)²`, if every other pair has
+`|Σ_{d ∈ P} f(n, d) f(m, d)| ≤ E`: it is `Σ_{n, m} conj(c(n)) c(m) Σ_{d ∈ P} f(n, d) f(m, d)`. -/
+lemma sum_sq_le {ι : Type*} (P : Finset ι) (I : Finset ℕ) (c : ℕ → ℂ) (f : ℕ → ι → ℝ)
     (hf : ∀ n d, |f n d| ≤ 1) (bad : ℕ → ℕ → Prop) [DecidableRel bad] {E : ℝ} (hE : 0 ≤ E)
     (h : ∀ n ∈ I, ∀ m ∈ I, ¬bad n m → |∑ d ∈ P, f n d * f m d| ≤ E) :
-    ∑ d ∈ P, (∑ n ∈ I, c n * f n d) ^ 2 ≤
-      #P * ∑ n ∈ I, ∑ m ∈ I with bad n m, |c n| * |c m| + E * (∑ n ∈ I, |c n|) ^ 2 := by
-  have e : ∑ d ∈ P, (∑ n ∈ I, c n * f n d) ^ 2 =
-      ∑ n ∈ I, ∑ m ∈ I, c n * c m * ∑ d ∈ P, f n d * f m d := by
-    simp_rw [sq, sum_mul_sum, mul_sum]
+    ∑ d ∈ P, ‖∑ n ∈ I, c n * f n d‖ ^ 2 ≤
+      #P * ∑ n ∈ I, ∑ m ∈ I with bad n m, ‖c n‖ * ‖c m‖ + E * (∑ n ∈ I, ‖c n‖) ^ 2 := by
+  have e : ((∑ d ∈ P, ‖∑ n ∈ I, c n * f n d‖ ^ 2 : ℝ) : ℂ) =
+      ∑ n ∈ I, ∑ m ∈ I, conj (c n) * c m * ((∑ d ∈ P, f n d * f m d : ℝ) : ℂ) := by
+    push_cast
+    simp_rw [← Complex.conj_mul', map_sum, map_mul, Complex.conj_ofReal, sum_mul_sum, mul_sum]
     rw [sum_comm]
     refine sum_congr rfl fun n _ => ?_
     rw [sum_comm]
     exact sum_congr rfl fun m _ => sum_congr rfl fun d _ => by ring
-  rw [e, sq, sum_mul_sum, mul_sum, mul_sum, ← sum_add_distrib]
+  have hle : ∑ d ∈ P, ‖∑ n ∈ I, c n * f n d‖ ^ 2 ≤
+      ∑ n ∈ I, ∑ m ∈ I, ‖c n‖ * ‖c m‖ * |∑ d ∈ P, f n d * f m d| := by
+    refine (Real.le_norm_self _).trans ?_
+    rw [← Complex.norm_real, e]
+    refine (norm_sum_le _ _).trans (sum_le_sum fun n _ => (norm_sum_le _ _).trans (le_of_eq ?_))
+    refine sum_congr rfl fun m _ => ?_
+    rw [norm_mul, norm_mul, Complex.norm_conj, Complex.norm_real, Real.norm_eq_abs]
+  refine hle.trans ?_
+  rw [sq, sum_mul_sum, mul_sum, mul_sum, ← sum_add_distrib]
   refine sum_le_sum fun n hn => ?_
   rw [sum_filter, mul_sum, mul_sum, ← sum_add_distrib]
   refine sum_le_sum fun m hm => ?_
@@ -90,10 +102,7 @@ lemma sum_sq_le {ι : Type*} (P : Finset ι) (I : Finset ℕ) (c : ℕ → ℝ) 
           rw [abs_mul]
           nlinarith [hf n d, hf m d, abs_nonneg (f n d), abs_nonneg (f m d)]
       _ = #P := by simp
-  have hcc : 0 ≤ |c n| * |c m| := by positivity
-  have h1 : c n * c m * ∑ d ∈ P, f n d * f m d ≤ |c n| * |c m| * |∑ d ∈ P, f n d * f m d| := by
-    rw [← abs_mul, ← abs_mul]
-    exact le_abs_self _
+  have hcc : 0 ≤ ‖c n‖ * ‖c m‖ := by positivity
   split_ifs with hb
   · nlinarith [mul_le_mul_of_nonneg_left hX hcc, mul_nonneg hE hcc]
   · nlinarith [mul_le_mul_of_nonneg_left (h n hn m hm hb) hcc]
@@ -238,7 +247,7 @@ lemma abs_sum_family_le {η C : ℝ}
         exact hb.trans_eq (by push_cast; ring)
 
 /-- **CONDITIONAL. The mean square of a free sum** (conditional on the half-plane, through `abs_sum_family_le`). If
-`|c(n)| ≤ tΛ(n)/√n` and `|c(n)| ≤ Λ(n)`, then `Σ_{d ∈ P} (Σ_{n ≤ Z, (n, M) = 1} c(n)J(n | d))²` is at most
+`‖c(n)‖ ≤ tΛ(n)/√n` and `‖c(n)‖ ≤ Λ(n)`, then `Σ_{d ∈ P} ‖Σ_{n ≤ Z, (n, M) = 1} c(n)J(n | d)‖²` is at most
 `|P| t²·4 log²Z (1 + log Z)`, the square pairs (`sum_isSquare_le`), plus `E (7Z)²` with
 `E = C log(Z²M + 2) e^{Lα}`, the other pairs (`abs_sum_family_le`; `Σ_{n ≤ Z} Λ(n) = ψ(Z) ≤ 7Z`). -/
 lemma sum_sq_free_le {η C : ℝ}
@@ -246,14 +255,15 @@ lemma sum_sq_free_le {η C : ℝ}
       ∀ χ : DirichletCharacter ℂ N, χ ≠ 1 → ∀ y x : ℝ, 0 ≤ y → y ≤ x →
         ‖∑ p ∈ Ioc ⌊y⌋₊ ⌊x⌋₊ with p.Prime ∧ p ≡ a [MOD M], χ p‖ ≤ C * Real.log (N * M + 2) * x ^ (11 / 12 + η))
     (hC0 : 0 ≤ C) {M r : ℕ} [NeZero M] (hM : 4 ∣ M) (hr : r.Coprime M) {L : ℝ} (hL : 0 ≤ L) (Z : ℕ)
-    (c : ℕ → ℝ) {t : ℝ} (ht : 0 ≤ t) (hc : ∀ n, |c n| ≤ t * (Λ n / √n)) (hc' : ∀ n, |c n| ≤ Λ n) :
-    ∑ d ∈ family M r L, (∑ n ∈ Icc 1 Z with n.Coprime M, c n * jacobiSym n d) ^ 2 ≤
+    (c : ℕ → ℂ) {t : ℝ} (ht : 0 ≤ t) (hc : ∀ n, ‖c n‖ ≤ t * (Λ n / √n) ∧ ‖c n‖ ≤ Λ n) :
+    ∑ d ∈ family M r L, ‖∑ n ∈ Icc 1 Z with n.Coprime M, c n * jacobiSym n d‖ ^ 2 ≤
       #(family M r L) * (t ^ 2 * (4 * Real.log Z ^ 2 * (1 + Real.log Z))) +
         C * Real.log (Z * Z * M + 2) * Real.exp L ^ (11 / 12 + η) * (7 * Z) ^ 2 := by
   have hE0 : 0 ≤ C * Real.log (Z * Z * M + 2) * Real.exp L ^ (11 / 12 + η) := by
     have : (0 : ℝ) ≤ Z * Z * M := by positivity
     have : 0 ≤ Real.log (Z * Z * M + 2) := Real.log_nonneg (by linarith)
     positivity
+  simp only [← Complex.ofReal_intCast]
   refine (sum_sq_le (family M r L) {n ∈ Icc 1 Z | n.Coprime M} c (fun n d => (jacobiSym n d : ℝ))
     (fun n d => abs_jacobiSym_le _ _) (fun n m => IsSquare (n * m)) hE0 ?_).trans ?_
   · intro n hn m hm hsq
@@ -270,15 +280,15 @@ lemma sum_sq_free_le {η C : ℝ}
               fun n _ _ => sum_nonneg fun m _ => by positivity).trans' (sum_le_sum fun n _ => ?_)
             refine (sum_le_sum_of_subset_of_nonneg (filter_subset_filter _ (filter_subset _ _))
               fun m _ _ => by positivity).trans' (sum_le_sum fun m _ => ?_)
-            calc |c n| * |c m| ≤ (t * (Λ n / √n)) * (t * (Λ m / √m)) :=
-                  mul_le_mul (hc n) (hc m) (abs_nonneg _) (by positivity)
+            calc ‖c n‖ * ‖c m‖ ≤ (t * (Λ n / √n)) * (t * (Λ m / √m)) :=
+                  mul_le_mul (hc n).1 (hc m).1 (norm_nonneg _) (by positivity)
               _ = _ := by ring
         _ = t ^ 2 * ∑ n ∈ Icc 1 Z, ∑ m ∈ Icc 1 Z with IsSquare (n * m), Λ n / √n * (Λ m / √m) := by
             simp_rw [mul_sum]
         _ ≤ t ^ 2 * (4 * Real.log Z ^ 2 * (1 + Real.log Z)) := by
             gcongr
             exact sum_isSquare_le Z
-    · -- the other pairs: `Σ |c(n)| ≤ ψ(Z) ≤ 7Z`
+    · -- the other pairs: `Σ ‖c(n)‖ ≤ ψ(Z) ≤ 7Z`
       have hψ : ∑ n ∈ Icc 1 Z, Λ n ≤ 7 * Z := by
         have h := Chebyshev.psi_le_const_mul_self (Nat.cast_nonneg (α := ℝ) Z)
         have hI : Icc 1 Z = Ioc 0 Z := by simpa using Finset.Icc_add_one_left_eq_Ioc 0 Z
@@ -288,7 +298,7 @@ lemma sum_sq_free_le {η C : ℝ}
           linarith
         nlinarith [Nat.cast_nonneg (α := ℝ) Z]
       gcongr
-      exact (sum_le_sum fun n _ => hc' n).trans ((sum_le_sum_of_subset_of_nonneg (filter_subset _ _)
+      exact (sum_le_sum fun n _ => (hc n).2).trans ((sum_le_sum_of_subset_of_nonneg (filter_subset _ _)
         fun n _ _ => ArithmeticFunction.vonMangoldt_nonneg).trans hψ)
 
 /-! ### The size of the family -/
@@ -445,72 +455,57 @@ lemma large_family {C₁ C₂ : ℝ} (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
 
 /-! ### Sobolev and Markov -/
 
-/-- `min(1, x) ≤ √x` for `x ≥ 0`. -/
-lemma min_one_le_sqrt {x : ℝ} (hx : 0 ≤ x) : min 1 x ≤ √x := by
-  rcases le_total x 1 with h | h
+/-- `|min(1, y/n)|` is at most `√y/√n` and at most `1`, for `y ≥ 0`. -/
+lemma abs_min_le {y : ℝ} (hy : 0 ≤ y) (n : ℕ) : |min 1 (y / n)| ≤ √y * (1 / √n) ∧ |min 1 (y / n)| ≤ 1 := by
+  have hx : 0 ≤ y / n := by positivity
+  rw [abs_of_nonneg (le_min zero_le_one hx), mul_one_div, ← Real.sqrt_div' _ (Nat.cast_nonneg n)]
+  refine ⟨?_, min_le_left _ _⟩
+  rcases le_total (y / n) 1 with h | h
   · rw [min_eq_right h]
     exact (Real.le_sqrt hx hx).2 (by nlinarith)
   · rw [min_eq_left h]
     exact Real.one_le_sqrt.2 h
 
-/-- The coefficients of `T_d(y)`: `|Λ(n) b(n) min(1, y/n)|` is at most `√y Λ(n)/√n` and at most `Λ(n)`. -/
-lemma abs_coef_le {b : ℕ → ℝ} (hb : ∀ n, |b n| ≤ 1) {y : ℝ} (hy : 0 ≤ y) (n : ℕ) :
-    |Λ n * b n * min 1 (y / n)| ≤ √y * (Λ n / √n) ∧ |Λ n * b n * min 1 (y / n)| ≤ Λ n := by
-  have hΛ := ArithmeticFunction.vonMangoldt_nonneg (n := n)
-  have hm0 : 0 ≤ min 1 (y / n) := le_min zero_le_one (by positivity)
-  rw [abs_mul, abs_mul, abs_of_nonneg hΛ, abs_of_nonneg hm0]
-  have hbn := hb n
-  constructor
-  · calc Λ n * |b n| * min 1 (y / n) ≤ Λ n * 1 * √(y / n) := by
-          gcongr
-          exact min_one_le_sqrt (by positivity)
-      _ = √y * (Λ n / √n) := by
-          rw [Real.sqrt_div' _ (Nat.cast_nonneg n)]
-          ring
-  · calc Λ n * |b n| * min 1 (y / n) ≤ Λ n * 1 * 1 := by gcongr; exact min_le_left _ _
-      _ = Λ n := by ring
-
-/-- The coefficients of `T_d(k + 1) − T_d(k)`: `|Λ(n) b(n)(min(1, (k+1)/n) − min(1, k/n))|` is at most
-`Λ(n)/√(kn)` and at most `Λ(n)`, as the difference is `0` for `n ≤ k` and `1/n` for `n > k`. -/
-lemma abs_coef_sub_le {b : ℕ → ℝ} (hb : ∀ n, |b n| ≤ 1) {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
-    |Λ n * b n * (min 1 (((k + 1 : ℕ) : ℝ) / n) - min 1 ((k : ℝ) / n))| ≤ 1 / √k * (Λ n / √n) ∧
-      |Λ n * b n * (min 1 (((k + 1 : ℕ) : ℝ) / n) - min 1 ((k : ℝ) / n))| ≤ Λ n := by
-  have hΛ := ArithmeticFunction.vonMangoldt_nonneg (n := n)
-  have hk1 : (1 : ℝ) ≤ k := by exact_mod_cast hk
-  have hδ : |min 1 (((k + 1 : ℕ) : ℝ) / n) - min 1 ((k : ℝ) / n)| ≤ 1 / √k * (1 / √n) ∧
+/-- The increments of `min(1, y/n)` at integers: `|min(1, (k + 1)/n) − min(1, k/n)|` is at most `1/√(kn)` and at
+most `1`, as it is `0` for `n ≤ k` and `1/n` for `n > k`. -/
+lemma abs_min_sub_le {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
+    |min 1 (((k + 1 : ℕ) : ℝ) / n) - min 1 ((k : ℝ) / n)| ≤ 1 / √k * (1 / √n) ∧
       |min 1 (((k + 1 : ℕ) : ℝ) / n) - min 1 ((k : ℝ) / n)| ≤ 1 := by
-    rcases Nat.eq_zero_or_pos n with rfl | hn
-    · simp
-    have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast hn
-    rcases le_or_gt n k with h | h
-    · have h' : (n : ℝ) ≤ k := by exact_mod_cast h
-      have h'' : (n : ℝ) ≤ ((k + 1 : ℕ) : ℝ) := by push_cast; linarith
-      rw [min_eq_left ((one_le_div (by linarith)).2 h'), min_eq_left ((one_le_div (by linarith)).2 h''), sub_self,
-        abs_zero]
-      constructor <;> positivity
-    · have hn' : (k : ℝ) + 1 ≤ n := by exact_mod_cast h
-      have hk' : (k : ℝ) ≤ n := by linarith
-      have hk'' : ((k + 1 : ℕ) : ℝ) ≤ n := by push_cast; linarith
-      rw [min_eq_right ((div_le_one (by linarith)).2 hk'), min_eq_right ((div_le_one (by linarith)).2 hk'')]
-      push_cast
-      rw [show ((k : ℝ) + 1) / n - k / n = 1 / n by ring, abs_of_pos (by positivity)]
-      constructor
-      · rw [div_mul_div_comm, one_mul, div_le_div_iff₀ (by positivity) (by positivity), one_mul, one_mul]
-        have h1 : √(k : ℝ) ≤ √(n : ℝ) := Real.sqrt_le_sqrt (by linarith)
-        have h2 : √(n : ℝ) * √(n : ℝ) = n := Real.mul_self_sqrt (by positivity)
-        nlinarith [Real.sqrt_nonneg (k : ℝ), Real.sqrt_nonneg (n : ℝ)]
-      · rw [div_le_one (by linarith)]
-        exact hn1
-  rw [abs_mul, abs_mul, abs_of_nonneg hΛ]
-  have hbn := hb n
+  have hk1 : (1 : ℝ) ≤ k := by exact_mod_cast hk
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp
+  have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast hn
+  rcases le_or_gt n k with h | h
+  · have h' : (n : ℝ) ≤ k := by exact_mod_cast h
+    have h'' : (n : ℝ) ≤ ((k + 1 : ℕ) : ℝ) := by push_cast; linarith
+    rw [min_eq_left ((one_le_div (by linarith)).2 h'), min_eq_left ((one_le_div (by linarith)).2 h''), sub_self,
+      abs_zero]
+    constructor <;> positivity
+  · have hn' : (k : ℝ) + 1 ≤ n := by exact_mod_cast h
+    have hk' : (k : ℝ) ≤ n := by linarith
+    have hk'' : ((k + 1 : ℕ) : ℝ) ≤ n := by push_cast; linarith
+    rw [min_eq_right ((div_le_one (by linarith)).2 hk'), min_eq_right ((div_le_one (by linarith)).2 hk'')]
+    push_cast
+    rw [show ((k : ℝ) + 1) / n - k / n = 1 / n by ring, abs_of_pos (by positivity)]
+    constructor
+    · rw [div_mul_div_comm, one_mul, div_le_div_iff₀ (by positivity) (by positivity), one_mul, one_mul]
+      have h1 : √(k : ℝ) ≤ √(n : ℝ) := Real.sqrt_le_sqrt (by linarith)
+      have h2 : √(n : ℝ) * √(n : ℝ) = n := Real.mul_self_sqrt (by positivity)
+      nlinarith [Real.sqrt_nonneg (k : ℝ), Real.sqrt_nonneg (n : ℝ)]
+    · rw [div_le_one (by linarith)]
+      exact hn1
+
+/-- The coefficients of the free parts and their increments: if `|δ| ≤ u/√n` and `|δ| ≤ 1`, then `‖Λ(n) b(n) δ‖` is at
+most `uΛ(n)/√n` and at most `Λ(n)`. -/
+lemma norm_coef_le {b : ℕ → ℂ} (hb : ∀ n, ‖b n‖ ≤ 1) {n : ℕ} {u δ : ℝ} (h : |δ| ≤ u * (1 / √n) ∧ |δ| ≤ 1) :
+    ‖(Λ n : ℂ) * b n * δ‖ ≤ u * (Λ n / √n) ∧ ‖(Λ n : ℂ) * b n * δ‖ ≤ Λ n := by
+  have hΛ := ArithmeticFunction.vonMangoldt_nonneg (n := n)
+  obtain ⟨hbn, h1, h2⟩ := And.intro (hb n) h
+  rw [norm_mul, norm_mul, Complex.norm_real, Complex.norm_real, Real.norm_of_nonneg hΛ, Real.norm_eq_abs]
   constructor
-  · calc Λ n * |b n| * |min 1 (((k + 1 : ℕ) : ℝ) / n) - min 1 ((k : ℝ) / n)| ≤ Λ n * 1 * (1 / √k * (1 / √n)) := by
-          gcongr
-          exact hδ.1
-      _ = 1 / √k * (Λ n / √n) := by ring
-  · calc Λ n * |b n| * |min 1 (((k + 1 : ℕ) : ℝ) / n) - min 1 ((k : ℝ) / n)| ≤ Λ n * 1 * 1 := by
-          gcongr
-          exact hδ.2
+  · calc Λ n * ‖b n‖ * |δ| ≤ Λ n * 1 * (u * (1 / √n)) := by gcongr
+      _ = u * (Λ n / √n) := by ring
+  · calc Λ n * ‖b n‖ * |δ| ≤ Λ n * 1 * 1 := by gcongr
       _ = Λ n := by ring
 
 /-- **The bound of `MeanSquareSup.card_bad_le`** for `M₀(k) = kD` and `M₁(k) = D/k`: at most
@@ -594,12 +589,11 @@ lemma bound_le {ε D : ℝ} (hε : 0 < ε) (hD : 0 ≤ D) {K₀ K₁ : ℕ} (hK�
     _ ≤ 2 * D * (K₀ : ℝ) ^ (-ε) + 4 * D * ((K₀ : ℝ) ^ (-ε) * S) := by gcongr
     _ = D * (K₀ : ℝ) ^ (-ε) * (2 + 4 * S) := by ring
 
-/-- **CONDITIONAL. At most a quarter of the family is bad** (conditional on the half-plane, through
-`sum_sq_free_le`). If the off-diagonal terms `E (7Z)²`, times `K₁`, are at most `|P|`, and
-`D K₀^{−ε}(2 + 4S) ≤ 1/64` with `D = 4 log²Z (1 + log Z) + 1`, then at most `|P|/4` members `d` have
-`T_d(k)² > k^{1+2ε}/16` for some `k ∈ [K₀, K₁]`: `MeanSquareSup.card_bad_le` with `M₀(k) = kD` and `M₁(k) = D/k`
-(`abs_coef_le`, `abs_coef_sub_le`), and `bound_le`. -/
-lemma card_bad_quarter {ε C : ℝ} (hε : 0 < ε)
+/-- **CONDITIONAL. Few members are bad** (conditional on the half-plane, through `sum_sq_free_le`). If the
+off-diagonal terms `E (7Z)²`, times `K₁`, are at most `|P|`, then the members `d` with `‖T_d(k)‖² > k^{1+2ε}/16` for
+some `k ∈ [K₀, K₁]` number at most `16|P| D K₀^{−ε}(2 + 4S)`, `D = 4 log²Z (1 + log Z) + 1`: `MeanSquareSup.card_bad_le`
+with `M₀(k) = kD` and `M₁(k) = D/k` (`norm_coef_le` with `abs_min_le` and `abs_min_sub_le`), and `bound_le`. -/
+lemma card_bad_le {ε C : ℝ} (hε : 0 < ε)
     (hC : ∀ (N M : ℕ) [NeZero N] [NeZero M], N.Coprime M → ∀ a : ℕ, a.Coprime M →
       ∀ χ : DirichletCharacter ℂ N, χ ≠ 1 → ∀ y x : ℝ, 0 ≤ y → y ≤ x →
         ‖∑ p ∈ Ioc ⌊y⌋₊ ⌊x⌋₊ with p.Prime ∧ p ≡ a [MOD M], χ p‖ ≤
@@ -608,11 +602,10 @@ lemma card_bad_quarter {ε C : ℝ} (hε : 0 < ε)
     {Z K₀ K₁ : ℕ} (hK₀ : 1 ≤ K₀) (hK : K₀ ≤ K₁)
     (hoff : C * Real.log (Z * Z * M + 2) * Real.exp L ^ (11 / 12 + 1 / 48 : ℝ) * (7 * Z) ^ 2 * K₁ ≤
       #(family M r L))
-    (hB : (4 * Real.log Z ^ 2 * (1 + Real.log Z) + 1) * (K₀ : ℝ) ^ (-ε) *
-      (2 + 4 * ∑' k : ℕ, ((k : ℝ) ^ (1 + ε))⁻¹) ≤ 1 / 64)
-    {b : ℕ → ℝ} (hb : ∀ n, |b n| ≤ 1) :
-    4 * #{d ∈ family M r L | ∃ k ∈ Icc K₀ K₁,
-      1 / 16 * (k : ℝ) ^ (1 + 2 * ε) < ‖((free M Z b d k : ℝ) : ℂ)‖ ^ 2} ≤ #(family M r L) := by
+    {b : ℕ → ℂ} (hb : ∀ n, ‖b n‖ ≤ 1) :
+    1 / 16 * #{d ∈ family M r L | ∃ k ∈ Icc K₀ K₁, 1 / 16 * (k : ℝ) ^ (1 + 2 * ε) < ‖freeC M Z b d k‖ ^ 2} ≤
+      #(family M r L) * ((4 * Real.log Z ^ 2 * (1 + Real.log Z) + 1) * (K₀ : ℝ) ^ (-ε) *
+        (2 + 4 * ∑' k : ℕ, ((k : ℝ) ^ (1 + ε))⁻¹)) := by
   set D := 4 * Real.log Z ^ 2 * (1 + Real.log Z) + 1 with hD
   set E := C * Real.log (Z * Z * M + 2) * Real.exp L ^ (11 / 12 + 1 / 48 : ℝ) * (7 * Z) ^ 2 with hE
   have hlZ : 0 ≤ Real.log Z := Real.log_natCast_nonneg Z
@@ -624,16 +617,13 @@ lemma card_bad_quarter {ε C : ℝ} (hε : 0 < ε)
   have hK₁ : (1 : ℝ) ≤ K₁ := by exact_mod_cast hK₀.trans hK
   have hEP : E ≤ #(family M r L) := le_trans (le_mul_of_one_le_right hE0 hK₁) hoff
   -- the mean squares
-  have h0 : ∀ k ∈ Icc K₀ K₁, ∑ d ∈ family M r L, ‖((free M Z b d k : ℝ) : ℂ)‖ ^ 2 ≤
-      #(family M r L) * (k * D) := by
+  have h0 : ∀ k ∈ Icc K₀ K₁, ∑ d ∈ family M r L, ‖freeC M Z b d k‖ ^ 2 ≤ #(family M r L) * (k * D) := by
     intro k hk
     have hk1 : (1 : ℝ) ≤ k := by exact_mod_cast hK₀.trans (mem_Icc.1 hk).1
-    have h := sum_sq_free_le hC hC0 hM hr hL Z (fun n => Λ n * b n * min 1 ((k : ℝ) / n))
-      (Real.sqrt_nonneg k) (fun n => (abs_coef_le hb (Nat.cast_nonneg k) n).1)
-      (fun n => (abs_coef_le hb (Nat.cast_nonneg k) n).2)
+    have h := sum_sq_free_le hC hC0 hM hr hL Z (fun n => (Λ n : ℂ) * b n * (min 1 ((k : ℝ) / n) : ℝ))
+      (Real.sqrt_nonneg k) (fun n => norm_coef_le hb (abs_min_le (Nat.cast_nonneg k) n))
     rw [Real.sq_sqrt (Nat.cast_nonneg k)] at h
-    simp only [Complex.norm_real, Real.norm_eq_abs, sq_abs]
-    calc ∑ d ∈ family M r L, free M Z b d k ^ 2 ≤
+    calc ∑ d ∈ family M r L, ‖freeC M Z b d k‖ ^ 2 ≤
           #(family M r L) * (k * (4 * Real.log Z ^ 2 * (1 + Real.log Z))) + E := h
       _ ≤ #(family M r L) * (k * (4 * Real.log Z ^ 2 * (1 + Real.log Z))) + #(family M r L) * k := by
           gcongr
@@ -641,22 +631,22 @@ lemma card_bad_quarter {ε C : ℝ} (hε : 0 < ε)
       _ = #(family M r L) * (k * D) := by
           rw [hD]
           ring
-  have h1 : ∀ k ∈ Ico K₀ K₁, ∑ d ∈ family M r L,
-      ‖((free M Z b d (k + 1 : ℕ) : ℝ) : ℂ) - ((free M Z b d k : ℝ) : ℂ)‖ ^ 2 ≤ #(family M r L) * (D / k) := by
+  have h1 : ∀ k ∈ Ico K₀ K₁, ∑ d ∈ family M r L, ‖freeC M Z b d (k + 1 : ℕ) - freeC M Z b d k‖ ^ 2 ≤
+      #(family M r L) * (D / k) := by
     intro k hk
     have hk1 : 1 ≤ k := hK₀.trans (mem_Ico.1 hk).1
     have hk1' : (1 : ℝ) ≤ k := by exact_mod_cast hk1
     have hkK : (k : ℝ) ≤ K₁ := by exact_mod_cast (mem_Ico.1 hk).2.le
     have h := sum_sq_free_le hC hC0 hM hr hL Z
-      (fun n => Λ n * b n * (min 1 (((k + 1 : ℕ) : ℝ) / n) - min 1 ((k : ℝ) / n))) (by positivity)
-      (fun n => (abs_coef_sub_le hb hk1 n).1) (fun n => (abs_coef_sub_le hb hk1 n).2)
+      (fun n => (Λ n : ℂ) * b n * (min 1 (((k + 1 : ℕ) : ℝ) / n) - min 1 ((k : ℝ) / n) : ℝ)) (by positivity)
+      (fun n => norm_coef_le hb (abs_min_sub_le hk1 n))
     rw [div_pow, Real.sq_sqrt (Nat.cast_nonneg k), one_pow] at h
-    have e : ∀ d, free M Z b d (k + 1 : ℕ) - free M Z b d k = ∑ n ∈ Icc 1 Z with n.Coprime M,
-        Λ n * b n * (min 1 (((k + 1 : ℕ) : ℝ) / n) - min 1 ((k : ℝ) / n)) * jacobiSym n d := by
+    have e : ∀ d, freeC M Z b d (k + 1 : ℕ) - freeC M Z b d k = ∑ n ∈ Icc 1 Z with n.Coprime M,
+        (Λ n : ℂ) * b n * (min 1 (((k + 1 : ℕ) : ℝ) / n) - min 1 ((k : ℝ) / n) : ℝ) * jacobiSym n d := by
       intro d
-      rw [free, free, ← sum_sub_distrib]
-      exact sum_congr rfl fun n _ => by ring
-    simp only [← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs, sq_abs, e]
+      rw [freeC, freeC, ← sum_sub_distrib]
+      exact sum_congr rfl fun n _ => by push_cast; ring
+    simp only [e]
     calc _ ≤ #(family M r L) * (1 / k * (4 * Real.log Z ^ 2 * (1 + Real.log Z))) + E := h
       _ ≤ #(family M r L) * (1 / k * (4 * Real.log Z ^ 2 * (1 + Real.log Z))) + #(family M r L) * (1 / k) := by
           gcongr
@@ -668,24 +658,16 @@ lemma card_bad_quarter {ε C : ℝ} (hε : 0 < ε)
           rw [hD]
           ring
   -- Sobolev and Markov
-  have hbad := MeanSquareSup.card_bad_le (family M r L) (fun d k => ((free M Z b d k : ℝ) : ℂ)) hK₀ hK hε.le
-    (fun k => (k : ℝ) * D) (fun k => D / k) h0 h1 (c := 1 / 16)
-  have hBd := bound_le hε hD0 hK₀ hK
-  have hP0 : (0 : ℝ) ≤ #(family M r L) := Nat.cast_nonneg _
-  have : (1 / 16 : ℝ) * #{d ∈ family M r L | ∃ k ∈ Icc K₀ K₁,
-      1 / 16 * (k : ℝ) ^ (1 + 2 * ε) < ‖((free M Z b d k : ℝ) : ℂ)‖ ^ 2} ≤ #(family M r L) * (1 / 64) :=
-    hbad.trans (mul_le_mul_of_nonneg_left (hBd.trans hB) hP0)
-  have h4 : (4 * #{d ∈ family M r L | ∃ k ∈ Icc K₀ K₁,
-      1 / 16 * (k : ℝ) ^ (1 + 2 * ε) < ‖((free M Z b d k : ℝ) : ℂ)‖ ^ 2} : ℝ) ≤ #(family M r L) := by
-    linarith
-  exact_mod_cast h4
+  exact (MeanSquareSup.card_bad_le (family M r L) (fun d k => freeC M Z b d k) hK₀ hK hε.le
+    (fun k => (k : ℝ) * D) (fun k => D / k) h0 h1).trans
+    (mul_le_mul_of_nonneg_left (bound_le hε hD0 hK₀ hK) (Nat.cast_nonneg _))
 
 /-! ### From integers to all `y` -/
 
 /-- `T_d` is affine between consecutive integers, as `min(1, y/n)` is for every `n ≥ 1`. -/
-lemma free_eq (M Z : ℕ) (b : ℕ → ℝ) (d k : ℕ) {y : ℝ} (hk : (k : ℝ) ≤ y) (hy : y ≤ k + 1) :
-    free M Z b d y = (k + 1 - y) * free M Z b d k + (y - k) * free M Z b d (k + 1 : ℕ) := by
-  unfold free
+lemma freeC_eq (M Z : ℕ) (b : ℕ → ℂ) (d k : ℕ) {y : ℝ} (hk : (k : ℝ) ≤ y) (hy : y ≤ k + 1) :
+    freeC M Z b d y = (k + 1 - y : ℝ) * freeC M Z b d k + (y - k : ℝ) * freeC M Z b d (k + 1 : ℕ) := by
+  unfold freeC
   rw [mul_sum, mul_sum, ← sum_add_distrib]
   refine sum_congr rfl fun n hn => ?_
   have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast (mem_Icc.1 (mem_filter.1 hn).1).1
@@ -702,14 +684,15 @@ lemma free_eq (M Z : ℕ) (b : ℕ → ℝ) (d k : ℕ) {y : ℝ} (hk : (k : ℝ
       field_simp
       ring
   rw [key]
+  push_cast
   ring
 
-/-- **A good member is good on the whole window.** If `T_d(k)² ≤ k^{1+2ε}/16` for every integer
-`k ∈ [⌊Y⌋, ⌊Y^A⌋ + 1]`, then `|T_d(y)| ≤ y^{1/2+ε}/2` for `y ∈ [Y, Y^A]`: `T_d(y)` lies between `T_d(k)` and
-`T_d(k + 1)` (`free_eq`) for `k = ⌊y⌋`, and `(k + 1)^{1/2+ε}/4 ≤ (2y)^{1/2+ε}/4 ≤ y^{1/2+ε}/2`. -/
-lemma abs_free_le {ε Y A : ℝ} (hε : 0 ≤ ε) (hε' : ε ≤ 1 / 2) (hY : 1 ≤ Y) {M Z : ℕ} {b : ℕ → ℝ} {d : ℕ}
-    (hgood : ∀ k ∈ Icc ⌊Y⌋₊ (⌊Y ^ A⌋₊ + 1), free M Z b d k ^ 2 ≤ 1 / 16 * (k : ℝ) ^ (1 + 2 * ε))
-    {y : ℝ} (hy : y ∈ Set.Icc Y (Y ^ A)) : |free M Z b d y| ≤ y ^ (1 / 2 + ε) / 2 := by
+/-- **A good member is good on the whole window.** If `‖T_d(k)‖² ≤ k^{1+2ε}/16` for every integer
+`k ∈ [⌊Y⌋, ⌊Y^A⌋ + 1]`, then `‖T_d(y)‖ ≤ y^{1/2+ε}/2` for `y ∈ [Y, Y^A]`: `T_d(y)` is a convex combination of `T_d(k)`
+and `T_d(k + 1)` (`freeC_eq`) for `k = ⌊y⌋`, and `(k + 1)^{1/2+ε}/4 ≤ (2y)^{1/2+ε}/4 ≤ y^{1/2+ε}/2`. -/
+lemma norm_freeC_le {ε Y A : ℝ} (hε : 0 ≤ ε) (hε' : ε ≤ 1 / 2) (hY : 1 ≤ Y) {M Z : ℕ} {b : ℕ → ℂ} {d : ℕ}
+    (hgood : ∀ k ∈ Icc ⌊Y⌋₊ (⌊Y ^ A⌋₊ + 1), ‖freeC M Z b d k‖ ^ 2 ≤ 1 / 16 * (k : ℝ) ^ (1 + 2 * ε))
+    {y : ℝ} (hy : y ∈ Set.Icc Y (Y ^ A)) : ‖freeC M Z b d y‖ ≤ y ^ (1 / 2 + ε) / 2 := by
   obtain ⟨hYy, hyA⟩ := hy
   have hy0 : 0 ≤ y := by linarith
   have hk : (⌊y⌋₊ : ℝ) ≤ y := Nat.floor_le hy0
@@ -717,15 +700,15 @@ lemma abs_free_le {ε Y A : ℝ} (hε : 0 ≤ ε) (hε' : ε ≤ 1 / 2) (hY : 1 
   have hfl := Nat.floor_le_floor (R := ℝ) hYy
   have hfl' := Nat.floor_le_floor (R := ℝ) hyA
   -- the bound at `j ∈ {k, k + 1}`
-  have hj : ∀ j ∈ Icc ⌊Y⌋₊ (⌊Y ^ A⌋₊ + 1), (j : ℝ) ≤ 2 * y → |free M Z b d j| ≤ y ^ (1 / 2 + ε) / 2 := by
+  have hj : ∀ j ∈ Icc ⌊Y⌋₊ (⌊Y ^ A⌋₊ + 1), (j : ℝ) ≤ 2 * y → ‖freeC M Z b d j‖ ≤ y ^ (1 / 2 + ε) / 2 := by
     intro j hjm hj2
     have hj0 : (0 : ℝ) ≤ j := Nat.cast_nonneg j
     have hsq : ((j : ℝ) ^ (1 / 2 + ε) / 4) ^ 2 = 1 / 16 * (j : ℝ) ^ (1 + 2 * ε) := by
       rw [div_pow, ← Real.rpow_natCast, ← Real.rpow_mul hj0]
       push_cast
       ring_nf
-    have h1 : |free M Z b d j| ≤ (j : ℝ) ^ (1 / 2 + ε) / 4 :=
-      (sq_le_sq₀ (abs_nonneg _) (by positivity)).1 (by rw [sq_abs, hsq]; exact hgood j hjm)
+    have h1 : ‖freeC M Z b d j‖ ≤ (j : ℝ) ^ (1 / 2 + ε) / 4 :=
+      (sq_le_sq₀ (norm_nonneg _) (by positivity)).1 (by rw [hsq]; exact hgood j hjm)
     have h2 : (j : ℝ) ^ (1 / 2 + ε) ≤ 2 * y ^ (1 / 2 + ε) := by
       calc (j : ℝ) ^ (1 / 2 + ε) ≤ (2 * y) ^ (1 / 2 + ε) := Real.rpow_le_rpow hj0 hj2 (by linarith)
         _ = 2 ^ (1 / 2 + ε) * y ^ (1 / 2 + ε) := Real.mul_rpow (by norm_num) hy0
@@ -734,32 +717,34 @@ lemma abs_free_le {ε Y A : ℝ} (hε : 0 ≤ ε) (hε' : ε ≤ 1 / 2) (hY : 1 
             exacts [by norm_num, by linarith]
         _ = 2 * y ^ (1 / 2 + ε) := by rw [Real.rpow_one]
     linarith
-  have hA : |free M Z b d ⌊y⌋₊| ≤ y ^ (1 / 2 + ε) / 2 :=
+  have hA : ‖freeC M Z b d ⌊y⌋₊‖ ≤ y ^ (1 / 2 + ε) / 2 :=
     hj _ (mem_Icc.2 ⟨hfl, by omega⟩) (by linarith)
-  have hB : |free M Z b d (⌊y⌋₊ + 1 : ℕ)| ≤ y ^ (1 / 2 + ε) / 2 :=
+  have hB : ‖freeC M Z b d (⌊y⌋₊ + 1 : ℕ)‖ ≤ y ^ (1 / 2 + ε) / 2 :=
     hj _ (mem_Icc.2 ⟨by omega, by omega⟩) (by push_cast; linarith)
-  rw [free_eq M Z b d ⌊y⌋₊ hk hk1.le]
-  calc |(⌊y⌋₊ + 1 - y) * free M Z b d ⌊y⌋₊ + (y - ⌊y⌋₊) * free M Z b d (⌊y⌋₊ + 1 : ℕ)|
-      ≤ (⌊y⌋₊ + 1 - y) * |free M Z b d ⌊y⌋₊| + (y - ⌊y⌋₊) * |free M Z b d (⌊y⌋₊ + 1 : ℕ)| := by
-        refine (abs_add_le _ _).trans ?_
-        rw [abs_mul, abs_mul, abs_of_nonneg (show (0 : ℝ) ≤ ⌊y⌋₊ + 1 - y by linarith),
-          abs_of_nonneg (show (0 : ℝ) ≤ y - ⌊y⌋₊ by linarith)]
+  rw [freeC_eq M Z b d ⌊y⌋₊ hk hk1.le]
+  calc ‖((⌊y⌋₊ + 1 - y : ℝ) : ℂ) * freeC M Z b d ⌊y⌋₊ + ((y - ⌊y⌋₊ : ℝ) : ℂ) * freeC M Z b d (⌊y⌋₊ + 1 : ℕ)‖
+      ≤ (⌊y⌋₊ + 1 - y) * ‖freeC M Z b d ⌊y⌋₊‖ + (y - ⌊y⌋₊) * ‖freeC M Z b d (⌊y⌋₊ + 1 : ℕ)‖ := by
+        refine (norm_add_le _ _).trans ?_
+        rw [norm_mul, norm_mul, Complex.norm_real, Complex.norm_real,
+          Real.norm_of_nonneg (show (0 : ℝ) ≤ ⌊y⌋₊ + 1 - y by linarith),
+          Real.norm_of_nonneg (show (0 : ℝ) ≤ y - ⌊y⌋₊ by linarith)]
     _ ≤ (⌊y⌋₊ + 1 - y) * (y ^ (1 / 2 + ε) / 2) + (y - ⌊y⌋₊) * (y ^ (1 / 2 + ε) / 2) := by gcongr
     _ = y ^ (1 / 2 + ε) / 2 := by ring
 
 /-! ### The family -/
 
-/-- **CONDITIONAL. Most of the family is good, uniformly** (conditional on the half-plane, through `large_family` and
-`card_bad_quarter`). Let `0 < ε ≤ 1/2` and `A ≥ 1`. For all large `Y`, every `M > 0` with `4 ∣ M`, `r` prime to `M`,
-`L` with `100(log M + 100A log Y) ≤ L` and weights `b₁`, `b₂` with `|bᵢ| ≤ 1`, some `d ∈ P` has
-`|T_d(y)| ≤ y^{1/2+ε}/2` on `[Y, Y^A]` for both weights, with the cutoff `Z = ⌊Y^{48A}⌋`. Each weight is bad on at most
-a quarter of `P`, and `P ≠ ∅`. The threshold for `Y` depends on `ε` and `A` only. -/
-theorem exists_good {ε A : ℝ} (hε : 0 < ε) (hε' : ε ≤ 1 / 2) (hA : 1 ≤ A) :
-    ∀ᶠ Y in Filter.atTop, ∀ (M r : ℕ) (L : ℝ) (b₁ b₂ : ℕ → ℝ), 0 < M → 4 ∣ M → r.Coprime M →
-      (∀ n, |b₁ n| ≤ 1) → (∀ n, |b₂ n| ≤ 1) → 100 * (Real.log M + 100 * A * Real.log Y) ≤ L →
-      ∃ d ∈ family M r L, ∀ y ∈ Set.Icc Y (Y ^ A),
-        |free M ⌊Y ^ (48 * A)⌋₊ b₁ d y| ≤ y ^ (1 / 2 + ε) / 2 ∧
-          |free M ⌊Y ^ (48 * A)⌋₊ b₂ d y| ≤ y ^ (1 / 2 + ε) / 2 := by
+/-- **CONDITIONAL. A member good for finitely many complex weights** (conditional on the half-plane, through
+`large_family` and `card_bad_le`). Let `0 < ε ≤ 1/2`, `A ≥ 1` and `ι` a finite type, with `W` elements. For all
+large `Y`, every `M > 0` with `4 ∣ M`, `r` prime to `M`, `L` with `100(log M + 100A log Y) ≤ L` and weights `bᵢ`,
+`i ∈ ι`, with `‖bᵢ‖ ≤ 1`, some `d ∈ P` has `‖T_d(y)‖ ≤ y^{1/2+ε}/2` on `[Y, Y^A]` for every weight, with the cutoff
+`Z = ⌊Y^{48A}⌋`. Each weight is bad on at most `|P|/(2W + 2)` members, and `P ≠ ∅`. The threshold for `Y` depends on
+`ε`, `A` and `W` only. -/
+theorem exists_good_fin {ε A : ℝ} (hε : 0 < ε) (hε' : ε ≤ 1 / 2) (hA : 1 ≤ A) (ι : Type*) [Fintype ι] :
+    ∀ᶠ Y in Filter.atTop, ∀ (M r : ℕ) (L : ℝ) (b : ι → ℕ → ℂ), 0 < M → 4 ∣ M → r.Coprime M →
+      (∀ i n, ‖b i n‖ ≤ 1) → 100 * (Real.log M + 100 * A * Real.log Y) ≤ L →
+      ∃ d ∈ family M r L, ∀ i, ∀ y ∈ Set.Icc Y (Y ^ A),
+        ‖freeC M ⌊Y ^ (48 * A)⌋₊ (b i) d y‖ ≤ y ^ (1 / 2 + ε) / 2 := by
+  set W := Fintype.card ι
   obtain ⟨C₁, hC₁, hsum⟩ := PrimeCharSums.norm_sum_Ioc_modEq_le (η := 1 / 48) (by norm_num)
   obtain ⟨C₂, hC₂, hcard⟩ := PrimeCharSums.card_Ioc_modEq_ge (η := 1 / 48) (by norm_num)
   obtain ⟨S, hS⟩ : ∃ S, S = ∑' k : ℕ, ((k : ℝ) ^ (1 + ε))⁻¹ := ⟨_, rfl⟩
@@ -768,9 +753,10 @@ theorem exists_good {ε A : ℝ} (hε : 0 < ε) (hε' : ε ≤ 1 / 2) (hA : 1 �
   have hκ0 : 0 < κ := by
     rw [hκ]
     positivity
-  have hlo := (isLittleO_log_rpow_rpow_atTop 3 hε).bound (c := 1 / (128 * κ * (2 + 4 * S))) (by positivity)
+  have hlo := (isLittleO_log_rpow_rpow_atTop 3 hε).bound (c := 1 / (64 * (W + 1) * κ * (2 + 4 * S)))
+    (by positivity)
   filter_upwards [hlo, Filter.eventually_ge_atTop (12544 * C₁ + 8 * C₂ + 4)] with Y hYlo hY
-  intro M r L b₁ b₂ hM0 hM4 hr hb₁ hb₂ hL
+  intro M r L b hM0 hM4 hr hb hL
   have : NeZero M := ⟨hM0.ne'⟩
   have hY4 : 4 ≤ Y := by linarith
   have hY1 : 1 ≤ Y := by linarith
@@ -779,7 +765,7 @@ theorem exists_good {ε A : ℝ} (hε : 0 < ε) (hε' : ε ≤ 1 / 2) (hA : 1 �
     linarith [Real.exp_one_lt_d9]
   have hlM : 0 ≤ Real.log M := Real.log_natCast_nonneg M
   have hL0 : 0 ≤ L := by nlinarith
-  -- the window `[Y, W]`, `W = Y^A`, and the cutoff `Z ≤ W^48`
+  -- the window `[Y, Y^A]`, and the cutoff `Z ≤ (Y^A)^48`
   have hW : Y ≤ Y ^ A := by simpa using Real.rpow_le_rpow_of_exponent_le hY1 hA
   have hW0 : 0 ≤ Y ^ A := by positivity
   have hZW : (⌊Y ^ (48 * A)⌋₊ : ℝ) ≤ (Y ^ A) ^ 48 := by
@@ -794,10 +780,11 @@ theorem exists_good {ε A : ℝ} (hε : 0 < ε) (hε' : ε ≤ 1 / 2) (hA : 1 �
     rw [Real.log_rpow (by linarith)]
     linarith
   obtain ⟨hP0, hoff⟩ := large_family hC₁ hC₂ hcard hr (W := Y ^ A) (by linarith) hL' hZW hK₁
-  -- the bound of the Sobolev–Markov lemma is at most `1/64`
-  have hB : (4 * Real.log ⌊Y ^ (48 * A)⌋₊ ^ 2 * (1 + Real.log ⌊Y ^ (48 * A)⌋₊) + 1) * (⌊Y⌋₊ : ℝ) ^ (-ε) *
-      (2 + 4 * ∑' k : ℕ, ((k : ℝ) ^ (1 + ε))⁻¹) ≤ 1 / 64 := by
-    rw [← hS]
+  -- the bound `B` of `card_bad_le` has `(W + 1)B ≤ 1/32`
+  obtain ⟨B, hBdef⟩ : ∃ B, B = (4 * Real.log ⌊Y ^ (48 * A)⌋₊ ^ 2 * (1 + Real.log ⌊Y ^ (48 * A)⌋₊) + 1) *
+      (⌊Y⌋₊ : ℝ) ^ (-ε) * (2 + 4 * ∑' k : ℕ, ((k : ℝ) ^ (1 + ε))⁻¹) := ⟨_, rfl⟩
+  have hB : (W + 1) * B ≤ 1 / 32 := by
+    rw [hBdef, ← hS]
     set ℓ := Real.log Y
     have hZ1 : (1 : ℝ) ≤ ⌊Y ^ (48 * A)⌋₊ := by
       exact_mod_cast (Nat.one_le_floor_iff _).2 (Real.one_le_rpow hY1 (by positivity))
@@ -824,50 +811,42 @@ theorem exists_good {ε A : ℝ} (hε : 0 < ε) (hε' : ε ≤ 1 / 2) (hA : 1 �
             gcongr
             exacts [by norm_num, by linarith]
         _ = 2 * Y ^ (-ε) := by rw [Real.rpow_one]
-    have hℓ3 : ℓ ^ 3 ≤ 1 / (128 * κ * (2 + 4 * S)) * Y ^ ε := by
+    have hℓ3 : ℓ ^ 3 ≤ 1 / (64 * (W + 1) * κ * (2 + 4 * S)) * Y ^ ε := by
       have h := hYlo
       rw [Real.norm_of_nonneg (Real.rpow_nonneg (by linarith) _), Real.norm_of_nonneg (by positivity),
         show (3 : ℝ) = (3 : ℕ) by norm_num, Real.rpow_natCast] at h
       exact h
     have hYε : Y ^ ε * Y ^ (-ε) = 1 := by
       rw [Real.rpow_neg (by linarith), mul_inv_cancel₀ (by positivity)]
-    calc (4 * Real.log ⌊Y ^ (48 * A)⌋₊ ^ 2 * (1 + Real.log ⌊Y ^ (48 * A)⌋₊) + 1) * (⌊Y⌋₊ : ℝ) ^ (-ε) *
-          (2 + 4 * S) ≤ κ * (1 / (128 * κ * (2 + 4 * S)) * Y ^ ε) * (2 * Y ^ (-ε)) * (2 + 4 * S) := by
+    calc ((W : ℝ) + 1) * ((4 * Real.log ⌊Y ^ (48 * A)⌋₊ ^ 2 * (1 + Real.log ⌊Y ^ (48 * A)⌋₊) + 1) *
+          (⌊Y⌋₊ : ℝ) ^ (-ε) * (2 + 4 * S)) ≤
+          (W + 1) * (κ * (1 / (64 * (W + 1) * κ * (2 + 4 * S)) * Y ^ ε) * (2 * Y ^ (-ε)) * (2 + 4 * S)) := by
           gcongr
           exact hD.trans (by gcongr)
-      _ = 1 / 64 * (Y ^ ε * Y ^ (-ε)) := by
+      _ = 1 / 32 * (Y ^ ε * Y ^ (-ε)) := by
           field_simp
           ring
-      _ = 1 / 64 := by rw [hYε, mul_one]
-  -- each weight is bad on at most a quarter of the family; find a member good for both
-  have hq₁ := card_bad_quarter hε hsum hC₁ hM4 hr hL0 hK₀ hK hoff hB hb₁
-  have hq₂ := card_bad_quarter hε hsum hC₁ hM4 hr hL0 hK₀ hK hoff hB hb₂
-  obtain ⟨d, hdP, hd₁, hd₂⟩ : ∃ d ∈ family M r L,
-      (∀ k ∈ Icc ⌊Y⌋₊ (⌊Y ^ A⌋₊ + 1),
-        ¬ 1 / 16 * (k : ℝ) ^ (1 + 2 * ε) < ‖((free M ⌊Y ^ (48 * A)⌋₊ b₁ d k : ℝ) : ℂ)‖ ^ 2) ∧
-      (∀ k ∈ Icc ⌊Y⌋₊ (⌊Y ^ A⌋₊ + 1),
-        ¬ 1 / 16 * (k : ℝ) ^ (1 + 2 * ε) < ‖((free M ⌊Y ^ (48 * A)⌋₊ b₂ d k : ℝ) : ℂ)‖ ^ 2) := by
-    by_contra hne
-    have hsub : family M r L ⊆
-        {d ∈ family M r L | ∃ k ∈ Icc ⌊Y⌋₊ (⌊Y ^ A⌋₊ + 1),
-          1 / 16 * (k : ℝ) ^ (1 + 2 * ε) < ‖((free M ⌊Y ^ (48 * A)⌋₊ b₁ d k : ℝ) : ℂ)‖ ^ 2} ∪
-        {d ∈ family M r L | ∃ k ∈ Icc ⌊Y⌋₊ (⌊Y ^ A⌋₊ + 1),
-          1 / 16 * (k : ℝ) ^ (1 + 2 * ε) < ‖((free M ⌊Y ^ (48 * A)⌋₊ b₂ d k : ℝ) : ℂ)‖ ^ 2} := by
-      intro d hd
-      rw [mem_union, mem_filter, mem_filter]
-      by_contra h
-      rw [not_or, not_and, not_and] at h
-      exact hne ⟨d, hd, fun k hk hlt => h.1 hd ⟨k, hk, hlt⟩, fun k hk hlt => h.2 hd ⟨k, hk, hlt⟩⟩
-    have := (card_le_card hsub).trans (card_union_le _ _)
-    omega
-  have hgood : ∀ b : ℕ → ℝ, (∀ k ∈ Icc ⌊Y⌋₊ (⌊Y ^ A⌋₊ + 1),
-      ¬ 1 / 16 * (k : ℝ) ^ (1 + 2 * ε) < ‖((free M ⌊Y ^ (48 * A)⌋₊ b d k : ℝ) : ℂ)‖ ^ 2) →
-      ∀ k ∈ Icc ⌊Y⌋₊ (⌊Y ^ A⌋₊ + 1), free M ⌊Y ^ (48 * A)⌋₊ b d k ^ 2 ≤ 1 / 16 * (k : ℝ) ^ (1 + 2 * ε) := by
-    intro b hb k hk
-    have := not_lt.1 (hb k hk)
-    rwa [Complex.norm_real, Real.norm_eq_abs, sq_abs] at this
-  exact ⟨d, hdP, fun y hy => ⟨abs_free_le hε.le hε' hY1 (hgood b₁ hd₁) hy, abs_free_le hε.le hε' hY1 (hgood b₂ hd₂) hy⟩⟩
+      _ = 1 / 32 := by rw [hYε, mul_one]
+  -- each weight is bad on at most `|P|/(2W + 2)` members; so some member is good for all of them
+  set bad := fun i => {d ∈ family M r L | ∃ k ∈ Icc ⌊Y⌋₊ (⌊Y ^ A⌋₊ + 1),
+    1 / 16 * (k : ℝ) ^ (1 + 2 * ε) < ‖freeC M ⌊Y ^ (48 * A)⌋₊ (b i) d k‖ ^ 2}
+  obtain ⟨d, hdP, hd⟩ := exists_mem_notMem_of_card_lt_card (s := univ.biUnion bad) (t := family M r L) <| by
+    have h1 : ∀ i, 1 / 16 * (#(bad i) : ℝ) ≤ #(family M r L) * B := fun i => by
+      rw [hBdef]
+      exact card_bad_le hε hsum hC₁ hM4 hr hL0 hK₀ hK hoff (hb i)
+    have h2 := sum_le_sum fun i (_ : i ∈ univ) => h1 i
+    rw [← mul_sum, sum_const, card_univ, nsmul_eq_mul] at h2
+    have h3 : (#(univ.biUnion bad) : ℝ) ≤ ∑ i, (#(bad i) : ℝ) := by exact_mod_cast card_biUnion_le
+    have hP : (0 : ℝ) < #(family M r L) := by exact_mod_cast hP0
+    have hB0 : 0 ≤ B := by
+      rw [hBdef]
+      positivity
+    have h4 := mul_le_mul_of_nonneg_left hB hP.le
+    have h5 := mul_nonneg hP.le hB0
+    exact_mod_cast (show (#(univ.biUnion bad) : ℝ) < #(family M r L) by linarith)
+  refine ⟨d, hdP, fun i y hy => norm_freeC_le hε.le hε' hY1 (fun k hk => not_lt.1 fun hlt => hd ?_) hy⟩
+  exact mem_biUnion.2 ⟨i, mem_univ _, mem_filter.2 ⟨hdP, k, hk, hlt⟩⟩
 
 end TwistFamily
 
-#print axioms TwistFamily.exists_good
+#print axioms TwistFamily.exists_good_fin

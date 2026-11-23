@@ -203,7 +203,7 @@ theorem norm_rampErr_le {η : ℝ} (hη : 0 < η) (hη' : η < 1 / 24) :
 /-- **CONDITIONAL. The errors of a setting** (conditional on the half-plane, through `norm_rampErr_le` at
 `η = 1/48`): there is `C ≥ 0` with `‖g_χ(y)‖ ≤ C log(N + 2) y^{23/24}` for every setting, every `χ` and every
 `y > 1`. The conductor of `D_χ` divides `N`. -/
-theorem Setting.norm_g_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ (S : Setting) (χ : Dual S.e) (y : ℝ), 1 < y →
+theorem Setting.norm_g_le : ∃ C : ℝ, 0 ≤ C ∧ ∀ (S : Setting) (χ : Dual S.A) (y : ℝ), 1 < y →
     ‖S.g χ y‖ ≤ C * Real.log (S.N + 2) * y ^ (23 / 24 : ℝ) := by
   obtain ⟨C, hC, h⟩ := norm_rampErr_le (η := 1 / 48) (by norm_num) (by norm_num)
   refine ⟨C, hC, fun S χ y hy => ?_⟩
@@ -225,21 +225,21 @@ theorem thin_of_large : ∃ x₀ : ℝ, ∀ x ≥ x₀, ∀ S : Setting, S.Thin 
   set u := (S.N : ℝ) * x with hu
   have hxu : x ≤ u := le_mul_of_one_le_left (by linarith) hN
   -- `|A| ≤ N` and `log(N + 2) ≤ 2N`
-  have hA : (Fintype.card (A S.e) : ℝ) ≤ S.N := by
+  have hA : (Fintype.card S.A : ℝ) ≤ S.N := by
     rw [← Nat.card_eq_fintype_card]
-    exact_mod_cast (Nat.card_le_card_of_surjective _ (mkA_surjective S.e)).trans <|
+    exact_mod_cast (Nat.card_le_card_of_surjective _ S.mkA_surjective).trans <|
       (Nat.card_le_card_of_injective _ Units.val_injective).trans <|
-        (Nat.card_zmod _).le.trans (Nat.le_of_dvd (NeZero.pos _) S.two_dvd_N)
+        (Nat.card_zmod _).le.trans (Nat.le_of_dvd (NeZero.pos _) S.QS_dvd_N)
   have hL : Real.log (S.N + 2) ≤ 2 * S.N := by
     linarith [Real.log_le_sub_one_of_pos (by positivity : (0 : ℝ) < S.N + 2)]
   have hL0 : 0 ≤ Real.log (S.N + 2) := Real.log_nonneg (by linarith)
-  have hD : 0 < 8 * (Fintype.card (A S.e) : ℝ) * x ^ 2 :=
+  have hD : 0 < 8 * (Fintype.card S.A : ℝ) * x ^ 2 :=
     mul_pos (mul_pos (by norm_num) (Nat.cast_pos.2 Fintype.card_pos)) (by positivity)
-  refine ⟨(8 * Fintype.card (A S.e) * x ^ 2)⁻¹, fun χ y hy => ?_, (mul_inv_cancel₀ hD.ne').le⟩
+  refine ⟨(8 * Fintype.card S.A * x ^ 2)⁻¹, fun χ y hy => ?_, (mul_inv_cancel₀ hD.ne').le⟩
   have hy1 : 1 < y := (Real.one_lt_rpow (by linarith) (by linarith)).trans_le hy
   have hy0 : 0 < y := by linarith
   -- `8|A|x²·C log(N + 2) ≤ 16C u² ≤ u³ ≤ u^{(log x)/24} ≤ y^{1/24}`
-  have key : 8 * Fintype.card (A S.e) * x ^ 2 * (C * Real.log (S.N + 2)) ≤ y ^ (1 / 24 : ℝ) := by
+  have key : 8 * Fintype.card S.A * x ^ 2 * (C * Real.log (S.N + 2)) ≤ y ^ (1 / 24 : ℝ) := by
     calc _ ≤ 8 * S.N * x ^ 2 * (C * (2 * S.N)) :=
           mul_le_mul (by gcongr) (mul_le_mul_of_nonneg_left hL hC) (mul_nonneg hC hL0) (by positivity)
       _ = 16 * C * u ^ 2 := by rw [hu]; ring
@@ -251,10 +251,10 @@ theorem thin_of_large : ∃ x₀ : ℝ, ∀ x ≥ x₀, ∀ S : Setting, S.Thin 
       _ = (u ^ Real.log x) ^ (1 / 24 : ℝ) := by rw [← Real.rpow_mul (by linarith)]; ring_nf
       _ ≤ y ^ (1 / 24 : ℝ) := Real.rpow_le_rpow (Real.rpow_pos_of_pos (by linarith) _).le hy (by norm_num)
   calc ‖S.g χ y‖ ≤ C * Real.log (S.N + 2) * y ^ (23 / 24 : ℝ) := hg S χ y hy1
-    _ ≤ (8 * Fintype.card (A S.e) * x ^ 2)⁻¹ * y := by
+    _ ≤ (8 * Fintype.card S.A * x ^ 2)⁻¹ * y := by
         rw [← div_eq_inv_mul, le_div_iff₀ hD]
-        calc C * Real.log (S.N + 2) * y ^ (23 / 24 : ℝ) * (8 * Fintype.card (A S.e) * x ^ 2)
-            = 8 * Fintype.card (A S.e) * x ^ 2 * (C * Real.log (S.N + 2)) * y ^ (23 / 24 : ℝ) := by ring
+        calc C * Real.log (S.N + 2) * y ^ (23 / 24 : ℝ) * (8 * Fintype.card S.A * x ^ 2)
+            = 8 * Fintype.card S.A * x ^ 2 * (C * Real.log (S.N + 2)) * y ^ (23 / 24 : ℝ) := by ring
           _ ≤ y ^ (1 / 24 : ℝ) * y ^ (23 / 24 : ℝ) := by gcongr
           _ = y := by rw [← Real.rpow_add hy0]; norm_num
 
@@ -262,7 +262,7 @@ theorem thin_of_large : ∃ x₀ : ℝ, ∀ x ≥ x₀, ∀ S : Setting, S.Thin 
 `Y` arbitrarily large, a setting with small twists and lattice data whose thin classes lie beyond `(Nx)^{log x}`. -/
 def ZetaTwistBound : Prop :=
   ∀ ε > 0, ∃ lam > (1 : ℝ), ∀ Y₀ : ℝ, ∃ Y ≥ Y₀, ∀ x ∈ Set.Icc Y (Y ^ lam),
-    ∃ S : Setting, S.Twists x ε ∧ Nonempty (LatticeData S x ε (((S.N : ℝ) * x) ^ Real.log x))
+    ∃ S : Setting, S.Twists 1 x ε ∧ Nonempty (LatticeData S 1 x ε (((S.N : ℝ) * x) ^ Real.log x))
 
 /-- **CONDITIONAL. The Riemann hypothesis from lattice data with small twists** (conditional on the half-plane
 `Re s > 11/12`, through `thin_of_large`): the frontier after step 4, with the thin scales proved. -/
