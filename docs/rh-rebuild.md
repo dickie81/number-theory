@@ -45,7 +45,7 @@ library's licence.
 
 | Step | Library | Lines | Archive | State |
 |---|---|---|---|---|
-| 1. The top | `HalfPlaneGRH` | 211 | about 130 | Done: `HalfPlaneGRH.rhAndGRH_of_zeroFreeRightOf`, with its converse `zeroFreeRightOf_half_iff` |
+| 1. The top | `HalfPlaneGRH` | 183 | about 130 | Done: `HalfPlaneGRH.rhAndGRH_of_zeroFreeRightOf`, with its converse `zeroFreeRightOf_half_iff` |
 | 2. Landau on windows | `WindowKernel`, `WindowPole`, `WindowNearest`, `LandauWindow`, `RampLaplace`, `WindowGRH` | about 1,600 | about 2,100 (the declarations `lemmaL` and `formB` name) | Done: `WindowGRH.rhAndGRH_of_windowBound` |
 | 3. Balance | | | `ChBalance`, `ChCore`, `ChTop`, `core_gm` | Next |
 | 4–6. | | | almost all of 10.7 million lines | Later |
@@ -56,19 +56,56 @@ Library line counts include the documentation; the archive has none.
 `(WindowGRH.cyclic χ).G` is at most `C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large, for some `λ > 1` and
 `C`. The archive's core theorem proves this in the form `HasWindows {x | Gm x ≤ x^θ} (3/2)`, which is stronger.
 
+**For RH alone**, the frontier is a statement about `Λ` only. `WindowGRH.ZetaWindowBound` asks, for every
+`θ > 1/2`, that `Σ_{n≤x} Λ(n)(x/n − 1) − x log x + (1 + γ)x ≤ C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large.
+`WindowGRH.riemannHypothesis_of_zetaWindowBound` gives Mathlib's `RiemannHypothesis` from it.
+
 **What step 2 simplified against the archive.**
 - Landau's theorem on windows is proved once, for any finite family of characters with positive weights. The
   weights `1/(3o + 1)` matter only for step 3.
 - Real parts are taken in the transform, `(Φ(s) + conj Φ(conj s))/2`. So no symmetry of `L(s, χ)` under
   conjugation is needed, where the archive proves one in 100 lines.
 - `(s − 1)ζ(s)` and `L(s, χ)` are handled by one construction, `−F'/F(s) + s·F'/F(1)` over `s(s − 1)`, continued
-  across `s = 1` with Mathlib's `dslope`. For `ζ` the only extra input is Mathlib's `ζ(s) − 1/(s − 1) → γ`.
+  across `s = 1` with Mathlib's `dslope`. For `ζ`, `F` is Mathlib's `riemannZeta₁`, with `ζ₁'(1) = γ` from Mathlib.
 - The Taylor coefficients of the Laplace transform come from the library's `LandauLaplace`. Cauchy's estimate and
   the derivatives of `c/(s − p)` come from Mathlib.
 
+**Reuse.** An audit of the library against steps 1 and 2 (23 November 2026) found three things.
+- **Replaced by the stack:**
+  - the trivial zeros of `ζ`, now `WeilTest.IsNontrivialZero.mem_strip` from the library's `T1bt`, which cut 45
+    lines;
+  - `(s − 1)ζ(s)`, now Mathlib's `riemannZeta₁`;
+  - our copy of Mathlib's `riemannZeta_ne_zero_of_one_le_re`;
+  - the punctured neighbourhoods of `conj`, now Mathlib's `Homeomorph.map_punctured_nhds_eq`.
+- **Nowhere in the stack:** Landau's theorem on windows, the ramp transforms, the pole asymptotics, the
+  nearest-pole geometry and the character families.
+- **Duplicated in heavy modules:** `RealDirichlet`, `RealCharHalfPlane`, `HalfPlaneJoinsChar` and
+  `LinnikCGLReflect` hold copies of five small lemmas of `HalfPlaneGRH`. They could import it instead.
+
+## Step 3, re-examined
+
+A reading of the archive's balance layer (`ch_balance`, `ch_core`, `core_gm`; about 6,000 lines with Landau on
+windows) shows that it only converts between statements of the same strength.
+
+- **Its input.** It takes an inequality on ramp-weighted sums over prime powers inert in `ℚ(√−d)`. The primes lie in
+  given Frobenius classes of an abelian CM field `E` of degree about `x^{2+8ε}`. The sums run over `m ≈ √x` weight
+  vectors, and the inequality must hold with the error of a single one.
+- **Its strength.** Averaged over the 2-part of `Gal(E/ℚ)`, that inequality is GRH for `4o` characters, stated
+  one-sidedly.
+- **Where the new mathematics is.** In the lattice argument that proves the inequality: one lattice quantity bounds
+  the sum over all the weight vectors at once, through slopes (`ch_top` and below).
+
+So formalising the balance layer as the archive does would make the frontier more complicated, not more classical.
+
 ## Next
 
-Step 3 states the inert-prime sums and proves the balance identity and the step from the cosets to the family. That
-should take elementary character sums only, and it leaves as frontier an explicit inequality about primes, the
-place where the lattices enter. Before formalising it, look for the shortest form of the identity that step 4 can
-still feed.
+Read the lattice layer, for `ζ` alone first, and find the cleanest statement just below the balance layer that the
+lattice argument proves. Then decide the shape of steps 3 and 4 together. For RH alone the archive's apparatus
+shrinks: the family is `{ζ}`, the design of translates is vacuous, and three quadratic twists remain. The building
+blocks for the balance identity are already in Mathlib and the library:
+- `sum_hom_units` with `MulChar.mulCharEquiv`;
+- `vonMangoldt.residueClass`;
+- `conductor_zpow_dvd`;
+- `QuadKronecker.exists_kronecker`;
+- `PNTMertens.sum_mangoldt_div_eq_log`;
+- `Chebyshev.psi_le_const_mul_self`.

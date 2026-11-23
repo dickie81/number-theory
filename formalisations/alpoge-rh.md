@@ -30,6 +30,9 @@ Lean and Mathlib (`docs/rh-rebuild.md`). Two steps are done.
   `Σ_{n ≤ x} Λ(n)χ(n)(x/n − 1)`.
 - **The theorem.** `WindowGRH.rhAndGRH_of_windowBound`: the Riemann hypothesis for `ζ` and every Dirichlet
   `L`-function, from `WindowGRH.WindowBound`.
+- **For `ζ` alone.** `WindowGRH.riemannHypothesis_of_zetaWindowBound`: Mathlib's `RiemannHypothesis` follows from a
+  statement about `Λ` alone, `WindowGRH.ZetaWindowBound`. For every `θ > 1/2`, on windows `[Y, Y^λ]` with `Y`
+  arbitrarily large, `Σ_{n≤x} Λ(n)(x/n − 1) − x log x + (1 + γ)x ≤ C x^θ`.
 
 ## How the statements differ from the archive's
 
@@ -51,10 +54,13 @@ The steps were written from the mathematics. Parts were written by helpers given
 - `RampLaplace`: the transforms of the ramp sums.
 
 `WindowGRH` treats `(s − 1)ζ(s)` and `L(s, χ)` alike, through `−F'/F(s) + s·F'/F(1)` over `s(s − 1)`. Mathlib's
-`dslope` continues this across `s = 1`, and Mathlib's limit `ζ(s) − 1/(s − 1) → γ` gives the constant.
+`dslope` continues this across `s = 1`. For `ζ`, the function is Mathlib's `riemannZeta₁`, whose
+`deriv_riemannZeta₁_one` gives the constant `γ`. That a nontrivial zero lies in the strip is the library's
+`WeilTest.IsNontrivialZero.mem_strip`.
 
 ## Conditional results
 
 | Result | Hypothesis | Lean |
 |---|---|---|
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function | `WindowGRH.WindowBound`: for every primitive `χ` and `θ > 1/2`, the weighted error of the ramp sums of the cyclic family of `χ` is at most `C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large | `WindowGRH.rhAndGRH_of_windowBound` |
+| The Riemann hypothesis | `WindowGRH.ZetaWindowBound`: for every `θ > 1/2`, `Σ_{n≤x} Λ(n)(x/n − 1) − x log x + (1 + γ)x ≤ C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large | `WindowGRH.riemannHypothesis_of_zetaWindowBound` |

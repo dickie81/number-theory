@@ -138,33 +138,19 @@ theorem phi_local {F : ℂ → ℂ} (hF : Differentiable ℂ F) (h1 : F 1 ≠ 0)
     · filter_upwards with s
       simp
 
-/-! ## `ζ` with its pole multiplied away -/
+/-! ## `ζ` with its pole multiplied away: Mathlib's `riemannZeta₁` -/
 
-/-- `ζ₁(s) = (s − 1)ζ(s)`, with its value `1` at `s = 1`: Mathlib's `LFunctionTrivChar₁ 1`. -/
-noncomputable abbrev zeta₁ : ℂ → ℂ := LFunctionTrivChar₁ 1
+theorem riemannZeta₁_of_ne_one {s : ℂ} (hs : s ≠ 1) : riemannZeta₁ s = (s - 1) * riemannZeta s := by
+  rw [riemannZeta_eq_inv_sub_mul hs, ← mul_assoc, mul_inv_cancel₀ (sub_ne_zero.2 hs), one_mul]
 
-theorem zeta₁_of_ne_one {s : ℂ} (hs : s ≠ 1) : zeta₁ s = (s - 1) * riemannZeta s := by
-  simp only [zeta₁, LFunctionTrivChar₁, Function.update_of_ne hs, LFunctionTrivChar, LFunction_modOne_eq]
+/-- `ζ₁'(1)/ζ₁(1) = γ` (Mathlib's `deriv_riemannZeta₁_one`). -/
+theorem logDeriv_riemannZeta₁_one : logDeriv riemannZeta₁ 1 = Real.eulerMascheroniConstant := by
+  rw [logDeriv_apply, deriv_riemannZeta₁_one, riemannZeta₁_one, div_one]
 
-theorem zeta₁_one : zeta₁ 1 = 1 := by
-  simp [zeta₁, LFunctionTrivChar₁]
-
-theorem differentiable_zeta₁ : Differentiable ℂ zeta₁ := differentiable_LFunctionTrivChar₁ 1
-
-/-- `ζ₁'(1)/ζ₁(1) = γ`, since `ζ(s) − 1/(s − 1) → γ` at `s = 1`. -/
-theorem logDeriv_zeta₁_one : logDeriv zeta₁ 1 = Real.eulerMascheroniConstant := by
-  have h1 := hasDerivAt_iff_tendsto_slope.1 (differentiable_zeta₁ 1).hasDerivAt
-  have h2 : Tendsto (slope zeta₁ 1) (𝓝[≠] 1) (𝓝 (Real.eulerMascheroniConstant : ℂ)) := by
-    refine tendsto_riemannZeta_sub_one_div.congr' ?_
-    filter_upwards [self_mem_nhdsWithin] with s (hs : s ≠ 1)
-    rw [slope_def_field, zeta₁_of_ne_one hs, zeta₁_one]
-    field_simp [sub_ne_zero.2 hs]
-  rw [logDeriv_apply, zeta₁_one, div_one, tendsto_nhds_unique h1 h2]
-
-theorem logDeriv_zeta₁ {s : ℂ} (hs : s ≠ 1) (hz : riemannZeta s ≠ 0) :
-    logDeriv zeta₁ s = 1 / (s - 1) + deriv riemannZeta s / riemannZeta s := by
-  have hev : zeta₁ =ᶠ[𝓝 s] fun w => (w - 1) * riemannZeta w := by
-    filter_upwards [eventually_ne_nhds hs] with w hw using zeta₁_of_ne_one hw
+theorem logDeriv_riemannZeta₁ {s : ℂ} (hs : s ≠ 1) (hz : riemannZeta s ≠ 0) :
+    logDeriv riemannZeta₁ s = 1 / (s - 1) + deriv riemannZeta s / riemannZeta s := by
+  have hev : riemannZeta₁ =ᶠ[𝓝 s] fun w => (w - 1) * riemannZeta w := by
+    filter_upwards [eventually_ne_nhds hs] with w hw using riemannZeta₁_of_ne_one hw
   rw [(logDeriv_congr_nhds hev).eq_of_nhds]
   show logDeriv ((fun w : ℂ => w - 1) * riemannZeta) s = _
   rw [logDeriv_mul (f := fun w : ℂ => w - 1) (g := riemannZeta) s (sub_ne_zero.2 hs) hz (by fun_prop)
@@ -183,11 +169,11 @@ noncomputable def rampErr {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (
 /-- The entire function with the zeros of `L(s, χ)` right of `0`: `ζ₁` for the trivial character, `L(s, χ)`
 for the others. -/
 noncomputable def entire {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) : ℂ → ℂ :=
-  if χ = 1 then zeta₁ else LFunction χ
+  if χ = 1 then riemannZeta₁ else LFunction χ
 
 /-- The transform of `E_χ`: `Φ_F` for that entire function, plus `1/s` for the trivial character. -/
 noncomputable def Ψ {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) : ℂ → ℂ :=
-  if χ = 1 then fun s => phi zeta₁ s + 1 / s else phi (LFunction χ)
+  if χ = 1 then fun s => phi riemannZeta₁ s + 1 / s else phi (LFunction χ)
 
 section OneCharacter
 
@@ -196,27 +182,22 @@ variable {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
 theorem differentiable_entire : Differentiable ℂ (entire χ) := by
   unfold entire
   split_ifs with h
-  · exact differentiable_zeta₁
+  · exact differentiable_riemannZeta₁
   · exact differentiable_LFunction h
 
 theorem entire_one_ne_zero : entire χ 1 ≠ 0 := by
   unfold entire
   split_ifs with h
-  · rw [zeta₁_one]; exact one_ne_zero
+  · rw [riemannZeta₁_one]; exact one_ne_zero
   · exact LFunction_apply_one_ne_zero h
-
-/-- `ζ` has no zero on `Re s ≥ 1` but its pole. -/
-theorem riemannZeta_ne_zero_of_one_le_re {s : ℂ} (hs : 1 ≤ s.re) (hs1 : s ≠ 1) : riemannZeta s ≠ 0 := by
-  have := LFunction_ne_zero_of_one_le_re (1 : DirichletCharacter ℂ 1) (Or.inr hs1) hs
-  rwa [LFunction_modOne_eq] at this
 
 theorem entire_ne_zero_of_one_le_re {s : ℂ} (hs : 1 ≤ s.re) : entire χ s ≠ 0 := by
   unfold entire
   split_ifs with h
   · rcases eq_or_ne s 1 with rfl | hs1
-    · rw [zeta₁_one]; exact one_ne_zero
-    · rw [zeta₁_of_ne_one hs1]
-      exact mul_ne_zero (sub_ne_zero.2 hs1) (riemannZeta_ne_zero_of_one_le_re hs hs1)
+    · rw [riemannZeta₁_one]; exact one_ne_zero
+    · rw [riemannZeta₁_of_ne_one hs1]
+      exact mul_ne_zero (sub_ne_zero.2 hs1) (riemannZeta_ne_zero_of_one_le_re hs)
   · exact LFunction_ne_zero_of_one_le_re χ (Or.inl h) hs
 
 /-- For an admissible `χ`, `L(s, χ)` and `entire χ` have the same zeros (the pole of `ζ` aside). -/
@@ -226,7 +207,7 @@ theorem LFunction_eq_zero_iff_entire (hadm : N = 1 ∨ χ ≠ 1) {s : ℂ} (hs :
   · have hN : N = 1 := hadm.resolve_right (not_not.2 h)
     subst hN
     have hs1 : s ≠ 1 := hs.resolve_left (not_not.2 h)
-    simp only [entire, h, ite_true, zeta₁_of_ne_one hs1, LFunction_modOne_eq, mul_eq_zero, sub_eq_zero, hs1,
+    simp only [entire, h, ite_true, riemannZeta₁_of_ne_one hs1, LFunction_modOne_eq, mul_eq_zero, sub_eq_zero, hs1,
       false_or]
   · simp [entire, h]
 
@@ -359,7 +340,7 @@ theorem laplace_rampErr (hadm : N = 1 ∨ χ ≠ 1) {s : ℂ} (hs : 3 < s.re) :
       refine LSeries_congr (fun {n} _ => ?_) s
       rw [MulChar.one_apply (isUnit_of_subsingleton _), mul_one]
     have hz : riemannZeta s ≠ 0 := riemannZeta_ne_zero_of_one_lt_re hs1
-    simp only [Ψ, ite_true, phi_of_ne_one _ hs1', numer, logDeriv_zeta₁ hs1' hz, logDeriv_zeta₁_one, hL]
+    simp only [Ψ, ite_true, phi_of_ne_one _ hs1', numer, logDeriv_riemannZeta₁ hs1' hz, logDeriv_riemannZeta₁_one, hL]
     field_simp
     push_cast
     ring
@@ -483,10 +464,7 @@ theorem re_lt_one (ρ : ℂ) (hρ : ρ ∈ F.Z) : ρ.re < 1 := by
 
 /-- `conj` carries punctured neighbourhoods to punctured neighbourhoods. -/
 theorem tendsto_conj (z : ℂ) : Tendsto (fun w : ℂ => conj w) (𝓝[≠] z) (𝓝[≠] (conj z)) :=
-  tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within _
-    (Complex.continuous_conj.continuousAt.tendsto.mono_left nhdsWithin_le_nhds)
-    (eventually_nhdsWithin_of_forall fun w (hw : w ≠ z) (h : conj w = conj z) =>
-      hw (by simpa using congrArg conj h))
+  (Complex.conjLIE.toHomeomorph.map_punctured_nhds_eq z).le
 
 theorem isolated (z : ℂ) (_hz : 0 < z.re) : ∀ᶠ w in 𝓝[≠] z, w ∉ F.Z := by
   have hne : ∀ i, ∀ a : ℂ, ∀ᶠ w in 𝓝[≠] a, entire (F.χ i) w ≠ 0 := fun i a =>
@@ -642,6 +620,50 @@ theorem zeroFreeRightOf_half_of_windowBound (h : WindowBound) : HalfPlaneGRH.Zer
 theorem rhAndGRH_of_windowBound (h : WindowBound) : HalfPlaneGRH.RHandGRH :=
   HalfPlaneGRH.rhAndGRH_of_zeroFreeRightOf (zeroFreeRightOf_half_of_windowBound h)
 
+/-! ## The frontier for `ζ` alone -/
+
+/-- The family of `ζ` alone: the character mod `1`, with weight `1`. -/
+noncomputable def zetaFamily : Family where
+  ι := Unit
+  N := fun _ => 1
+  χ := fun _ => 1
+  w := fun _ => 1
+  w_pos := fun _ => one_pos
+  adm := fun _ => Or.inl rfl
+
+/-- The error of `ζ`'s family is `Σ_{n ≤ x} Λ(n)(x/n − 1) − x log x + (1 + γ)x`. -/
+theorem zetaFamily_G (x : ℝ) : zetaFamily.G x =
+    ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, Λ n * (x / n - 1) - x * Real.log x + (1 + Real.eulerMascheroniConstant) * x := by
+  have h1 : ∀ n : ℕ, (1 : DirichletCharacter ℂ 1) n = 1 := fun n => MulChar.one_apply (isUnit_of_subsingleton _)
+  have hG : zetaFamily.G x = (rampErr (1 : DirichletCharacter ℂ 1) x).re := by
+    show ∑ _i : Unit, (1 : ℝ) * (rampErr (1 : DirichletCharacter ℂ 1) x).re = _
+    simp
+  rw [hG, rampErr, ite_eq_left rfl, add_re, sub_re, ofReal_re, ofReal_re, RampLaplace.rampSum, re_sum]
+  congr 2
+  refine Finset.sum_congr rfl fun n _ => ?_
+  rw [h1, mul_one, ← ofReal_mul, ofReal_re]
+
+/-- **The frontier for `ζ` alone**: for every `θ > 1/2`, on windows `[Y, Y^λ]` with `Y` arbitrarily large,
+`Σ_{n ≤ x} Λ(n)(x/n − 1) − x log x + (1 + γ)x ≤ C x^θ`, for some `λ > 1` and `C`. -/
+def ZetaWindowBound : Prop :=
+  ∀ θ : ℝ, 1 / 2 < θ → ∃ lam : ℝ, 1 < lam ∧ ∃ C : ℝ, ∀ Y₀ : ℝ, ∃ Y ≥ Y₀, ∀ x ∈ Icc Y (Y ^ lam),
+    ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, Λ n * (x / n - 1) - x * Real.log x + (1 + Real.eulerMascheroniConstant) * x ≤
+      C * x ^ θ
+
+/-- **The Riemann hypothesis from the frontier for `ζ` alone.** -/
+theorem riemannHypothesis_of_zetaWindowBound (h : ZetaWindowBound) : RiemannHypothesis := by
+  refine HalfPlaneGRH.riemannHypothesis_of_zeta_ne_zero fun s hs => ?_
+  rcases eq_or_ne s 1 with rfl | hs1
+  · exact riemannZeta_one_ne_zero
+  obtain ⟨lam, hlam, C, hW⟩ := h ((1 / 2 + s.re) / 2) (by linarith)
+  have hθ0 : 0 < (1 / 2 + s.re) / 2 := by linarith
+  have hne : LFunction (1 : DirichletCharacter ℂ 1) s ≠ 0 :=
+    zetaFamily.zeroFree_of_windows hθ0 hlam (fun Y₀ => by
+      obtain ⟨Y, hY, hYW⟩ := hW Y₀
+      exact ⟨Y, hY, fun x hx => (zetaFamily_G x).trans_le (hYW x hx)⟩) () (by linarith) (Or.inr hs1)
+  rwa [LFunction_modOne_eq] at hne
+
 end WindowGRH
 
 #print axioms WindowGRH.rhAndGRH_of_windowBound
+#print axioms WindowGRH.riemannHypothesis_of_zetaWindowBound

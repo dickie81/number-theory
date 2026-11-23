@@ -2205,6 +2205,7 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms HalfPlaneGRH.zeroFreeRightOf_half_iff
 #print axioms LandauWindow.re_le_of_windows
 #print axioms WindowGRH.rhAndGRH_of_windowBound
+#print axioms WindowGRH.riemannHypothesis_of_zetaWindowBound
 
 /-! ### What `cglDensity` uses
 

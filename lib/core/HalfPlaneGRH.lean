@@ -1,4 +1,5 @@
 import Mathlib
+import T1bt
 
 /-!
 # The Riemann hypothesis for `ζ` and every Dirichlet `L`-function, from a zero-free half-plane
@@ -17,9 +18,9 @@ Riemann hypothesis for `ζ` and for the `L`-function of every Dirichlet characte
   `L`-function of `χ`, and the functional equation of `χ⁻¹`, which is primitive too, carries it to `1 − s`.
 * `re_eq_half_of_zeroFreeRightOf`: at `θ = 1/2`, every zero of every `L(s, χ)` in the critical strip lies on
   the line `Re s = 1/2`.
-* `riemannHypothesis_of_zeroFreeRightOf`: Mathlib's `RiemannHypothesis`. In the strip this is the character
-  mod `1`; on `Re s ≥ 1` it is Mathlib's nonvanishing; on `Re s ≤ 0` the functional equation of `ζ` leaves only
-  the trivial zeros.
+* `riemannHypothesis_of_zeta_ne_zero`: Mathlib's `RiemannHypothesis` from `ζ` alone. A nontrivial zero lies in the
+  open strip (the library's `WeilTest.IsNontrivialZero.mem_strip`), and the functional equation of `ζ` reflects
+  one left of the line to the right. `riemannHypothesis_of_zeroFreeRightOf` is the case of the character mod `1`.
 * `zeroFreeRightOf_half_iff`: the half-plane at `1/2` is equivalent to those two conclusions together, so this
   step neither adds to nor takes from what the steps below must prove.
 -/
@@ -137,60 +138,31 @@ theorem re_eq_half_of_zeroFreeRightOf (h : ZeroFreeRightOf (1 / 2)) {N : ℕ} [N
   · exact heq
   · exact absurd hz (LFunction_ne_zero_of_zeroFreeRightOf h (by norm_num) χ hgt (Or.inr hs1))
 
-/-- **The Riemann hypothesis** (Mathlib's `RiemannHypothesis`), from the half-plane at `1/2`. -/
-theorem riemannHypothesis_of_zeroFreeRightOf (h : ZeroFreeRightOf (1 / 2)) : RiemannHypothesis := by
+/-- **The Riemann hypothesis from `ζ` alone**: if `ζ` has no zero on `Re s > 1/2`, Mathlib's `RiemannHypothesis`
+holds. A nontrivial zero lies in the open strip (`WeilTest.IsNontrivialZero.mem_strip`). One left of the line would
+give, by the functional equation, the zero `1 − s` right of it. -/
+theorem riemannHypothesis_of_zeta_ne_zero (h : ∀ s : ℂ, 1 / 2 < s.re → riemannZeta s ≠ 0) :
+    RiemannHypothesis := by
   intro s hz htriv hs1
-  have hζ : ∀ w : ℂ, LFunction (1 : DirichletCharacter ℂ 1) w = riemannZeta w := fun w => by
-    rw [LFunction_modOne_eq]
-  have hone : ∀ w : ℂ, 1 ≤ w.re → w ≠ 1 → riemannZeta w ≠ 0 := fun w hw hw1 => by
-    rw [← hζ]
-    exact LFunction_ne_zero_of_one_le_re _ (Or.inr hw1) hw
-  rcases lt_or_ge 0 s.re with h0 | h0
-  · rcases lt_or_ge s.re 1 with h1 | h1
-    · exact re_eq_half_of_zeroFreeRightOf h (1 : DirichletCharacter ℂ 1) (by rw [hζ]; exact hz) h0 h1
-    · exact absurd hz (hone s h1 hs1)
-  · -- left of the strip: `s = 1 − w` with `Re w ≥ 1`, and the functional equation of `ζ`
-    exfalso
-    rcases eq_or_ne s 0 with rfl | hs0
-    · rw [riemannZeta_zero] at hz
-      norm_num at hz
-    have hwre : 1 ≤ (1 - s).re := by rw [sub_re, one_re]; linarith
-    have hw1 : 1 - s ≠ 1 := fun e => hs0 (by linear_combination -e)
-    have hwn : ∀ n : ℕ, 1 - s ≠ -n := fun n e => by
+  obtain ⟨h0, h1⟩ := WeilTest.IsNontrivialZero.mem_strip ⟨hz, htriv⟩
+  rcases lt_trichotomy s.re (1 / 2) with hlt | heq | hgt
+  · have hn : ∀ n : ℕ, s ≠ -n := fun n e => by
       have := congrArg re e
       rw [neg_re, natCast_re] at this
       linarith [(Nat.cast_nonneg n : (0 : ℝ) ≤ n)]
-    have hfe := riemannZeta_one_sub hwn hw1
-    rw [sub_sub_cancel, hz] at hfe
-    have hπ : (Real.pi : ℂ) ≠ 0 := ofReal_ne_zero.2 Real.pi_ne_zero
-    have hpow : (2 * (Real.pi : ℂ)) ^ (-(1 - s)) ≠ 0 := by
-      rw [Ne, cpow_eq_zero_iff]
-      exact fun h' => mul_ne_zero two_ne_zero hπ h'.1
-    have hΓ : Gamma (1 - s) ≠ 0 := Gamma_ne_zero_of_re_pos (by linarith)
-    have hζw : riemannZeta (1 - s) ≠ 0 := hone _ hwre hw1
-    have hcos : cos (Real.pi * (1 - s) / 2) = 0 := by
-      rcases mul_eq_zero.1 hfe.symm with h' | h'
-      · rcases mul_eq_zero.1 h' with h'' | h''
-        · rcases mul_eq_zero.1 h'' with h3 | h3
-          · rcases mul_eq_zero.1 h3 with h4 | h4
-            · norm_num at h4
-            · exact absurd h4 hpow
-          · exact absurd h3 hΓ
-        · exact h''
-      · exact absurd h' hζw
-    obtain ⟨k, hk⟩ := Complex.cos_eq_zero_iff.1 hcos
-    -- so `1 − s = 2k + 1`, and `s = −2k` is a trivial zero
-    have hw : 1 - s = 2 * k + 1 := by
-      apply mul_left_cancel₀ hπ
-      linear_combination 2 * hk
-    have hs_eq : s = -2 * (k : ℂ) := by linear_combination -hw
-    have hre : s.re = -2 * k := by rw [hs_eq]; simp
-    have hk0 : k ≠ 0 := fun e => hs0 (by rw [hs_eq, e]; simp)
-    have hkpos : 0 < k := by
-      have : (0 : ℝ) ≤ k := by linarith
-      exact lt_of_le_of_ne (by exact_mod_cast this) (Ne.symm hk0)
-    obtain ⟨n, hn⟩ : ∃ n : ℕ, k = n + 1 := ⟨(k - 1).toNat, by omega⟩
-    exact htriv ⟨n, by rw [hs_eq, hn]; push_cast; ring⟩
+    have hfe := riemannZeta_one_sub hn hs1
+    rw [hz, mul_zero] at hfe
+    exact absurd hfe (h (1 - s) (by rw [sub_re, one_re]; linarith))
+  · exact heq
+  · exact absurd hz (h s hgt)
+
+/-- **The Riemann hypothesis** (Mathlib's `RiemannHypothesis`), from the half-plane at `1/2`. -/
+theorem riemannHypothesis_of_zeroFreeRightOf (h : ZeroFreeRightOf (1 / 2)) : RiemannHypothesis := by
+  refine riemannHypothesis_of_zeta_ne_zero fun s hs => ?_
+  rcases eq_or_ne s 1 with rfl | hs1
+  · exact riemannZeta_one_ne_zero
+  · have := h 1 (1 : DirichletCharacter ℂ 1) isPrimitive_one_level_one s hs (Or.inr hs1)
+    rwa [LFunction_modOne_eq] at this
 
 /-- **The Riemann hypothesis for `ζ` and every Dirichlet `L`-function**, from the half-plane at `1/2`. -/
 theorem rhAndGRH_of_zeroFreeRightOf (h : ZeroFreeRightOf (1 / 2)) : RHandGRH :=
