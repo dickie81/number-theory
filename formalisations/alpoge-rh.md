@@ -201,8 +201,11 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   - The frontier: `ZetaBalance.rhAndGRH_of_sharpBound` gives RH with GRH from `ZetaBalance.SharpBound`, through a
     proved bridge to the six-term interface (`ZetaBalance.SharpData.nonempty_sixTermData`,
     `ZetaBalance.SharpData.toSixTermData_Fo`): defined sources, target and periods, the forced orders fixed, and
-    nonnegative slacks. The theta chain still enters as a parameter (`ZetaBalance.ChainHook`), so the frontier is
-    not yet sharp; wiring `ThetaChain.Data.chain` in is next.
+    nonnegative slacks. `ZetaBalance.rhAndGRH_of_sharpBoundPinned` takes the frontier with the periods given by the
+    theta chain (`ThetaChain.Data.chain`, through `ZetaBalance.sharpBoundTheta_of_pinned`), the CM type, the
+    branching constant and the parameters' arithmetic pinned, and the kernels kept from vanishing
+    (`ThetaChain.Data.comp_zero_inp`). Still existential: the local factors at the auxiliary places, the level data
+    after step 0, the cusp subspace, the decoration lift, and the twisted levels (no `Q`-decorations yet).
 
 ## How the statements differ from the archive's
 

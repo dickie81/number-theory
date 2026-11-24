@@ -547,12 +547,12 @@ construction, measured"). In order:
      losses of the frame inequality.
 
    It is still equivalent to the gap bound, as above: frames of rank one satisfy it whenever that bound holds.
-2. **A sharp frontier**, being designed (24 November 2026). A design study chose `ZetaBalance.SixTermBound` with a
-   canonical frame: as sources the forms whose periods are integral, as target the integral period functionals, and
-   as maps the period maps. Defining these objects is what "The construction, measured" finds a frontier needs before
-   it can have content. The definitions are estimated at about 2,500–4,500 lines, in layers L0 to L7. Open: whether
-   the untwisted target suffices, and the choice of the target's metric. The first layer, `O_K`-lattices with metrics
-   at the complex places as hermitian lattices (`HermitianLattice`), is being written.
+2. **A sharp frontier**, stated on the branch `sharp-frontier` (24 November 2026). The construction's objects are
+   defined in nine modules: `KLattice`, `FrameRescale`, `CMHost`, `HermClasses`, `WeylFock`, `HermForms`,
+   `ThetaChain`, `PeriodTarget` and `ForcedOrders`. `SharpBound` states the frontier and proves its bridge to
+   `SixTermData`, and `SharpChain` pins the periods to the theta chain (`rhAndGRH_of_sharpBoundPinned`). Two reviews
+   against the archive corrected eight transcription errors. Still existential: the local factors at the auxiliary
+   places, the level data after step 0, the cusp subspace, the decoration lift, and the twisted levels.
 3. **Self-contained components:**
    - the sizes of the auxiliary primes;
    - the frame condition at one complex place (`LinkS`, about 100K archive lines). The step from it to (RS) is done

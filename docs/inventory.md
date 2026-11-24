@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1930 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1933 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -15,7 +15,7 @@ note of `formalisations/` that names it, if one does.
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 219 | 774 |
-| `lib/pnt` | 356 | 1043 |
+| `lib/pnt` | 357 | 1046 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2528,6 +2528,12 @@ note of `formalisations/` that names it, if one does.
 - `ZetaBalance.SharpData.nonempty_sixTermData`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.SharpData.toSixTermData_Fo`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.rhAndGRH_of_sharpBound`: CONDITIONAL. The Riemann hypothesis for `ζ` and every Dirichlet `L`-function from the sharp frontier ([note](../formalisations/alpoge-rh.md))
+
+#### `SharpChain`: The sharp frontier with the theta chain — CONDITIONAL on the half-plane
+
+- `ThetaChain.Data.comp_zero_inp`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.sharpBoundTheta_of_pinned`: The pinned frontier implies `SharpBoundTheta`. ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.rhAndGRH_of_sharpBoundPinned`: CONDITIONAL. RH and GRH from the pinned frontier ([note](../formalisations/alpoge-rh.md))
 
 #### `ShortCharSums`: Short character sums
 
