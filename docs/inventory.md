@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1919 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1923 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 217 | 766 |
+| `lib/core` | 218 | 770 |
 | `lib/pnt` | 355 | 1040 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -803,6 +803,13 @@ note of `formalisations/` that names it, if one does.
 #### `ParitySplit`: Weil's form splits by parity: positivity for every real `g`
 
 - `WeilForm.weilQg_ge_twentieth_all`: Weil positivity for every real `g`, pure Lean ([note](../formalisations/weil-positivity.md))
+
+#### `PeriodTarget`: Branching, periods, the target `C_u` and the sources `N_ω`
+
+- `PeriodTarget.coeff_coefLast`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `PeriodTarget.per_eq_classSum`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `PeriodTarget.mem_Ctgt`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `PeriodTarget.Nsrc_le`: Sanity ([note](../formalisations/alpoge-rh.md))
 
 #### `PhiDExp`: Double-exponential upper bounds on the first three rungs
 

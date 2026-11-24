@@ -454,6 +454,7 @@ import WeylFock
 import CMHost
 import HermForms
 import ForcedOrders
+import PeriodTarget
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2272,6 +2273,10 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ZetaBalance.Setting.lpF_nonneg_le
 #print axioms ZetaBalance.Setting.Ranks.FTypeG_nonpos
 #print axioms ZetaBalance.Setting.Ranks.FInert_nonneg
+#print axioms PeriodTarget.coeff_coefLast
+#print axioms PeriodTarget.per_eq_classSum
+#print axioms PeriodTarget.mem_Ctgt
+#print axioms PeriodTarget.Nsrc_le
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
 #print axioms ZetaBalance.rhAndGRH_of_latticeBound
 #print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound
