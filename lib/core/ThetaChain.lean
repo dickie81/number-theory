@@ -39,9 +39,9 @@ the chain data (`Data.θ_rat`), on the archive's range only.
 `s = ι(liftW x)` with `liftW x` a lift of the coset into the half-lattice `HA` (`Data.HA`, the archive's `halfAO`, a
 parameter), so `vol^{−1/2}` enters twice, as in the archive; with
 the finite Heisenberg sum `xiS Φ e = Σ_{y ∈ SB} Φ̂(y)·α(y)·U_y e`, `Φ̂(y) = vol^{−1/2}(vol/|SA|)·Σ_{t ∈ SA} Φ(t)
-e^{2πi Im H(t, y)}` (`xiS`, `thInd`). The finite data `SA, SB, BC, vol` (the archive's `halfAO/halfBO/repsOf`) are a
-**parameter** (`XiData`). The cosets are `cA⁻¹H_S/cB·H_S` with `H_S = {x : x(N_P) ⊆ N′_P, P ∈ S}` (`homAt`, read
-globally: `x(N) ⊆ N′_P`, `locMem`). The local factor `Ξ = Π_P XiAt_P` (spec-2 1d: `E1 ∘ om ∘ PhiG/PhiQ` over `volN`) is
+e^{2πi Im H(t, y)}` (`xiS`, `thInd`). The finite data `SA, SB, BC, vol` are a parameter (`XiData`), pinned by
+`Data.XDPinned` (spec-3 §3: `HA = halfAO`, `BC = ι(halfBO)` with `perO`, `twist₂`, `expS`; `IsReps`; `volS`).
+The cosets are `cA⁻¹H_S/cB·H_S` with `H_S = {x : x(N_P) ⊆ N′_P, P ∈ S}` (`homAt`, read globally: `x(N) ⊆ N′_P`, `locMem`). The local factor `Ξ = Π_P XiAt_P` (spec-2 1d: `E1 ∘ om ∘ PhiG/PhiQ` over `volN`) is
 **a parameter** (`Data.Xi`), too heavy to transcribe here; its stated property, invariance under `cB·H_S`, is
 `XiInv`.
 
@@ -209,8 +209,13 @@ noncomputable def Iop (s sd : ℝ) (Λ₁ Λ₂ : AddSubgroup (ι → ℂ)) (G :
   ((Real.sqrt ((Λ₁ ⊓ Λ₂).relIndex Λ₂ : ℝ))⁻¹ : ℂ) •
     ∑ᶠ q : Λ₂ ⧸ (Λ₁ ⊓ Λ₂).addSubgroupOf Λ₂, al s sd (q.out : ι → ℂ) • opU s (q.out : ι → ℂ) G
 
+/-- `S` is a set of representatives of `Λ₂/(Λ₁ ∩ Λ₂)` (spec-3 §3): `S ⊆ Λ₂`, distinct elements of `S` are distinct
+mod `Λ₁`, and every `y ∈ Λ₂` is `≡` some `x ∈ S` mod `Λ₁`. Pins `XiData.SA`, `SB` (`Data.XDPinned`). -/
+def IsReps (Λ₁ Λ₂ : Set (ι → ℂ)) (S : Finset (ι → ℂ)) : Prop :=
+  ↑S ⊆ Λ₂ ∧ (∀ x ∈ S, ∀ y ∈ S, x - y ∈ Λ₁ → x = y) ∧ ∀ y ∈ Λ₂, ∃ x ∈ S, y - x ∈ Λ₁
+
 /-- The finite data of a Heisenberg sum: coset representatives `SA`, `SB`, the lattice `BC` and the volume (the
-archive's `halfAO/halfBO/repsOf`, not transcribed: a parameter). -/
+archive's `halfAO/halfBO/repsOf`; free here, pinned by `Data.XDPinned`). -/
 structure XiData (ι : Type*) where
   /-- Representatives `SA`. -/
   SA : Finset (ι → ℂ)
@@ -379,6 +384,55 @@ structure ThetaStd (a b : ℕ) where
   θ : Amb Φ a b → ℂ
   ne_zero : θ ≠ 0
   mem : θ ∈ Th P.s P.sd (La τ P (stdLat (E := E) (n := a)) (stdLat (E := E) (n := b)))
+
+/-- The localisation `M_(P) = {z : s·z ∈ M for some s ∉ P}` (an additive group: the closure adds nothing). -/
+def locSub (Pl : HeightOneSpectrum (𝓞 E)) (M : Submodule (𝓞 E) (Matrix (Fin b) (Fin a) E)) :
+    AddSubgroup (Matrix (Fin b) (Fin a) E) :=
+  AddSubgroup.closure {z | ∃ s : 𝓞 E, s ∉ Pl.asIdeal ∧ (s : E) • z ∈ M}
+
+/-- `perO(𝔄, N, N′) = O_E·𝔄·Hom(N, N′)` (spec-3 §3); `ι(perO) = La(N, N′)`, as `𝔄·Hom` is `O_E`-stable. -/
+def perO (A : Submodule (𝓞 E) E) (N : Submodule (𝓞 E) (Fin a → E)) (N' : Submodule (𝓞 E) (Fin b → E)) :
+    Submodule (𝓞 E) (Matrix (Fin b) (Fin a) E) :=
+  Submodule.span (𝓞 E) {z | ∃ w ∈ A, ∃ x ∈ homSet N N', z = w • x}
+
+open Classical in
+/-- `expS(SS, Q) = 1` if `Q ∈ SS`, `−1` if `Q̄ ∈ SS`, `0` otherwise. -/
+noncomputable def expS (SS : Set (HeightOneSpectrum (𝓞 E))) (Q : HeightOneSpectrum (𝓞 E)) : ℤ :=
+  if Q ∈ SS then 1 else
+    if ∃ Pl ∈ SS, Q.asIdeal = Pl.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E) then -1
+    else 0
+
+/-- `twist₂(M, c, e) = ⋂_Q {w : c^{−e(Q)}·w ∈ M_(Q)}`: the lattice equal to `c^{e(Q)}·M` at every `Q`. -/
+def twist₂ (M : Submodule (𝓞 E) (Matrix (Fin b) (Fin a) E)) (c : E) (ex : HeightOneSpectrum (𝓞 E) → ℤ) :
+    Set (Matrix (Fin b) (Fin a) E) :=
+  {w | ∀ Q, c ^ (-ex Q) • w ∈ locSub Q M}
+
+/-- `halfAO(SS, M, c)`: `c⁻¹M` at `P ∈ SS`, `cM` at `P̄`, `M` elsewhere (the half-lattice of the lifts). -/
+noncomputable def halfAO (SS : Set (HeightOneSpectrum (𝓞 E))) (M : Submodule (𝓞 E) (Matrix (Fin b) (Fin a) E))
+    (c : E) : Set (Matrix (Fin b) (Fin a) E) :=
+  twist₂ M c fun Q => -expS SS Q
+
+/-- `halfBO(SS, M, c)`: `cM` at `P ∈ SS`, `c⁻¹M` at `P̄`, `M` elsewhere (the lattice `BC`). -/
+noncomputable def halfBO (SS : Set (HeightOneSpectrum (𝓞 E))) (M : Submodule (𝓞 E) (Matrix (Fin b) (Fin a) E))
+    (c : E) : Set (Matrix (Fin b) (Fin a) E) :=
+  twist₂ M c (expS SS)
+
+/-- `volS(SS, M₀, M) = Π_{P ∈ SS} [M_P : M₀_P ∩ M_P]/[M₀_P : M₀_P ∩ M_P]`, the covolume ratio. -/
+noncomputable def volS (SS : Set (HeightOneSpectrum (𝓞 E))) (M₀ M : Submodule (𝓞 E) (Matrix (Fin b) (Fin a) E)) :
+    ℝ :=
+  ∏ᶠ Pl ∈ SS, ((locSub Pl M₀).relIndex (locSub Pl M) : ℝ) / ((locSub Pl M).relIndex (locSub Pl M₀) : ℝ)
+
+/-- **The Heisenberg data pinned** (spec-3 §3), for a step with lattices `N`, `N′`, places `SS`, integer `c` (the
+modulus of the lift congruence, as in the archive's `liftS`): `HA = halfAO(SS, perO, c)`, `BC = ι(halfBO(SS, perO,
+c))`, `SA` representatives of `(LamC ∩ AC)/(LamC ∩ AC ∩ BC)` with `0 ∈ SA`, `SB` of `BC/(BC ∩ LamC)` (`LamC =
+La(N, N′) = ι(perO)`, `AC = ι(HA)`), and `vol = volS(SS, perO(std, std′), perO(N, N′))` (it cancels). -/
+def XDPin (SS : Set (HeightOneSpectrum (𝓞 E))) (c : ℕ) (N : Submodule (𝓞 E) (Fin a → E))
+    (N' : Submodule (𝓞 E) (Fin b → E)) (XD : XiData (Φ × Fin b × Fin a)) (HA : Set (Matrix (Fin b) (Fin a) E)) :
+    Prop :=
+  HA = halfAO SS (perO P.A N N') (c : E) ∧ XD.BC = iota τ P '' halfBO SS (perO P.A N N') (c : E) ∧
+    IsReps XD.BC ((La τ P N N' : Set (Amb Φ a b)) ∩ iota τ P '' HA) XD.SA ∧ (0 : Amb Φ a b) ∈ XD.SA ∧
+    IsReps (La τ P N N') XD.BC XD.SB ∧
+    XD.vol = volS SS (perO P.A (stdLat (E := E) (n := a)) (stdLat (E := E) (n := b))) (perO P.A N N')
 
 end Jets
 
@@ -558,6 +612,11 @@ noncomputable def Data.chain (D : Data τ) : Chain Φ L where
     (D.XD j c c') (D.HA j c c') (D.Xi j c c')
     (rhoIn (D.mu j) (D.dI j c) * rhoOut (D.mu j) (D.dI (j + 1) c'))
     c.2.N c'.2.N
+
+/-- **The data's Heisenberg data and half-lattices are pinned** (`XDPin` at every step, places `S`, integer `cB j`,
+the modulus of `liftW`'s congruence). Meant for L7 (`IsThetaCol`). -/
+def Data.XDPinned (D : Data τ) : Prop :=
+  ∀ j c c', XDPin τ D.P D.S (D.cB j) c.2.N c'.2.N (D.XD j c c') (D.HA j c c')
 
 end Data
 
