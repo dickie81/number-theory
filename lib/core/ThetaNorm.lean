@@ -17,13 +17,16 @@ exact condition). The library's `θ_std` on `Amb Φ a b` is the archive's `thZer
 `Th(Hf s)`), so `g` is an `Hf s`-isometry of `ℂ^{Fin 4 × Φ}`. The normalised sigma `σ*`, the point `t = ω₀/2`, the
 lattices `L` and `Λ_M`, the isometry `g` and the phase `κ` are not transcribed (the archive's `sgStar`, `gC` and
 `KapChoice.kappa` need the CM elliptic curve and the split-prime data): they are the fields of `Pin`, with the stated
-properties `U_t σ*(0) ≠ 0` (so `th0(0) = 1`), `g` an isometry and `|κ| = 1`.
+properties `U_t σ*(0) ≠ 0` (so `th0(0) = 1`), `g` an isometry and `|κ| = 1`. `Pin.Canonical` (spec-4) fixes the
+scale-bearing fields: `Lc = δ·φ₀(cc)` with `Δ(Lc) = 1`, `s = 1/area(Lc)`, `σ = σ*_{Lc} = σ_W·exp(−s₂z²/2)` (Weierstrass
+`σ_W`, `ζ_W` by their product and sum over Mathlib's `PeriodPair.lattice`; `g₂`, `g₃` are Mathlib's) and `Λ = ι(𝔄)`;
+`t` (a 2-torsion point), `g` and `κ` stay quantified, as they move `θ₀` by a phase only.
 
 **Freedom left.** Given a `Pin`, `θ₀` is unique up to `ζ⁴ = 1` (spec-3 §2, `ThetaVector`), and `ζ^{ab} = 1` for even
 `a, b`, so `θ_std` is pinned. Since `κ` is only constrained by `|κ| = 1`, the remaining freedom of the frontier is a
 unimodular phase, which does not change slopes; the `ℂ^×` (in particular `ℚ^×`) scale is gone.
 
-**Sanity theorems:** `th0_zero`, `F0_zero`.
+**Sanity theorems:** `th0_zero`, `F0_zero`, `sgStar_zero`.
 -/
 
 namespace ThetaNorm
@@ -94,10 +97,55 @@ theorem F0_zero {ι : Type*} [Fintype ι] {s : ℝ} (D : Pin Φ s) : F0 s D.σ D
 
 end Base
 
+/-! ## The normalised sigma (spec-4) -/
+
+section Sigma
+
+open ComplexConjugate
+
+variable (Lp : PeriodPair)
+
+/-- The Weierstrass `σ_W(z) = z·∏'_{l ∈ L}(1 − z/l)·exp(z/l + z²/(2l²))` (the `l = 0` factor is `1`). -/
+noncomputable def sigmaW (z : ℂ) : ℂ :=
+  z * ∏' l : Lp.lattice, (1 - z / l) * Complex.exp (z / l + z ^ 2 / (2 * (l : ℂ) ^ 2))
+
+/-- The Weierstrass `ζ_W(z) = Σ'_{l ∈ L}(1/(z − l) + 1/l + z/l²)` (the `l = 0` term is `1/z`). -/
+noncomputable def zetaW (z : ℂ) : ℂ := ∑' l : Lp.lattice, (1 / (z - l) + 1 / l + z / (l : ℂ) ^ 2)
+
+/-- Masser's `s₂(L) = (η(ω₁)ω̄₂ − η(ω₂)ω̄₁)/(ω₁ω̄₂ − ω₂ω̄₁)`, with the quasi-periods `η(ω_i) = 2ζ_W(ω_i/2)`. -/
+noncomputable def s2 : ℂ :=
+  (2 * zetaW Lp (Lp.ω₁ / 2) * conj Lp.ω₂ - 2 * zetaW Lp (Lp.ω₂ / 2) * conj Lp.ω₁) /
+    (Lp.ω₁ * conj Lp.ω₂ - Lp.ω₂ * conj Lp.ω₁)
+
+/-- The normalised sigma `σ*(z) = σ_W(z)·exp(−s₂z²/2)` (the archive's `sgStar`). -/
+noncomputable def sgStar (z : ℂ) : ℂ := sigmaW Lp z * Complex.exp (-(s2 Lp) * z ^ 2 / 2)
+
+/-- The covolume `area(L) = |Im(ω̄₁ω₂)|`. -/
+noncomputable def area : ℝ := |(conj Lp.ω₁ * Lp.ω₂).im|
+
+/-- **Sanity:** `σ*(0) = 0`. -/
+theorem sgStar_zero : sgStar Lp 0 = 0 := by simp [sgStar, sigmaW]
+
+end Sigma
+
 section Std
 
 variable {E L : Type*} [Field E] [NumberField E] [Field L] [IsCMField E] {Φ : Type*} [Fintype Φ] [DecidableEq Φ]
   {τ : Φ → (E →+* L)} {P : TP E L Φ} {a b : ℕ}
+
+/-- **The canonical pin** (spec-4): `Lc = δ·φ₀(cc)`, for an additive group `cc ⊆ E` (the ideal `cc` of `O_K`, `K` the
+imaginary quadratic subfield) with `𝔄 = cc·AA0`, `φ₀ = σ₀ ∘ τ_p` on `cc` for every `p` (the CM type is induced from
+`K`) and `δ = P.δ`, normalised by `Δ(Lc) = g₂³ − 27g₃² = 1` (equivalently `δ¹² = Δ(φ₀(cc))`, as
+`Δ(δΛ) = δ⁻¹²Δ(Λ)`); `s = 1/area(Lc)`; `σ = σ*_{Lc}`; `Λ = ι(𝔄)`; and `t` a 2-torsion point killed by neither
+`(1 ± √−d)/2` (`sd = √d/2`). The choices left (`cc`, `AA0`, the basis of `Lc`, `t` mod `Lc`, `g`, `κ`) do not move
+`|θ₀|` (spec-4). Meant for the frontier (`SharpChain.IsThetaCol`). -/
+def Pin.Canonical (τ : Φ → (E →+* L)) (P : TP E L Φ) (D : Pin Φ P.s) : Prop :=
+  ∃ (cc : Submodule ℤ E) (AA0 : Submodule (𝓞 E) E) (Lp : PeriodPair),
+    P.A = Submodule.span (𝓞 E) (cc : Set E) * AA0 ∧
+    (∀ p, (Lp.lattice : Set ℂ) = (fun c => P.δ * P.σ₀ (τ p c)) '' cc) ∧ Lp.g₂ ^ 3 - 27 * Lp.g₃ ^ 2 = 1 ∧
+    D.Lc = Lp.lattice.toAddSubgroup ∧ P.s = (area Lp)⁻¹ ∧ D.σ = sgStar Lp ∧
+    D.Λ = AddSubgroup.closure {z | ∃ w ∈ P.A, z = fun p => P.δ * P.σ₀ (τ p w)} ∧
+    2 * D.t ∈ D.Lc ∧ (1 / 2 + P.sd * Complex.I) * D.t ∉ D.Lc ∧ (1 / 2 - P.sd * Complex.I) * D.t ∉ D.Lc
 
 /-- The base theta is normalised (spec-3 §2, option (A), the archive's exact condition): `θ_std = tensPow θ₀` for a
 `θ₀` with `θ₀^{⊗4} = κ·(Iop(stdLat, g(Λ_M⁴)) F0) ∘ g` (`IsTheta0`), for the pinning data `D`. This kills the `ℂ^×`

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1937 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1941 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 219 | 778 |
+| `lib/core` | 221 | 782 |
 | `lib/pnt` | 357 | 1046 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -1052,6 +1052,16 @@ note of `formalisations/` that names it, if one does.
 - `ThetaChain.Chain.comp_zero`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ThetaChain.Chain.lift_add`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ThetaChain.opU_zero`: Sanity ([note](../formalisations/alpoge-rh.md))
+
+#### `ThetaNorm`: The normalisation of the base theta
+
+- `ThetaNorm.th0_zero`: `th0(0) = 1`. ([note](../formalisations/alpoge-rh.md))
+- `ThetaNorm.F0_zero`: `F0(0) = 1` (spec-3 §2, as in the archive's `ProductThetaMem`). ([note](../formalisations/alpoge-rh.md))
+- `ThetaNorm.sgStar_zero`: Sanity ([note](../formalisations/alpoge-rh.md))
+
+#### `ThetaVol`: The local volumes of the theta kernels (spec-3 §1)
+
+- `ThetaVol.volN_pos`: The volume is positive ([note](../formalisations/alpoge-rh.md))
 
 #### `TwinLandau`: The Landau argument for twin forms, for any zero family
 
