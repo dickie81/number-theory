@@ -1,4 +1,5 @@
 import HalfPlaneTwistMean
+import HalfPlaneGRH
 
 /-!
 # Every real Dirichlet L-function is zero-free on `Re s > 11/12`
@@ -30,7 +31,7 @@ import HalfPlaneTwistMean
   (`LFunction_eq_chi3`), whose half-plane is `ne_zero_of_re_gt_eleven_twelfths`.
 * **Every real character** (`LFunction_ne_zero_of_isQuadratic`): through Mathlib's
   `primitiveCharacter`, with the Euler factors `1 − ψ(p)p^{−s}` nonzero for `Re s > 0`
-  (`one_sub_mul_cpow_ne_zero`); the trivial character, away from `s = 1`, is `ζ` times such factors
+  (`HalfPlaneGRH.eulerFactor_ne_zero`); the trivial character, away from `s = 1`, is `ζ` times such factors
   (Mathlib's `LFunctionTrivChar_eq_mul_riemannZeta`).
 -/
 
@@ -313,20 +314,6 @@ theorem LFunction_ne_zero_of_isPrimitive [NeZero q] {χ : DirichletCharacter ℂ
     rw [LFunction_changeLevel hqN χ (Or.inl hχ)] at hL
     exact left_ne_zero_of_mul hL
 
-/-- An Euler factor `1 − a·p^{−s}` with `|a| ≤ 1`, `p` prime and `Re s > 0` does not vanish. -/
-theorem one_sub_mul_cpow_ne_zero {p : ℕ} (hp : p.Prime) {a : ℂ} (ha : ‖a‖ ≤ 1) {s : ℂ}
-    (hs : 0 < s.re) : 1 - a * (p : ℂ) ^ (-s) ≠ 0 := by
-  intro h
-  have h1 : a * (p : ℂ) ^ (-s) = 1 := (sub_eq_zero.1 h).symm
-  have hlt : ‖a * (p : ℂ) ^ (-s)‖ < 1 := by
-    rw [norm_mul, Complex.norm_natCast_cpow_of_pos hp.pos, neg_re]
-    have : (p : ℝ) ^ (-s.re) < 1 :=
-      Real.rpow_lt_one_of_one_lt_of_neg (by exact_mod_cast hp.one_lt) (by linarith)
-    calc ‖a‖ * (p : ℝ) ^ (-s.re) ≤ 1 * (p : ℝ) ^ (-s.re) := by gcongr
-      _ < 1 := by rw [one_mul]; exact this
-  rw [h1, norm_one] at hlt
-  exact lt_irrefl _ hlt
-
 /-- **Every real Dirichlet L-function is zero-free on `Re s > 11/12`**: for every quadratic
 Dirichlet character `χ` (any modulus, primitive or not) and `Re s > 11/12`, `L(s, χ) ≠ 0`, the
 trivial character excepted at `s = 1`. -/
@@ -342,7 +329,7 @@ theorem LFunction_ne_zero_of_isQuadratic [NeZero q] {χ : DirichletCharacter ℂ
     refine mul_ne_zero ?_ (ne_zero_of_re_gt_eleven_twelfths hs).1
     rw [Finset.prod_ne_zero_iff]
     intro p hp
-    simpa using one_sub_mul_cpow_ne_zero (Nat.prime_of_mem_primeFactors hp) (a := 1) (by simp) hs0
+    simpa using HalfPlaneGRH.eulerFactor_ne_zero (Nat.prime_of_mem_primeFactors hp) (a := 1) (by simp) hs0
   · have : NeZero χ.conductor := ⟨conductor_ne_zero χ⟩
     have hψ1 : χ.primitiveCharacter ≠ 1 := by
       intro h
@@ -358,7 +345,7 @@ theorem LFunction_ne_zero_of_isQuadratic [NeZero q] {χ : DirichletCharacter ℂ
       hψ1 hs) ?_
     rw [Finset.prod_ne_zero_iff]
     intro p hp
-    exact one_sub_mul_cpow_ne_zero (Nat.prime_of_mem_primeFactors hp)
+    exact HalfPlaneGRH.eulerFactor_ne_zero (Nat.prime_of_mem_primeFactors hp)
       (DirichletCharacter.norm_le_one _ _) hs0
 
 end Real
@@ -374,5 +361,4 @@ end Eis
 #print axioms Eis.RealChar.apply_eq_jacobiSym
 #print axioms Eis.RealChar.LFunction_eq_chi3
 #print axioms Eis.RealChar.LFunction_ne_zero_of_isPrimitive
-#print axioms Eis.RealChar.one_sub_mul_cpow_ne_zero
 #print axioms Eis.RealChar.LFunction_ne_zero_of_isQuadratic

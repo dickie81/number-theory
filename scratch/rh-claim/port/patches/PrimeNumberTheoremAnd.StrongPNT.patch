@@ -1,0 +1,74 @@
+--- a/lib/vendor/pnt-plus/PrimeNumberTheoremAnd/StrongPNT.lean
++++ b/lib/vendor/pnt-plus/PrimeNumberTheoremAnd/StrongPNT.lean
+@@ -177,7 +177,7 @@
+       · refine mul_nonneg (mul_nonneg ?_ ?_) (inv_nonneg.mpr ?_) <;> linarith
+     have hdist : r' - r ≤ ‖z' - z‖ := by
+       simp only [mem_sphere_iff_norm, sub_zero, Metric.mem_closedBall,
+-        dist_zero_right] at hz' z_in_r
++        _root_.dist_zero_right] at hz' z_in_r
+       rw [← hz']
+       exact le_trans (by linarith) (norm_sub_norm_le z' z)
+     rw [norm_pow, norm_inv, one_div, inv_pow]
+@@ -1037,7 +1037,7 @@
+   have r'_lt_R : r' < R := lt_trans r'_lt_r r_lt_R
+   have rFiniteZeros: (SetOfZeros r f).Finite := finiteSetOfZeros_mono r_lt_one finiteZeros
+   have zNotInZeros : ¬(z ∈ SetOfZeros r f) := (fun hmem => hz.2 ⟨hmem.1.trans r_lt_R'.le, hmem.2⟩)
+-  have z_norm : ‖z‖ ≤ r' := by simpa [Metric.mem_closedBall, dist_zero_right] using hz.1
++  have z_norm : ‖z‖ ≤ r' := by simpa [Metric.mem_closedBall, _root_.dist_zero_right] using hz.1
+   have ρ_mem : ∀ ρ ∈ rFiniteZeros.toFinset, ‖ρ‖ ≤ r ∧ f ρ = 0 :=
+     fun ρ hρ => rFiniteZeros.mem_toFinset.mp hρ
+   have ρ_ne_zero : ∀ ρ ∈ rFiniteZeros.toFinset, ρ ≠ 0 :=
+@@ -1104,7 +1104,7 @@
+     apply (norm_sum_le _ _).trans (Finset.sum_le_sum (fun ρ hρ => ?_))
+     rw [norm_div, RCLike.norm_natCast]
+     apply div_le_div_of_nonneg_left (Nat.cast_nonneg _) hpos
+-    simp only [Set.mem_sdiff, Metric.mem_closedBall, dist_zero_right, SetOfZeros,
++    simp only [Set.mem_sdiff, Metric.mem_closedBall, _root_.dist_zero_right, SetOfZeros,
+       Finite.mem_toFinset, mem_ofPred_eq] at hρ hz
+     rw [norm_sub_rev]
+     calc R ^ 2 / R' - R'
+@@ -1656,7 +1656,7 @@
+     {f : ℂ → ℂ} (hf : f = fun z ↦ ζ (z + 3 / 2 + I * t)) : (SetOfZeros 1 f).Finite := by
+   by_contra hinf; rw [Set.not_finite] at hinf
+   have zerosSubset : SetOfZeros 1 f ⊆ Metric.closedBall (0 : ℂ) 1 := fun _ hx => by
+-    simpa only [Metric.mem_closedBall, dist_zero_right] using hx.1
++    simpa only [Metric.mem_closedBall, _root_.dist_zero_right] using hx.1
+   obtain ⟨x, hxK, hacc⟩ :=
+     hinf.exists_accPt_of_subset_isCompact (isCompact_closedBall 0 1) zerosSubset
+   have hfAnalytic : AnalyticOnNhd ℂ f (Metric.ball (0 : ℂ) 2) := by
+@@ -1674,7 +1674,7 @@
+   have hfeq : Set.EqOn f 0 (Metric.ball (0 : ℂ) 2) := by
+     refine AnalyticOnNhd.eqOn_zero_of_preconnected_of_mem_closure hfAnalytic
+       Metric.isPreconnected_ball (z₀ := x) ?_ ?_
+-    · simp only [Metric.mem_ball, Metric.mem_closedBall, dist_zero_right] at hxK ⊢
++    · simp only [Metric.mem_ball, Metric.mem_closedBall, _root_.dist_zero_right] at hxK ⊢
+       linarith
+     · simp only [mem_closure_iff_clusterPt, ← accPt_principal_iff_clusterPt]
+       exact hacc.mono (principal_mono.mpr fun _ h => h.2)
+@@ -1776,7 +1776,7 @@
+     exact ⟨by linarith, by linarith⟩
+   set z : ℂ := δ - 1 / 2 with hz
+   have hz' : z ∈ Metric.closedBall (0 : ℂ) r' \ SetOfZeros R' f := by
+-    simp only [SetOfZeros, f, Set.mem_sdiff, Metric.mem_closedBall, dist_zero_right, mem_ofPred_eq,
++    simp only [SetOfZeros, f, Set.mem_sdiff, Metric.mem_closedBall, _root_.dist_zero_right, mem_ofPred_eq,
+       not_and]
+     refine ⟨le_of_lt (lt_trans hd' (by linarith)), fun _ => riemannZeta_ne_zero_of_one_lt_re ?_⟩
+     simp only [add_re, div_ofNat_re, re_ofNat, mul_re, I_re, ofReal_re, zero_mul, I_im, ofReal_im,
+@@ -2459,7 +2459,7 @@
+       add_zero, mul_comm, add_comm]
+   set Z : ℂ := z.re - 3 / 2 with hZ
+   have hZ' : Z ∈ Metric.closedBall (0 : ℂ) r' \ SetOfZeros R' f := by
+-    simp only [SetOfZeros, f, Set.mem_sdiff, Metric.mem_closedBall, dist_zero_right, mem_ofPred_eq,
++    simp only [SetOfZeros, f, Set.mem_sdiff, Metric.mem_closedBall, _root_.dist_zero_right, mem_ofPred_eq,
+       not_and, hZ]
+     ring_nf
+     refine ⟨?_, fun _ => ?_⟩
+@@ -2635,7 +2635,7 @@
+   set g : ℂ → ℂ := fun z ↦ ζ (z + 3 / 2 + I * t) with hg
+   set f : ℂ → ℂ := fun z ↦ g z / ζ (3 / 2 + I * t) with hf
+   have fAnalytic : AnalyticOnNhd ℂ f (Metric.closedBall (0 : ℂ) 1) := by
+-    intro z hz; simp only [Metric.mem_closedBall, dist_zero_right] at hz
++    intro z hz; simp only [Metric.mem_closedBall, _root_.dist_zero_right] at hz
+     simp only [hf, hg]
+     refine AnalyticAt.div_const (AnalyticAt.comp (DifferentiableOn.analyticAt (s := {z : ℂ | z ≠ 1})
+       (fun z' hz' => (differentiableAt_riemannZeta hz').differentiableWithinAt)

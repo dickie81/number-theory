@@ -1,0 +1,141 @@
+name: Linnik certificates
+
+# The Linnik paper's two theorems, at 21/10 and 43/20, rest on certificates that the kernel checks, about 62 hours of
+# one core in 1228 files of lib/pnt (`SieveHint*`, with `Linnik21500`, `Linnik21000` and their `…Count` files the
+# library LinnikCert). They are opt-in: neither the default build nor CI's build of a change compiles them
+# (scripts/lean_targets.py). This workflow builds them, with every check file, every Saturday and on request; then it
+# checks the axioms of lib/check/CheckLinnik.lean (scripts/check_axioms.py), the dead code of the whole library with
+# them (scripts/dead_code.py --full) and the build's warnings. Its stages are those of ci.yml's Lean build, with a
+# cache of their own (`lake-build-linnik`), which starts from CI's (`lake-build`) when it has none: a stage continues
+# from the previous one's cache, and the next week's run from the last one's. It is not a job of ci.yml, so it is not
+# part of the check "CI passed" that main's branch protection requires.
+
+on:
+  schedule:
+    - cron: '23 2 * * 6'  # Saturdays at 02:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: linnik-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # The part files compile four at once on the runner's four cores, as they did when CI's build of every change
+  # compiled them (scripts/lean-slots.sh did not count them as heavy then); scripts/build.sh's default, two at once,
+  # is for machines with less memory per core.
+  LEAN_HEAVY: '4'
+
+jobs:
+  build-1:
+    name: Linnik certificates (stage 1)
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    outputs:
+      partial: ${{ steps.build.outputs.partial }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        uses: ./.github/actions/lean-build
+        with:
+          stage: '1'
+          targets: Check CheckAll CheckZeta23 CheckDH CheckLinnik
+          cache: lake-build-linnik
+          checks: CheckLinnik
+          dead-code: --full
+
+  build-2:
+    name: Linnik certificates (stage 2)
+    needs: build-1
+    if: needs.build-1.outputs.partial == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    outputs:
+      partial: ${{ steps.build.outputs.partial }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        uses: ./.github/actions/lean-build
+        with:
+          stage: '2'
+          targets: Check CheckAll CheckZeta23 CheckDH CheckLinnik
+          cache: lake-build-linnik
+          checks: CheckLinnik
+          dead-code: --full
+
+  build-3:
+    name: Linnik certificates (stage 3)
+    needs: build-2
+    if: needs.build-2.outputs.partial == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    outputs:
+      partial: ${{ steps.build.outputs.partial }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        uses: ./.github/actions/lean-build
+        with:
+          stage: '3'
+          targets: Check CheckAll CheckZeta23 CheckDH CheckLinnik
+          cache: lake-build-linnik
+          checks: CheckLinnik
+          dead-code: --full
+
+  build-4:
+    name: Linnik certificates (stage 4)
+    needs: build-3
+    if: needs.build-3.outputs.partial == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    outputs:
+      partial: ${{ steps.build.outputs.partial }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        uses: ./.github/actions/lean-build
+        with:
+          stage: '4'
+          targets: Check CheckAll CheckZeta23 CheckDH CheckLinnik
+          cache: lake-build-linnik
+          checks: CheckLinnik
+          dead-code: --full
+
+  build-5:
+    name: Linnik certificates (stage 5)
+    needs: build-4
+    if: needs.build-4.outputs.partial == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    outputs:
+      partial: ${{ steps.build.outputs.partial }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        uses: ./.github/actions/lean-build
+        with:
+          stage: '5'
+          targets: Check CheckAll CheckZeta23 CheckDH CheckLinnik
+          cache: lake-build-linnik
+          checks: CheckLinnik
+          dead-code: --full
+
+  build-6:
+    name: Linnik certificates (stage 6)
+    needs: build-5
+    if: needs.build-5.outputs.partial == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        uses: ./.github/actions/lean-build
+        with:
+          stage: '6'
+          last: 'true'
+          targets: Check CheckAll CheckZeta23 CheckDH CheckLinnik
+          cache: lake-build-linnik
+          checks: CheckLinnik
+          dead-code: --full

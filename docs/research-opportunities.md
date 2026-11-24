@@ -12,12 +12,12 @@ assistance (Claude); the literature positions in particular need expert review.
 
 | Direction | What would be new | Cost | Section |
 |---|---|---|---|
-| Exponential sums with `μ` and `Λ`, uniformly in `α`, with a power saving: `Σ_{n≤x} μ(n)e(nα) ≪ x^{35/36+ε}` | No unconditional power saving can exist without a zero-free half-plane for `ζ` (`α = 0` is Mertens' function); under GRH, Baker and Harman have `3/4` | Vaughan's identity and the bilinear exponential-sum bounds in Lean; the uniform major-arc inputs exist | [§1](#1-exponential-sums-over-primes-and-with-the-möbius-function) |
-| The Euler–Kronecker constants of the cyclotomic fields: `−C(log q)² ≤ Σ_{χ≠χ₀} L′/L(1, χ) ≤ (12 + o(1)) log q` | Unconditionally only `O(φ(q) log q)` is known for one `q`; the shape matches Ihara's GRH bound `(2 + o(1)) log q` | A sharp-cutoff uniform prime number theorem in progressions (short); Brun–Titchmarsh for the sharper lower bound (moderate) | [§2](#2-the-eulerkronecker-constants-of-the-cyclotomic-fields) |
-| The sieve programmes: Linnik at `21/10`, a lever table for what would go lower; short intervals at `21/40`; the hybrid of the two | The hybrid, primes in `(x, x + x^θ]` in every class mod `q ≤ x^η` for `θ > 4/7`, needs density estimates that count zeros, not characters | Large | [§3](#3-the-sieve-programmes) |
+| Exponential sums with `μ` and `Λ`, uniformly in `α`, with a power saving: `Σ_{n≤x} μ(n)e(nα) ≪ x^{35/36+ε}` (superseded under GRH, §1) | No unconditional power saving can exist without a zero-free half-plane for `ζ` (`α = 0` is Mertens' function); under GRH, Baker and Harman have `3/4` | Vaughan's identity and the bilinear exponential-sum bounds in Lean; the uniform major-arc inputs exist | [§1](#1-exponential-sums-over-primes-and-with-the-möbius-function) |
+| The Euler–Kronecker constants of the cyclotomic fields: `−C(log q)² ≤ Σ_{χ≠χ₀} L′/L(1, χ) ≤ (12 + o(1)) log q` (superseded under GRH, §2) | Unconditionally only `O(φ(q) log q)` is known for one `q`; the shape matches Ihara's GRH bound `(2 + o(1)) log q` | A sharp-cutoff uniform prime number theorem in progressions (short); Brun–Titchmarsh for the sharper lower bound (moderate) | [§2](#2-the-eulerkronecker-constants-of-the-cyclotomic-fields) |
+| The sieve programmes: Linnik at `21/10` (its certificates opt-in to build since 23 November, `2 + η` under GRH being the library's headline), a lever table for what would go lower; short intervals at `21/40` (every `θ > 1/2` under RH, §3.2); the hybrid of the two | The hybrid, primes in `(x, x + x^θ]` in every class mod `q ≤ x^η` for `θ > 4/7`, needs density estimates that count zeros, not characters | Large | [§3](#3-the-sieve-programmes) |
 | A zero of the Davenport–Heilbronn function with `Re s > 1` (Numerical) | Known to exist since 1936; none below height 12000, by the scan here; the library's `dh` column would show that the half-plane's proof must use the Euler product. Since done for `Re s > 11/12`, in Lean, and zeros with `Re s > 1` located numerically from height `2.53·10¹²` ([§8.5](#85-the-davenportheilbronn-zeros-right-of-1112-certified-right-of-1-located)) | Finding one, then a certificate at that height: fifty times or more the existing boxes, or an approximate functional equation for `dh` | [§4](#4-the-davenportheilbronn-function-a-zero-with-re-s--1-numerical) |
-| The smaller harvest: the prime number theorem in progressions uniformly in `q` with a sharp cutoff, Liouville, `μ` in progressions, Mertens with a power saving, `k`-free numbers | Exercises given the half-plane, each a statement the literature has only under RH or GRH | A module or two each | [§5](#5-the-smaller-harvest) |
-| Not recommended now: the orbit-lattice conjecture, Weil positivity, the half-plane at `7/8` | | | [§6](#6-directions-looked-at-and-not-recommended-now) |
+| The smaller harvest: the prime number theorem in progressions uniformly in `q` with a sharp cutoff, Liouville, `μ` in progressions, Mertens with a power saving, `k`-free numbers (at `1/2` under RH and GRH, §5) | Exercises given the half-plane, each a statement the literature has only under RH or GRH | A module or two each | [§5](#5-the-smaller-harvest) |
+| Not recommended now: the orbit-lattice conjecture, Weil positivity, the half-plane at `7/8` (superseded under RH and GRH) | | | [§6](#6-directions-looked-at-and-not-recommended-now) |
 | The missing tools, by what each unlocks | | | [§7](#7-the-missing-tools-by-what-they-unlock) |
 | A second scan, 9 November: what it proved, what the literature now has, and what is left of the orbit-lattice conjecture | Under RH the pivots of the orbit form grow like `log N` (`BallPivot`); the conjecture is RH up to a constant. `dh` has a zero with `Re s > 11/12`, at height `24415`, certified (`DHLocate5`) | The sampling inequality with its natural constants | [§8](#8-a-second-scan-9-november-2026) |
 
@@ -43,6 +43,10 @@ strong as a zero-free half-plane for `ζ`, and none is known: Davenport's theore
 Baker and Harman proved `x^{3/4+ε}` (J. London Math. Soc. 43 (1991), 193–198). The exponent `35/36` is what the
 simplest dissection gives from `11/12`; with a half-plane `Re s > θ` the same argument gives `1 − (1 − θ)/3`, so `23/24`
 from OpenAI's main preprint's `7/8` and `5/6` from GRH, short of Baker and Harman, whose tools are sharper.
+
+*24 November:* superseded where GRH holds, which counts as proven for the library (L. Alpöge's Lean archive, an
+input of [account.md](account.md)): under it Baker and Harman's `x^{3/4+ε}` applies. What this section would still
+add is a power saving that does not rest on the archive.
 
 **Proof.** Dirichlet's approximation with `Q = x^{1−c}`: `α = a/q + β` with `(a, q) = 1`, `q ≤ Q`, `|β| ≤ 1/(qQ)`.
 
@@ -76,6 +80,10 @@ Vaughan's (the singular series is extra work); and quantitative Möbius disjoint
 ## 2. The Euler–Kronecker constants of the cyclotomic fields
 
 *Status, 9 November: stated elsewhere since this was written (§8.2).*
+
+*24 November:* superseded where GRH holds, which counts as proven for the library (L. Alpöge's Lean archive, an
+input of [account.md](account.md)): under it Ihara's `γ_q ≤ (2 + o(1)) log q` applies, the bound that the argument
+below gives at `θ = 1/2`.
 
 **Theorem B (modulo the half-plane).** For `q ≥ 3`, with `χ₀` the trivial character mod `q`,
 
@@ -125,6 +133,11 @@ Mathlib's `LSeries`); and, for the `log log q` lower bound, Brun–Titchmarsh, w
 ## 3. The sieve programmes
 
 ### 3.1 Linnik's exponent: the lever table
+
+*23 November:* GRH, from L. Alpöge's Lean archive, makes `2 + η` the library's headline exponent
+(`LinnikGRH.linnik_two`, with GRH a hypothesis in the Lean), and the certificates at `43/20` and `21/10` became
+opt-in to build (`lib/check/CheckLinnik.lean`, `docs/building.md`). What follows is the record of the sieve route; an
+exponent below `2`, which GRH does not give, is what would now be new.
 
 **12 November: the paper at `43/20`, from the half-plane and Huxley's estimate.** The Linnik paper now proves
 `43/20` (`Linnik21500.linnik_21500`). Its Type II estimate in two variables counts characters only from `7789/10000`
@@ -1188,6 +1201,11 @@ project, and what remains is a set of cell certificates whose losses total below
 Monte Carlo computation says the method keeps Li's constant positive down to `θ ≈ 0.5182`, below Li's `0.52`; a Lean
 proof there would be below the literature, resting on the half-plane.
 
+*24 November:* settled where RH holds. The rebuild's top, RH with GRH (`HalfPlaneGRH.RHandGRH`, which L. Alpöge's Lean
+archive proves), gives a prime in `(y, y + y^θ]` for every `θ > 1/2` and every large `y`, through Lindelöf's hypothesis
+and the density hypothesis (`HalfPlaneGRH.RHandGRH.short_primes`). What the sieve would still add is an exponent that
+does not rest on the archive.
+
 ### 3.3 The hybrid: primes in short intervals in every progression
 
 What the two programmes would give together: for `θ > 4/7 + η` and `q ≤ x^{η'}`, every `(x, x + x^θ]` holds a prime
@@ -1242,11 +1260,16 @@ Each is a module or two, and none is progress in the field: given the half-plane
 statement the literature has only under RH or GRH, or without a power saving. They are listed because they are cheap
 and the inventory would carry them.
 
+*24 November:* RH and GRH now count as proven for the library (L. Alpöge's Lean archive, an input of
+[account.md](account.md)), so the literature's forms at `1/2` apply. Under the rebuild's top, `HalfPlaneGRH.RHandGRH`,
+the library has the progressions at a fixed modulus with `x^{1/2+η}` (`HalfPlaneGRH.RHandGRH.psiAP_isBigO`), not
+uniformly as item 1 asks, and item 5 for `k = 2` at `x^{2/5+η}` (`HalfPlaneGRH.RHandGRH.squarefree_isBigO`).
+
 1. **The prime number theorem in progressions, uniformly in the modulus:**
    `ψ(x; q, a) = x/φ(q) + O(x^{11/12+η} log(q + 2))` for every `q` and `(a, q) = 1`, with the constant depending on
    `η` only. The character side is already there: `ChiUniform.psiChi_le_uniform` gives
-   `|ψ(x, χ)| ≤ C log(q + 2) x^{11/12+η}` for every `χ ≠ 1` mod every `q` (its module header says "quadratic", a
-   stale line; the theorem is general). What is left is orthogonality with `HalfPlanePNT.psi_isBigO_eleven_twelfths`
+   `|ψ(x, χ)| ≤ C log(q + 2) x^{11/12+η}` for every `χ ≠ 1` mod every `q` (its module header said "quadratic" until
+   8 November; the theorem is general). What is left is orthogonality with `HalfPlanePNT.psi_isBigO_eleven_twelfths`
    for the trivial character, as in `PNTProgressions.psiAP_isBigO`, keeping the constant. Consequence: an asymptotic in
    every progression for `q ≤ x^{1/12−η}`, where Siegel–Walfisz allows `q ≤ (log x)^B`, and the Brun–Titchmarsh
    asymptotic in that range. §1 and §2 use it.
@@ -1258,7 +1281,8 @@ and the inventory would carry them.
    range `q ≤ (log x)^B` is known.
 4. **Mertens' theorems with a power saving:** `Σ_{n ≤ x} Λ(n)/n = log x − γ + O(x^{−1/12+η})` and
    `Σ_{p ≤ x} 1/p = log log x + M + O(x^{−1/12+η})`, by partial summation from
-   `HalfPlanePNT.psi_isBigO_eleven_twelfths`.
+   `HalfPlanePNT.psi_isBigO_eleven_twelfths`. The first is done: `ZetaBalance.mertens_error_le`, through the general
+   tail lemma `GSTail.tail_le_of_sum_le`.
 5. **`k`-free numbers:** `Q_k(x) = x/ζ(k) + O(x^{1/(k+1−Θ)+η})`, the argument of `SquarefreeCount` with `d^k` in
    place of `d²`.
 6. **Pell's equation** and **`p = x² + 27y²`**: already in `account.md`'s within-reach list.
@@ -1286,7 +1310,10 @@ and the inventory would carry them.
   kernel-checked certificates for `WeilForm.CertE` and `CertO`, which would make `WeilForm.weilQg_ge_both`
   unconditional to `2a ≤ 1.6`; it is compute-bound (the cost figures of [weil-positivity-l05.md](weil-positivity-l05.md)).
 - **The half-plane at `7/8`.** It does not move Linnik's exponent (§3.1); what it would improve is listed in
-  `account.md`, and §1 and §2 above would gain `23/24` and the constant `8` in place of `12`.
+  `account.md`, and §1 and §2 above would gain `23/24` and the constant `8` in place of `12`. *24 November:*
+  superseded where RH holds: the rebuild's top, RH with GRH (`HalfPlaneGRH.RHandGRH`), is the half-plane at `1/2` for
+  `ζ` and every `L(s, χ)`, and the deductions that `account.md` lists for a new half-plane hold at `1/2`
+  (`HalfPlaneGRH.RHandGRH.corollaries`); §1 and §2 would need their own proofs at `1/2`.
 - **Linnik below `2.198`:** not by the decomposition of the paper's version at `11/5`, with the window as its Type
   II estimate; with the estimate in two variables that decomposition reaches `2.193`. The searches of §3.1 go lower and are in
   Lean: `2.15` (`Linnik21500.linnik_21500`) and `21/10` (`Linnik21000.linnik_21000`).
@@ -1411,6 +1438,10 @@ from the half-plane alone should be expected to appear elsewhere. The library's 
 the orbit form.
 
 ### 8.3 The orbit-lattice conjecture: it is equivalent to RH
+
+*24 November:* with RH counted as proven for the library (L. Alpöge's Lean archive, an input of
+[account.md](account.md)), the conjecture holds for `ζ` (`PivotSharp.orbitLattice_of_rh`); in the library's Lean RH
+stays a hypothesis.
 
 **Theorem (Lean, under RH).** `d_N ≥ (log N/2 + log 4 + 2)/(22e⁸)` for every `N ≥ 1`.
 
@@ -1625,4 +1656,5 @@ function's, whose zeros there are the numerical ones above.
   there are none.
 - **Goldbach's exceptional set from the half-plane.** Hardy and Littlewood's argument gives `E(x) ≪ x^{2Θ−1/2+ε}`
   (`x^{1/2+ε}` under GRH, nothing for `Θ ≥ 3/4`); the half-plane removes the exceptional zeros of Montgomery and
-  Vaughan's and Pintz's treatments, and what exponent that gives is not worked out here.
+  Vaughan's and Pintz's treatments, and what exponent that gives is not worked out here. *24 November:* where GRH
+  holds, which counts as proven for the library, Hardy and Littlewood's `x^{1/2+ε}` applies; it is not in Lean.

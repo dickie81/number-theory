@@ -15,6 +15,10 @@ They are every library of the lakefile instead when `lean-toolchain` or `lake-ma
 `lakefile.lean` changes outside its module lists in another way than by adding a library, since such a change can
 reach every module.
 
+The opt-in part of the library is never a target: the Linnik paper's certificates and the theorems on them
+(`import_cone.optional`, the library `LinnikCert`), and `CheckLinnik`, which prints their axioms. A change to them, or
+to a module they import, builds the rest; `.github/workflows/linnik.yml` builds them every week and on request.
+
 The import graph is read from the working tree, which should be at HEAD, as `import_cone.py` reads it, with the
 vendored libraries' modules under their hierarchical names.
 """
@@ -29,6 +33,8 @@ import import_cone  # noqa: E402
 ROOT = import_cone.ROOT
 WHOLE = {"lean-toolchain", "lake-manifest.json"}
 ALWAYS = ["Check", "CheckAll", "CheckZeta23", "CheckDH"]
+# the opt-in libraries (scripts/gen_lakefile.py), which no target list holds
+OPT_IN_LIBS = {"LinnikCert", import_cone.OPT_IN_CHECK}
 
 
 def graph():
@@ -71,7 +77,7 @@ def lakefile_settings(rev):
     blocks, name, above = {None: []}, None, []
     for line in text.splitlines():
         if (not line.strip() or line.lstrip().startswith(".one ")
-                or re.fullmatch(r"/-- lib/\w+: \d+ modules\. -/", line)):
+                or re.fullmatch(r"/-- lib/\w+: \d+ modules\b.*-/", line)):
             continue
         m = re.match(r"lean_lib\s+(\S+)\s+where", line)
         if m:
@@ -87,8 +93,9 @@ def lakefile_settings(rev):
 
 
 def libraries():
+    """The libraries of the lakefile, the opt-in ones aside."""
     text = open(os.path.join(ROOT, "lakefile.lean"), encoding="utf-8").read()
-    return re.findall(r"^lean_lib\s+(\S+)\s+where", text, re.M)
+    return [lib for lib in re.findall(r"^lean_lib\s+(\S+)\s+where", text, re.M) if lib not in OPT_IN_LIBS]
 
 
 def targets(base):
@@ -108,17 +115,21 @@ def targets(base):
     if whole:
         return libraries()
     mods, imports = graph()
+    # the opt-in modules, and CheckLinnik, are neither targets nor a way to reach one
+    skip = import_cone.optional(mods) | {import_cone.OPT_IN_CHECK}
     importers = {}
     for m, names in imports.items():
         for n in names:
-            importers.setdefault(n, set()).add(m)
-    reached, stack = set(changed), list(changed)
+            if m not in skip:
+                importers.setdefault(n, set()).add(m)
+    reached, stack = set(changed) - skip, list(set(changed) - skip)
     while stack:
         for m in importers.get(stack.pop(), ()):
             if m not in reached:
                 reached.add(m)
                 stack.append(m)
-    return ALWAYS + sorted(added - set(ALWAYS)) + sorted("+" + m for m in reached if m in mods and m not in ALWAYS)
+    return (ALWAYS + sorted(added - set(ALWAYS) - OPT_IN_LIBS)
+            + sorted("+" + m for m in reached if m in mods and m not in ALWAYS))
 
 
 def main(argv):

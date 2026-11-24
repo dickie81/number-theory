@@ -1,0 +1,11 @@
+--- a/lib/core/UniquenessQ.lean
++++ b/lib/core/UniquenessQ.lean
+@@ -46,7 +46,7 @@
+     (poleR_integrable hp.memL2 a)]
+   refine ⟨by linarith, ?_⟩
+   have hsub : Ioc (-a) a ≤ᵐ[volume]
+-      (Function.support (fun u => φ u * Real.exp (-(u / 2))) ∩ Ioc (-a) a) := by
++      (Function.support (fun u => φ u * Real.exp (-(u / 2))) ∩ Ioc (-a) a : Set ℝ) := by
+     filter_upwards [hpos] with t ht hs
+     refine ⟨?_, hs⟩
+     have : 0 < φ t := ht (abs_le.2 ⟨hs.1.le, hs.2⟩)

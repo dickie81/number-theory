@@ -1,0 +1,29 @@
+--- a/lib/vendor/pnt-plus/PrimeNumberTheoremAnd/ResidueCalcOnRectangles.lean
++++ b/lib/vendor/pnt-plus/PrimeNumberTheoremAnd/ResidueCalcOnRectangles.lean
+@@ -508,7 +508,7 @@
+   exact integral_deriv_eq_sub (fun _ _ => e2.differentiableAt) (e4.intervalIntegrable _ _)
+ 
+ lemma integral_const_div_sq_add_sq (hy : y ≠ 0) :
+-    ∫ x in x₁..x₂, y / (x ^ 2 + y ^ 2) = arctan (x₂ / y) - arctan (x₁ / y) := by
++    ∫ x in x₁..x₂, y / (x ^ 2 + y ^ 2) = Real.arctan (x₂ / y) - Real.arctan (x₁ / y) := by
+   nth_rewrite 1 [← div_mul_cancel₀ x₁ hy, ← div_mul_cancel₀ x₂ hy]
+   simp_rw [← mul_integral_comp_mul_right, ← intervalIntegral.integral_const_mul,
+     ← integral_one_div_one_add_sq]
+@@ -520,7 +520,7 @@
+ lemma integral_const_div_self_add_im (hy : y ≠ 0) :
+     ∫ x : ℝ in x₁..x₂, A / (x + y * I) =
+     A * (Real.log (x₂ ^ 2 + y ^ 2) / 2 - Real.log (x₁ ^ 2 + y ^ 2) / 2) -
+-    A * I * (arctan (x₂ / y) - arctan (x₁ / y)) := by
++    A * I * (Real.arctan (x₂ / y) - Real.arctan (x₁ / y)) := by
+   have e1 {x : ℝ} : A / (x + y * I) = A * x / (x ^ 2 + y ^ 2) - A * I * y / (x ^ 2 + y ^ 2) := by
+     ring_nf
+     simp_rw [inv_re_add_im]
+@@ -543,7 +543,7 @@
+ lemma integral_const_div_re_add_self (hx : x ≠ 0) :
+     ∫ y : ℝ in y₁..y₂, A / (x + y * I) =
+     A / I * (Real.log (y₂ ^ 2 + (-x) ^ 2) / 2 - Real.log (y₁ ^ 2 + (-x) ^ 2) / 2) -
+-    A / I * I * (arctan (y₂ / -x) - arctan (y₁ / -x)) := by
++    A / I * I * (Real.arctan (y₂ / -x) - Real.arctan (y₁ / -x)) := by
+   have l1 {y : ℝ} : A / (x + y * I) = A / I / (y + ↑(-x) * I) := by
+     have e1 : x + y * I ≠ 0 := by
+       contrapose! hx

@@ -60,7 +60,9 @@ The paper and its supplement describe the library at the commit that contains th
 
 Theorem 1.1 is `Linnik21000.linnik_21000` in `lib/pnt/Linnik21000.lean`, with the exponent written `2100/1000`, and
 Theorem 1.2 is `Linnik21500.linnik_21500` in `lib/pnt/Linnik21500.lean`, with the exponent written `2150/1000`. Neither
-has a hypothesis in Lean.
+has a hypothesis in Lean. Both rest on certificates whose build is opt-in: `lib/check/CheckLinnik.lean` prints their
+axioms, and neither the repository's default build nor its CI on every change compiles them
+([below](#checking-the-proofs)).
 
 Corollary 1.3 is the two theorems in number: there are `c > 0` and `K` such that for every `q ≥ 1`, every `a` prime
 to `q` and every `x ≥ K·q^L` the residue class of `a` mod `q` has at least `c·x/(φ(q) log x)` primes `p ≤ x`; and
@@ -124,11 +126,13 @@ of the two recent results and Theorem 1.1 both, through their formalisations.
 The claims table (Appendix A) names the Lean theorem behind each claim. From the repository root:
 
 ```sh
-lake exe cache get                     # Mathlib's prebuilt files
-scripts/build.sh                       # the default target, lib/check/Check.lean, and what it imports
-python3 scripts/check_axioms.py        # Theorem 1.2, Corollary 1.3 at 43/20, the theorems of Sections 2 to 7
-scripts/build.sh CheckAll              # lib/check/CheckAll.lean, with the certificate at 21/10
-python3 scripts/check_axioms.py --all  # Theorem 1.1, Corollary 1.3 at 21/10, Sections 8 to 10, and more
+lake exe cache get                        # Mathlib's prebuilt files
+scripts/build.sh                          # the default target, lib/check/Check.lean, and what it imports
+python3 scripts/check_axioms.py           # the theorems of Sections 2 to 7, the literature, the deduction
+scripts/build.sh CheckAll                 # lib/check/CheckAll.lean
+python3 scripts/check_axioms.py --all     # the theorems of Sections 8 to 10, and more
+scripts/build.sh CheckLinnik              # opt-in: lib/check/CheckLinnik.lean, with both certificates
+python3 scripts/check_axioms.py --linnik  # Theorems 1.1 and 1.2, Corollary 1.3, the certificates' bounds
 ```
 
 The script fails unless every theorem it prints depends only on `propext`, `Classical.choice` and `Quot.sound`.
@@ -139,8 +143,10 @@ files `lib/pnt/SieveHint21500P1.lean` to `SieveHint21500P17.lean`, about 63 minu
 certificate at `21/10` has 107374 parts, in the 1150 files `lib/pnt/SieveHint21000P1.lean` to
 `SieveHint21000P1150.lean`, which the kernel checks in 128 to 349 seconds each, about 61 hours of one core in all
 (Lake's build times in CI; the program that wrote the hints predicted 76), and the 29349 Buchstab steps that join the
-parts are in the 58 files `lib/pnt/SieveHint21000N1.lean` to `SieveHint21000N58.lean`, 24 minutes in all; the
-repository's continuous integration builds these files in stages. `tools/linnik/hint_cert.py` writes both.
+parts are in the 58 files `lib/pnt/SieveHint21000N1.lean` to `SieveHint21000N58.lean`, 24 minutes in all. These
+files are opt-in: the repository's default build and its CI on every change leave them out, and the workflow
+`.github/workflows/linnik.yml` builds them in stages, with `lib/check/CheckLinnik.lean`, every week and on request.
+`tools/linnik/hint_cert.py` writes both.
 
 ## Building the PDFs
 

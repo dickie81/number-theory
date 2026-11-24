@@ -22,6 +22,7 @@ satisfies `|γ_χ(½ + it + c + iv)| ≤ e^{KR(c)}(1 + |t|)^{c/2}(1 + |v|)^{c/2+
   functional equation turns the left integral into `ε(χ)²N^{1−2s}J(1 − s, χ⁻¹)`.
 -/
 import LinnikSubconvex
+import HalfPlaneGRH
 
 open Complex Real Set MeasureTheory
 
@@ -503,18 +504,12 @@ lemma norm_gammaFactor_le {N : ℕ} (χ : DirichletCharacter ℂ N) {z : ℂ} (h
     rw [hre]
     exact real_Gamma_le_eight (by linarith) (by linarith)
 
-lemma gammaFactor_ne_zero {N : ℕ} (χ : DirichletCharacter ℂ N) {z : ℂ} (h : 0 < z.re) :
-    gammaFactor χ z ≠ 0 := by
-  rcases χ.even_or_odd with hp | hp
-  · rw [hp.gammaFactor_def]; exact Gammaℝ_ne_zero_of_re_pos h
-  · rw [hp.gammaFactor_def]; exact Gammaℝ_ne_zero_of_re_pos (by simp; linarith)
-
 /-- `Λ(z, χ) = L(z, χ)γ_χ(z)` on `Re z > 0`. -/
 lemma completed_eq_mul {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {z : ℂ} (h : 0 < z.re) :
     completedLFunction χ z = LFunction χ z * gammaFactor χ z := by
   have hz0 : z ≠ 0 := fun h0 => by rw [h0] at h; simp at h
   rw [LFunction_eq_completed_div_gammaFactor χ z (Or.inl hz0)]
-  field_simp [gammaFactor_ne_zero χ h]
+  field_simp [HalfPlaneGRH.gammaFactor_ne_zero χ h]
 
 /-- `|Λ(z, χ)| ≤ 16(N + 1)(3 + |Im z|)` on `1/2 ≤ Re z ≤ 3`, for `χ ≠ 1` (
 `PsiOmega.norm_LFunction_leC`). -/

@@ -1,13 +1,14 @@
 name: Lean build stage
 description: >-
   One stage of the Lean build. It restores the library's build from the Actions cache, gets Mathlib's prebuilt
-  files, builds the targets that validate the change (scripts/lean_targets.py) with scripts/build.sh for at most
-  `minutes` minutes, and saves the build to the cache, even when the stage fails or is cancelled. If the build
-  finished, it then checks the axioms of Check, CheckAll, CheckZeta23 and CheckDH, that the library has no dead
-  code (scripts/dead_code.py), and that the build's log shows no warning in the library's own sources
-  (scripts/check_warnings.py; Lake replays the messages of the modules it does not rebuild). A cold build takes
-  longer than one job may run, so the workflow chains stages: each one continues from the last one's cache. The job
-  must check out the commit with its parent (fetch-depth 2), so that a pull request's merge commit has its base.
+  files, builds the targets that validate the change (scripts/lean_targets.py), or the targets it is given, with
+  scripts/build.sh for at most `minutes` minutes, and saves the build to the cache, even when the stage fails or is
+  cancelled. If the build finished, it then checks the axioms of the check files it is given (Check, CheckAll,
+  CheckZeta23 and CheckDH by default), that the library has no dead code (scripts/dead_code.py), and that the build's
+  log shows no warning in the library's own sources (scripts/check_warnings.py; Lake replays the messages of the
+  modules it does not rebuild). A cold build takes longer than one job may run, so the workflow chains stages: each
+  one continues from the last one's cache. The job must check out the commit with its parent (fetch-depth 2), so
+  that a pull request's merge commit has its base.
 inputs:
   stage:
     description: The stage's number, used in the cache key.
@@ -18,6 +19,22 @@ inputs:
   last:
     description: '"true" for the last stage, which fails if the build is still unfinished at its time limit.'
     default: 'false'
+  targets:
+    description: >-
+      The Lake targets to build, separated by spaces. Empty, the default, for those of scripts/lean_targets.py, which
+      leaves out the opt-in Linnik certificates.
+    default: ''
+  cache:
+    description: >-
+      The prefix of the build cache's keys. A stage restores the newest build saved under it, or else, for a prefix
+      other than the default, the newest build of CI's own builds (`lake-build`), and saves under it.
+    default: lake-build
+  checks:
+    description: The check files of lib/check whose axioms are checked (scripts/check_axioms.py), separated by spaces.
+    default: Check CheckAll CheckZeta23 CheckDH
+  dead-code:
+    description: The options of scripts/dead_code.py; `--full` for the opt-in Linnik certificates too.
+    default: ''
 outputs:
   partial:
     description: '"true" if the build stopped at its time limit.'
@@ -45,23 +62,29 @@ runs:
       uses: actions/cache/restore@v4
       with:
         path: .lake/build
-        key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+        key: ${{ inputs.cache }}-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
         restore-keys: |
-          lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}-
+          ${{ inputs.cache }}-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}-
+          ${{ inputs.cache }}-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
           lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
 
     - name: Choose the targets
       id: targets
       shell: bash
+      env:
+        GIVEN: ${{ inputs.targets }}
       run: |
-        # A pull request is compared with its base (the first parent of its merge commit), a push with the commit it
-        # replaced. A manual run, a new branch, or a base that cannot be fetched builds every library.
+        # Targets given as an input are built as they are. Otherwise a pull request is compared with its base (the
+        # first parent of its merge commit), a push with the commit it replaced. A manual run, a new branch, or a base
+        # that cannot be fetched builds every library but the opt-in ones.
         base=
         case "${{ github.event_name }}" in
           pull_request) base=$(git rev-parse HEAD^1) ;;
           push) base="${{ github.event.before }}" ;;
         esac
-        if [ -n "$base" ] && [ "$base" != 0000000000000000000000000000000000000000 ] \
+        if [ -n "$GIVEN" ]; then
+          targets=$(printf '%s\n' $GIVEN)
+        elif [ -n "$base" ] && [ "$base" != 0000000000000000000000000000000000000000 ] \
             && { git cat-file -e "$base^{commit}" 2>/dev/null || git fetch --no-tags --depth=1 origin "$base"; }; then
           targets=$(python3 scripts/lean_targets.py "$base")
         else
@@ -97,23 +120,26 @@ runs:
       uses: actions/cache/save@v4
       with:
         path: .lake/build
-        key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.stage }}
+        key: ${{ inputs.cache }}-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.stage }}
 
     - name: Check the axioms
       if: steps.build.outputs.partial != 'true'
       shell: bash
+      env:
+        CHECKS: ${{ inputs.checks }}
       run: |
-        python3 scripts/check_axioms.py
-        python3 scripts/check_axioms.py --all
-        python3 scripts/check_axioms.py --zeta23
-        python3 scripts/check_axioms.py --dh
+        for c in $CHECKS; do
+          python3 scripts/check_axioms.py "$c"
+        done
 
     - name: No dead code
       if: steps.build.outputs.partial != 'true'
       shell: bash
+      env:
+        OPTIONS: ${{ inputs.dead-code }}
       run: |
         lake build deadcode
-        python3 scripts/dead_code.py
+        python3 scripts/dead_code.py $OPTIONS
 
     - name: No warnings in the library's sources
       if: steps.build.outputs.partial != 'true'

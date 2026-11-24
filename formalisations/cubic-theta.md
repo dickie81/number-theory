@@ -40,8 +40,8 @@ Here `K = ℚ(ω)`, `𝓞 K = ℤ[ω]`, `δ₃ = 1 + 2ω` is a square root of `�
 
 The constant terms `c₀`, `cP` and `cM` are left free. The theorem is in the proofs of `Linnik21500.linnik_21500`
 and `Linnik21000.linnik_21000`, the Linnik paper's Theorems 1.2 and 1.1, whose axioms are `propext`,
-`Classical.choice` and `Quot.sound` (`lib/check/Check.lean`; for `linnik_21000`, `lib/check/CheckAll.lean`), so it
-depends on those only.
+`Classical.choice` and `Quot.sound` (`lib/check/CheckLinnik.lean`, whose build is opt-in), so
+it depends on those only.
 
 ## Source
 

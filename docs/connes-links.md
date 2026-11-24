@@ -169,6 +169,10 @@ gaps between the lonely primes of stage `N` are at most about `N^θ`, across the
   parameter.
 - **Not yet done.** Then GRH, in the form of the strand's criteria for characters (`PsiOmega.grh_iff_QC_subexp_all`),
   would give `A > 2`: Bach's bound, and Miller's test with `(log n)^{2+ε}` bases.
+- *24 November:* GRH now counts as proven for the library (L. Alpöge's archive, an input of
+  [account.md](account.md)). In its Lean the rebuild's top, `HalfPlaneGRH.RHandGRH`, gives the half-plane
+  `Re s > 1/2` for every `L(s, χ)` (`HalfPlaneGRH.RHandGRH.LFunction_ne_zero`), so after the refactor it would give
+  `A > 2` with no criterion of Weil's form.
 
 ### 9. Weil's criterion over `𝔽_q` and Manin's lattice
 

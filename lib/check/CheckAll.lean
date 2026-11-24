@@ -1,5 +1,7 @@
-/- This file prints the axioms of every final theorem of the library. It is not built by default. Every line it
-prints must be `[propext, Classical.choice, Quot.sound]`, a subset of them, or none. -/
+/- This file prints the axioms of every final theorem of the library but those of the Linnik paper's certificates,
+which `CheckLinnik.lean` prints (they are opt-in), those of the zeta23 layer (`CheckZeta23.lean`) and those of
+`lib/dh` (`CheckDH.lean`). It is not built by default. Every line it prints must be
+`[propext, Classical.choice, Quot.sound]`, a subset of them, or none. -/
 import PrimeNumberTheoremAnd.Consequences
 import PNTKV
 import KaiserKV
@@ -329,15 +331,10 @@ import SieveMain2
 import LinnikCGLSteps
 import SieveCurve7D
 import SieveBox
-import SieveHint21500
-import Linnik21500
-import SieveHint21000
-import Linnik21000
 import SieveAdCount
-import Linnik21500Count
-import Linnik21000Count
 import LinnikG7
 import LinnikGRH
+import LinnikAlmostAll
 import ShortPrimesHalfPlane
 import LinnikWeylBridge
 import ZetaHuxley
@@ -445,6 +442,16 @@ import OddMargin2
 import GsMain
 import V3Gen
 import ParityGround
+import WindowGRH
+import ZetaFrame
+import EuclidLattice
+import HermitianLattice
+import FrameAtPlace
+import ZetaThin
+import ZetaPair
+import SixTerm
+import RHJoinsLinnik
+import RHHarvest
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -1299,26 +1306,16 @@ Minkowski's bound, with every prime up to it inert. -/
 #print axioms LinnikCGLSteps.charDensity_inT
 #print axioms SieveCurve7D.counts_7d
 #print axioms SieveRough.shareBox
-#print axioms Linnik21500.tree21500
-#print axioms Linnik21500.linnik_21500
-#print axioms Linnik21000.tree21000
-#print axioms Linnik21000.linnik_21000
 #print axioms SieveAd.count_of_large
 #print axioms SieveAd.count_large_bd
 #print axioms SieveAd.count_bd
 #print axioms SieveAd.count_large_pr
 #print axioms SieveAd.count_pr
-#print axioms Linnik21500.count_21500
-#print axioms Linnik21500.count_large_21500
-#print axioms Linnik21000.count_21000
-#print axioms Linnik21000.count_large_21000
 /- The Linnik paper's Theorem 1.1, at `21/10` (`papers/linnik-exponent/main.tex`, Sections 8 to 10): the declarations
 of its claims table (Appendix A, second block) that no line above prints, in the table's order by name. The others
-of that block are printed above: the resonant window and its steps, the leaves' estimate, the tests' soundness, the
-certificate's bound and the theorem. -/
-#print axioms Linnik21000.part21000
-#print axioms Linnik21000.sound21000
-#print axioms Linnik21000.soundF21000
+of that block are printed above: the resonant window and its steps, the leaves' estimate and the tests' soundness.
+The theorem, its corollary in number and its certificate's bound and parts (`Linnik21000.linnik_21000`,
+`Linnik21000.tree21000`, `Linnik21000.part21000`) are printed by `CheckLinnik.lean`, which builds the certificate. -/
 #print axioms LinnikCGLStep.charDensity_cglGen
 #print axioms SieveAd.altFDYH
 #print axioms SieveAd.altFDYH_sound
@@ -1481,6 +1478,21 @@ certificate's bound and the theorem. -/
 #print axioms LinnikGRH.linnik_two_of_GRH
 #print axioms ShortPrimesHalfPlane.zeroFreeXi_of_halfplane
 #print axioms LinnikWeylBridge.weylBound_of_PYWeyl
+
+/- Primes in almost all reduced classes (`LinnikAlmostAll`), the classical deduction in mean square: from a density
+estimate `CharDensity A B C`, all the reduced classes mod `q` but `Kφ(q)q^{−c}` hold a prime `p ≤ Kq^{A/2+η}`. Under
+GRH the exponent is `1 + η`; from the curve `g7d` it is `11667/10000 + η`, CONDITIONAL on the half-plane and on Chen,
+Gupta and Li's Proposition 3.1. Under GRH, a bound of Turán's type: all classes but `Kq^{1−δ+η}` hold a prime
+`p ≤ Kq^{1+δ}`, `0 < δ ≤ 1`. These hold for almost all classes, not every class; each is named in
+`formalisations/README.md`. -/
+#print axioms LinnikAlmostAll.sum_norm_sq_eq
+#print axioms LinnikAlmostAll.card_bad_le
+#print axioms LinnikAlmostAll.error_sq_le
+#print axioms LinnikAlmostAll.almostAll_of_charDensity
+#print axioms LinnikAlmostAll.almostAll_one_of_GRH
+#print axioms LinnikAlmostAll.almostAll_one
+#print axioms LinnikAlmostAll.almostAll_g7d
+#print axioms LinnikAlmostAll.almostAll_turan
 
 /- Results that no paper uses and nothing else printed here uses, kept for their own sake: each is named in
 `formalisations/` (`scripts/dead_code.py`). -/
@@ -2201,6 +2213,51 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms V3Gen.coer_vprime
 #print axioms V3Gen.pos_vprime
 #print axioms WeilOdd.L05_mixed
+#print axioms HalfPlaneGRH.zeroFreeRightOf_half_iff
+#print axioms LandauWindow.re_le_of_windows
+#print axioms WindowGRH.rhAndGRH_of_windowBound
+#print axioms WindowGRH.riemannHypothesis_of_zetaWindowBound
+#print axioms ZetaBalance.Setting.balance
+#print axioms ZetaBalance.BalanceData.zeta_le
+#print axioms ZetaBalance.riemannHypothesis_of_zetaBalanceBound
+#print axioms ZetaBalance.BalanceData.cyclicG_le
+#print axioms ZetaBalance.rhAndGRH_of_balanceBound
+#print axioms SlopeFrame.frame_inequality
+#print axioms GramVolume.vol_comp_le
+#print axioms EuclidLattice.bost
+#print axioms EuclidLattice.supClosed
+#print axioms EuclidLattice.frame
+#print axioms GramVolume.volLe_iSup
+#print axioms PlaceLattice.bost
+#print axioms PlaceLattice.frame
+#print axioms HermitianLattice.balanced
+#print axioms HermitianLattice.frame
+#print axioms FrameAtPlace.FrameCond.codim_le
+#print axioms FrameAtPlace.FrameCond.codim_le_padded
+#print axioms FrameAtPlace.FrameCond.restrictScalars
+#print axioms PlaceLattice.spread_of_frameCond
+#print axioms HermitianLattice.spread_of_frameCond
+#print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
+#print axioms ZetaBalance.rhAndGRH_of_latticeBound
+#print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound
+#print axioms ZetaTwist.exists_winPair_twists
+#print axioms ZetaTwist.exists_winPair_twists_one
+#print axioms TwistFamily.exists_good_fin
+#print axioms ZetaBalance.riemannHypothesis_of_zetaPairBound
+#print axioms ZetaBalance.rhAndGRH_of_pairBound
+#print axioms ZetaBalance.rhAndGRH_of_sixTermBound
+#print axioms LinnikGRH.dirichletRH_of_rhAndGRH
+#print axioms HalfPlaneGRH.RHandGRH.LFunction_ne_zero
+#print axioms HalfPlaneGRH.RHandGRH.riemannZeta_ne_zero
+#print axioms HalfPlaneGRH.RHandGRH.weylBound
+#print axioms HalfPlaneGRH.RHandGRH.zeta_bound
+#print axioms HalfPlaneGRH.RHandGRH.short_primes
+#print axioms HalfPlaneGRH.RHandGRH.psi_isBigO
+#print axioms HalfPlaneGRH.RHandGRH.psiChi_isBigO
+#print axioms HalfPlaneGRH.RHandGRH.psiAP_isBigO
+#print axioms HalfPlaneGRH.RHandGRH.divisor_isBigO
+#print axioms HalfPlaneGRH.RHandGRH.squarefree_isBigO
+#print axioms HalfPlaneGRH.RHandGRH.corollaries
 
 /-! ### What `cglDensity` uses
 

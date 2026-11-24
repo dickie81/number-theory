@@ -1,0 +1,11 @@
+--- a/lib/core/EisensteinSymbol.lean
++++ b/lib/core/EisensteinSymbol.lean
+@@ -284,7 +284,7 @@
+     have h3 := congrArg Units.val h2
+     rw [coe_red, Units.val_pow_eq_pow_val] at h3
+     exact h3
+-  · simp [chi6, σu]
++  · simp [chi6, σu, MonoidHom.coe_coe]
+ 
+ /-- `χ_P^6 = 1`. -/
+ theorem chi6_pow_six : chi6 P hP6 ^ 6 = 1 := by

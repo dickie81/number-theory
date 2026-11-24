@@ -1425,9 +1425,10 @@ definitions that these use, are this paper's. The cost $c$, the number of parts 
 counts of the table are the Lean's: scripts read them from the statements of the generated files, and the same scripts
 give the figures that Proposition~\ref{M-prop:certificate} and the paragraphs after it give at $43/20$.
 
-The repository's continuous integration builds the $1150$ part files and the $58$ files of the cells in stages, and
-the kernel checks them there, as it checks the $17$ part files at $43/20$; \lean{Linnik21000.linnik\_21000} and
-\lean{Linnik21500.linnik\_21500} are printed with the three standard axioms.
+The repository's continuous integration builds the $1150$ part files and the $58$ files of the cells in stages, every
+week and on request, since the certificates' build is opt-in, and the kernel checks them there, as it checks the $17$
+part files at $43/20$; \lean{Linnik21000.linnik\_21000} and \lean{Linnik21500.linnik\_21500} are printed, by
+\file{lib/check/CheckLinnik.lean}, with the three standard axioms.
 
 \subsection*{The artefact}
 
@@ -1439,13 +1440,16 @@ the commands:
 \begin{itemize}
 \item \texttt{lake exe cache get} fetches Mathlib's prebuilt files, which the build then trusts; building Mathlib from
   source, or replaying the environment with \texttt{lean4checker}, removes that trust;
-\item \texttt{scripts/build.sh} builds Theorem~\ref{M-thm:4320} (the default target, \file{lib/check/Check.lean});
-\item \texttt{scripts/build.sh CheckAll} builds Theorem~\ref{M-thm:2110}; in both builds the script limits how many of
-  the memory-hungry kernel checks of a certificate run at once;
+\item \texttt{scripts/build.sh} builds the default target, \file{lib/check/Check.lean}, and \texttt{scripts/build.sh
+  CheckAll} builds \file{lib/check/CheckAll.lean}: between them the steps of both theorems that need no certificate;
+\item \texttt{scripts/build.sh CheckLinnik} builds Theorems~\ref{M-thm:2110} and~\ref{M-thm:4320}, with both
+  certificates (\file{lib/check/CheckLinnik.lean}); the script limits how many of the memory-hungry kernel checks of a
+  certificate run at once;
 \item \texttt{python3 scripts/check\_axioms.py} checks the axioms (with \texttt{--all} for
-  \file{lib/check/CheckAll.lean}).
+  \file{lib/check/CheckAll.lean}, and \texttt{--linnik} for \file{lib/check/CheckLinnik.lean}).
 \end{itemize}
-The repository's continuous integration runs them on every change to the library.
+The repository's continuous integration runs the first two builds and their checks on every change to the library,
+and the third, whose build is opt-in, every week and on request.
 
 \section{Computations around the exponents}\label{sup:computations}
 

@@ -1,0 +1,20 @@
+--- a/lib/core/HalfPlaneWeighted.lean
++++ b/lib/core/HalfPlaneWeighted.lean
+@@ -424,6 +424,8 @@
+     · simp only [show 1 ≤ m + 3 by omega, show 2 ≤ m + 3 by omega, ite_true,
+         show m + 3 - 1 = m + 2 by omega, show m + 3 - 2 = m + 1 by omega]
+       norm_num
++      split_ifs with hx
++      · omega
+       linear_combination split_rec h1 m
+   · by_cases hp2 : p = 2
+     · subst hp2
+@@ -449,6 +451,8 @@
+       · simp only [show 1 ≤ m + 3 by omega, show 2 ≤ m + 3 by omega, ite_true,
+           show m + 3 - 1 = m + 2 by omega, show m + 3 - 2 = m + 1 by omega]
+         norm_num
++        split_ifs with hx
++        · omega
+         rcases Nat.even_or_odd m with ⟨j, rfl⟩ | ⟨j, rfl⟩
+         · rw [Hloc_odd h2 hp2 (k := j + j + 3) (by omega), Hloc_odd h2 hp2 (k := j + j + 1) (by omega)]
+           ring

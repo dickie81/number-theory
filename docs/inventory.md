@@ -3,20 +3,23 @@
 Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`
 rewrites it, and CI checks that it is current (`--check`).
 
-`lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and
-`lib/check/Check.lean` print the axioms of 1837 theorems: the library's final results (those of the
-zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the
-papers' theorems, of which there are 210, marked *paper*. Each line gives a theorem's name and the
-headline of its docstring, and links the note of `formalisations/` that names it, if one does.
+`lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
+and `lib/check/CheckLinnik.lean` print the axioms of 1891 theorems: the library's final results (those
+of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
+and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
+which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
+certificates: only `CheckLinnik` prints them, and only its build, which is opt-in, checks them
+(`docs/building.md`). Each line gives a theorem's name and the headline of its docstring, and links the
+note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 198 | 712 |
-| `lib/pnt` | 347 | 1012 |
+| `lib/core` | 210 | 738 |
+| `lib/pnt` | 355 | 1040 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
-## The results of `CheckAll`, `CheckZeta23`, `CheckDH` and `Check`
+## The results of `CheckAll`, `CheckZeta23`, `CheckDH`, `Check` and `CheckLinnik`
 
 ### `lib/core`
 
@@ -437,6 +440,12 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `EpsteinTwo.rh_iff`: The Riemann hypothesis for `x² + 2y²` is RH for `ζ` and GRH for `χ₋₈` ([note](../formalisations/weil-positivity.md))
 - `EpsteinTwo.rh_iff_twins`: …and so it is Weil's twin criterion for `ζ_{ℚ(√−2)}` ([note](../formalisations/weil-positivity.md))
 
+#### `EuclidLattice`: Euclidean lattices and their slopes
+
+- `EuclidLattice.supClosed`: Saturated sums of sublattices of minimal slope at least `θ` have minimal slope at least `θ`. ([note](../formalisations/alpoge-rh.md))
+- `EuclidLattice.bost`: Bost's inequality ([note](../formalisations/alpoge-rh.md))
+- `EuclidLattice.frame`: Euclidean frames ([note](../formalisations/alpoge-rh.md))
+
 #### `EulerGammaBinet`: Euler's constant to seven digits, from Binet's formula
 
 - `Electron.eulerMascheroni_bounds`: Euler's constant to seven digits
@@ -483,6 +492,14 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WeilForm.groundState_unique_below_log2`: The ground state of `Q` is unique up to sign for every `a > 0` with `2a < log 2` ([note](../formalisations/weil-positivity.md))
 - `WeilForm.groundState_unique_035`: The ground state of `Q` is unique up to sign for every `0 < a ≤ 0.35` ([note](../formalisations/weil-positivity.md))
 
+#### `FrameAtPlace`: The frame condition at one place
+
+- `FrameAtPlace.FrameCond.codim_le`: The frame condition at one place forces rank spreading ([note](../formalisations/alpoge-rh.md))
+- `FrameAtPlace.FrameCond.codim_le_padded`: The padded target ([note](../formalisations/alpoge-rh.md))
+- `FrameAtPlace.FrameCond.restrictScalars`: The frame condition over `ℝ` for complex-linear maps ([note](../formalisations/alpoge-rh.md))
+- `PlaceLattice.spread_of_frameCond`: Rank spreading from the frame condition at one place ([note](../formalisations/alpoge-rh.md))
+- `HermitianLattice.spread_of_frameCond`: Rank spreading for hermitian frames from the frame condition at one complex place ([note](../formalisations/alpoge-rh.md))
+
 #### `GapBound`: The pole-overlap gap bound
 
 - `WeilForm.simple_of_pole_overlap`: Simplicity from a nonzero pole overlap ([note](../formalisations/weil-positivity.md))
@@ -491,6 +508,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.pole_overlap_identity`: The pole-overlap identity ([note](../formalisations/weil-positivity.md))
 - `WeilForm.simpleGround_of_gap`: Energy gap ⇒ simplicity ([note](../formalisations/weil-positivity.md))
+
+#### `GramVolume`: Volumes of parallelotopes
+
+- `GramVolume.vol_comp_le`: Hadamard's inequality for maps ([note](../formalisations/alpoge-rh.md))
+- `GramVolume.volLe_iSup`: Hadamard place by place ([note](../formalisations/alpoge-rh.md))
 
 #### `GroundState`: Ground states of Weil's form: the structural facts
 
@@ -535,6 +557,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.rh_of_D_and_realRooted_proved`: §11 item 1 ⇒ RH with Hadamard's factorisation proved ([note](../formalisations/weil-positivity.md))
 
+#### `HalfPlaneGRH`: The Riemann hypothesis for `ζ` and every Dirichlet `L`-function, from a zero-free half-plane
+
+- `HalfPlaneGRH.zeroFreeRightOf_half_iff`: The half-plane at `1/2` is equivalent to the Riemann hypothesis for `ζ` and every Dirichlet `L`-function ([note](../formalisations/alpoge-rh.md))
+
 #### `HalfPlaneJoinsChar`: The band for every `L(s, χ)` and the twin-form rates at `11/12`
 
 - `HalfPlaneJoins.LFunction_band_eleven_twelfths`: The band `|2 Re ρ − 1| ≤ 5/6` for every `L(s, χ)`, `χ ≠ 1`
@@ -559,6 +585,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `HasseEisenstein.card_points_of_mod_three_eq_two`: `y² = x³ + D` has `q + 1` points when `q ≡ 2 (mod 3)`
 - `HasseEisenstein.exists_eisenstein_trace`: The Frobenius of `y² = x³ + D` is an Eisenstein integer of norm `q`
 - `HasseEisenstein.abs_trace_le`: Hasse's bound for `y² = x³ + D`
+
+#### `HermitianLattice`: Hermitian lattices over a totally complex field
+
+- `HermitianLattice.balanced`: Spans of stable discrete subgroups are balanced ([note](../formalisations/alpoge-rh.md))
+- `HermitianLattice.frame`: Hermitian frames ([note](../formalisations/alpoge-rh.md))
 
 #### `HodgeCounting`: The Hodge index theorem from counting: Minkowski's theorem as the bridge to `BallWeil`
 
@@ -628,6 +659,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `LagariasCriterion.lagarias_upto_5040`: Lagarias's inequality for `1 ≤ n ≤ 5040` ([note](../formalisations/lagarias-criterion.md))
 - `LagariasCriterion.lagarias_criterion`: Lagarias's criterion ([note](../formalisations/lagarias-criterion.md))
+
+#### `LandauWindow`: Landau's theorem on windows
+
+- `LandauWindow.re_le_of_windows`: Landau's theorem on windows ([note](../formalisations/alpoge-rh.md))
 
 #### `LatticeCount`: The ball tower from counting integer points
 
@@ -776,6 +811,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `PivotTop.mertens_le_uniform`: Mertens' bound, uniform *paper* ([note](../formalisations/ball-rate.md))
 - `PivotTop.top_bound`: The top vertex keeps 13/10 of its diagonal *paper* ([note](../formalisations/ball-rate.md))
 
+#### `PlaceLattice`: Lattices with places, and heights averaged over them
+
+- `PlaceLattice.bost`: Bost's inequality with averaged heights ([note](../formalisations/alpoge-rh.md))
+- `PlaceLattice.frame`: Frames with averaged heights ([note](../formalisations/alpoge-rh.md))
+
 #### `PoleRelax`: Past `λ₀ = 0`: the pole term through a finite relaxation
 
 - `WeilForm.memLp_ind`
@@ -911,6 +951,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `WeilForm.first_degeneracy_036`: Simplicity route, with its start discharged ([note](../formalisations/weil-positivity.md))
 - `WeilForm.not_simple_iff_secular`: The exact secular characterisation ([note](../formalisations/weil-positivity.md))
+
+#### `SlopeFrame`: The frame inequality for slopes
+
+- `SlopeFrame.frame_inequality`: The frame inequality ([note](../formalisations/alpoge-rh.md))
 
 #### `SquaresCongruences`: Congruences for sums of squares and the binary forms of class number one
 
@@ -1291,6 +1335,11 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `WindowForm.quadruple_sum`: The off-line quadruple.
 - `WindowForm.offline_negative`: The mechanism of positivity loss
 
+#### `WindowGRH`: The Riemann hypothesis from a windowed bound on smoothed prime sums
+
+- `WindowGRH.rhAndGRH_of_windowBound`: The Riemann hypothesis for `ζ` and every Dirichlet `L`-function, from the frontier `WindowBound` ([note](../formalisations/alpoge-rh.md))
+- `WindowGRH.riemannHypothesis_of_zetaWindowBound`: The Riemann hypothesis from the frontier for `ζ` alone ([note](../formalisations/alpoge-rh.md))
+
 #### `XiBounds`: The order of `Ξ`, from Riemann's theta kernel
 
 - `WeilForm.rh_of_D_and_realRooted_final`: Roadmap item 1, final form ([note](../formalisations/weil-positivity.md))
@@ -1321,6 +1370,22 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `ZerosInfinite`: `ζ` has infinitely many nontrivial zeros
 
 - `ZerosInfinite.infinite_ZIdx`: `ζ` has infinitely many nontrivial zeros
+
+#### `ZetaBalance`: The balance identity
+
+- `ZetaBalance.Setting.balance`: Lemma B, the balance identity ([note](../formalisations/alpoge-rh.md))
+
+#### `ZetaFrame`: From lattices to the inert-prime gap
+
+- `ZetaBalance.riemannHypothesis_of_zetaLatticeBound`: The Riemann hypothesis from lattice data on windows ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.rhAndGRH_of_latticeBound`: The Riemann hypothesis for `ζ` and every Dirichlet `L`-function from lattice data on windows ([note](../formalisations/alpoge-rh.md))
+
+#### `ZetaGap`: From the inert-prime gap to the Riemann hypothesis for `ζ` and every Dirichlet `L`-function
+
+- `ZetaBalance.BalanceData.cyclicG_le`: Theorem Z ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.BalanceData.zeta_le`: Theorem Z for `ζ` ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.riemannHypothesis_of_zetaBalanceBound`: The Riemann hypothesis from balance data on windows ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.rhAndGRH_of_balanceBound`: The Riemann hypothesis for `ζ` and every Dirichlet `L`-function from balance data on windows ([note](../formalisations/alpoge-rh.md))
 
 #### `ZetaInputs`: Discharging the remaining classical inputs over the zeros of `ζ`
 
@@ -1569,32 +1634,43 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `Linnik21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints
 
-- `Linnik21000.tree21000`: The first term at `2100 / 1000` ([note](../formalisations/harman-sieve.md))
-- `Linnik21000.linnik_21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints ([note](../formalisations/chen-gupta-li-density.md))
+- `Linnik21000.tree21000`: The first term at `2100 / 1000` *paper* *opt-in* ([note](../formalisations/harman-sieve.md))
+- `Linnik21000.linnik_21000`: Linnik's theorem with exponent `2100 / 1000`, by a search led by hints *paper* *opt-in* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `Linnik21000Count`: The number of primes in a class at the exponent `2100/1000`
 
-- `Linnik21000.count_21000`: Primes in every class, in number, at the exponent `2100/1000` ([note](../formalisations/harman-sieve.md))
-- `Linnik21000.count_large_21000`: The primes of a class in `(q^L, 2q^L]` at `L = 2100/1000` ([note](../formalisations/harman-sieve.md))
+- `Linnik21000.count_21000`: Primes in every class, in number, at the exponent `2100/1000` *paper* *opt-in* ([note](../formalisations/harman-sieve.md))
+- `Linnik21000.count_large_21000`: The primes of a class in `(q^L, 2q^L]` at `L = 2100/1000` *paper* *opt-in* ([note](../formalisations/harman-sieve.md))
 
 #### `Linnik21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints
 
-- `Linnik21500.sound21500`: The tests at `2150 / 1000` are sound. *paper*
-- `Linnik21500.soundF21500`: The tests in one pass at `2150 / 1000` are sound *paper*
-- `Linnik21500.part21500`: A part of the search bounds its term *paper*
-- `Linnik21500.tree21500`: The first term at `2150 / 1000` *paper* ([note](../formalisations/harman-sieve.md))
-- `Linnik21500.linnik_21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints *paper* ([note](../formalisations/chen-gupta-li-density.md))
+- `Linnik21500.sound21500`: The tests at `2150 / 1000` are sound. *paper* *opt-in*
+- `Linnik21500.soundF21500`: The tests in one pass at `2150 / 1000` are sound *paper* *opt-in*
+- `Linnik21500.part21500`: A part of the search bounds its term *paper* *opt-in*
+- `Linnik21500.tree21500`: The first term at `2150 / 1000` *paper* *opt-in* ([note](../formalisations/harman-sieve.md))
+- `Linnik21500.linnik_21500`: Linnik's theorem with exponent `2150 / 1000`, by a search led by hints *paper* *opt-in* ([note](../formalisations/chen-gupta-li-density.md))
 
 #### `Linnik21500Count`: The number of primes in a class at the exponent `2150/1000`
 
-- `Linnik21500.count_21500`: Primes in every class, in number, at the exponent `2150/1000` *paper* ([note](../formalisations/harman-sieve.md))
-- `Linnik21500.count_large_21500`: The primes of a class in `(q^L, 2q^L]` at `L = 2150/1000` *paper* ([note](../formalisations/harman-sieve.md))
+- `Linnik21500.count_21500`: Primes in every class, in number, at the exponent `2150/1000` *paper* *opt-in* ([note](../formalisations/harman-sieve.md))
+- `Linnik21500.count_large_21500`: The primes of a class in `(q^L, 2q^L]` at `L = 2150/1000` *paper* *opt-in* ([note](../formalisations/harman-sieve.md))
 
 #### `LinnikAFE`: The approximate functional equation for `L(s, χ)²`
 
 - `LinnikGamma.norm_gammaFactor_ratio_le`: The ratio of two values of the Archimedean factor
 - `LinnikGamma.verticalIntegral_sub_eq`: Moving the line of integration across a simple pole at `0` ([note](../formalisations/chen-gupta-li-density.md))
 - `LinnikGamma.afe`: The approximate functional equation for `L(s, χ)²` ([note](../formalisations/hybrid-fourth-moment.md))
+
+#### `LinnikAlmostAll`: Primes in almost all reduced classes: below `q^{1+η}` under GRH, and `q^{1.1667+η}` from the curve `g7d`
+
+- `LinnikAlmostAll.sum_norm_sq_eq`: Parseval over the classes
+- `LinnikAlmostAll.card_bad_le`: Counting the classes with no small prime, by Parseval
+- `LinnikAlmostAll.error_sq_le`: The characters other than the trivial one, in mean square
+- `LinnikAlmostAll.almostAll_of_charDensity`: Primes in almost all reduced classes, from a density estimate
+- `LinnikAlmostAll.almostAll_one_of_GRH`: Primes in almost all classes under GRH, below `q^{1+η}`
+- `LinnikAlmostAll.almostAll_one`: Primes in almost all classes below `q^{1+η}`, from GRH as L. Alpöge's Lean archive proves it ([note](../formalisations/alpoge-rh.md))
+- `LinnikAlmostAll.almostAll_g7d`: CONDITIONAL. Primes in almost all classes below `q^{11667/10000+η}`, from the curve `g7d`
+- `LinnikAlmostAll.almostAll_turan`: All the classes but `Kq^{1−δ+η}` have a prime below `Kq^{1+δ}`, under GRH as L. Alpöge's Lean archive proves it
 
 #### `LinnikBuckets`: The off-diagonal pairs in dyadic buckets of the analytic conductor
 
@@ -2021,7 +2097,8 @@ headline of its docstring, and links the note of `formalisations/` that names it
 #### `LinnikGRH`: GRH for every Dirichlet L-function gives the density hypothesis `CharDensity 2 0 1`, and so Linnik's exponent `2 + η`
 
 - `LinnikGRH.charDensity_two_of_GRH`: GRH for every Dirichlet character gives `Linnik.CharDensity 2 0 1`
-- `LinnikGRH.linnik_two_of_GRH`: The consequence
+- `LinnikGRH.linnik_two_of_GRH`: The consequence *paper*
+- `LinnikGRH.linnik_two`: Linnik's theorem with every exponent above `2`, from GRH as L. Alpöge's Lean archive proves it *paper* ([note](../formalisations/alpoge-rh.md))
 
 #### `LinnikGammaRatio`: Ratios of `Γ` on vertical lines, and the functional equation reflected to the modulus `q`
 
@@ -2267,7 +2344,7 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `PNTMertens.E₂Λ.abs_le`: The error in Mertens' second theorem
 - `PNTMertens.sum_mangoldt_div_log_eq`: Mertens' second theorem with Euler's constant
 
-#### `PNTProgressions`: The prime number theorem modulo the divisors of `24`
+#### `PNTProgressions`: The prime number theorem in progressions
 
 - `PNTProgressions.sum_dvd_le_log`: `Σ_{n ≤ N, p ∣ n} Λ(n) ≤ log N` for a prime `p`
 - `PNTProgressions.sum_not_coprime_le`: `Σ_{n ≤ N, (n, q) > 1} Λ(n) ≤ ω(q) log N` for `q ≠ 0`.
@@ -2357,6 +2434,24 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 - `QuantMoments.moment_quant_pos`: Quantitative moments, positive fundamental discriminants ([note](../formalisations/d2-density.md))
 - `QuantMoments.moment_quant_neg`: Quantitative moments, negative fundamental discriminants ([note](../formalisations/d2-density.md))
+
+#### `RHHarvest`: The corollaries of the top: RH and GRH through the library's zero-free half-planes
+
+- `HalfPlaneGRH.RHandGRH.LFunction_ne_zero`: GRH: no zero of `L(s, χ)` on `Re s > 1/2`
+- `HalfPlaneGRH.RHandGRH.riemannZeta_ne_zero`: RH: no zero of `ζ` on `Re s > 1/2`
+- `HalfPlaneGRH.RHandGRH.weylBound`: Weyl's bound
+- `HalfPlaneGRH.RHandGRH.zeta_bound`: `ζ(s)` and `1/ζ(s)` are `≪ |t|^ε` on `Re s ≥ σ₀ > 1/2`
+- `HalfPlaneGRH.RHandGRH.short_primes`: Primes in short intervals
+- `HalfPlaneGRH.RHandGRH.psi_isBigO`: The prime number theorem with a square-root error
+- `HalfPlaneGRH.RHandGRH.psiChi_isBigO`: `ψ(x, χ) = O(x^{1/2+η})`
+- `HalfPlaneGRH.RHandGRH.psiAP_isBigO`: The prime number theorem in progressions with a square-root error
+- `HalfPlaneGRH.RHandGRH.divisor_isBigO`: The divisor problems
+- `HalfPlaneGRH.RHandGRH.squarefree_isBigO`: Squarefree numbers
+- `HalfPlaneGRH.RHandGRH.corollaries`: The corollaries of the top
+
+#### `RHJoinsLinnik`: The rebuild's Riemann hypothesis, in the words of the Linnik results
+
+- `LinnikGRH.dirichletRH_of_rhAndGRH`: GRH from the rebuild, in the archive's words ([note](../formalisations/alpoge-rh.md))
 
 #### `RandModel`: Lamzouri's random model for `L'/L(1, χ_D)` (milestone B2, unconditional)
 
@@ -2937,9 +3032,9 @@ headline of its docstring, and links the note of `formalisations/` that names it
 
 #### `SieveHint21000R`: The route and the parts' bound at `L = 2100 / 1000`
 
-- `Linnik21000.sound21000`: The tests at `2100 / 1000` are sound.
-- `Linnik21000.soundF21000`: The tests in one pass with the resonant window, its lines named by the hint, the cofactor and the test at the two corners at `2100 / 1000` are sound.
-- `Linnik21000.part21000`: A part of the search bounds its term
+- `Linnik21000.sound21000`: The tests at `2100 / 1000` are sound. *paper* *opt-in*
+- `Linnik21000.soundF21000`: The tests in one pass with the resonant window, its lines named by the hint, the cofactor and the test at the two corners at `2100 / 1000` are sound. *paper* *opt-in*
+- `Linnik21000.part21000`: A part of the search bounds its term *paper* *opt-in*
 
 #### `SieveLeaf`: The leaves of Buchstab's tree, by the fundamental lemma
 
@@ -3285,6 +3380,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `SieveWeight.norm_Sw_wy_le`: Lemma 1 for the weights `ψ_P`, in `Λ` form, uniformly in `P ≥ 4`
 - `SieveWeight.norm_Sp_le`: Lemma 1 for primes *paper* ([note](../formalisations/chen-gupta-li-density.md))
 
+#### `SixTerm`: The six-term interface below the frame inequality — CONDITIONAL on the half-plane
+
+- `ZetaBalance.rhAndGRH_of_sixTermBound`: CONDITIONAL. The Riemann hypothesis for `ζ` and every Dirichlet `L`-function from the six-term frontier ([note](../formalisations/alpoge-rh.md))
+
 #### `SmallPrimes`: The small primes generate the units mod `q`
 
 - `SmallPrimes.exists_prime_not_mem`: The least prime outside a proper subgroup
@@ -3334,6 +3433,10 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `TwinKV.twins_lower_cut`: The lower bound with a free cutoff `u`
 - `TwinKV.twins_lower_KV_sharp`: The twin form with the PNT exponent
 
+#### `TwistFamily`: A family of primes whose quadratic twists are small on a window — CONDITIONAL on the half-plane
+
+- `TwistFamily.exists_good_fin`: CONDITIONAL. A member good for finitely many complex weights ([note](../formalisations/alpoge-rh.md))
+
 #### `ZetaAFE`: The approximate functional equation for `ξ(s)²`
 
 - `ZetaFourth.afe_xi`: The approximate functional equation for `ξ(s)²`
@@ -3380,6 +3483,20 @@ headline of its docstring, and links the note of `formalisations/` that names it
 - `ZetaKernel.hm_duality_pts`: The Halász–Montgomery duality inequality at points
 - `ZetaKernel.norm_kz_le`: The kernel bound ([note](../formalisations/zeta-density.md))
 - `ZetaKernel.power_count_pts`: Large values of a power at well-spaced heights
+
+#### `ZetaPair`: The pair-first frontiers — CONDITIONAL on the half-plane
+
+- `ZetaBalance.rhAndGRH_of_pairBound`: CONDITIONAL. The Riemann hypothesis for `ζ` and every Dirichlet `L`-function from the pair-first frontier ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.riemannHypothesis_of_zetaPairBound`: CONDITIONAL. The Riemann hypothesis from the pair-first frontier ([note](../formalisations/alpoge-rh.md))
+
+#### `ZetaThin`: The thin scales for `ζ` — CONDITIONAL on the half-plane
+
+- `ZetaBalance.riemannHypothesis_of_zetaTwistBound`: CONDITIONAL. The Riemann hypothesis from lattice data with small twists ([note](../formalisations/alpoge-rh.md))
+
+#### `ZetaTwist`: A pair of primes with small twists on a window — CONDITIONAL on the half-plane
+
+- `ZetaTwist.exists_winPair_twists`: CONDITIONAL. The twists for every character ([note](../formalisations/alpoge-rh.md))
+- `ZetaTwist.exists_winPair_twists_one`: CONDITIONAL. The twists for `ζ` ([note](../formalisations/alpoge-rh.md))
 
 ### `lib/dh`
 

@@ -1,24 +1,21 @@
 /-
-# The prime number theorem modulo the divisors of `24`
+# The prime number theorem in progressions
 
 Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 
-Plain statement. For every `q ∣ 24`, every `a < q` prime to `q` and every `η > 0`,
+Plain statement. For every `q ≥ 1`, every `a < q` prime to `q` and every `η > 0`,
 `ψ(x; q, a) − x/φ(q) = O(x^{11/12+η})`, with `ψ(x; q, a) = Σ_{1 ≤ n ≤ x, n ≡ a (q)} Λ(n)`
-(`PsiOmega.psiAP`) (`psiAP_isBigO_of_dvd_24`); the same for every `q ≥ 1` whose Dirichlet characters are all
-quadratic (`psiAP_isBigO`). No hypothesis. *
-*
+(`PsiOmega.psiAP`) (`psiAP_isBigO`). No hypothesis. More generally, `O(x^e)` for any `e > 0` for which `ψ(x) − x`
+and every `ψ(x, χ)` with `χ ≠ 1` mod `q` are `O(x^e)` (`psiAP_isBigO_of`); under GRH, `e = 1/2 + η`
+(`HalfPlaneGRH.RHandGRH.psiAP_isBigO`).
 
 * `psiAP_eq_sum`: orthogonality, `ψ(x; q, a) = φ(q)⁻¹ Σ_χ χ(a⁻¹)ψ(x, χ)` (Mathlib's
   `DirichletCharacter.sum_char_inv_mul_char_eq`).
 * `psiChi_one`, `sum_dvd_le_log`, `sum_not_coprime_le`: for the trivial character mod `q`,
   `ψ(x, 1) = ψ(x) − Σ_{n ≤ x, (n, q) > 1} Λ(n)`, and the subtracted sum is at most `ω(q) log x`: each prime `p ∣ q`
   contributes the `Λ(p^m) = log p` with `p^m ≤ x`, which sum to at most `log x`.
-* `psiAP_isBigO`: `HalfPlanePNT.psi_isBigO_eleven_twelfths` for `ψ(x) − x`,
-  `ChiPNT.psiChi_isBigO_eleven_twelfths` for each `ψ(x, χ)` with `χ ≠ 1`, and `log x ≤ x^e/e`.
-* `isQuadratic_of_sq_eq_one`, `sq_eq_one_of_dvd_24`: every unit of `ℤ/24` squares to `1` (`decide`), so every
-  unit of `ℤ/q` does for `q ∣ 24` (Mathlib's `ZMod.unitsMap_surjective`), and then every character mod `q` is
-  quadratic. *(Removed.)*
+* `psiAP_isBigO_of`: the bounds for `ψ(x) − x` and each `ψ(x, χ)` with `χ ≠ 1`, and `log x ≤ x^e/e`.
+* `psiAP_isBigO`: `HalfPlanePNT.psi_isBigO_eleven_twelfths` and `ChiPNT.psiChi_isBigO_eleven_twelfths`.
 -/
 import ChiPNT
 
@@ -132,15 +129,15 @@ lemma psiAP_eq_sum (q : ℕ) [NeZero q] {a : ℕ} (ha : a.Coprime q) (haq : a < 
   · have h' : ¬ (a : ZMod q) = k := fun h' ↦ h (hiff.2 h')
     simp [h, h']
 
-/-- **The prime number theorem in progressions modulo every `q`**: for `a` prime to `q`, `a < q`,
-`ψ(x; q, a) − x/φ(q) = O(x^{11/12+η})` for every `η > 0`. -/
-theorem psiAP_isBigO {q : ℕ} [NeZero q] {a : ℕ} (ha : a.Coprime q) (haq : a < q) {η : ℝ} (hη : 0 < η) :
-    (fun x ↦ PsiOmega.psiAP q a x - x / q.totient) =O[atTop] fun x ↦ x ^ (11 / 12 + η) := by
+/-- **The prime number theorem in progressions from bounds for the characters**: if `ψ(x) − x` and every `ψ(x, χ)`
+with `χ ≠ 1` mod `q` are `O(x^e)`, `e > 0`, then `ψ(x; q, a) − x/φ(q) = O(x^e)` for `a` prime to `q`, `a < q`. -/
+theorem psiAP_isBigO_of {q : ℕ} [NeZero q] {a : ℕ} (ha : a.Coprime q) (haq : a < q) {e : ℝ} (he : 0 < e)
+    (hψ' : (ψ - id) =O[atTop] fun x : ℝ ↦ x ^ e)
+    (hχ' : ∀ χ : DirichletCharacter ℂ q, χ ≠ 1 → ChiPNT.psiChi χ =O[atTop] fun x ↦ x ^ e) :
+    (fun x ↦ PsiOmega.psiAP q a x - x / q.totient) =O[atTop] fun x ↦ x ^ e := by
   have hau : IsUnit (a : ZMod q) := (ZMod.isUnit_iff_coprime a q).2 ha
   have hainv : IsUnit ((a : ZMod q)⁻¹) :=
     IsUnit.of_mul_eq_one (a : ZMod q) (by rw [mul_comm]; exact ZMod.mul_inv_of_unit _ hau)
-  set e : ℝ := 11 / 12 + η with hedef
-  have he : 0 < e := by linarith
   set E : ℝ → ℝ := fun x ↦ ∑ k ∈ Finset.Icc 1 ⌊x⌋₊, (if k.Coprime q then 0 else Λ k) with hEdef
   -- the decomposition
   have hdec : ∀ x : ℝ, (((PsiOmega.psiAP q a x - x / q.totient : ℝ)) : ℂ) =
@@ -159,9 +156,8 @@ theorem psiAP_isBigO {q : ℕ} [NeZero q] {a : ℕ} (ha : a.Coprime q) (haq : a 
     ring
   -- the pieces
   have hψ : (fun x : ℝ ↦ (((ψ x - x : ℝ)) : ℂ)) =O[atTop] fun x ↦ x ^ e := by
-    have h := HalfPlanePNT.psi_isBigO_eleven_twelfths hη
-    rw [← isBigO_norm_left] at h ⊢
-    refine h.congr_left fun x ↦ ?_
+    rw [← isBigO_norm_left] at hψ' ⊢
+    refine hψ'.congr_left fun x ↦ ?_
     rw [Complex.norm_real]
     rfl
   have hE : (fun x : ℝ ↦ ((E x : ℝ) : ℂ)) =O[atTop] fun x ↦ x ^ e := by
@@ -186,8 +182,7 @@ theorem psiAP_isBigO {q : ℕ} [NeZero q] {a : ℕ} (ha : a.Coprime q) (haq : a 
       χ ((a : ZMod q)⁻¹) * ChiPNT.psiChi χ x) =O[atTop] fun x ↦ x ^ e := by
     have h := IsBigO.sum (A := fun χ x ↦ χ ((a : ZMod q)⁻¹) * ChiPNT.psiChi χ x)
       (s := Finset.univ.erase (1 : DirichletCharacter ℂ q)) (l := atTop)
-      (g := fun x : ℝ ↦ x ^ e) fun χ hχ ↦
-        (ChiPNT.psiChi_isBigO_eleven_twelfths (Finset.ne_of_mem_erase hχ) hη).const_mul_left _
+      (g := fun x : ℝ ↦ x ^ e) fun χ hχ ↦ (hχ' χ (Finset.ne_of_mem_erase hχ)).const_mul_left _
     rwa [Finset.sum_fn] at h
   have hC : (fun x : ℝ ↦ (((PsiOmega.psiAP q a x - x / q.totient : ℝ)) : ℂ)) =O[atTop]
       fun x ↦ x ^ e := by
@@ -195,5 +190,12 @@ theorem psiAP_isBigO {q : ℕ} [NeZero q] {a : ℕ} (ha : a.Coprime q) (haq : a 
     exact ((hψ.sub hE).add hχ).const_mul_left _
   rw [← isBigO_norm_left] at hC ⊢
   exact hC.congr_left fun x ↦ Complex.norm_real _
+
+/-- **The prime number theorem in progressions modulo every `q`**: for `a` prime to `q`, `a < q`,
+`ψ(x; q, a) − x/φ(q) = O(x^{11/12+η})` for every `η > 0`. -/
+theorem psiAP_isBigO {q : ℕ} [NeZero q] {a : ℕ} (ha : a.Coprime q) (haq : a < q) {η : ℝ} (hη : 0 < η) :
+    (fun x ↦ PsiOmega.psiAP q a x - x / q.totient) =O[atTop] fun x ↦ x ^ (11 / 12 + η) :=
+  psiAP_isBigO_of ha haq (by linarith) (HalfPlanePNT.psi_isBigO_eleven_twelfths hη)
+    fun _ hχ ↦ ChiPNT.psiChi_isBigO_eleven_twelfths hχ hη
 
 end PNTProgressions

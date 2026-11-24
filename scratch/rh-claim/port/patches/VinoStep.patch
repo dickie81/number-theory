@@ -1,0 +1,11 @@
+--- a/lib/core/VinoStep.lean
++++ b/lib/core/VinoStep.lean
+@@ -134,7 +134,7 @@
+     with hT
+   have hTcard : T.card ≤ ∏ e : Fin k, p ^ (k - (e + 1)) := by
+     rw [hT, Fintype.card_piFinset]
+-    exact Finset.prod_le_prod fun e _ => card_residue_le_int p k _ _ hp0 (by omega)
++    exact Finset.prod_le_prod' fun e _ => card_residue_le_int p k _ _ hp0 (by omega)
+   refine le_trans ?_ hTcard
+   refine card_le_card_of_injOn (fun x e => (∑ i, x i ^ ((e : ℕ) + 1)) % (p : ℤ) ^ k) ?_ ?_
+   · intro x hx

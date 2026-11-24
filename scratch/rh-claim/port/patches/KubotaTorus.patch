@@ -1,0 +1,13 @@
+--- a/lib/core/KubotaTorus.lean
++++ b/lib/core/KubotaTorus.lean
+@@ -267,8 +267,8 @@
+     rw [hbox (fun w => ‖w‖ₑ ^ 2)]
+     exact ENNReal.mul_lt_top ENNReal.ofReal_lt_top h2
+   have hGL : MemLp G 2 := by
+-    rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+-      hGm.aestronglyMeasurable]
++    refine ⟨hGm.aestronglyMeasurable, ?_⟩
++    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top]
+     simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
+     exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hL2.ne
+   have hcoef : ∀ n, mFourierCoeff G n = 0 := by

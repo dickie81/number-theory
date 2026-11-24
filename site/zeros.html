@@ -327,7 +327,11 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
       gives <span class="math">L</span> = {{harman}} &lt; {{harmanBound}} (the paper's Section 12; not formalised). The
       paper's Theorem 1.1 is <span class="math">L</span> = {{Lres}} (<code>{{resLean}}</code>),
       with the resonant window, the leaves of a comparison cut in three and the terms of the sign + reversed as well; it
-      rests on two inputs that have not been refereed: the half-plane and Chen, Gupta and Li's Proposition 3.1.</p>
+      rests on two inputs that have not been refereed: the half-plane and Chen, Gupta and Li's Proposition 3.1. Both
+      theorems rest on certificates that the kernel checks in about 62 hours of one core, whose build is opt-in
+      (<code>lib/check/CheckLinnik.lean</code>): the repository checks them every week, not on every change. Under GRH,
+      which L. Alpöge's Lean archive proves on its own Lean and Mathlib, the library gives every
+      <span class="math">L</span> &gt; {{grh}}: its headline exponent, with GRH a hypothesis in the library's Lean.</p>
     <div class="plate">
       <div class="legend">
         <span><i class="kd lean"></i><span>proved in Lean</span></span>

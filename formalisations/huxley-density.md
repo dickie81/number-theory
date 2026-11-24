@@ -32,7 +32,7 @@ The Linnik proofs use these instances:
 
 These theorems are in the proofs of the Linnik paper's two theorems, `Linnik21500.linnik_21500` (Theorem 1.2, at
 `43/20`) and `Linnik21000.linnik_21000` (Theorem 1.1, at `21/10`), whose axioms are `propext`, `Classical.choice` and
-`Quot.sound` (`lib/check/Check.lean`; for `linnik_21000`, `lib/check/CheckAll.lean`), so they depend on those only.
+`Quot.sound` (`lib/check/CheckLinnik.lean`, whose build is opt-in), so they depend on those only.
 `charDensity_gen` and the twenty steps do not use the half-plane: `Eis.LFunction_ne_zero_of_re_gt` is not among the
 declarations their proofs depend on.
 

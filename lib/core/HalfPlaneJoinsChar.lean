@@ -12,7 +12,7 @@ reflection `Λ*(1 − s, χ) = ε_χ Λ*(s, χ⁻¹)` of a primitive `χ` (`PsiO
 * `LFunction_band_of_isPrimitive`, `LFunction_band_eleven_twelfths`: every zero `ρ` of `L(s, χ)`,
   `χ ≠ 1`, with `0 < Re ρ < 1` has `|2 Re ρ − 1| ≤ 5/6`. Mathlib's `LFunction_changeLevel` carries the band from
   the primitive character inducing `χ` to `χ`: the Euler factors `1 − χ'(p)p^{−s}` it adds do not vanish on
-  `Re s > 0` (`Eis.RealChar.one_sub_mul_cpow_ne_zero`);
+  `Re s > 0` (`HalfPlaneGRH.eulerFactor_ne_zero`);
 * `chi4_rate_eleven_twelfths`, `chi8_rate_eleven_twelfths`, `QK4_rate_eleven_twelfths`: the twin forms of
   `L(s, χ₋₄)`, of `L(s, χ₋₈)` and of `ζ·ζ_{ℚ(i)}` (`Dedekind4.QK`) are at least `−C e^{5λ/6}` at `λ ≥ 0`;
 * `QC_rate_eleven_twelfths`, `QKχ_rate_eleven_twelfths`: the same for `L(s, χ)` and for `ζ·L(s, χ)`, for every good
@@ -28,20 +28,6 @@ namespace HalfPlaneJoins
 
 variable {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
 
-/-- A zero of `L(s, χ)` with `0 < Re s < 1`, `χ` primitive, reflects to a zero of `L(1 − s, χ⁻¹)`. -/
-theorem LFunction_inv_one_sub_eq_zero (hprim : χ.IsPrimitive) {s : ℂ}
-    (hs : DirichletCharacter.LFunction χ s = 0) (h0 : 0 < s.re) (h1 : s.re < 1) :
-    DirichletCharacter.LFunction χ⁻¹ (1 - s) = 0 := by
-  by_contra hne
-  have h1' : 0 < (1 - s).re := by simp; linarith
-  have hL := LamG_ne_zero h1' hne
-  rw [LamG_one_sub' (isPrimitive_inv χ hprim), inv_inv] at hL
-  apply hL
-  have hz : LamG χ s = 0 := by
-    unfold LamG
-    rw [completed_eq_mul h0, hs, mul_zero, mul_zero]
-  rw [hz, mul_zero]
-
 /-- **The band for a primitive `χ ≠ 1`**: the half-plane at `s` for `χ` and at `1 − s` for `χ⁻¹`. -/
 theorem LFunction_band_of_isPrimitive (hχ : χ ≠ 1) (hprim : χ.IsPrimitive) {s : ℂ}
     (hs : DirichletCharacter.LFunction χ s = 0) (h0 : 0 < s.re) (h1 : s.re < 1) :
@@ -52,7 +38,7 @@ theorem LFunction_band_of_isPrimitive (hχ : χ ≠ 1) (hprim : χ.IsPrimitive) 
   have hlow : (1 - s).re ≤ 11 / 12 := by
     by_contra h
     exact Eis.LFunction_ne_zero_of_re_gt χ⁻¹ (lt_of_not_ge h) (Or.inl (inv_ne_one.2 hχ))
-      (LFunction_inv_one_sub_eq_zero hprim hs h0 h1)
+      (HalfPlaneGRH.LFunction_inv_one_sub_eq_zero hprim h0 h1 hs)
   simp only [sub_re, one_re] at hlow
   rw [abs_le]
   constructor <;> linarith
@@ -73,7 +59,7 @@ theorem LFunction_band_eleven_twelfths (hχ : χ ≠ 1) {s : ℂ}
   have hprod : ∏ p ∈ N.primeFactors, (1 - χ.primitiveCharacter p * (p : ℂ) ^ (-s)) ≠ 0 := by
     rw [Finset.prod_ne_zero_iff]
     intro p hp
-    exact Eis.RealChar.one_sub_mul_cpow_ne_zero (Nat.prime_of_mem_primeFactors hp)
+    exact HalfPlaneGRH.eulerFactor_ne_zero (Nat.prime_of_mem_primeFactors hp)
       (DirichletCharacter.norm_le_one _ _) h0
   have hL : DirichletCharacter.LFunction χ.primitiveCharacter s = 0 := by
     rcases mul_eq_zero.1 hfac.symm with h | h

@@ -6,24 +6,51 @@ Lake's globs cannot select a directory and the lakefile names every module of ea
 the lakefile is written; `--check` regenerates it in memory and exits 1 if lakefile.lean differs, so that a module
 added, removed or renamed in lib/ without regenerating fails the check.
 
-Layers (lib/<dir> → library): core → Core, pnt → PNT, dh → DH, zeta23 → Zeta23Layer. The vendored upstreams keep
-their hierarchical names. The package turns `autoImplicit` and `relaxedAutoImplicit` off for every library, the
-vendored ones included, so that a name a declaration's header does not bind is an error, not a silent implicit
-argument. Check (lib/check/Check.lean) is the
-default target; CheckAll, CheckZeta23 and CheckDH are built on request, and so is the executable deadcode (scripts/lean/DeadCode.lean), the
-dead-code check's Lean side.
+Layers (lib/<dir> → library): core → Core, pnt → PNT, dh → DH, zeta23 → Zeta23Layer. The opt-in modules of lib/pnt,
+the Linnik paper's certificates and the theorems that rest on them (`import_cone.optional`), are a library of their
+own, LinnikCert, which only CheckLinnik imports. The vendored upstreams keep their hierarchical names. The package
+turns `autoImplicit` and `relaxedAutoImplicit` off for every library, the vendored ones included, so that a name a
+declaration's header does not bind is an error, not a silent implicit argument. Check (lib/check/Check.lean) is the
+default target; CheckAll, CheckZeta23, CheckDH and CheckLinnik are built on request, and so is the executable deadcode
+(scripts/lean/DeadCode.lean), the dead-code check's Lean side.
+
+The script also refuses an import of an opt-in module by any module but CheckLinnik, which would put the certificates
+back in the default build.
 """
 import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import import_cone  # noqa: E402
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MATHLIB_REV = "0f64d30a9a4593b3ae50375b960a5cf7f0845606"
 LAYERS = [("Core", "core"), ("PNT", "pnt"), ("DH", "dh"), ("Zeta23Layer", "zeta23")]
+# the library of the opt-in modules, all of them in lib/pnt
+OPT_IN = ("LinnikCert", "pnt")
 
 
 def modules(d):
     return sorted(f[:-5] for f in os.listdir(os.path.join(ROOT, "lib", d)) if f.endswith(".lean"))
+
+
+def opt_in():
+    """The opt-in modules, which are the library LinnikCert, not their layer's."""
+    found = {d: sorted(import_cone.optional(modules(d))) for _, d in LAYERS}
+    stray = [m for d, ms in found.items() if d != OPT_IN[1] for m in ms]
+    if stray:
+        sys.exit(f"opt-in modules outside lib/{OPT_IN[1]}: {', '.join(stray)}")
+    return found[OPT_IN[1]]
+
+
+def leaks():
+    """Each import of an opt-in module by a module that the default build can reach: any but the opt-in modules
+    themselves and CheckLinnik."""
+    mods, imports = import_cone.sources()
+    opt = import_cone.optional(mods)
+    return sorted(f"{m} imports {i}" for m, names in imports.items()
+                  if m not in opt and m != import_cone.OPT_IN_CHECK for i in names if i in opt)
 
 
 def globs(names, per_line=4):
@@ -47,17 +74,27 @@ def lakefile():
            '  globs := #[.submodules `PrimeNumberTheoremAnd]', '',
            '/-- anthropics/formal-math zeta23 at fbdc36b, ported by lib/vendor/zeta23/zeta23_port.patch. -/',
            'lean_lib Zeta23 where', '  srcDir := "lib/vendor/zeta23"', '  globs := #[.submodules `Zeta23]', '']
+    cert = opt_in()
     for lib, d in LAYERS:
-        ms = modules(d)
-        out += [f'/-- lib/{d}: {len(ms)} modules. -/', f'lean_lib {lib} where', f'  srcDir := "lib/{d}"',
+        ms = [m for m in modules(d) if m not in cert]
+        aside = f", the {len(cert)} of {OPT_IN[0]} aside" if d == OPT_IN[1] else ""
+        out += [f'/-- lib/{d}: {len(ms)} modules{aside}. -/', f'lean_lib {lib} where', f'  srcDir := "lib/{d}"',
                 f'  globs := {globs(ms)}', '']
+    out += [f"/-- lib/{OPT_IN[1]}: {len(cert)} modules, the Linnik paper's certificates and the theorems on them; "
+            "opt-in, for CheckLinnik. -/",
+            f'lean_lib {OPT_IN[0]} where', f'  srcDir := "lib/{OPT_IN[1]}"', f'  globs := {globs(cert)}', '']
     out += ["/-- The axioms of the papers' theorems; the default target. -/", '@[default_target]',
             'lean_lib Check where', '  srcDir := "lib/check"', '  roots := #[`Check]', '',
-            '/-- The axioms of every final theorem of the library; not a default target. -/', 'lean_lib CheckAll where', '  srcDir := "lib/check"', '  roots := #[`CheckAll]', '',
+            "/-- The axioms of every final theorem of the library but those CheckLinnik prints; "
+            "not a default target. -/",
+            'lean_lib CheckAll where', '  srcDir := "lib/check"', '  roots := #[`CheckAll]', '',
             '/-- The axioms of the zeta23 layer\'s results, which CheckAll cannot import; not a default target. -/',
             'lean_lib CheckZeta23 where', '  srcDir := "lib/check"', '  roots := #[`CheckZeta23]', '',
             "/-- The axioms of the lib/dh layer's results; not a default target. -/",
             'lean_lib CheckDH where', '  srcDir := "lib/check"', '  roots := #[`CheckDH]', '',
+            "/-- The axioms of the Linnik paper's two theorems and their certificates; "
+            "opt-in, not a default target. -/",
+            'lean_lib CheckLinnik where', '  srcDir := "lib/check"', '  roots := #[`CheckLinnik]', '',
             "/-- The dead-code check's Lean side, run by scripts/dead_code.py; it imports only Lean. -/",
             'lean_exe deadcode where', '  srcDir := "scripts/lean"', '  root := `DeadCode', '  supportInterpreter := true',
             '']
@@ -67,11 +104,17 @@ def lakefile():
 def main():
     path = os.path.join(ROOT, "lakefile.lean")
     text = lakefile()
+    bad = leaks()
+    for b in bad:
+        print(f"{b}: only {import_cone.OPT_IN_CHECK} may import an opt-in module, or the default build compiles it")
     if "--check" in sys.argv:
         ok = os.path.exists(path) and open(path, encoding="utf-8").read() == text
         n = sum(len(modules(d)) for _, d in LAYERS)
-        print(f"lakefile.lean {'matches' if ok else 'DIFFERS from'} lib/ ({n} modules in {len(LAYERS)} layers)")
-        return 0 if ok else 1
+        print(f"lakefile.lean {'matches' if ok else 'DIFFERS from'} lib/ ({n} modules in {len(LAYERS)} layers, "
+              f"{len(opt_in())} of them opt-in)")
+        return 0 if ok and not bad else 1
+    if bad:
+        return 1
     open(path, "w", encoding="utf-8").write(text)
     print("wrote", path)
     return 0

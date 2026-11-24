@@ -27,8 +27,8 @@ Here `dp S c t = Σ_{j∈S} c_j j^{−it}` (`DirMean.dp`). In words, let `D_χ(t
 `LinnikHybrid.large_values_chars_off` is the second with the weights `j^{−β_χ}`, `σ ≤ β_χ ≤ σ + 1/2`, at the cost of a
 factor `e`, and with `Σ|c_j|²j^{−2σ}` on the right. These theorems are in the proofs of
 `Linnik21500.linnik_21500` and `Linnik21000.linnik_21000`, the Linnik paper's Theorems 1.2 and 1.1, whose axioms are
-`propext`, `Classical.choice` and `Quot.sound` (`lib/check/Check.lean`; for `linnik_21000`,
-`lib/check/CheckAll.lean`), so they depend on those only.
+`propext`, `Classical.choice` and `Quot.sound` (`lib/check/CheckLinnik.lean`, whose build is
+opt-in), so they depend on those only.
 
 ## Source
 

@@ -7,10 +7,12 @@
 
 The inventory lists the theorems whose axioms lib/check/CheckAll.lean (the library's final results),
 lib/check/CheckZeta23.lean (those of the zeta23 layer, which CheckAll cannot import), lib/check/CheckDH.lean (those of
-the lib/dh layer) and lib/check/Check.lean (the papers' theorems) print, module by module: each with the headline of
-its docstring (its bold title, or else its first sentence), whether it is a paper's, and the note of formalisations/
-that names it, if one does. Every module of the library is imported by one of the four, which scripts/dead_code.py
-checks. Modules and layers are read as import_cone.py reads them.
+the lib/dh layer), lib/check/Check.lean (the papers' theorems) and lib/check/CheckLinnik.lean (the Linnik paper's
+theorems that rest on its certificates, which are opt-in) print, module by module: each with the headline of its
+docstring (its bold title, or else its first sentence), whether it is a paper's (printed by Check or CheckLinnik),
+whether only the opt-in build checks it (printed by CheckLinnik alone), and the note of formalisations/ that names
+it, if one does. Every module of the library is imported by one of the five, which scripts/dead_code.py checks.
+Modules and layers are read as import_cone.py reads them.
 """
 import json
 import os
@@ -22,7 +24,9 @@ import import_cone  # noqa: E402
 
 ROOT = import_cone.ROOT
 OUT = os.path.join(ROOT, "docs", "inventory.md")
-CHECKS = ["Check", "CheckAll", "CheckZeta23", "CheckDH"]
+CHECKS = ["Check", "CheckAll", "CheckZeta23", "CheckDH", import_cone.OPT_IN_CHECK]
+# the check files of the papers' theorems
+PAPERS = ["Check", import_cone.OPT_IN_CHECK]
 DECL = re.compile(r"^(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|nonrec|unsafe|partial)\s+)*"
                   r"(theorem|lemma|def|abbrev|instance|structure|inductive|class)\s+([^\s:(\[{]+)")
 
@@ -102,7 +106,8 @@ def inventory():
     mods, _ = import_cone.sources()
     decls = {m: declarations(os.path.join(ROOT, p)) for m, p in mods.items()}
     where = {full: m for m, ds in decls.items() for full, *_ in ds}
-    check, named = set(printed("Check")), notes()
+    check, named = {n for c in PAPERS for n in printed(c)}, notes()
+    default = {n for c in CHECKS if c != import_cone.OPT_IN_CHECK for n in printed(c)}
     listed = sorted({n for c in CHECKS for n in printed(c)})
     layer = {m: mods[m].split(os.sep)[1] for m in mods}
     results = {}
@@ -114,7 +119,8 @@ def inventory():
     entries = []
     for m in sorted(mods, key=lambda m: (import_cone.DIRS.index(layer[m]), m)):
         if m in results:
-            rows = [{"name": f, "headline": headline(doc), "paper": f in check, "note": named.get(f)}
+            rows = [{"name": f, "headline": headline(doc), "paper": f in check, "optIn": f not in default,
+                     "note": named.get(f)}
                     for f, _, doc, _ in decls[m] if f in results[m]]
             entries.append({"module": m, "layer": layer[m], "path": mods[m], "title": title(os.path.join(ROOT, mods[m])),
                             "results": rows})
@@ -124,14 +130,18 @@ def inventory():
 def markdown(entries):
     n_res = sum(len(e["results"]) for e in entries)
     n_paper = sum(r["paper"] for e in entries for r in e["results"])
+    n_opt = sum(r["optIn"] for e in entries for r in e["results"])
     out = ["# Inventory of the library's results", "",
            "Written by `scripts/inventory.py` from the sources; do not edit it by hand. `python3 scripts/inventory.py`",
            "rewrites it, and CI checks that it is current (`--check`).", "",
-           "`lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean` and",
-           f"`lib/check/Check.lean` print the axioms of {n_res} theorems: the library's final results (those of the",
-           "zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`) and the",
-           f"papers' theorems, of which there are {n_paper}, marked *paper*. Each line gives a theorem's name and the",
-           "headline of its docstring, and links the note of `formalisations/` that names it, if one does.",
+           "`lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`",
+           f"and `lib/check/CheckLinnik.lean` print the axioms of {n_res} theorems: the library's final results (those",
+           "of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)",
+           "and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of",
+           f"which there are {n_paper}, marked *paper*. The {n_opt} marked *opt-in* rest on the Linnik paper's",
+           "certificates: only `CheckLinnik` prints them, and only its build, which is opt-in, checks them",
+           "(`docs/building.md`). Each line gives a theorem's name and the headline of its docstring, and links the",
+           "note of `formalisations/` that names it, if one does.",
            "", "| Layer | Modules with results | Results |", "|---|---|---|"]
     for d in import_cone.DIRS[:-1]:
         a = [e for e in entries if e["layer"] == d]
@@ -149,11 +159,11 @@ def markdown(entries):
                 if e["results"]:
                     out.append("")
                 for r in e["results"]:
-                    marks = (" *paper*" if r["paper"] else "") + \
+                    marks = (" *paper*" if r["paper"] else "") + (" *opt-in*" if r["optIn"] else "") + \
                             (f" ([note](../formalisations/{r['note']}))" if r["note"] else "")
                     out.append(f"- `{r['name']}`" + (f": {r['headline']}" if r["headline"] else "") + marks)
 
-    section(entries, "The results of `CheckAll`, `CheckZeta23`, `CheckDH` and `Check`")
+    section(entries, "The results of `CheckAll`, `CheckZeta23`, `CheckDH`, `Check` and `CheckLinnik`")
     return "\n".join(out) + "\n"
 
 

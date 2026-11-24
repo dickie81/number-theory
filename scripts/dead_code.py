@@ -3,11 +3,17 @@
 the site's, or registered in formalisations/.
 
     python3 scripts/dead_code.py               # after `lake build Check CheckAll CheckZeta23 CheckDH deadcode`
+    python3 scripts/dead_code.py --full        # after `lake build CheckLinnik` as well: the opt-in modules too
     python3 scripts/dead_code.py --json OUT    # also write the findings, with each declaration's lines, to OUT
 
 The roots are the theorems that the check files lib/check/*.lean print. `lake exe deadcode` (scripts/lean/DeadCode.lean)
 imports the check files, Check, CheckAll and CheckDH together, then CheckZeta23, which they cannot import, and walks what
-the roots use, through types and proofs. The check fails if:
+the roots use, through types and proofs. The opt-in modules, the Linnik paper's certificates and the theorems on them
+(`import_cone.optional`), are left out, with CheckLinnik, which prints those theorems: the default build does not
+compile them. In their place the run walks, as sources, the library's declarations that their sources cite (`cited`),
+so that what only they use is not reported. With `--full` the first run imports CheckLinnik as well, and the opt-in
+modules are the library's like the others; CI runs that in the workflow linnik.yml, which builds them. The check fails
+if:
 
 1. a declaration of lib/core, lib/pnt, lib/dh, lib/zeta23 or lib/check is used by no root (Lean's generated
    declarations and the meta level, macros and syntax, aside), or a module of those directories is imported by no
@@ -16,9 +22,9 @@ the roots use, through types and proofs. The check fails if:
    `RiemannHypothesis` or `[SieveCert.Grid]`), and no root without one uses it, nor a result of
    a section "Conditional results" of formalisations/ (formalisations/README.md's, or a note's), which lists the results
    conditional on purpose: a lemma of a route that nothing proves any more;
-3. a root that no other root uses, a result of the library, is neither printed by Check.lean (the papers' results),
-   nor presented by the page on the zeros (scripts/zeros_page.py), nor named in formalisations/: a result that
-   nothing uses must be registered there, with what it is;
+3. a root that no other root uses, a result of the library, is neither printed by Check.lean or CheckLinnik.lean (the
+   papers' results), nor presented by the page on the zeros (scripts/zeros_page.py), nor named in formalisations/: a
+   result that nothing uses must be registered there, with what it is;
 4. a result of "Conditional results" is printed by no check file, or a check file prints a name that no module of its
    environment declares.
 """
@@ -31,12 +37,19 @@ import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
+import import_cone  # noqa: E402
 import zeros_page  # noqa: E402
 
 DIRS = ["core", "pnt", "dh", "zeta23", "check"]
-# the environments: the check files that can be imported together
+OPT_IN = import_cone.OPT_IN_CHECK
+# the environments: the check files that can be imported together; with --full, CheckLinnik joins the first
 RUNS = [["Check", "CheckAll", "CheckDH"], ["CheckZeta23"]]
+# the check files of the papers' results
+PAPERS = ["Check", OPT_IN]
 NAME = r"`([A-Za-z_][\w.']*\.[\w.']+)`"
+IDENT = re.compile(r"(?<![\w.'])(?:_root_\.)?([A-Za-z_][\w'!?]*(?:\.[A-Za-z_][\w'!?]*)*)")
+# the opt-in files that hold one piece each of a certificate: its part files `…P<k>` and files of cells `…N<j>`
+PIECE = re.compile(r"(SieveHint\d+[PN])(\d+)")
 
 
 def modules(d):
@@ -46,6 +59,37 @@ def modules(d):
 def printed(check):
     text = open(os.path.join(ROOT, "lib", "check", check + ".lean"), encoding="utf-8").read()
     return re.findall(r"^#print axioms (\S+)", text, re.M)
+
+
+def cited():
+    """The names that the opt-in modules cite, for a run without them: each identifier of their sources, in their
+    comments too, as written and in each namespace that the file declares or opens (`deadcode` keeps those that the
+    library's modules declare). The pieces of a certificate, its part files and files of cells, are generated alike
+    and cite the same names, so only the first of each kind is read, which keeps the read to a few MB of the 1 GB."""
+    mods = {m: os.path.join("lib", d, m + ".lean") for d in DIRS for m in modules(d)}
+    opt = sorted(import_cone.optional(mods))
+    pieces = {}
+    for m in opt:
+        p = PIECE.fullmatch(m)
+        if p:
+            pieces.setdefault(p.group(1), []).append((int(p.group(2)), m))
+    read = [m for m in opt if not PIECE.fullmatch(m)] + sorted(min(ps)[1] for ps in pieces.values())
+    out = set()
+    for m in read:
+        text = re.sub(r"\b0x[0-9a-fA-F]+", " ", open(os.path.join(ROOT, mods[m]), encoding="utf-8").read())
+        spaces = set()
+        for ns in re.findall(r"^\s*(?:namespace|open)\s+(.+)$", text, re.M):
+            for n in ns.split():
+                if n == "scoped":
+                    continue
+                if n in ("in", "hiding", "renaming") or not IDENT.fullmatch(n):
+                    break
+                parts = n.split(".")
+                spaces |= {".".join(parts[:i]) for i in range(1, len(parts) + 1)}
+        for t in set(IDENT.findall(text)):
+            out.add(t)
+            out |= {f"{s}.{t}" for s in spaces}
+    return sorted(out)
 
 
 def registry():
@@ -85,7 +129,8 @@ def page():
 
 def run(tmp, imports):
     r = subprocess.run(["lake", "exe", "deadcode", os.path.join(tmp, "ours"), os.path.join(tmp, "roots"),
-                        os.path.join(tmp, "allow")] + imports, cwd=ROOT, capture_output=True, text=True)
+                        os.path.join(tmp, "allow"), os.path.join(tmp, "extra")] + imports,
+                       cwd=ROOT, capture_output=True, text=True)
     if r.returncode != 0:
         sys.exit(f"deadcode {' '.join(imports)} failed:\n{r.stdout[-2000:]}{r.stderr[-2000:]}")
     return json.loads(r.stdout.strip().splitlines()[-1])
@@ -117,23 +162,30 @@ def analyse(runs):
 
 
 def main():
+    full = "--full" in sys.argv
     ours = [m for d in DIRS for m in modules(d)]
-    checks = [c for run_ in RUNS for c in run_]
-    prints = {c: printed(c) for c in checks}
+    if not full:
+        skip = import_cone.optional(ours) | {OPT_IN}
+        ours = [m for m in ours if m not in skip]
+    runs_ = [RUNS[0] + [OPT_IN]] + RUNS[1:] if full else RUNS
+    checks = [c for run_ in runs_ for c in run_]
+    prints = {c: printed(c) for c in checks + [c for c in PAPERS if c not in checks]}
     roots = sorted({n for c in checks for n in prints[c]})
+    papers = {n for c in PAPERS for n in prints[c]}
     registered, conditional = registry()
     shown = page()
+    extra = [] if full else cited()
     with tempfile.TemporaryDirectory() as tmp:
-        for name, items in (("ours", ours), ("roots", roots), ("allow", sorted(conditional))):
+        for name, items in (("ours", ours), ("roots", roots), ("allow", sorted(conditional)), ("extra", extra)):
             open(os.path.join(tmp, name), "w", encoding="utf-8").write("\n".join(items) + "\n")
-        runs = [run(tmp, imports) for imports in RUNS]
+        runs = [run(tmp, imports) for imports in runs_]
     unused, info, imported, stats = analyse(runs)
     unimported = sorted(set(ours) - imported)
     condUnused = sorted((x for x in info.values() if x["closed"] and x["name"] not in conditional and not x["usedBy"]),
                         key=lambda x: x["name"])
-    unregistered = sorted(n for n, x in info.items() if not x["usedByAny"] and n not in prints["Check"]
+    unregistered = sorted(n for n, x in info.items() if not x["usedByAny"] and n not in papers
                           and n not in shown and n not in registered)
-    stale = sorted(conditional - set(roots))
+    stale = sorted(conditional - {n for ns in prints.values() for n in ns})
     missing = sorted(set(roots) - set(info))
     byMod = {}
     for d in unused:
@@ -154,9 +206,10 @@ def main():
     for n in missing:
         print(f"{n}: printed by a check file, but no module of its environment declares it")
     ok = not (unused or unimported or condUnused or unregistered or stale or missing)
-    print(f"dead_code: {len(roots)} printed theorems; {len(unused)} unused declarations in {len(byMod)} modules, "
-          f"{len(unimported)} modules imported by no check file, {len(condUnused)} conditional theorems that no "
-          f"result uses, {len(unregistered)} unregistered results")
+    print(f"dead_code{' --full' if full else ''}: {len(roots)} printed theorems"
+          f"{'' if full else f', and the names that the opt-in modules cite as sources'}; {len(unused)} unused "
+          f"declarations in {len(byMod)} modules, {len(unimported)} modules imported by no check file, "
+          f"{len(condUnused)} conditional theorems that no result uses, {len(unregistered)} unregistered results")
     print("DEAD CODE PASS" if ok else "DEAD CODE FAIL")
     if "--json" in sys.argv:
         json.dump({"unused": unused, "unimported": unimported, "conditionalUnused": condUnused,

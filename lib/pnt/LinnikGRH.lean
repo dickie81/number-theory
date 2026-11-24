@@ -6,20 +6,25 @@ Built against PrimeNumberTheoremAnd at commit 650d312 (`lib/vendor/pnt-plus`).
 Plain statement. If every Dirichlet L-function satisfies the generalized Riemann hypothesis in the library's form
 (`PsiOmega.GRH χ` for every modulus `q ≥ 1` and every `χ` mod `q`), then `Linnik.CharDensity 2 0 1` holds
 (`charDensity_two_of_GRH`), and so every reduced class modulo every `q ≥ 1` has a prime `p ≤ K q^{2+η}` for every
-`η > 0` (`linnik_two_of_GRH`).
+`η > 0` (`linnik_two_of_GRH`). `linnik_two` is the same theorem with GRH in the words of L. Alpöge's Lean archive
+(`DirichletRH`), which proves it on its own pins (`tools/rh/README.md`): the library's headline Linnik exponent.
 
 That Linnik's exponent is `2 + η` under GRH is a classical consequence of GRH (via the density estimate with `A = 2`,
 which is then trivial). The module's content is the machine-checked link between two parts of the library that had no
 import between them: the Weil-criterion layer's `PsiOmega.GRH` (`lib/core/WeilChiCriterion.lean`) and the density
 deduction of `LinnikDeduction`. `Linnik.linnik_of_charDensity` itself uses the zero-free half-plane
 `Eis.LFunction_ne_zero_of_re_gt` (through `error_le`), so `linnik_two_of_GRH` is not a half-plane-free statement. It is
-conditional on GRH, so it is a different statement from the unconditional exponent `89/40` of the Linnik paper; `2` is
-the exponent the density route gives under GRH, not claimed to be an optimum.
+conditional on GRH, so it is a different statement from the unconditional exponents `43/20` and `21/10` of the Linnik
+paper (`Linnik21500.linnik_21500`, `Linnik21000.linnik_21000`); `2` is the exponent the density route gives under GRH,
+not claimed to be an optimum.
 
 * `charDensity_two_of_GRH`: `(∀ q [NeZero q] χ, PsiOmega.GRH χ) → Linnik.CharDensity 2 0 1`, by cases `σ > 1/2` (only the
   trivial character is counted) and `σ = 1/2` (at most `φ(q)` characters).
 * `linnik_two_of_GRH`: the same hypothesis gives `p ≡ a (mod q)`, `p ≤ K q^{2+η}`, by
   `Linnik.linnik_of_charDensity (le_refl _) (le_refl _) zero_le_one`.
+* `DirichletRH`, `linnik_two`: GRH as the archive states it (its `DirichletLZerosOnLine`, which its theorem
+  `LFunction_eq_zero_re` proves), and the exponent `2 + η` from it. In Lean GRH stays a hypothesis: the library
+  declares no axioms, and the archive, on Lean `v4.33.1` and an older Mathlib, is not imported.
 -/
 import LinnikDeduction
 import WeilChiCriterion
@@ -82,7 +87,23 @@ theorem linnik_two_of_GRH
       ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ (2 + η) :=
   Linnik.linnik_of_charDensity (le_refl _) (le_refl _) zero_le_one (charDensity_two_of_GRH h) hη
 
+/-- **GRH in the words of L. Alpöge's Lean archive**: a zero of `L(s, χ)` in the open critical strip has real part
+`1/2`, for every character of every modulus. It is the archive's `DirichletLZerosOnLine`, which its theorem
+`LFunction_eq_zero_re` proves (`tools/rh/README.md`), and `PsiOmega.GRH χ` for every `χ` with the hypotheses in
+another order. -/
+def DirichletRH : Prop :=
+  ∀ (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N) (s : ℂ),
+    0 < s.re → s.re < 1 → LFunction χ s = 0 → s.re = 1 / 2
+
+/-- **Linnik's theorem with every exponent above `2`, from GRH as L. Alpöge's Lean archive proves it**: every reduced
+class modulo `q` holds a prime `p ≤ K q^{2 + η}`. `linnik_two_of_GRH` with its hypothesis in the archive's words. -/
+theorem linnik_two (h : DirichletRH) {η : ℝ} (hη : 0 < η) :
+    ∃ K : ℝ, ∀ (q : ℕ) [NeZero q] (a : ℕ), a.Coprime q →
+      ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD q] ∧ (p : ℝ) ≤ K * (q : ℝ) ^ (2 + η) :=
+  linnik_two_of_GRH (fun q _ χ s hz h0 h1 => h q χ s h0 h1 hz) hη
+
 end LinnikGRH
 
 #print axioms LinnikGRH.charDensity_two_of_GRH
 #print axioms LinnikGRH.linnik_two_of_GRH
+#print axioms LinnikGRH.linnik_two

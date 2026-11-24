@@ -16,3 +16,4 @@ __pycache__/
 /papers/*/main.pdf
 /papers/*/supplement.pdf
 /_site/
+/external/

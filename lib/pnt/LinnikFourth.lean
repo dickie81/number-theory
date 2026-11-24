@@ -77,7 +77,7 @@ theorem norm_LFunction_sq_le {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N
   have hsre : s.re = 1 / 2 := by simp [hs]
   have hA := afe hprim hχ (s := s) (by rw [hsre]; norm_num) (by rw [hsre]; norm_num)
   have h1s : (1 : ℂ) - s = 1 / 2 + ((-t : ℝ) : ℂ) * I := by rw [hs]; push_cast; ring
-  have hγ : gammaFactor χ s ≠ 0 := gammaFactor_ne_zero χ (by rw [hsre]; norm_num)
+  have hγ : gammaFactor χ s ≠ 0 := HalfPlaneGRH.gammaFactor_ne_zero χ (by rw [hsre]; norm_num)
   have hγn : 0 < ‖gammaFactor χ s‖ := norm_pos_iff.2 hγ
   have hΛ : completedLFunction χ s = LFunction χ s * gammaFactor χ s :=
     completed_eq_mul χ (by rw [hsre]; norm_num)
@@ -782,7 +782,7 @@ lemma norm_VI'_GG_div_le {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (M
     (t : ℝ) (hint : Integrable fun v : ℝ => ‖M (1 / 2 + t * I + (c + v * I))‖ * Wf (c + 1 / 2) v) :
     ‖VerticalIntegral' (GG χ M (1 / 2 + t * I)) c / gammaFactor χ (1 / 2 + t * I) ^ 2‖ ≤
       KG3 c t N / (2 * π) * ∫ v : ℝ, ‖M (1 / 2 + t * I + ((c : ℂ) + (v : ℂ) * I))‖ * Wf (c + 1 / 2) v := by
-  have hγ : gammaFactor χ (1 / 2 + t * I) ≠ 0 := gammaFactor_ne_zero χ (by simp)
+  have hγ : gammaFactor χ (1 / 2 + t * I) ≠ 0 := HalfPlaneGRH.gammaFactor_ne_zero χ (by simp)
   have hγn : 0 < ‖gammaFactor χ (1 / 2 + t * I)‖ ^ 2 := pow_pos (norm_pos_iff.2 hγ) 2
   have h := norm_verticalIntegral'_le (G := GG χ M (1 / 2 + t * I)) (c := c)
     (hint.const_mul (KG2 χ c t)) (fun (v : ℝ) => by

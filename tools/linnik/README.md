@@ -5,7 +5,9 @@ checks. They need Python 3 only, where a row says nothing else. The paper's Theo
 (`Linnik21500.linnik_21500`), is `hint_cert.py`'s, on the searches of `tree_cert.py`, `rev_cert.py`, `fill_cert.py`
 and `flip_cert.py`, with the curve and region of `gen_zone.py`. Its Theorem 1.1, at `21/10`
 (`Linnik21000.linnik_21000`), is `hint_cert.py`'s too, with the leaves' region of `gen_leafzone.py` and the resonant
-window's test of `res_test.py`. The scripts from `route_limits.py` to `type2_model.py` in the table are
+window's test of `res_test.py`. The Lean files of both certificates are opt-in to build: they are the Lake library
+`LinnikCert`, which only `lib/check/CheckLinnik.lean` imports (`docs/building.md`). The scripts from
+`route_limits.py` to `type2_model.py` in the table are
 measurements of the window route; in their rows "the paper" is the paper's version at `11/5`. The certificates at
 weaker exponents, with the windows of `g7d` and the parts of these scripts that wrote them, are no longer in the
 tree; they are in the git history (the paper's version at `11/5` at commit `49dc981`; the certificates at `11/5`,
@@ -61,8 +63,10 @@ It prints the search's cost, its counts, the number of parts and the comparison,
 | `21500` | `43/20` | `ghx` | `0.94847` | `3.4·10^7` | 1552 | 17 part files + `SieveHint21500.lean` + `Linnik21500.lean` |
 
 The kernel's check of the certificate is the build itself: each part file proves its parts by `decide +kernel`, and
-`Linnik21500.lean` assembles them into the theorem. The certificate at `21/10` (`hint_cert.py 21000`) is not in the
-check, for its plan takes hours on several machines.
+`Linnik21500.lean` assembles them into the theorem. That build is opt-in: `lake build CheckLinnik` runs it, for both
+certificates, and `.github/workflows/linnik.yml` does every week and on request; the default build and CI's build of a
+change leave the certificates out. The certificate at `21/10` (`hint_cert.py 21000`) is not in the check of
+`check_certificate.py`, for its plan takes hours on several machines.
 
 `gen_cgl_curve.py --check` regenerates the two files of the curve `g7d` (seconds). The curve `g7d`
 (`SieveCurve7D.g7d`) is the curve of the leaves' region of `gen_leafzone.py`, which Theorem 1.1 uses (the estimate

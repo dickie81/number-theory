@@ -18,7 +18,8 @@ an `L`-function with a zero in `Re s ≥ σ`, `|Im s| ≤ T`. `LFunction` is Mat
 
 The theorem is in the proofs of `Linnik21000.linnik_21000`, the Linnik paper's Theorem 1.1 (at `21/10`), and of
 `LinnikG7.linnik_g7d`, the classical deduction from the curve `g7d`, whose axioms are `propext`, `Classical.choice` and
-`Quot.sound` (`lib/check/CheckAll.lean`, `lib/check/Check.lean`), so it depends on those only. The paper's
+`Quot.sound` (`lib/check/CheckLinnik.lean`, whose build is opt-in, and `lib/check/Check.lean`), so it depends on
+those only. The paper's
 Theorem 1.2, at `43/20`, does not use it. It does not use the zero-free half-plane:
 `Eis.LFunction_ne_zero_of_re_gt` is not among the declarations its proof depends on.
 

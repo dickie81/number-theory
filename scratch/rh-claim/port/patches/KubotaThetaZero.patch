@@ -1,0 +1,12 @@
+--- a/lib/core/KubotaThetaZero.lean
++++ b/lib/core/KubotaThetaZero.lean
+@@ -97,8 +97,7 @@
+   refine memLp_two_of_lintegral hm ?_
+   have hfin : ∫⁻ q, ‖u q‖ₑ ^ 2 ∂(muR rhoG) < ⊤ := by
+     have h := hu2.eLpNorm_lt_top
+-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+-      hu2.aestronglyMeasurable] at h
++    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top] at h
+     simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two] at h
+     exact (ENNReal.rpow_lt_top_iff_of_pos (by norm_num)).1 h
+   have key : ∫⁻ p, ‖u (slAct g p)‖ₑ ^ 2 ∂(muR rhoG) = ∫⁻ p, ‖u p‖ₑ ^ 2 ∂(muR rhoG) :=
