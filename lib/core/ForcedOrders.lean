@@ -12,7 +12,7 @@ primes `g₀, g₁` and the cut `X″` of L7.1, which are inputs here.
 For `1 ≤ j ≤ m` the weight is `w_j = e_{j−1}`; here `j` is `J + 1` for `J : Fin m`, so `w_j = wj hc J`.
 * **At `p ∈ {g₀, g₁}`** (`FTypeG`): `−½·Σ_τ (Σ_{i<k+j−1} |a⁺_{j,τ,i}| + Σ_{c<m−j} |a⁻_{j,τ,c}|)`, with
   `a⁺ = σ_i + e_{j−1} − (nV − 1 − 2i)/2 − ((k + j − 1) − (m − j))/2`, `σ_i = v_i` for `i < k − 1` and `−b_{i−k+1}`
-  beyond, and `a⁻ = b_{j−1+c} − e_{j−1} − (t + 1 + 2c)/2`.
+  beyond, and `a⁻ = b_{j+c} − e_{j−1} − (t + 1 + 2c)/2`.
 * **At `p = d`** (`FRamD`): `−((k − 1)/2)·Σ_{t∈A} min(w_j(1, t), w_j(−1, t))`.
 * **At inert or signal `p ≤ X″`** (`FInert`): `Σ_ρ (k − 1)w_j(ρ)/(p² − 1)` if `p` is inert with `hP(p) = 1`, and
   otherwise `nP(p)⁻¹·Σ_{z∈Φ} lpF(p, nP(p), s ↦ (k − 1)·w_j(pos_p(z; s)))`, where (`lpF`)
@@ -67,9 +67,9 @@ def sig (H : R.HC) (i : ℕ) : ℤ :=
 noncomputable def aPlus (H : R.HC) (J : Fin R.m) (i : ℕ) : ℝ :=
   R.sig H i + H.e J - ((R.nV : ℝ) - 1 - 2 * i) / 2 - (((R.k : ℝ) + J) - ((R.m : ℝ) - J - 1)) / 2
 
-/-- `a⁻_{j,c} = b_{j−1+c} − e_{j−1} − (t + 1 + 2c)/2`, for `j = J + 1` and `c < m − j`. -/
+/-- `a⁻_{j,c} = b_{j+c} − e_{j−1} − (t + 1 + 2c)/2`, for `j = J + 1` and `c < m − j` (`b` is 0-based). -/
 noncomputable def aMinus (H : R.HC) (J : Fin R.m) (c : Fin (R.m - J - 1)) : ℝ :=
-  H.b ⟨J + c, by have := c.2; omega⟩ - H.e J - ((R.t : ℝ) + 1 + 2 * c) / 2
+  H.b ⟨J + 1 + c, by have := c.2; omega⟩ - H.e J - ((R.t : ℝ) + 1 + 2 * c) / 2
 
 /-- The forced order at `p ∈ {g₀, g₁}`:
 `FTypeG(j) = −½·Σ_τ (Σ_{i<k+j−1} |a⁺_{j,τ,i}| + Σ_{c<m−j} |a⁻_{j,τ,c}|)`, for `j = J + 1`. -/

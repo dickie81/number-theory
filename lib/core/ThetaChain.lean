@@ -14,12 +14,13 @@ unitary character of `𝔸_E^×/E^×` whose values lie in `L`, a homomorphism wi
 `a : Φ → ℤ` is read on the principal ideles: `χ(x) = ∏_{σ ∈ Φ} τ_σ(x/x̄)^{−a_σ}` (`Hecke.HasType`; the archimedean
 component is `z ↦ ∏ (z_σ/z̄_σ)^{a_σ}`, and `χ` is trivial on `E^×`). `UnramAway S` and `Tame S` say that `χ` kills the
 local units away from `S`, and the principal units at the places of `S`. The lift characters `μ_{0,j}` (type `−e_j`)
-and the splitting character `χ_ψ` (type `2`, unramified) form one existential bundle (`LiftChars`). Not encoded:
+form one existential bundle (`LiftChars`). Not encoded:
 triviality on `𝔸_F^×` (Mathlib has no base change of finite adeles at the pin) and the tie `μ_{0,j} = ω^{−2(j+1)}` on
 the residue units at `g` (it lives with the level data, spec-2 2a).
 
-**Splitting characters** (L5.2). For the determinant idele `d` of a class, `ρ_j = (μξ)(d)⁻¹·χ_ψ(d)^{−N_{j+1}/2}`
-(`rhoIn`) and `ρ′_j = (μξ)(d)·χ_ψ(d)^{N_j/2}` (`rhoOut`). The determinant idele needs the frames at `SG ∪ Q`, which the
+**Splitting characters** (L5.2). For the determinant idele `d` of a class, `ρ_j = (μξ)(d)⁻¹` (`rhoIn`) and
+`ρ′_j = (μξ)(d)` (`rhoOut`), as in the archive's step kernel: no `χ_ψ` (its powers would cancel only against a
+`chiFac` on the theta, which `thMoved` does not carry). The determinant idele needs the frames at `SG ∪ Q`, which the
 decorated lattices of `HermClasses` do not carry; it is a parameter of the chain data (`Data.dI`).
 
 **Theta functions** (spec-2, 1a and 1e). On `V = (Φ × Fin b × Fin a → ℂ)` (`Amb`): the form
@@ -31,9 +32,12 @@ operators `U_x G(z) = G(z + x)·exp(−πH(z, x) − πH(x, x)/2)` (`opU`), the 
 archive's moved theta `θ_{N,N′} = Iop(La(N, std′), La(N, N′)) (Iop(La(std, std′), La(N, std′)) θ_std)` (`thMoved`):
 **no `χ`, no `chiFac`** (they cancel in the jets, spec-2 1b). The constants `s, sd, δ, 𝔄, cD` and the embedding
 `σ₀ : L → ℂ` are pinned by the setting and passed in `TP`. The base theta `θ_std` is **existential** (`ThetaStd`):
-nonzero, in `Th(La(std, std′))`, with every jet in `σ₀(L)`.
+nonzero, in `Th(La(std, std′))`; the rationality of the jets of the coset thetas that `κ_j` sums is a condition on
+the chain data (`Data.θ_rat`), on the archive's range only.
 
-**Finite places** (spec-2, 1b, 1e). The coset theta `θ_{N,N′,x} = α(s)·U_{−s}(xiS(1_{BC}) θ_{N,N′})`, `s = ι(x)`, with
+**Finite places** (spec-2, 1b, 1e). The coset theta `θ_{N,N′,x} = vol^{−1/2}·α(s)·U_{−s}(xiS(1_{BC}) θ_{N,N′})`,
+`s = ι(liftW x)` with `liftW x` a lift of the coset into the half-lattice `HA` (`Data.HA`, the archive's `halfAO`, a
+parameter), so `vol^{−1/2}` enters twice, as in the archive; with
 the finite Heisenberg sum `xiS Φ e = Σ_{y ∈ SB} Φ̂(y)·α(y)·U_y e`, `Φ̂(y) = vol^{−1/2}(vol/|SA|)·Σ_{t ∈ SA} Φ(t)
 e^{2πi Im H(t, y)}` (`xiS`, `thInd`). The finite data `SA, SB, BC, vol` (the archive's `halfAO/halfBO/repsOf`) are a
 **parameter** (`XiData`). The cosets are `cA⁻¹H_S/cB·H_S` with `H_S = {x : x(N_P) ⊆ N′_P, P ∈ S}` (`homAt`, read
@@ -43,7 +47,7 @@ globally: `x(N) ⊆ N′_P`, `locMem`). The local factor `Ξ = Π_P XiAt_P` (spe
 
 **Jets and `κ_j`** (spec-2 1e). `jetVal θ m = cD^m·∂^m θ(0)` (`pd`, holomorphic iterated derivatives), brought to `L`
 by `desc = σ₀⁻¹` (`0` off `σ₀(L)`). The jet operator multiplies by `Π_τ det(x_τ)^{n_τ}`, substitutes
-`x_{τ,s,α} ↦ Σ_β y_{τ,β,s}·∂_{τ,β,α}` (`jetSub`) and replaces each `∂^m` by its jet value (`jetEval`); it is linear
+`x_{τ,r,c} ↦ Σ_β y_{τ,β,c}·∂_{τ,β,r}` (row `r`, column `c`; `jetSub`) and replaces each `∂^m` by its jet value (`jetEval`); it is linear
 (`jetOp`). Then `κ_j(c, c′) = Σ_{x} Ξ(x)·ρ_j(c)ρ′_j(c′)·Jet(θ_{N,N′,x})` (`kappa`). **Determinant powers.** In the
 library's convention (`WeylFock`: `VV λ` stores `F` for the function `det^{λ_{n−1}}·F`), the spec's output factor
 `Π det(y′)^{−s÷_j}` is the implicit factor of `VV(λ_{j+1})`, as `λ_{j+1, N_{j+1}−1} = −s÷_j` (L3.1), and the input
@@ -111,18 +115,14 @@ def Hecke.HasType (χ : Hecke E L) (a : Φ → ℤ) : Prop :=
   ∀ x : Eˣ, (χ.toHom (FiniteAdeleRing.unitEmbedding (𝓞 E) E x) : L) =
     ∏ σ, τ σ ((x : E) / IsCMField.complexConj E (x : E)) ^ (-a σ)
 
-/-- The lift characters `μ_{0,j}` (`j < m`; type `−e_j`, unramified away from `Sg`, tame there) and the splitting
-character `χ_ψ` (type `2`, everywhere unramified), L5.1. Existential: L7 quantifies over it. -/
+/-- The lift characters `μ_{0,j}` (`j < m`; type `−e_j`, unramified away from `Sg`, tame there), L5.1. Existential:
+L7 quantifies over it. -/
 structure LiftChars (m : ℕ) (e : ℕ → Φ → ℤ) (Sg : Set (HeightOneSpectrum (𝓞 E))) where
   /-- The lift characters `μ_{0,j}`. -/
   mu : ℕ → Hecke E L
-  /-- The splitting character `χ_ψ`. -/
-  chiPsi : Hecke E L
   mu_type : ∀ j < m, (mu j).HasType τ (-e j)
   mu_unram : ∀ j < m, (mu j).UnramAway Sg
   mu_tame : ∀ j < m, (mu j).Tame Sg
-  chiPsi_type : chiPsi.HasType τ 2
-  chiPsi_unram : chiPsi.UnramAway ∅
 
 end Hecke
 
@@ -132,13 +132,13 @@ section Split
 
 variable {E L : Type*} [Field E] [NumberField E] [Field L]
 
-/-- `ρ_j(c) = (μ_{0,j}ξ)(d)⁻¹·χ_ψ(d)^{−N_{j+1}/2}` at the determinant idele `d` of `c`; `b = N_{j+1}`. -/
-def rhoIn (μ χψ : Hecke E L) (b : ℕ) (d : Ideles E) : L :=
-  ((μ.toHom d)⁻¹ * χψ.toHom d ^ (-((b / 2 : ℕ) : ℤ)) : Lˣ)
+/-- `ρ_j(c) = (μ_{0,j}ξ)(d)⁻¹` at the determinant idele `d` of `c`. -/
+def rhoIn (μ : Hecke E L) (d : Ideles E) : L :=
+  ((μ.toHom d)⁻¹ : Lˣ)
 
-/-- `ρ′_j(c′) = (μ_{0,j}ξ)(d′)·χ_ψ(d′)^{N_j/2}` at the determinant idele `d′` of `c′`; `a = N_j`. -/
-def rhoOut (μ χψ : Hecke E L) (a : ℕ) (d : Ideles E) : L :=
-  (μ.toHom d * χψ.toHom d ^ (a / 2) : Lˣ)
+/-- `ρ′_j(c′) = (μ_{0,j}ξ)(d′)` at the determinant idele `d′` of `c′`. -/
+def rhoOut (μ : Hecke E L) (d : Ideles E) : L :=
+  (μ.toHom d : Lˣ)
 
 /-- The determinant power `s♯_j(τ) = e_j(τ) − N_{j+1}/2` (`b = N_{j+1}`). -/
 def sSharp {Φ : Type*} (e : Φ → ℤ) (b : ℕ) (σ : Φ) : ℤ := e σ - (b / 2 : ℕ)
@@ -230,9 +230,10 @@ noncomputable def hatS (s : ℝ) (D : XiData ι) (F : (ι → ℂ) → ℂ) (y :
 noncomputable def xiS (s sd : ℝ) (D : XiData ι) (F : (ι → ℂ) → ℂ) (e : (ι → ℂ) → ℂ) : (ι → ℂ) → ℂ :=
   ∑ y ∈ D.SB, (hatS s D F y * al s sd y) • opU s y e
 
-/-- The coset theta `α(x)·U_{−x}(xiS(1_{BC}) e)` at the point `x = ι(lift)` of a coset (spec-2 1b). -/
+/-- The coset theta `vol^{−1/2}·α(x)·U_{−x}(xiS(1_{BC}) e)` at the point `x = ι(lift)` of a coset (spec-2 1b; the
+outer `vol^{−1/2}` is the archive's, on top of the one in `hatS`). -/
 noncomputable def thInd (s sd : ℝ) (D : XiData ι) (e : (ι → ℂ) → ℂ) (x : ι → ℂ) : (ι → ℂ) → ℂ :=
-  al s sd x • opU s (-x) (xiS s sd D (D.BC.indicator 1) e)
+  (((Real.sqrt D.vol)⁻¹ : ℝ) : ℂ) • al s sd x • opU s (-x) (xiS s sd D (D.BC.indicator 1) e)
 
 variable [DecidableEq ι]
 
@@ -307,10 +308,11 @@ section Jets
 variable {E L : Type*} [Field E] [NumberField E] [Field L] {Φ : Type*} [Fintype Φ] [DecidableEq Φ]
   {a b : ℕ}
 
-/-- The substitution `x_{τ,s,α} ↦ Σ_β y_{τ,β,s}·∂_{τ,β,α}`: polynomials in the `∂_{τ,β,α}` with coefficients
-polynomials in `y`. -/
+/-- The substitution `x_{τ,r,c} ↦ Σ_β y_{τ,β,c}·∂_{τ,β,r}` (`r` the row, `c` the column of `x`; as matrices
+`x ↦ ∂ᵀ·y_{·,<a}`, so column weights pass to `y`): polynomials in the `∂_{τ,β,r}` with coefficients polynomials in
+`y`. -/
 noncomputable def jetSub (hab : a ≤ b) : Pol Φ a L →ₐ[L] MvPolynomial (Φ × Fin b × Fin a) (Pol Φ b L) :=
-  aeval fun p => ∑ β : Fin b, C (X (p.1, β, Fin.castLE hab p.2.1)) * X (p.1, β, p.2.2)
+  aeval fun p => ∑ β : Fin b, C (X (p.1, β, Fin.castLE hab p.2.2)) * X (p.1, β, p.2.1)
 
 /-- Replace each monomial `∂^m` by the scalar `J(m)`. -/
 noncomputable def jetEval (J : (Φ × Fin b × Fin a →₀ ℕ) → L) :
@@ -347,29 +349,36 @@ def XiInv (S : Set (HeightOneSpectrum (𝓞 E))) (cB : ℕ) (N : Submodule (𝓞
     (N' : Submodule (𝓞 E) (Fin b → E)) (Xi : Matrix (Fin b) (Fin a) E → L) : Prop :=
   ∀ x, ∀ y ∈ scl (cB : E) (homAt S N N'), Xi (x + y) = Xi x
 
+/-- The representative lift of a coset `x` (the archive's `liftW`): a chosen `s ∈ HA` with `s − x ∈ cB·H_S` (Hilbert
+choice, as the archive's `ε`; arbitrary if there is none). `HA` is the half-lattice (the archive's `halfAO`, not
+transcribed: a parameter). -/
+noncomputable def liftW (S : Set (HeightOneSpectrum (𝓞 E))) (cA cB : ℕ) (N : Submodule (𝓞 E) (Fin a → E))
+    (N' : Submodule (𝓞 E) (Fin b → E)) (HA : Set (Matrix (Fin b) (Fin a) E)) (x : Cosets S cA cB N N') :
+    Matrix (Fin b) (Fin a) E :=
+  Classical.epsilon fun s => s ∈ HA ∧ s - (x.out : Matrix (Fin b) (Fin a) E) ∈ scl (cB : E) (homAt S N N')
+
 variable (τ : Φ → (E →+* L)) (P : TP E L Φ)
 
 /-- The step kernel `κ(c, c′) = Σ_{x ∈ cA⁻¹H_S/cB·H_S} Ξ(x)·r·Jet(θ_{N,N′,x})`, with `r = ρ_j(c)ρ′_j(c′)`,
-`θ_{N,N′,x} = thInd(θ_{N,N′})(ι x)` and `θ_{N,N′} = thMoved θ_std` (spec-2 1e). -/
+`θ_{N,N′,x} = thInd(θ_{N,N′})(ι(liftW x))` (the lift in the half-lattice `HA`) and `θ_{N,N′} = thMoved θ_std`
+(spec-2 1e). -/
 noncomputable def kappa (hab : a ≤ b) (n : Φ → ℕ) (θ : Amb Φ a b → ℂ) (S : Set (HeightOneSpectrum (𝓞 E)))
-    (cA cB : ℕ) (D : XiData (Φ × Fin b × Fin a)) (Xi : Matrix (Fin b) (Fin a) E → L) (r : L)
+    (cA cB : ℕ) (D : XiData (Φ × Fin b × Fin a)) (HA : Set (Matrix (Fin b) (Fin a) E))
+    (Xi : Matrix (Fin b) (Fin a) E → L) (r : L)
     (N : Submodule (𝓞 E) (Fin a → E)) (N' : Submodule (𝓞 E) (Fin b → E)) : Pol Φ a L →ₗ[L] Pol Φ b L :=
   ∑ᶠ x : Cosets S cA cB N N', (Xi (x.out : Matrix (Fin b) (Fin a) E) * r) •
-    jetOp P hab n (thInd P.s P.sd D (thMoved τ P θ N N') (iota τ P (x.out : Matrix (Fin b) (Fin a) E)))
+    jetOp P hab n (thInd P.s P.sd D (thMoved τ P θ N N') (iota τ P (liftW S cA cB N N' HA x)))
 
 variable [IsCMField E]
 
 /-- The base theta `θ_std` for the sizes `(a, b)` (spec-2 1e, item 2): existential, a nonzero element of
-`Th(La(std, std′))` all of whose jets, for every pair of lattices and every coset datum, lie in `σ₀(L)`
-(`JetsRat`). -/
+`Th(La(std, std′))`. Its rationality (`JetsRat`) holds only on the archive's range (self-dual lattices, points of
+`cA⁻¹H_S`, the pinned coset datum), so it is a condition on the chain data (`Data.θ_rat`), not stated here. -/
 structure ThetaStd (a b : ℕ) where
   /-- The base theta. -/
   θ : Amb Φ a b → ℂ
   ne_zero : θ ≠ 0
   mem : θ ∈ Th P.s P.sd (La τ P (stdLat (E := E) (n := a)) (stdLat (E := E) (n := b)))
-  rat : ∀ (D : XiData (Φ × Fin b × Fin a)) (N : Submodule (𝓞 E) (Fin a → E)) (N' : Submodule (𝓞 E) (Fin b → E))
-    (x : Amb Φ a b) (m : Φ × Fin b × Fin a →₀ ℕ),
-    jetVal P (thInd P.s P.sd D (thMoved τ P θ N N') x) m ∈ Set.range P.σ₀
 
 end Jets
 
@@ -494,7 +503,7 @@ abbrev Cls (n : ℕ → ℕ) (ST SG : Finset (HeightOneSpectrum (𝓞 E))) (β :
 variable (τ : Φ → (E →+* L))
 
 /-- The data of a theta chain: ranks `N_j`, the theta constants, the place sets, the level data, the weights `λ_j`
-and `e_j`, the characters `μ_{0,j}ξ` and `χ_ψ`, the determinant ideles, the base thetas, the coset parameters and
+and `e_j`, the characters `μ_{0,j}ξ`, the determinant ideles, the base thetas, the coset parameters and
 the local factors `Ξ`. L7 builds it from a setting and a `ChIdx`. -/
 structure Data where
   /-- The ranks `N_j`. -/
@@ -518,8 +527,6 @@ structure Data where
   lam : ∀ j, Φ → Fin (n j) → ℤ
   /-- The characters `μ_{0,j}ξ_μ`. -/
   mu : ℕ → Hecke E L
-  /-- The splitting character `χ_ψ`. -/
-  chiPsi : Hecke E L
   /-- The determinant ideles `d(N_c)` (L5.2). -/
   dI : ∀ j, Cls n ST SG β Λ j → Ideles E
   /-- The base thetas. -/
@@ -530,9 +537,17 @@ structure Data where
   cB : ℕ → ℕ
   /-- The finite Heisenberg data. -/
   XD : ∀ j, Cls n ST SG β Λ j → Cls n ST SG β Λ (j + 1) → XiData (Φ × Fin (n (j + 1)) × Fin (n j))
+  /-- The half-lattices in which the coset points are lifted (`liftW`; the archive's `halfAO`). -/
+  HA : ∀ j, Cls n ST SG β Λ j → Cls n ST SG β Λ (j + 1) → Set (Matrix (Fin (n (j + 1))) (Fin (n j)) E)
   /-- The local factors `Ξ_j(c, c′)` (`PsiAt` at the last step). -/
   Xi : ∀ j, Cls n ST SG β Λ j → Cls n ST SG β Λ (j + 1) → Matrix (Fin (n (j + 1))) (Fin (n j)) E → L
   Xi_inv : ∀ j c c', XiInv S (cB j) (c.2.N) (c'.2.N) (Xi j c c')
+  /-- `JetsRat` on the archive's range: the jets of every coset theta that `kappa` sums (the class lattices, the
+  lifted coset points `liftW x` of `cA⁻¹H_S`, the data's own `XD`) lie in `σ₀(L)`. -/
+  θ_rat : ∀ j (c : Cls n ST SG β Λ j) (c' : Cls n ST SG β Λ (j + 1)) (x : Cosets S (cA j) (cB j) c.2.N c'.2.N)
+    (m : Φ × Fin (n (j + 1)) × Fin (n j) →₀ ℕ),
+    jetVal P (thInd P.s P.sd (XD j c c') (thMoved τ P (θ j).θ c.2.N c'.2.N)
+      (iota τ P (liftW S (cA j) (cB j) c.2.N c'.2.N (HA j c c') x))) m ∈ Set.range P.σ₀
 
 /-- The theta chain of the data: `κ_j(c, c′)` with `r = ρ_j(c)ρ′_j(c′)` and the input power `nIn`. -/
 noncomputable def Data.chain (D : Data τ) : Chain Φ L where
@@ -540,8 +555,8 @@ noncomputable def Data.chain (D : Data τ) : Chain Φ L where
   C := Cls D.n D.ST D.SG D.β D.Λ
   mass _ c := mass c.2
   kappa j c c' := kappa τ D.P (D.mono j) (nIn (D.e j) (D.n (j + 1)) (D.lam j)) (D.θ j).θ D.S (D.cA j) (D.cB j)
-    (D.XD j c c') (D.Xi j c c')
-    (rhoIn (D.mu j) D.chiPsi (D.n (j + 1)) (D.dI j c) * rhoOut (D.mu j) D.chiPsi (D.n j) (D.dI (j + 1) c'))
+    (D.XD j c c') (D.HA j c c') (D.Xi j c c')
+    (rhoIn (D.mu j) (D.dI j c) * rhoOut (D.mu j) (D.dI (j + 1) c'))
     c.2.N c'.2.N
 
 end Data

@@ -11,7 +11,8 @@ branching space is `X′ = E^n`.
 
 **The interlacing weight** (L6.1, `sg`, `sgT`). `sg = sgHC − ρ_n` with
 `sgHC = (v; for each q < m: −b_q, −e_q + (t−1)/2, …, −e_q − (t−1)/2)` and `ρ_n(i) = (n−1)/2 − i`, then
-`sgT = sg − m·h`, `h = (t+1)/2`. All entries are integers for the spec's ranks (`n = N_m − 1` odd, `t` odd). As in
+`sgT = sg` (the archive's `sgTrue = sg − m·h` with its `sgHC` carrying an extra `m(t+1)/2`; the shifts cancel, so
+the block-`q` entries of `sgT` match `λ_m`). All entries are integers for the spec's ranks (`n = N_m − 1` odd, `t` odd). As in
 `WeylFock.wt`, the parameter families `v`, `b`, `e` are indexed by `ℕ` (extend by zero).
 
 **The branching map** (L6.1, `br`). `br = (c_Br·∏_τ τ(tz)^{−nBr(λ_τ, σ_τ)})·Π_σ ∘ coefLast`, where `coefLast` takes
@@ -71,9 +72,10 @@ def rhoW (i : Fin n) : ℤ := ((n - 1) / 2 : ℕ) - (i : ℤ)
 /-- The interlacing weight `sg = sgHC − ρ_{N_m−1}`. -/
 def sg (k t : ℕ) (v b e : Φ → ℕ → ℤ) : Φ → Fin n → ℤ := fun ρ i => sgHC k t v b e ρ i - rhoW i
 
-/-- `sgT = sg − m·h`, `h = (t+1)/2`: the weight of the rows and of the branching map. Meant for L7. -/
-def sgT (k t m : ℕ) (v b e : Φ → ℕ → ℤ) : Φ → Fin n → ℤ := fun ρ i =>
-  sg k t v b e ρ i - ((m * ((t + 1) / 2) : ℕ) : ℤ)
+/-- `sgT = sg`: the weight of the rows and of the branching map. Meant for L7. The library's `sg` (whose `sgHC` omits
+the archive's constant `m(t+1)/2`) already equals the archive's `sgTrue = sg − m·h`, so no shift is applied; `m` is
+kept as an (unused) argument so that callers do not change. -/
+def sgT (k t _m : ℕ) (v b e : Φ → ℕ → ℤ) : Φ → Fin n → ℤ := sg k t v b e
 
 end Weight
 
