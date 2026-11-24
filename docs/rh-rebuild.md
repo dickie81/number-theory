@@ -538,7 +538,22 @@ complex `K` with heights averaged over the places (`HermitianLattice.frame`). In
    It is still equivalent to the gap bound, as above: frames of rank one satisfy it whenever that bound holds.
 2. **Self-contained components:**
    - the sizes of the auxiliary primes;
-   - the frame condition at one complex place (`LinkS`, about 100K archive lines);
+   - the frame condition at one complex place (`LinkS`, about 100K archive lines). The step from it to (RS) is done
+     (24 November 2026, `FrameAtPlace`, 495 lines, 101 of them documentation; the linear algebra takes 265 and the
+     frames 165):
+     - `FrameAtPlace.FrameCond.codim_le`: if maps `B_ω : V_ω → W` are nearly isometric (I) and nearly tight (T), and
+       `Σ_ω codim N_ω ≤ ε′Σ_ω dim V_ω`, then `codim Σ_ω B_ω(N_ω) ≤ (η + 2(√e + ε′)/(1 − √e))·dim W`. The proof is
+       Bessel's inequality and Cauchy–Schwarz for traces;
+     - `PlaceLattice.spread_of_frameCond` and `HermitianLattice.spread_of_frameCond`: the condition for multiples of
+       the components `π_w ∘ φ_ω` of a frame's maps at one place gives (RS), with `α = (1 − δ)⁻¹(η + 2√e/(1 − √e))`
+       and `β = (1 − δ)⁻¹·2/(1 − √e)`. For `e ≤ 1/4` these are no larger than the archive's `(1 − δ)⁻¹(η + 4√e)` and
+       `4(1 − δ)⁻¹`;
+     - ranks are read at the place, as spans of the class are balanced. The components are projections, so no
+       `O_K`-linearity is used, and the image of the span at the place need only lie in the span of the image there.
+
+     What remains is (I) and (T) for the construction's period maps at one complex place. A complex-linear component
+     and its realification have the same `e` and `η`, but formalising that transfer needs traces and adjoints under
+     `restrictScalars`, which Mathlib lacks;
    - the slopes of algebraic modular forms through the mass formula (250K);
    - local divisibility at inert primes (`LinkG`, 160K), given the Weil-representation statements.
 3. **The theta layer**, with the theta constants and Howe duality first taken as stated inputs.

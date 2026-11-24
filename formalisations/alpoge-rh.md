@@ -137,6 +137,23 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   at one place has rank `d·[K:ℚ]`. `HermitianLattice.frame`: hermitian lattices and maps that commute with `O_K` form
   frames, with heights averaged over the places. These are the frames of the archive's `ch_top`, so the frames that
   the frontiers ask for (`ZetaBalance.LatticeData`) can be the archive's own.
+- **The frame condition at one place.** `FrameAtPlace.FrameCond.codim_le`: let maps `B_ω : V_ω → W` of
+  finite-dimensional real or complex inner product spaces be nearly isometric and nearly tight
+  (`FrameAtPlace.FrameCond`):
+  - `Σ_ω ‖B_ω*B_ω − 1‖²_HS ≤ e·Σ_ω dim V_ω`, with `e < 1`;
+  - `dim W·tr Q² ≤ (1 + η)(tr Q)²` for `Q = Σ_ω B_ω B_ω*`, with `η ≥ 0`.
+
+  If subspaces `N_ω ≤ V_ω` have total codimension at most `ε'·Σ_ω dim V_ω`, with `0 ≤ ε' ≤ 1`, then `Σ_ω B_ω(N_ω)`
+  has codimension at most `(η + 2(√e + ε')/(1 − √e))·dim W`. The proof is Bessel's inequality and Cauchy–Schwarz for
+  traces. `FrameAtPlace.FrameCond.codim_le_padded` measures it in a subspace of dimension at least `(1 − δ)·dim W`,
+  at a cost of `(1 − δ)⁻¹`.
+- **Rank spreading from one place.** `PlaceLattice.spread_of_frameCond` and `HermitianLattice.spread_of_frameCond`:
+  if multiples of the components of a frame's maps at one place meet that condition, the frame spreads ranks
+  (`SlopeFrame.Frame.RankSpread`, the hypothesis (RS) of the frame inequality). The constants are
+  `α = (1 − δ)⁻¹(η + 2√e/(1 − √e))` and `β = (1 − δ)⁻¹·2/(1 − √e)`. Ranks are read at the one place, as the spans of
+  the class are balanced. The components are projections of the maps, so no `O_K`-linearity is used. For hermitian
+  frames the place is a complex place of `K`, and the components are maps of real inner product spaces; a
+  complex-linear map and its realification have the same `e` and `η`.
 
 ## How the statements differ from the archive's
 
@@ -150,6 +167,9 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   `ζ` and every `χ`. It does not use the archive's twist of the Artin map for odd `χ`, which makes complex
   conjugation `(−1, −1, 1)`; that twist only fixes the coordinates in which the shares of the translates are asked
   for. The characters trivial on `A₀` are found by Fourier analysis on `A`, not counted.
+- **The constants of rank spreading.** The archive's frame condition gives `α = (1 − δ)⁻¹(η + 4√e)` and
+  `β = 4(1 − δ)⁻¹`. The library's, `(1 − δ)⁻¹(η + 2√e/(1 − √e))` and `(1 − δ)⁻¹·2/(1 − √e)`, are no larger when
+  `e ≤ 1/4`.
 
 ## How it was formalised
 

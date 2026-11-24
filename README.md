@@ -40,7 +40,7 @@ CI's build of a change, and a workflow of their own checks them every week.
 
 | Path | Contents |
 |---|---|
-| `lib/core` | The library's modules that need only Mathlib: 498 files. |
+| `lib/core` | The library's modules that need only Mathlib: 499 files. |
 | `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 1880 files, 1225 of them the part and cell files of the certificates `SieveHint<tag>`. The certificates and the theorems on them, 1232 files, are opt-in: the Lake library `LinnikCert`, which only `CheckLinnik.lean` imports. |
 | `lib/dh` | The Davenport–Heilbronn function and its zeros: 68 files. |
 | `lib/zeta23` | The modules that also use `zeta23`: 10 files. |
