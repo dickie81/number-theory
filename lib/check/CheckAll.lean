@@ -455,6 +455,7 @@ import CMHost
 import HermForms
 import ForcedOrders
 import PeriodTarget
+import ThetaChain
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2277,6 +2278,10 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms PeriodTarget.per_eq_classSum
 #print axioms PeriodTarget.mem_Ctgt
 #print axioms PeriodTarget.Nsrc_le
+#print axioms ThetaChain.opU_zero
+#print axioms ThetaChain.Chain.comp_zero
+#print axioms ThetaChain.Chain.lift_add
+#print axioms ThetaChain.detShift_wt_succ
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
 #print axioms ZetaBalance.rhAndGRH_of_latticeBound
 #print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound

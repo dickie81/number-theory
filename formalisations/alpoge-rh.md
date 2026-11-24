@@ -194,6 +194,10 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   - Periods and target: the interlacing weight, the branching map, the period, the integral rows, the twisted
     target lattice `C_u` and the sources `N_ω` (`PeriodTarget.coeff_coefLast`, `PeriodTarget.per_eq_classSum`,
     `PeriodTarget.mem_Ctgt`, `PeriodTarget.Nsrc_le`).
+  - The theta chain: Hecke and splitting characters, theta functions by the archive's recipe from an existential
+    standard theta, jets, the kernels `κ_j`, the lifts and the chain; the local factors at the auxiliary places
+    are a parameter with their invariance (`ThetaChain.opU_zero`, `ThetaChain.Chain.comp_zero`,
+    `ThetaChain.Chain.lift_add`, `ThetaChain.detShift_wt_succ`).
 
 ## How the statements differ from the archive's
 
