@@ -452,6 +452,7 @@ import FrameRescale
 import HermClasses
 import WeylFock
 import CMHost
+import HermForms
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2263,6 +2264,10 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ZetaBalance.Setting.f_eq
 #print axioms ZetaBalance.Setting.card_gal
 #print axioms ZetaBalance.Setting.τ_eq
+#print axioms HermForms.conj_pet
+#print axioms HermForms.dOp_mem
+#print axioms HermForms.gram_isHermitian
+#print axioms HermForms.source_G
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
 #print axioms ZetaBalance.rhAndGRH_of_latticeBound
 #print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound

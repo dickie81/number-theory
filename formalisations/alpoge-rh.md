@@ -185,6 +185,9 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     `WeylFock.DeltaOL_subset_DeltaN_std`).
   - The host: the CM field of a setting, of degree `4|A|`, and its CM type (`ZetaBalance.Setting.f_eq`,
     `ZetaBalance.Setting.card_gal`, `ZetaBalance.Setting.τ_eq`).
+  - Forms: equivariant functions on decorated lattices with Weyl-module values, the integral forms, the Petersson
+    form, the diamond operators and the ramified cut; the source as a `KLattice` with metrics `σ_v(H_ω)`
+    (`HermForms.conj_pet`, `HermForms.dOp_mem`, `HermForms.gram_isHermitian`, `HermForms.source_G`).
 
 ## How the statements differ from the archive's
 
