@@ -198,6 +198,11 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     standard theta, jets, the kernels `κ_j`, the lifts and the chain; the local factors at the auxiliary places
     are a parameter with their invariance (`ThetaChain.opU_zero`, `ThetaChain.Chain.comp_zero`,
     `ThetaChain.Chain.lift_add`, `ThetaChain.detShift_wt_succ`).
+  - The frontier: `ZetaBalance.rhAndGRH_of_sharpBound` gives RH with GRH from `ZetaBalance.SharpBound`, through a
+    proved bridge to the six-term interface (`ZetaBalance.SharpData.nonempty_sixTermData`,
+    `ZetaBalance.SharpData.toSixTermData_Fo`): defined sources, target and periods, the forced orders fixed, and
+    nonnegative slacks. The theta chain still enters as a parameter (`ZetaBalance.ChainHook`), so the frontier is
+    not yet sharp; wiring `ThetaChain.Data.chain` in is next.
 
 ## How the statements differ from the archive's
 
