@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1898 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1912 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 211 | 745 |
+| `lib/core` | 215 | 759 |
 | `lib/pnt` | 355 | 1040 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -254,6 +254,12 @@ note of `formalisations/` that names it, if one does.
 
 - `CAClosed.cA_zero`: `c₀ = −¼ log(27/4)` ([note](../formalisations/d2-density.md))
 - `CAClosed.cA_one`: `c₁ = ¾ log(3/4)` ([note](../formalisations/d2-density.md))
+
+#### `CMHost`: The CM host of a setting
+
+- `ZetaBalance.Setting.f_eq`: `f = |Φ| = 2|A|`. ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.Setting.card_gal`: `|Gal(E/ℚ)| = [E  ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.Setting.τ_eq`: `τ` does not depend on the lift ([note](../formalisations/alpoge-rh.md))
 
 #### `CertInstances`: The certificate theorems as instances of the weighted certificate
 
@@ -500,6 +506,13 @@ note of `formalisations/` that names it, if one does.
 - `PlaceLattice.spread_of_frameCond`: Rank spreading from the frame condition at one place ([note](../formalisations/alpoge-rh.md))
 - `HermitianLattice.spread_of_frameCond`: Rank spreading for hermitian frames from the frame condition at one complex place ([note](../formalisations/alpoge-rh.md))
 
+#### `FrameRescale`: Rescaled frames, extreme slopes, duals and saturation
+
+- `SlopeFrame.Frame.Spread.loss_le_rescale`: The frame inequality in the archive's units ([note](../formalisations/alpoge-rh.md))
+- `SlopeFrame.SlopeLattice.muMax_rescale`: `μ_max` rescales ([note](../formalisations/alpoge-rh.md))
+- `HermitianLattice.dual_anti`: Duality reverses inclusion ([note](../formalisations/alpoge-rh.md))
+- `HermitianLattice.saturation_top`: Saturating in the whole space changes nothing ([note](../formalisations/alpoge-rh.md))
+
 #### `GapBound`: The pole-overlap gap bound
 
 - `WeilForm.simple_of_pole_overlap`: Simplicity from a nonzero pole overlap ([note](../formalisations/weil-positivity.md))
@@ -585,6 +598,14 @@ note of `formalisations/` that names it, if one does.
 - `HasseEisenstein.card_points_of_mod_three_eq_two`: `y² = x³ + D` has `q + 1` points when `q ≡ 2 (mod 3)`
 - `HasseEisenstein.exists_eisenstein_trace`: The Frobenius of `y² = x³ + D` is an Eisenstein integer of norm `q`
 - `HasseEisenstein.abs_trace_le`: Hasse's bound for `y² = x³ + D`
+
+#### `HermClasses`: Hermitian spaces, decorated unimodular lattices and their classes
+
+- `HermClasses.instMulActionDeco`: The action is a group action ([note](../formalisations/alpoge-rh.md))
+- `HermClasses.Lsh_of_isEmpty`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `HermClasses.dia_smul`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `HermClasses.mass_mk`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `HermClasses.act_ext_eLast`: Sanity ([note](../formalisations/alpoge-rh.md))
 
 #### `HermitianLattice`: Hermitian lattices over a totally complex field
 
@@ -1331,6 +1352,11 @@ note of `formalisations/` that names it, if one does.
 - `WengRankTwo.rh_wengNum`: The Riemann hypothesis for the numerator
 - `WengRankTwo.rh_weng`: The Riemann hypothesis for Weng's rank-2 zeta function of `ℚ` ([note](../formalisations/weil-positivity.md))
 - `WengRankTwo.differenced_real`: The differenced `Ξ`
+
+#### `WeylFock`: Weights, dual Weyl modules, the Fock form and the lattices `Δ_N`
+
+- `WeylFock.hw_mem_nabla`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `WeylFock.DeltaOL_subset_DeltaN_std`: Sanity ([note](../formalisations/alpoge-rh.md))
 
 #### `WindowForm`: The prime-side window form: its algebra, its certification logic, and the counterexample mechanism
 

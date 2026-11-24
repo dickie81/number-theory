@@ -173,6 +173,18 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   - The index and the slope: for `O_K`-lattices `N ≤ M`, `μ(N) = μ(M) − log [M : N]/rk`, with `rk = [K:ℚ]·|ι|`
     (`KLattice.slope_withLattice`, `KLattice.rk_top`).
   - Scaling the metrics by `c > 0` lowers the degree by `(rk/2)·log c` (`KLattice.deg_scale`).
+- **The layers of the sharp frontier, in progress** (`docs/rh-rebuild.md`, "Next"). Each defines objects that the
+  frontier will state; their sanity theorems guard the definitions.
+  - Units: frames in the archive's units, with every hypothesis and the conclusion of the frame inequality
+    unchanged (`SlopeFrame.Frame.Spread.loss_le_rescale`, `SlopeFrame.SlopeLattice.muMax_rescale`); duals and
+    saturation (`HermitianLattice.dual_anti`, `HermitianLattice.saturation_top`).
+  - Classes: decorated unimodular hermitian lattices, the group acting on them, classes and mass weights
+    (`HermClasses.instMulActionDeco`, `HermClasses.Lsh_of_isEmpty`, `HermClasses.dia_smul`, `HermClasses.mass_mk`,
+    `HermClasses.act_ext_eLast`).
+  - Coefficients: dual Weyl modules as polynomials, the Fock form and the lattices `Δ_N` (`WeylFock.hw_mem_nabla`,
+    `WeylFock.DeltaOL_subset_DeltaN_std`).
+  - The host: the CM field of a setting, of degree `4|A|`, and its CM type (`ZetaBalance.Setting.f_eq`,
+    `ZetaBalance.Setting.card_gal`, `ZetaBalance.Setting.τ_eq`).
 
 ## How the statements differ from the archive's
 
