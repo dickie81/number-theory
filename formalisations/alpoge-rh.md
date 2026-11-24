@@ -147,13 +147,17 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   has codimension at most `(η + 2(√e + ε')/(1 − √e))·dim W`. The proof is Bessel's inequality and Cauchy–Schwarz for
   traces. `FrameAtPlace.FrameCond.codim_le_padded` measures it in a subspace of dimension at least `(1 − δ)·dim W`,
   at a cost of `(1 − δ)⁻¹`.
+- **Complex-linear maps.** `FrameAtPlace.FrameCond.restrictScalars`: complex-linear maps that meet the condition over
+  `ℂ` meet it over `ℝ` with the same `e` and `η`. Real dimensions are twice the complex ones, real traces twice the real
+  parts of the complex ones (`FrameAtPlace.trace_restrictScalars`), and adjoints commute with restricting scalars, so
+  both sides of (I) double and both sides of (T) quadruple.
 - **Rank spreading from one place.** `PlaceLattice.spread_of_frameCond` and `HermitianLattice.spread_of_frameCond`:
   if multiples of the components of a frame's maps at one place meet that condition, the frame spreads ranks
   (`SlopeFrame.Frame.RankSpread`, the hypothesis (RS) of the frame inequality). The constants are
   `α = (1 − δ)⁻¹(η + 2√e/(1 − √e))` and `β = (1 − δ)⁻¹·2/(1 − √e)`. Ranks are read at the one place, as the spans of
   the class are balanced. The components are projections of the maps, so no `O_K`-linearity is used. For hermitian
-  frames the place is a complex place of `K`, and the components are maps of real inner product spaces; a
-  complex-linear map and its realification have the same `e` and `η`.
+  frames the place is a complex place of `K`, the components are complex-linear, and the condition is asked of them
+  over `ℂ`, as the archive states it.
 
 ## How the statements differ from the archive's
 

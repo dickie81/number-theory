@@ -242,6 +242,13 @@ structure Frame where
 
 attribute [instance] Frame.fintype Frame.lattice Frame.bounded Frame.latticeM Frame.boundedM
 
+/-- **Rank spreading** (RS) with constants `α` and `β`: sublattices of total corank at most `ε'·Σ rk N ω` have images
+whose sum has corank at most `(α + β ε')·rk C`. -/
+def Frame.RankSpread (F : Frame) (α β : ℝ) : Prop :=
+  ∀ ε' : ℝ, 0 ≤ ε' → ε' ≤ 1 → ∀ a : ∀ ω, F.L ω,
+    ∑ ω, (((F.N ω).rk ⊤ : ℝ) - (F.N ω).rk (a ω)) ≤ ε' * ∑ ω, ((F.N ω).rk ⊤ : ℝ) →
+    (F.C.rk ⊤ : ℝ) - F.C.rk (Finset.univ.sup fun ω => F.img ω (a ω)) ≤ (α + β * ε') * F.C.rk ⊤
+
 /-- The hypotheses of the frame inequality for a frame: the rank-weighted mean of `μ(N ω) − h ω` is at least `s`,
 `μ_max(N ω) − h ω ≤ s + U`, `μ_min(C) ≥ s − H`, and the images spread their ranks with constants `α`, `β`. -/
 structure Frame.Spread (F : Frame) (s U H α β : ℝ) : Prop where
@@ -257,11 +264,8 @@ structure Frame.Spread (F : Frame) (s U H α β : ℝ) : Prop where
   range : ∀ ω, (F.N ω).SlopeLe (s + U + F.h ω)
   /-- `μ_min(C) ≥ s − H`. -/
   depth : F.C.SlopeGe ⊤ (s - H)
-  /-- **Rank spreading**: sublattices of total corank at most `ε'·Σ rk N ω` have images whose sum has corank at most
-  `(α + β ε')·rk C`. -/
-  spread : ∀ ε' : ℝ, 0 ≤ ε' → ε' ≤ 1 → ∀ a : ∀ ω, F.L ω,
-    ∑ ω, (((F.N ω).rk ⊤ : ℝ) - (F.N ω).rk (a ω)) ≤ ε' * ∑ ω, ((F.N ω).rk ⊤ : ℝ) →
-    (F.C.rk ⊤ : ℝ) - F.C.rk (Finset.univ.sup fun ω => F.img ω (a ω)) ≤ (α + β * ε') * F.C.rk ⊤
+  /-- **Rank spreading** with constants `α` and `β`. -/
+  spread : F.RankSpread α β
 
 /-- **The frame inequality for a frame**: `μ(C) ≥ s − α·H − β·U·log(1 + H/U)`. -/
 theorem Frame.Spread.loss_le {F : Frame} {s U H α β : ℝ} (h : F.Spread s U H α β) :

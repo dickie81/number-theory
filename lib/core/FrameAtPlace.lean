@@ -5,7 +5,7 @@ import HermitianLattice
 # The frame condition at one place
 
 A step of the library's proof of the Riemann hypothesis (`docs/rh-rebuild.md`, "Next"): the frame condition at one
-complex place, and the rank spreading (RS) of the frame inequality (`SlopeFrame.Frame.Spread`) that it gives.
+complex place, and the rank spreading (RS) of the frame inequality (`SlopeFrame.Frame.RankSpread`) that it gives.
 
 **The setting** (`FrameAtPlace.FrameCond`). Maps `B_ω : V_ω → W` between finite-dimensional inner product spaces, over
 `ℝ` or `ℂ`, with `d_ω = dim V_ω` and `D = dim W`. Put `Q = Σ_ω B_ω B_ω*` (`frameOp`) and `X_ω = B_ω*B_ω − 1`
@@ -45,11 +45,17 @@ Then the frame spreads ranks (`SlopeFrame.Frame.RankSpread`), with `α = (1 − 
   of its vectors at `w` (`PlaceLattice.Balanced.starProjection_mem`). So its part at `w` contains the sum of the
   `π_w φ_ω(span a_ω ∩ V_{v_ω})`.
 
-No `O_K`-linearity is used: the components are projections. For hermitian frames
-(`HermitianLattice.spread_of_frameCond`) the maps commute with `O_K`, so they send each `V_v` into `W_v`, and the
-components are their restrictions. There the places are the complex places of `K`, and the parts at them are complex
-subspaces taken as real ones. A complex-linear map and its realification have the same `e` and `η`: dimensions, traces
-and squared Hilbert–Schmidt norms all double.
+No `O_K`-linearity is used: the components are projections.
+
+**Complex-linear maps** (`FrameAtPlace.FrameCond.restrictScalars`). Complex-linear maps that meet the frame condition
+over `ℂ` meet it over `ℝ` with the same `e` and `η`. Real dimensions are twice the complex ones, real traces are twice
+the real parts of the complex ones (`FrameAtPlace.trace_restrictScalars`), and adjoints commute with restricting
+scalars. So both sides of (I) double, and both sides of (T) quadruple.
+
+For hermitian frames (`HermitianLattice.spread_of_frameCond`) the places are the complex places of `K`, and the parts
+at them are complex subspaces taken as real ones. The maps commute with `O_K`, so they send `V_v` into `W_v`
+complex-linearly, and the components are these restrictions. The theorem takes the frame condition over `ℂ` for them,
+as the archive states it.
 
 The archive's frame condition gives `α = (1 − δ)⁻¹(η + 4√e)` and `β = 4(1 − δ)⁻¹`. The constants here are no larger
 when `e ≤ 1/4`.
@@ -84,6 +90,8 @@ theorem sum_norm_sq_le {T : E →ₗ[𝕜] E} (hT : T.IsSymmetric) {κ : Type*} 
   exact Finset.sum_le_sum fun l _ => hv.sum_inner_products_le _
 
 end Space
+
+section FrameCondition
 
 variable {ι : Type*} [Fintype ι] {V : ι → Type*} [∀ ω, NormedAddCommGroup (V ω)]
   [∀ ω, InnerProductSpace 𝕜 (V ω)] [∀ ω, FiniteDimensional 𝕜 (V ω)] {W : Type*} [NormedAddCommGroup W]
@@ -319,18 +327,57 @@ theorem FrameCond.codim_le_padded (hB : FrameCond B e η) {ε' : ℝ} (hε0 : 0 
     _ ≤ (η + 2 * (√e + ε') / (1 - √e)) * ((1 - δ)⁻¹ * finrank 𝕜 C) := by gcongr
     _ = _ := by ring
 
+end FrameCondition
+
+/-! ### Complex-linear maps -/
+
+section Complex
+
+attribute [local instance] InnerProductSpace.complexToReal
+
+variable {U U' : Type*} [NormedAddCommGroup U] [InnerProductSpace ℂ U] [FiniteDimensional ℂ U]
+  [NormedAddCommGroup U'] [InnerProductSpace ℂ U'] [FiniteDimensional ℂ U']
+
+/-- **The real trace** of a complex-linear map is twice the real part of its trace: in the real basis `b_l, i·b_l`, an
+entry `a` of its complex matrix becomes the block `[[re a, −im a], [im a, re a]]`. -/
+theorem trace_restrictScalars (T : U →ₗ[ℂ] U) : trace ℝ U (T.restrictScalars ℝ) = 2 * re (trace ℂ U T) := by
+  rw [trace_eq_matrix_trace ℝ (Complex.basisOneI.smulTower' (finBasis ℂ U)), restrictScalars_toMatrix,
+    trace_eq_matrix_trace ℂ (finBasis ℂ U), re_to_complex, ← Algebra.trace_complex_apply, Matrix.trace,
+    Matrix.trace, map_sum, Fintype.sum_prod_type]
+  simp [Algebra.trace_eq_matrix_trace Complex.basisOneI, Matrix.trace]
+
+/-- **The adjoint commutes with restricting scalars**, for the real inner products `re ⟪·, ·⟫`. -/
+theorem adjoint_restrictScalars (B : U →ₗ[ℂ] U') : (B.restrictScalars ℝ).adjoint = B.adjoint.restrictScalars ℝ :=
+  ((eq_adjoint_iff _ _).2 fun x y => by simp [real_inner_eq_re_inner ℂ, adjoint_inner_left]).symm
+
+/-- **The frame condition over `ℝ` for complex-linear maps**: complex-linear maps that meet it over `ℂ` meet it over
+`ℝ`, with the same `e` and `η`. Real dimensions are twice the complex ones, real traces twice the real parts of the
+complex ones (`trace_restrictScalars`), and adjoints commute with restricting scalars (`adjoint_restrictScalars`). So
+both sides of (I) double, and both sides of (T) quadruple. -/
+theorem FrameCond.restrictScalars {ι : Type*} [Fintype ι] {V : ι → Type*} [∀ ω, NormedAddCommGroup (V ω)]
+    [∀ ω, InnerProductSpace ℂ (V ω)] [∀ ω, FiniteDimensional ℂ (V ω)] {W : Type*} [NormedAddCommGroup W]
+    [InnerProductSpace ℂ W] [FiniteDimensional ℂ W] {B : ∀ ω, V ω →ₗ[ℂ] W} {e η : ℝ} (hB : FrameCond B e η) :
+    FrameCond (fun ω => (B ω).restrictScalars ℝ) e η := by
+  have hd (ω : ι) : defect ((B ω).restrictScalars ℝ) * defect ((B ω).restrictScalars ℝ) =
+      (defect (B ω) * defect (B ω)).restrictScalars ℝ := by
+    simp only [defect, adjoint_restrictScalars]
+    rfl
+  have hQ : frameOp (fun ω => (B ω).restrictScalars ℝ) = (frameOp B).restrictScalars ℝ := by
+    ext y
+    simp [frameOp, adjoint_restrictScalars]
+  obtain ⟨hpos, he, hη, hI, hT⟩ := hB
+  refine ⟨by simpa [finrank_real_of_complex, ← Finset.mul_sum] using hpos, he, hη, ?_, ?_⟩
+  · simp only [hd, trace_restrictScalars, finrank_real_of_complex, re_to_real, Nat.cast_mul, Nat.cast_ofNat,
+      ← Finset.mul_sum]
+    linarith
+  · rw [hQ, show (frameOp B).restrictScalars ℝ * (frameOp B).restrictScalars ℝ =
+      (frameOp B * frameOp B).restrictScalars ℝ from rfl]
+    simp only [trace_restrictScalars, finrank_real_of_complex, re_to_real, Nat.cast_mul, Nat.cast_ofNat]
+    linarith
+
+end Complex
+
 end FrameAtPlace
-
-namespace SlopeFrame
-
-/-- **Rank spreading** (RS) with constants `α` and `β`, the field `spread` of `Frame.Spread`: sublattices of total
-corank at most `ε'·Σ rk N ω` have images whose sum has corank at most `(α + β ε')·rk C`. -/
-def Frame.RankSpread (F : Frame) (α β : ℝ) : Prop :=
-  ∀ ε' : ℝ, 0 ≤ ε' → ε' ≤ 1 → ∀ a : ∀ ω, F.L ω,
-    ∑ ω, (((F.N ω).rk ⊤ : ℝ) - (F.N ω).rk (a ω)) ≤ ε' * ∑ ω, ((F.N ω).rk ⊤ : ℝ) →
-    (F.C.rk ⊤ : ℝ) - F.C.rk (Finset.univ.sup fun ω => F.img ω (a ω)) ≤ (α + β * ε') * F.C.rk ⊤
-
-end SlopeFrame
 
 namespace PlaceLattice
 
@@ -457,10 +504,10 @@ open Module Submodule NumberField FrameAtPlace
 attribute [local instance] InnerProductSpace.complexToReal
 
 /-- **Rank spreading for hermitian frames from the frame condition at one complex place.** Let `v` be a complex place
-of `K`. Suppose that:
+of `K`, and `B ω : V ω v → W v` the components of the `φ ω` there: complex-linear maps that agree with the `φ ω`. They
+exist, as maps that commute with `O_K` send `V ω v` into `W v` complex-linearly. Suppose that:
 * the sources have full rank;
-* multiples `c ω` of the components of the `φ ω` at `v`, as maps of real inner product spaces, meet the frame condition
-  with constants `e` and `η`;
+* multiples `c ω` of the `B ω` meet the frame condition over `ℂ` with constants `e` and `η`;
 * the part of `span Λ'` at `v` has at least `1 − δ` of the dimension of `W v`.
 
 Then the hermitian frame (`HermitianLattice.frame`) spreads ranks with `α = (1 − δ)⁻¹(η + 2√e/(1 − √e))` and
@@ -476,20 +523,28 @@ theorem spread_of_frameCond {K : Type} [Field K] [NumberField K] [IsTotallyCompl
     (hφK : ∀ ω (k : 𝓞 K) x, φ ω (act (V ω) (emb (k : K)) x) = act W (emb (k : K)) (φ ω x))
     (h : ι → Pl K → ℝ) (hφ : ∀ ω v, ∀ x ∈ V ω v, ‖φ ω x‖ ≤ Real.exp (h ω v) * ‖x‖)
     (hrk : 0 < finrank ℝ (span ℝ (Λ' : Set F))) (hspan : ∀ ω, span ℝ (Λ ω : Set (E ω)) = ⊤) (v : Pl K)
-    (c : ι → ℝ) {e η : ℝ}
-    (hB : FrameCond (fun ω => c ω • PlaceLattice.component (φ ω) ((V ω v).restrictScalars ℝ)
-      ((W v).restrictScalars ℝ)) e η) {δ : ℝ} (hδ : δ < 1)
+    (B : ∀ ω, V ω v →ₗ[ℂ] W v) (hBφ : ∀ ω x, (B ω x : F) = φ ω x) (c : ι → ℝ) {e η : ℝ}
+    (hB : FrameCond (fun ω => c ω • B ω) e η) {δ : ℝ} (hδ : δ < 1)
     (hpad : (1 - δ) * finrank ℝ ((W v).restrictScalars ℝ) ≤
       finrank ℝ ↥(span ℝ (Λ' : Set F) ⊓ (W v).restrictScalars ℝ)) :
     (frame V hV htop Λ hΛ W hW hWtop Λ' hΛ' φ hφΛ hφK h hφ hrk).RankSpread
-      ((1 - δ)⁻¹ * (η + 2 * √e / (1 - √e))) ((1 - δ)⁻¹ * (2 / (1 - √e))) :=
-  PlaceLattice.spread_of_frameCond (X := fun ω => placeLattice (V ω) (hV ω) (htop ω) (Λ ω) (hΛ ω))
+      ((1 - δ)⁻¹ * (η + 2 * √e / (1 - √e))) ((1 - δ)⁻¹ * (2 / (1 - √e))) := by
+  refine PlaceLattice.spread_of_frameCond (X := fun ω => placeLattice (V ω) (hV ω) (htop ω) (Λ ω) (hΛ ω))
     (Y := placeLattice W hW hWtop Λ' hΛ') φ hφΛ h hφ (fun ω _ ha => hΛ'.img (hφK ω) ha)
-    (fun ω _ hb => (hΛ ω).preimg (hφK ω) hb) hrk hspan (fun _ => rfl) (fun _ => v) v c hB hδ hpad
+    (fun ω _ hb => (hΛ ω).preimg (hφK ω) hb) hrk hspan (fun _ => rfl) (fun _ => v) v c ?_ hδ hpad
+  -- The real components are the realifications of the `c ω • B ω`.
+  have hc : (fun ω => (c ω • B ω).restrictScalars ℝ) =
+      fun ω => c ω • PlaceLattice.component (φ ω) ((V ω v).restrictScalars ℝ) ((W v).restrictScalars ℝ) := by
+    funext ω
+    ext (x : V ω v)
+    show c ω • (B ω x : F) = c ω • ((W v).restrictScalars ℝ).starProjection (φ ω x)
+    rw [← hBφ, (starProjection_eq_self_iff (K := (W v).restrictScalars ℝ)).2 (B ω x).2]
+  exact hc ▸ hB.restrictScalars
 
 end HermitianLattice
 
 #print axioms FrameAtPlace.FrameCond.codim_le
 #print axioms FrameAtPlace.FrameCond.codim_le_padded
+#print axioms FrameAtPlace.FrameCond.restrictScalars
 #print axioms PlaceLattice.spread_of_frameCond
 #print axioms HermitianLattice.spread_of_frameCond

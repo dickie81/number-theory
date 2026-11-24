@@ -2233,6 +2233,7 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms HermitianLattice.frame
 #print axioms FrameAtPlace.FrameCond.codim_le
 #print axioms FrameAtPlace.FrameCond.codim_le_padded
+#print axioms FrameAtPlace.FrameCond.restrictScalars
 #print axioms PlaceLattice.spread_of_frameCond
 #print axioms HermitianLattice.spread_of_frameCond
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
