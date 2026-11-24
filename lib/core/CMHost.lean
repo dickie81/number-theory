@@ -95,8 +95,6 @@ def r : ℕ := R.k + R.m - 1
 /-- `nV = r + t`. -/
 def nV : ℕ := R.r + R.t
 
-/-- `h = (t + 1)/2`. -/
-def h : ℕ := (R.t + 1) / 2
 
 /-! ## Harish-Chandra parameters -/
 

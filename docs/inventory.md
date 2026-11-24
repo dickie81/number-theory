@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1933 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1937 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 219 | 774 |
+| `lib/core` | 219 | 778 |
 | `lib/pnt` | 357 | 1046 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -514,7 +514,11 @@ note of `formalisations/` that names it, if one does.
 
 #### `FrameRescale`: Rescaled frames, extreme slopes, duals and saturation
 
+- `SlopeFrame.Frame.slope_rescale`: The slope of the target rescales ([note](../formalisations/alpoge-rh.md))
+- `SlopeFrame.Frame.loss_le_rescale_iff`: Invariance of the conclusion ([note](../formalisations/alpoge-rh.md))
 - `SlopeFrame.Frame.Spread.loss_le_rescale`: The frame inequality in the archive's units ([note](../formalisations/alpoge-rh.md))
+- `SlopeFrame.SlopeLattice.slopeGe_iff_le_muMin`: `μ_min(a)` is the greatest `θ` with `SlopeGe a θ` ([note](../formalisations/alpoge-rh.md))
+- `SlopeFrame.SlopeLattice.muMin_le_slope_le_muMax`: `μ_min ≤ μ ≤ μ_max` ([note](../formalisations/alpoge-rh.md))
 - `SlopeFrame.SlopeLattice.muMax_rescale`: `μ_max` rescales ([note](../formalisations/alpoge-rh.md))
 - `HermitianLattice.dual_anti`: Duality reverses inclusion ([note](../formalisations/alpoge-rh.md))
 - `HermitianLattice.saturation_top`: Saturating in the whole space changes nothing ([note](../formalisations/alpoge-rh.md))

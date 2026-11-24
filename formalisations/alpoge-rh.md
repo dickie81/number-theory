@@ -176,7 +176,9 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
 - **The layers of the sharp frontier, in progress** (`docs/rh-rebuild.md`, "Next"). Each defines objects that the
   frontier will state; their sanity theorems guard the definitions.
   - Units: frames in the archive's units, with every hypothesis and the conclusion of the frame inequality
-    unchanged (`SlopeFrame.Frame.Spread.loss_le_rescale`, `SlopeFrame.SlopeLattice.muMax_rescale`); duals and
+    unchanged (`SlopeFrame.Frame.Spread.loss_le_rescale`, `SlopeFrame.Frame.loss_le_rescale_iff`,
+    `SlopeFrame.Frame.slope_rescale`, `SlopeFrame.SlopeLattice.muMax_rescale`); the largest and smallest slopes
+    (`SlopeFrame.SlopeLattice.muMin_le_slope_le_muMax`, `SlopeFrame.SlopeLattice.slopeGe_iff_le_muMin`); duals and
     saturation (`HermitianLattice.dual_anti`, `HermitianLattice.saturation_top`).
   - Classes: decorated unimodular hermitian lattices, the group acting on them, classes and mass weights
     (`HermClasses.instMulActionDeco`, `HermClasses.Lsh_of_isEmpty`, `HermClasses.dia_smul`, `HermClasses.mass_mk`,

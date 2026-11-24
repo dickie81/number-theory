@@ -2257,6 +2257,10 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms KLattice.deg_scale
 #print axioms SlopeFrame.Frame.Spread.loss_le_rescale
 #print axioms SlopeFrame.SlopeLattice.muMax_rescale
+#print axioms SlopeFrame.Frame.loss_le_rescale_iff
+#print axioms SlopeFrame.Frame.slope_rescale
+#print axioms SlopeFrame.SlopeLattice.muMin_le_slope_le_muMax
+#print axioms SlopeFrame.SlopeLattice.slopeGe_iff_le_muMin
 #print axioms HermitianLattice.dual_anti
 #print axioms HermitianLattice.saturation_top
 #print axioms HermClasses.instMulActionDeco
