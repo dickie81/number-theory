@@ -447,6 +447,7 @@ import ZetaFrame
 import EuclidLattice
 import HermitianLattice
 import FrameAtPlace
+import KLattice
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2237,6 +2238,13 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms FrameAtPlace.FrameCond.restrictScalars
 #print axioms PlaceLattice.spread_of_frameCond
 #print axioms HermitianLattice.spread_of_frameCond
+#print axioms KLattice.inner_ψ
+#print axioms KLattice.isHermitian_map
+#print axioms KLattice.hom_ψ
+#print axioms KLattice.spread_of_frameCond
+#print axioms KLattice.slope_withLattice
+#print axioms KLattice.rk_top
+#print axioms KLattice.deg_scale
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
 #print axioms ZetaBalance.rhAndGRH_of_latticeBound
 #print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound

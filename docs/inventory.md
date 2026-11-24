@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1891 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1898 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 210 | 738 |
+| `lib/core` | 211 | 745 |
 | `lib/pnt` | 355 | 1040 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -617,6 +617,16 @@ note of `formalisations/` that names it, if one does.
 - `JacobiFourSquares.theta_pow_four`: Jacobi's four-square identity
 - `JacobiFourSquares.r4_zero`: `r₄(0) = 1`
 - `JacobiFourSquares.r4_eq`: Jacobi's four-square theorem
+
+#### `KLattice`: Hermitian `O_K`-lattices in `K^ι`
+
+- `KLattice.inner_ψ`: The metric ([note](../formalisations/alpoge-rh.md))
+- `KLattice.rk_top`: Ranks ([note](../formalisations/alpoge-rh.md))
+- `KLattice.slope_withLattice`: The slope after an index ([note](../formalisations/alpoge-rh.md))
+- `KLattice.deg_scale`: Scaling the metrics ([note](../formalisations/alpoge-rh.md))
+- `KLattice.isHermitian_map`: On a CM field, a matrix hermitian for complex conjugation is hermitian at every complex place, so only positivity is asked of `σ_v(H)` there. ([note](../formalisations/alpoge-rh.md))
+- `KLattice.hom_ψ`: The map of `B` extends `B` ([note](../formalisations/alpoge-rh.md))
+- `KLattice.spread_of_frameCond`: Rank spreading from the frame condition at one complex place ([note](../formalisations/alpoge-rh.md))
 
 #### `KaiserBulk`: The bulk of the Kaiser probe and the doubled rate
 

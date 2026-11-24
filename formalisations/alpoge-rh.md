@@ -161,6 +161,18 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   the class are balanced. The components are projections of the maps, so no `O_K`-linearity is used. For hermitian
   frames the place is a complex place of `K`, the components are complex-linear, and the condition is asked of them
   over `ℂ`, as the archive states it.
+- **`O_K`-lattices with metrics at the places** (`lib/core/KLattice.lean`), the first layer of a sharp frontier
+  (`docs/rh-rebuild.md`, "Next"). An `O_K`-lattice in `K^ι` with a positive definite hermitian metric `G v` at each
+  complex place `v` is a hermitian lattice. Its realisation `x ↦ (A_v σ_v(x))_v`, with `A_vᴴA_v = G_v`, has inner
+  products `Σ_v σ_v(x)ᴴ G_v σ_v(y)`, so it depends on the metrics alone (`KLattice.inner_ψ`). The metrics may be
+  `K`-rational, `σ_v(H)` for a hermitian `H` over a CM field (`KLattice.isHermitian_map`), or only known to exist.
+  - A `K`-linear map extends to the realisations (`KLattice.hom_ψ`).
+  - A real-linear map that commutes with `O_K` is complex-linear at every place (`HermitianLattice.component`). So
+    the frame condition at one complex place spreads ranks, with no padding at full rank
+    (`KLattice.spread_of_frameCond`).
+  - The index and the slope: for `O_K`-lattices `N ≤ M`, `μ(N) = μ(M) − log [M : N]/rk`, with `rk = [K:ℚ]·|ι|`
+    (`KLattice.slope_withLattice`, `KLattice.rk_top`).
+  - Scaling the metrics by `c > 0` lowers the degree by `(rk/2)·log c` (`KLattice.deg_scale`).
 
 ## How the statements differ from the archive's
 
