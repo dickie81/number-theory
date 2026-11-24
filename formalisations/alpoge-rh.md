@@ -113,6 +113,9 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   `HalfPlaneGRH.RHandGRH`, which covers every character, gives GRH in the archive's words (`LinnikGRH.DirichletRH`). So
   `ZetaBalance.PairBound` gives `LinnikGRH.linnik_two` and `LinnikAlmostAll.almostAll_one`, conditionally on the
   half-plane.
+- **The corollaries of the top.** `lib/pnt/RHHarvest.lean` turns `HalfPlaneGRH.RHandGRH` into the classical
+  consequences of RH and GRH, through the library's results for a zero-free half-plane at `1/2` (listed in the
+  index's "Conditional results"). So they too follow from `ZetaBalance.PairBound`, conditionally on the half-plane.
 
 - **The frame inequality**, `SlopeFrame.frame_inequality`. Sources `N_i` map to one target `C`. Suppose Bost's slope
   inequality holds on the images, and the images spread their ranks. Then the mean slope of the `N_i`, less the heights
@@ -161,7 +164,7 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
 
 ## How the statements differ from the archive's
 
-- **The frontier is weaker.** `WindowBound` is the bound for the cyclic family of each primitive character, the
+- **The window bound is weaker.** `WindowBound` is the bound for the cyclic family of each primitive character, the
   archive's `Level.cyc` with its `Gm`. It allows any window ratio `λ > 1` and any constant `C`, where the archive's
   argument delivers `λ = 3/2` and `C = 1`.
 - **More general.** Landau's theorem on windows is proved for any family with positive weights, and abstractly for

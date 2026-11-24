@@ -13,7 +13,8 @@ from `main` on every push.
 The library's Linnik exponent is `2 + η` under GRH for every Dirichlet `L`-function (`LinnikGRH.linnik_two`). GRH
 is proved by L. Alpöge's Lean archive (20 November 2026), which [`tools/rh/`](tools/rh/README.md) builds on the
 archive's own Lean and Mathlib, where the kernel accepts it with Lean's three standard axioms; the library does not
-import it, so in its Lean GRH stays a hypothesis. The Linnik paper's exponents `21/10` and `43/20` need no hypothesis.
+import it, so in its Lean GRH stays a hypothesis, the top of the library's own rebuild of the proof
+([`docs/rh-rebuild.md`](docs/rh-rebuild.md)). The Linnik paper's exponents `21/10` and `43/20` need no hypothesis.
 They rest on certificates that the kernel checks in about 62 hours of one core, which are opt-in: `lake build
 CheckLinnik` builds them and `lib/check/CheckLinnik.lean` prints the theorems' axioms, outside the default build and
 CI's build of a change, and a workflow of their own checks them every week.
@@ -41,7 +42,7 @@ CI's build of a change, and a workflow of their own checks them every week.
 | Path | Contents |
 |---|---|
 | `lib/core` | The library's modules that need only Mathlib: 499 files. |
-| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 1880 files, 1225 of them the part and cell files of the certificates `SieveHint<tag>`. The certificates and the theorems on them, 1232 files, are opt-in: the Lake library `LinnikCert`, which only `CheckLinnik.lean` imports. |
+| `lib/pnt` | The modules that also use PrimeNumberTheoremAnd, among them the Linnik paper's: 1881 files, 1225 of them the part and cell files of the certificates `SieveHint<tag>`. The certificates and the theorems on them, 1232 files, are opt-in: the Lake library `LinnikCert`, which only `CheckLinnik.lean` imports. |
 | `lib/dh` | The Davenport–Heilbronn function and its zeros: 68 files. |
 | `lib/zeta23` | The modules that also use `zeta23`: 10 files. |
 | `lib/vendor/pnt-plus`, `lib/vendor/zeta23` | Two upstream libraries, ported to this toolchain, each with its license and its port patch. See their READMEs. |

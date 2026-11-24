@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1869 printed theorems, marking *opt-in* the 14 that
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1891 printed theorems, marking *opt-in* the 14 that
 rest on the Linnik paper's certificates, whose build is opt-in (`lib/check/CheckLinnik.lean`), and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.
@@ -64,7 +64,9 @@ fields with their class groups and the class number formula.
   `LinnikGRH.linnik_two`, under GRH in the archive's words (`LinnikGRH.DirichletRH`). The library is rebuilding the
   archive's proof on its own stack ([`rh-rebuild.md`](rh-rebuild.md)); the rebuild's frontier `ZetaBalance.PairBound`
   gives that hypothesis, conditionally on the half-plane (`ZetaBalance.rhAndGRH_of_pairBound`,
-  `LinnikGRH.dirichletRH_of_rhAndGRH`).
+  `LinnikGRH.dirichletRH_of_rhAndGRH`). The rebuild's top, RH with GRH (`HalfPlaneGRH.RHandGRH`), is the one
+  hypothesis of what the library's deductions from a zero-free half-plane give at `1/2`, marked "under RH" or "under
+  GRH" below (`HalfPlaneGRH.RHandGRH.corollaries`).
 - **An input whose journal review is pending**: Alpöge and Furman's theorem that two thirds of the zeros of `ζ` lie on
   the critical line (arXiv:2608.13637), which `zeta23` proves with no hypothesis (`CriticalLine.two_thirds`). zeta23's
   [metadata](https://github.com/anthropics/formal-math/blob/fbdc36bbf17d20af3fd0447c6d1a8a02773c9844/zeta23/formalization.yaml)
@@ -106,26 +108,26 @@ result's note finds it unused; blank where neither has been checked.
 
 | Result | Lean | H |
 |---|---|---|
-| `ψ(x) = x + O(x^{11/12+ε})` | `HalfPlanePNT.psi_isBigO_eleven_twelfths` | yes |
+| `ψ(x) = x + O(x^{11/12+ε})`; under RH, `x + O(x^{1/2+ε})`, and under GRH `ψ(x, χ) = O(x^{1/2+ε})` for every `χ ≠ 1` | `HalfPlanePNT.psi_isBigO_eleven_twelfths`, `HalfPlaneGRH.RHandGRH.psi_isBigO`, `HalfPlaneGRH.RHandGRH.psiChi_isBigO` | yes |
 | `ψ(x) = x + O(x·exp(−c(log x)^{3/5}(log log x)^{−1/5}))`, the strongest form known from refereed results | `PNTKV.PNT_KV` | no |
-| `ψ(x; q, a) = x/φ(q) + O(x^{11/12+η})` for every `q` and every `a` prime to `q`, at fixed `q` | `PNTProgressions.psiAP_isBigO` | yes |
+| `ψ(x; q, a) = x/φ(q) + O(x^{11/12+η})` for every `q` and every `a` prime to `q`, at fixed `q`; under GRH, `x/φ(q) + O(x^{1/2+η})` | `PNTProgressions.psiAP_isBigO`, `HalfPlaneGRH.RHandGRH.psiAP_isBigO` | yes |
 | Linnik under GRH, the library's headline exponent: every class `a` mod `q` with `(a, q) = 1` holds a prime `p ≤ Kq^{2+η}` for every `η > 0`, by the density estimate with `A = 2` that GRH gives; GRH is L. Alpöge's, an input (above), so in the Lean a hypothesis, stated as the archive states it | `LinnikGRH.linnik_two`, `LinnikGRH.linnik_two_of_GRH` | yes |
 | Linnik: every class `a` mod `q` with `(a, q) = 1` holds a prime `p ≤ Kq^{2150/1000}`, below `13/6`, where the Type II estimate in one variable has no window: the search with the estimate in two variables alone, the rest of a term with no prime of the rest's size being a product of the primes of its comparison's own tree, and with the reversal of a term of three or five primes through its largest prime, the cofactor kept as one number, the kernel following the plan of the search by hints; from the half-plane and Huxley's estimate, with no input of Chen, Gupta and Li's: its tests have the paper's conditions on the leaves of a comparison alone (`SieveAd.Plain.fillTests`), so no module of that formalisation is in its import cone (the Linnik paper's Theorem 1.2). Its certificate, like those of the next two rows, is opt-in to build (`lib/check/CheckLinnik.lean`) | `Linnik21500.linnik_21500` | yes |
 | The same with `p ≤ Kq^{2100/1000}`: that search with terms of the sign `+` reversed too, the leaves of a comparison cut in three (the fourth moment of the cofactor's polynomial), the resonant window in both trees, a Type II estimate in one variable that sorts the characters by the sizes of a rest's own prime sums as well as by their zeros, with Chen, Gupta and Li's large values of the powers and the cofactor in the rest when it is one prime, the window's test at the two corners of the box of a rest's cells where its test at one corner fails, the chains over the frozen parts on cells as fine as the main tree's, a box of two primes cut in two where that pays, and a plan that searches every configuration of the estimate in two variables that the kernel's tests accept over the frozen parts (the Linnik paper's Theorem 1.1) | `Linnik21000.linnik_21000` | yes |
 | In number, at `2150/1000` and at `2100/1000`: for every `q`, every `a` prime to `q` and every `x ≥ Kq^L` the class holds at least `c·x/(φ(q) log x)` primes `p ≤ x`, with `c > 0`. The searches prove the count at `x = q^L`, where the primes of the class in `(q^L, 2q^L]` number at least `(1 − C)/2` of `x/(φ(q) log x)` for large `q`, `C` the search's cost; the multiples of the modulus carry it to every `x`, which uses that the theorems hold for every modulus and every class (the Linnik paper's Corollary 1.3) | `Linnik21500.count_21500`, `Linnik21000.count_21000`, `Linnik21500.count_large_21500`, `Linnik21000.count_large_21000`, `SieveAd.count_of_large` | yes |
 | Linnik by density estimates and the classical deduction, with the exponents `12`, `4`, `17/6`, `36/13`, `87/35`, `12/5` and `2.3334`, each `+ η` | `Linnik.linnik_twelve`, `LinnikDensity.linnik_four`, `LinnikSubconvex.linnik_seventeen_sixths`, `LinnikIngham.linnik_thirtysix_thirteenths`, `LinnikHuxley.linnik_eighty_seven_thirty_fifths`, `LinnikTwelve.linnik_twelve_fifths`, `LinnikG7.linnik_g7d` | yes |
 | Linnik for almost all classes, below exponent `2`: for every `η > 0`, all the reduced classes mod `q` but at most `Kφ(q)q^{−c}` hold a prime `p ≤ Kq^{1+η}` under GRH (L. Alpöge's, an input, above; in the Lean a hypothesis), and a prime `p ≤ Kq^{11667/10000+η}` from the curve `g*`, which rests on the half-plane and on Chen, Gupta and Li's Proposition 3.1 (the two inputs above); from a density exponent `A`, the exponent `A/2 + η`. Under GRH, with GRH's `√x` for every character, a bound of Turán's type: for `0 < δ ≤ 1`, all the classes but `Kq^{1−δ+η}` hold a prime `p ≤ Kq^{1+δ}`, so at `δ = 1 − κ` all but `Kq^{κ+η}` hold one below `Kq^{2−κ}`. These hold for almost all classes, not every class. The method is classical, the deduction above in mean square over the classes (under GRH it is P. Turán's argument); the exponent `1.1667` was not found in the literature by a quick search, and is not claimed as new | `LinnikAlmostAll.almostAll_one`, `LinnikAlmostAll.almostAll_one_of_GRH`, `LinnikAlmostAll.almostAll_turan`, `LinnikAlmostAll.almostAll_g7d`, `LinnikAlmostAll.almostAll_of_charDensity` | yes |
-| A prime in `(y, y + y^θ]` for every large `y`, `θ > 17/30`; and for all `y ∈ [X, 2X]` outside a set of measure `X^{1−δ}`, `θ > 2/15` | `ZetaGMDensity.short_primes_seventeen_thirtieths`, `ZetaGMDensity.almost_all_short_primes_two_fifteenths` | yes |
+| A prime in `(y, y + y^θ]` for every large `y`, `θ > 17/30`; and for all `y ∈ [X, 2X]` outside a set of measure `X^{1−δ}`, `θ > 2/15`; under RH, every `θ > 1/2` | `ZetaGMDensity.short_primes_seventeen_thirtieths`, `ZetaGMDensity.almost_all_short_primes_two_fifteenths`, `HalfPlaneGRH.RHandGRH.short_primes` | yes |
 | In terms of `Θ`: `limsup log\|ψ(x) − x\|/log x = Θ`, the same for `M(x)`, `Σ μ(n)n^{−s}` converges exactly on `Re s > Θ`, and a prime in `(y, y + y^θ]` for `θ > 2Θ/(1 + 2Θ)` | `PsiExponent.limsup_expo`, `MertensExponent.limsup_mexpo`, `MertensExponent.moebiusAbscissa_eq_Theta`, `InghamDensity.short_primes_Theta` | |
 | `ψ(x) − x`, `M(x)` and the prime races mod 3, 4, 7 and 8 are `Ω±(x^θ)` for every `θ < 1/2` | `PsiOmega.psi_omega_half`, `PsiOmega.mertens_omega_half`, `PsiOmega.race_three_half`, `PsiOmega.race_four_half`, `WeilTwinGeneral.race_seven_half`, `PsiOmega.race_eight_half` | no |
-| `M(x) = O(x^{11/12+η})`; `Σ_{n≤x} d_k(n) = xP_k(log x) + O(x^{11/12+η})` with `deg P_k = k − 1`; `Q(x) = 6x/π² + O(x^{12/25+η})` for the squarefree numbers | `MertensExponent.mertens_isBigO_eleven_twelfths`, `DivisorExponent.divisor_isBigO_eleven_twelfths`, `DivisorExponent.natDegree_Pk_eq`, `SquarefreeCount.squarefree_isBigO_twelve_25ths` | yes |
+| `M(x) = O(x^{11/12+η})`; `Σ_{n≤x} d_k(n) = xP_k(log x) + O(x^{11/12+η})` with `deg P_k = k − 1`; `Q(x) = 6x/π² + O(x^{12/25+η})` for the squarefree numbers; under RH, `M(x)` and the error for `d_k` are `O(x^{1/2+η})`, and that for `Q` is `O(x^{2/5+η})` | `MertensExponent.mertens_isBigO_eleven_twelfths`, `DivisorExponent.divisor_isBigO_eleven_twelfths`, `DivisorExponent.natDegree_Pk_eq`, `SquarefreeCount.squarefree_isBigO_twelve_25ths`, `MertensExponent.rh_iff_mertens`, `HalfPlaneGRH.RHandGRH.divisor_isBigO`, `HalfPlaneGRH.RHandGRH.squarefree_isBigO` | yes |
 
 ### Values of `L`-functions, and quadratic fields
 
 | Result | Lean | H |
 |---|---|---|
-| `ζ` and `1/ζ`, and uniformly in `q` every `L(s, χ)` and `1/L(s, χ)`, are `≪ (q\|t\|)^ε` on `Re s ≥ σ₀ > 11/12` | `HalfPlaneLindelof.zeta_bound_eleven_twelfths`, `LinnikLindelof.lindelof` | yes |
-| `\|ζ(σ + it)\| ≪ \|t\|^{(11/12−σ)/2+ε}` on `[1/12, 11/12]`, so `5/24` on the critical line; `\|L(1/2 + it, χ)\| ≪ (q(\|t\| + 2))^{5/24+ε}` uniformly | `Subconvexity.zeta_strip_eleven_twelfths`, `LinnikSubconvex.critBoundχ` | yes |
+| `ζ` and `1/ζ`, and uniformly in `q` every `L(s, χ)` and `1/L(s, χ)`, are `≪ (q\|t\|)^ε` on `Re s ≥ σ₀ > 11/12`; under RH, `ζ` and `1/ζ` are `≪ \|t\|^ε` on `Re s ≥ σ₀ > 1/2` | `HalfPlaneLindelof.zeta_bound_eleven_twelfths`, `LinnikLindelof.lindelof`, `HalfPlaneGRH.RHandGRH.zeta_bound` | yes |
+| `\|ζ(σ + it)\| ≪ \|t\|^{(11/12−σ)/2+ε}` on `[1/12, 11/12]`, so `5/24` on the critical line; `\|L(1/2 + it, χ)\| ≪ (q(\|t\| + 2))^{5/24+ε}` uniformly; under RH, `\|ζ(1/2 + it)\| ≪ \|t\|^ε`, Lindelöf's hypothesis, and so Weyl's `\|t\|^{1/6+ε}` | `Subconvexity.zeta_strip_eleven_twelfths`, `LinnikSubconvex.critBoundχ`, `Subconvexity.lindelof_of_RH`, `HalfPlaneGRH.RHandGRH.weylBound` | yes |
 | Littlewood's bounds, which he proved under GRH: `1/log log q ≪ \|L(1, χ)\| ≪ log log q` and `L′/L(1, χ) ≪ log log q` for quadratic `χ ≠ 1`; with explicit constants for every `χ ≠ 1`, real or complex, `e^{−γ−3/100}/(13(52 + ℓ)) ≤ \|L(1, χ)\| ≤ 13e^{γ+3/100}(52 + ℓ)`, `ℓ = log log(q + 2)`, so `13e^{γ+3/100}(1 + o(1)) log log q` where GRH gives `2e^γ log log q` | `Littlewood.norm_LFunction_one_ge`, `Littlewood.norm_LFunction_one_le`, `Littlewood.norm_logDeriv_one_le`, `LittlewoodSharp.norm_LFunction_one_bounds_sharp` | yes |
 | Class numbers with explicit constants, so effective: `h_K ≥ √\|D\|/(85(52 + log log(\|D\| + 2)))` for imaginary quadratic `K`, `R_Kh_K ≥ √D/(55(52 + log log(D + 2)))` for real `K`, and `≪ √\|D\| log log \|D\|` from above with explicit constants | `ClassNumberSharp.classNumber_ge_85`, `ClassNumberSharp.regulator_mul_classNumber_ge_55`, `ClassNumberSharp.classNumber_le_sharp`, `ClassNumberSharp.regulator_mul_classNumber_le_sharp` | yes |
 | A split and an inert prime below `C_A(log \|D\|)^A` for every `A > 12`, and below `10^{298}(log \|D\|)^{13}`; the Euler–Kronecker constant | `QuadClassNumber.exists_split_le`, `QuadClassNumber.exists_inert_le`, `QuadClassNumber.exists_split_le_13`, `QuadClassNumber.exists_inert_le_13`, `QuadClassNumber.eulerKronecker` | yes |
@@ -168,12 +170,12 @@ The deductions are stated for any input, against Mathlib's `ζ` and `LFunction`,
 | Prove | and the library gives | Through |
 |---|---|---|
 | no zero of `ζ` on `Re s > β`, for some `β < 1` | the errors of `ψ`, `M` and `Σ d_k` at `x^{β+η}`, and of the squarefree count at `x^{1/(3−β)+η}` | `HalfPlanePNT.psi_isBigO_of_zeroFree`, `MertensExponent.mertens_isBigO_of_zeroFree`, `DivisorExponent.divisor_isBigO_of_zeroFree`, `SquarefreeCount.squarefree_isBigO_of_zeroFree` |
-| the same for `L(s, χ)`, `χ ≠ 1` | `ψ(x, χ) = O(x^{β+η})` | `ChiPNT.psiChi_isBigO_of_zeroFree` |
+| the same for `L(s, χ)`, `χ ≠ 1` | `ψ(x, χ) = O(x^{β+η})`; for every `χ ≠ 1` mod `q`, with the row above, `ψ(x; q, a) = x/φ(q) + O(x^{β+η})` for `a` prime to `q` | `ChiPNT.psiChi_isBigO_of_zeroFree`, `PNTProgressions.psiAP_isBigO_of` |
 | a density estimate `Linnik.CharDensity A B C` over the characters, `A ≥ 2` | Linnik's theorem with every exponent above `A`, and for almost all classes every exponent above `A/2` | `Linnik.linnik_of_charDensity`, `LinnikAlmostAll.almostAll_of_charDensity` |
 | `ShortWeil.DensityXi A B` and a zero-free region `ShortWeil.ZeroFreeXi α` for `ζ` | a prime in `(y, y + y^θ]` for `θ > max(1/2, 1 − 1/A)` | `ShortWeil.short_primes_of_density` |
 | `ShortWeil.DensityXi (A + ε) B` for every `ε > 0` | primes in almost all intervals `(y, y + y^θ]` for `θ > 1 − 2/A` | `AlmostAll.almost_all_of_density` |
 | `\|ζ(1/2 + it)\| ≪ \|t\|^c` (`CrossCriteria.ZetaCritBound`) | the density exponent `2 + 4c` | `InghamDensity.densityXi_of_zetaCrit` |
-| RH | the Lindelöf hypothesis, and from it the density hypothesis | `Subconvexity.lindelof_of_RH`, `InghamDensity.densityHypothesis_of_lindelof` |
+| RH, and with it GRH for every `L(s, χ)`: the rebuild's top `HalfPlaneGRH.RHandGRH`, which L. Alpöge's Lean archive proves (an input, above) | no zero of `ζ` or of any `L(s, χ)` on `Re s > 1/2`, so the deductions above at `β = 1/2`: `ψ`, `ψ(x, χ)`, `ψ(x; q, a)`, `M` and `Σ d_k` at `x^{1/2+η}`, the squarefree count at `x^{2/5+η}`; from RH alone the Lindelöf hypothesis, and from it Weyl's bound, the density hypothesis and a prime in `(y, y + y^θ]` for every `θ > 1/2` | `HalfPlaneGRH.RHandGRH.corollaries`, `Subconvexity.lindelof_of_RH`, `InghamDensity.densityHypothesis_of_lindelof` |
 | GRH for every `L(s, χ)`, which L. Alpöge's Lean archive proves (an input, above) | Linnik's theorem with every exponent above `2`: the library's headline Linnik exponent | `LinnikGRH.linnik_two_of_GRH`, and in the archive's words `LinnikGRH.linnik_two` |
 | Petrow and Young's Weyl bound for every `L(s, χ)`, uniformly (`LinnikWeyl.PYWeyl`) | Weyl's bound for `ζ`, and Huxley's exponents above `5/6` for the characters | `LinnikWeylBridge.weylBound_of_PYWeyl`, `LinnikStairs7.charDensity_hy_0`, `LinnikStairs7.charDensity_hy_top` |
 | that RH fails | `ψ(x) − x = Ω±(√x)` | `HalfPlaneJoinsPNT.psiOmegaSqrt_of_not_RH` |
@@ -215,7 +217,9 @@ Within reach, with no hypothesis, from results the library has:
   library proves it from hypotheses that arb computations support, lower bounds for 350 mode energies and the
   definiteness of two Gram matrices (`WeilForm.weilQg_ge_both`, and `WeilForm.weilQ_ge_prime3` for even probes below
   `2a = log 3`). Certificates that the kernel checks, as the Linnik sieve's are, would remove the hypotheses. X. Zhu's
-  preprint arXiv:2608.24827 (2026) claims the same window by interval arithmetic.
+  preprint arXiv:2608.24827 (2026) claims the same window by interval arithmetic. Where RH holds, which counts as
+  proven here, Weil's form is nonnegative at every support (`WeilForm.weil_criterion_zeta`); the certificates would
+  give the margin of `WeilForm.weilQg_ge_both` with no hypothesis.
 - **Hyperbolic 3-space**: Kubota's `θ` (`Eis.kubotaTheta`) as an eigenfunction of the Laplacian at `s(2 − s) = 8/9`,
   below the continuous spectrum `[1, ∞)`: a bound state of a free particle on the cubic metaplectic cover. The library
   has the energy `∫ v²|∇F|² dz dv/v³` and its invariance (`Eis.lintegral_energy_actP`), not the Laplacian.
@@ -238,6 +242,9 @@ In order of what is in reach.
    and not a proof, keeps Li's constant positive down to `θ ≈ 0.5182` once Guth and Maynard's estimate
    (`ZetaGMLV.gm_large_values`) joins Huxley's. A Lean proof below `0.52` would go below Li, resting on the half-plane
    as Linnik's exponent does: the sieve's main terms take the prime number theorem in short ranges from it.
+   *24 November:* settled where RH holds, which counts as proven here: every `θ > 1/2`
+   (`HalfPlaneGRH.RHandGRH.short_primes`). What the sieve would still add is an exponent that does not rest on
+   L. Alpöge's archive.
 2. **Linnik's exponent.** With GRH from L. Alpöge's archive the library's exponent is `2 + η`
    (`LinnikGRH.linnik_two`), what the density route gives at `A = 2`; an exponent below `2` for every modulus is not
    known even under GRH, so any route to one is of the greatest interest. For almost all classes the library is below
@@ -279,17 +286,24 @@ In order of what is in reach.
    once: `ψ`, `M`, `ψ(x, χ)` and `Σ d_k` at `x^{7/8+η}`, the squarefree count at `x^{8/17+η}`, and `Θ ≤ 7/8`. The
    Ankeny, Littlewood and class-number chain and `Subconvexity.zeta_strip_eleven_twelfths` have `11/12` written in;
    made parametric, they would give `A > 8` in place of `A > 12`, and `3/16` in place of `5/24` on the critical line.
-   Linnik's exponent would not move.
+   Linnik's exponent would not move. *24 November:* superseded where RH and GRH hold: under the rebuild's top,
+   `HalfPlaneGRH.RHandGRH`, the deductions above hold at `1/2` (`HalfPlaneGRH.RHandGRH.corollaries`), and the chains,
+   made parametric, would give `A > 2`.
 4. **Density estimates.** For `ζ` the library proves Guth and Maynard's maximum, `30/13`, as one exponent for all `σ`,
    not their curve. For the characters it proves Chen, Gupta and Li's Proposition 3.1 and the steps the Linnik curve
    needs, not their Theorem 1.2; above `5/6` its exponent is `101/50` against Huxley's `2`: the zeros that its
    detector counts with the fourth moment cost at least `1.974`, and only `LinnikWeyl.PYWeyl` would remove them. Each
-   sharper estimate enters through the deductions above.
-5. **The Riemann hypothesis.** The library reduces RH to properties of Weil's form in about forty ways, proves none of
-   their hypotheses, and shows, through `dh`, that no argument which applies to `dh` as well can prove them. A new
-   criterion should come with its `dh` column, which tests it before any work on `ζ`. A geometric direction, that the
-   analogue for `ζ` of the surface `C × C` in Weil's proof for curves is the discretisation of the infinite unit ball,
-   is set out in [ball-conjecture.md](ball-conjecture.md), with its rank-two case: Hasse's bound for every elliptic
+   sharper estimate enters through the deductions above. *24 November:* settled where RH and GRH hold: RH gives the
+   density hypothesis for `ζ` (`HalfPlaneGRH.RHandGRH.corollaries`), and GRH the exponent `2` for the characters
+   (`LinnikGRH.charDensity_two_of_GRH`).
+5. **The Riemann hypothesis.** *24 November:* RH and GRH now count as proven here, through L. Alpöge's archive (an
+   input, above), whose proof the library is rebuilding on its own stack ([rh-rebuild.md](rh-rebuild.md)); in its
+   Lean the rebuild's top, `HalfPlaneGRH.RHandGRH`, stays a hypothesis. The library reduces RH to properties of
+   Weil's form in about forty ways, proves none of their hypotheses, and shows, through `dh`, that no argument which
+   applies to `dh` as well can prove them. A new criterion should come with its `dh` column, which tests it before any
+   work on `ζ`. A geometric direction, that the analogue for `ζ` of the surface `C × C` in Weil's proof for curves is
+   the discretisation of the infinite unit ball, is set out in [ball-conjecture.md](ball-conjecture.md), with its
+   rank-two case: Hasse's bound for every elliptic
    curve of odd characteristic (`ManinHasse.abs_trace_le`) and the Riemann hypothesis for it in every degree, from the
    lattice of Manin's twist (`ManinHasse.toeplitz_nonneg`), and for `y² = x³ + D` with the Frobenius an Eisenstein
    integer (`HasseEisenstein.abs_trace_le`). Over a finite field Weil's criterion is proved in both directions: the
@@ -340,13 +354,11 @@ In order of what is in reach.
    [connes-links.md](connes-links.md) lists how this strand joins the rest of the library.
 6. **Tools that are missing.** The large sieve over all moduli `q ≤ Q` (the library has one modulus at a time), so no
    Bombieri–Vinogradov; bounds for Kloosterman sums, which the bilinear Type I estimate avoids; exponent pairs (the
-   Weyl bound is only a hypothesis); Selberg's and Rosser's sieves; anything in the twelve sections the library does
-   not touch.
+   Weyl bound is only a hypothesis, or a consequence of the rebuild's top, `HalfPlaneGRH.RHandGRH.weylBound`);
+   Selberg's and Rosser's sieves; anything in the twelve sections the library does not touch.
 
 ## Debts
 
-- `PNTProgressions`'s module header, and so its line in `docs/inventory.md`, says "modulo the divisors of 24":
-  `PNTProgressions.psiAP_isBigO` holds for every `q`. The fix is a Lean edit that rebuilds the modules above it.
 - 21 files of `lib/dh` name their generator, `gen_locate_zero.py`, `gen_locate.py`, `gen_logext.py` or
   `gen_oddterms.py`, and none of the four is in the repository, so the files can be neither regenerated nor checked
   ([survey](dry-efficiency-survey.md)).

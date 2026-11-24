@@ -5,8 +5,11 @@
 that every zero of every Dirichlet `L`-function in the open critical strip has real part `1/2`. It shows that the
 archive's other three statements follow from those two, and states what this library then gives.
 
-Nothing in it is unconditional: the archive is not compiled in this repository's environment, and its claim is
-unverified.
+Nothing in it is unconditional here: the archive is not compiled in this repository's environment. On the archive's
+own pins the hypothesis is discharged (`port/RHJoin.lean`, below). The library itself now proves the deductions of
+the table below, but those on the orbit's form, from its own statement of RH and GRH, `HalfPlaneGRH.RHandGRH`:
+`HalfPlaneGRH.RHandGRH.corollaries` (`lib/pnt/RHHarvest.lean`), and Linnik's through
+`LinnikGRH.dirichletRH_of_rhAndGRH`.
 
 Check it with
 
@@ -49,6 +52,8 @@ has the account and the commands):
 | `port/RHJoin.lean` | `RHClaim.Claim` from the archive's `riemannHypothesis` and `LFunction_eq_zero_re`, and each theorem above without its hypothesis; compiled with the archive's build, and an error unless each depends on the three standard axioms, read from the kernel's terms |
 
 The port compiles: on 21 November 2026 all 349 files, `PortCheck.lean` among them, compiled on the archive's pins
-with no error. `RHJoin.lean` has not been compiled: it needs the archive's own build finished and checked, which
-was still running then. Until it compiles, the theorems of this directory are conditional, and the archive's claim
-is unverified here.
+with no error. `RHJoin.lean` needed the archive's own build finished and checked, which was still running then. It
+has since compiled against that build, with no error, and every theorem in it depends on `propext`,
+`Classical.choice` and `Quot.sound` only (`tools/rh/README.md`, "The state of the build"). So on the archive's pins
+the theorems of this directory hold without their hypothesis; in this repository's environment they stay
+conditional.

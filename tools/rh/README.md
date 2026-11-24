@@ -646,12 +646,12 @@ against Mathlib's and the library's own.
 
 One repair reached further than its own bundle: see "A lifted proof named" above. Of the 45 bundles whose
 terms name a lifted proof that could have been renumbered when ten bundles of the first levels were compiled
-again, the kernel refused three (`l004n012`, `l015n014`, `l021n003`) and accepted 42; the three are being
-compiled again. Until `bundle_replay.py` has been over the whole build, checks of this kind (the bundles that
-`proof_refs.py` names after each repair, sent to the kernel by `bundle_recheck.py --bundle`) are the only
-evidence that the bundles made before a repair still fit what is below them. A first run of
-`lean/ReplayAll.lean` over the 169 bundles of the first three levels (175 162 constants, 893 theorems held
-twice) refused none.
+again, the kernel refused three (`l004n012`, `l015n014`, `l021n003`) and accepted 42; the three were compiled
+again, and the pass over the whole build above accepted them. Until `bundle_replay.py` had been over the whole
+build, checks of this kind (the bundles that `proof_refs.py` names after each repair, sent to the kernel by
+`bundle_recheck.py --bundle`) were the only evidence that the bundles made before a repair still fit what is below
+them. A first run of `lean/ReplayAll.lean` over the 169 bundles of the first three levels (175 162 constants, 893
+theorems held twice) refused none.
 
 It stops by itself after a level where more than a few definitions failed, because what is built on them would
 fail too. Then, and at the end:
@@ -721,7 +721,7 @@ agree, and `fp_compare.py` says in a few minutes whether they do.
 
 The library's deductions are stated for any input (`docs/account.md`, "What a new input buys at once"), and
 `scratch/rh-claim/RHClaim.lean` states them from the archive's own statements: it compiles here, and each of its
-theorems depends on the three standard axioms only. What is missing is one environment in which both the archive's
+theorems depends on the three standard axioms only. What was missing was one environment in which both the archive's
 `Main` and that file are checked. There are three ways to get one:
 
 1. **Port the archive to this repository's pins.** One file in ten fails at each level, for a hundred reasons
@@ -732,7 +732,9 @@ theorems depends on the three standard axioms only. What is missing is one envir
 3. **Wait for the archive to be ported to a current toolchain** by its author or by the Lean community, which was
    proposed on the Lean Zulip on the day of the claim, and pin this repository there.
 
-The second also needs the archive's build finished on its own pins, which is the build above.
+The second also needs the archive's build finished on its own pins, which is the build above. Both are done: on
+the archive's pins `RHJoin.lean` compiled against the port and that build ("The state of the build"). In this
+repository's environment the archive is still not imported, so there the deductions stay conditional.
 
 ## The port of the library to the archive's pins
 

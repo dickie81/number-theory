@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1880 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1891 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -15,7 +15,7 @@ note of `formalisations/` that names it, if one does.
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 210 | 738 |
-| `lib/pnt` | 354 | 1029 |
+| `lib/pnt` | 355 | 1040 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2344,7 +2344,7 @@ note of `formalisations/` that names it, if one does.
 - `PNTMertens.E₂Λ.abs_le`: The error in Mertens' second theorem
 - `PNTMertens.sum_mangoldt_div_log_eq`: Mertens' second theorem with Euler's constant
 
-#### `PNTProgressions`: The prime number theorem modulo the divisors of `24`
+#### `PNTProgressions`: The prime number theorem in progressions
 
 - `PNTProgressions.sum_dvd_le_log`: `Σ_{n ≤ N, p ∣ n} Λ(n) ≤ log N` for a prime `p`
 - `PNTProgressions.sum_not_coprime_le`: `Σ_{n ≤ N, (n, q) > 1} Λ(n) ≤ ω(q) log N` for `q ≠ 0`.
@@ -2434,6 +2434,20 @@ note of `formalisations/` that names it, if one does.
 
 - `QuantMoments.moment_quant_pos`: Quantitative moments, positive fundamental discriminants ([note](../formalisations/d2-density.md))
 - `QuantMoments.moment_quant_neg`: Quantitative moments, negative fundamental discriminants ([note](../formalisations/d2-density.md))
+
+#### `RHHarvest`: The corollaries of the top: RH and GRH through the library's zero-free half-planes
+
+- `HalfPlaneGRH.RHandGRH.LFunction_ne_zero`: GRH: no zero of `L(s, χ)` on `Re s > 1/2`
+- `HalfPlaneGRH.RHandGRH.riemannZeta_ne_zero`: RH: no zero of `ζ` on `Re s > 1/2`
+- `HalfPlaneGRH.RHandGRH.weylBound`: Weyl's bound
+- `HalfPlaneGRH.RHandGRH.zeta_bound`: `ζ(s)` and `1/ζ(s)` are `≪ |t|^ε` on `Re s ≥ σ₀ > 1/2`
+- `HalfPlaneGRH.RHandGRH.short_primes`: Primes in short intervals
+- `HalfPlaneGRH.RHandGRH.psi_isBigO`: The prime number theorem with a square-root error
+- `HalfPlaneGRH.RHandGRH.psiChi_isBigO`: `ψ(x, χ) = O(x^{1/2+η})`
+- `HalfPlaneGRH.RHandGRH.psiAP_isBigO`: The prime number theorem in progressions with a square-root error
+- `HalfPlaneGRH.RHandGRH.divisor_isBigO`: The divisor problems
+- `HalfPlaneGRH.RHandGRH.squarefree_isBigO`: Squarefree numbers
+- `HalfPlaneGRH.RHandGRH.corollaries`: The corollaries of the top
 
 #### `RHJoinsLinnik`: The rebuild's Riemann hypothesis, in the words of the Linnik results
 

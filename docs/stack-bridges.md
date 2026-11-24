@@ -33,12 +33,13 @@ theorem LinnikGRH.dirichletRH_of_rhAndGRH (h : HalfPlaneGRH.RHandGRH) : LinnikGR
 ```
 
 It joins the library's rebuild of Alpöge's proof (`docs/rh-rebuild.md`) to `LinnikGRH`. The rebuild concludes
-`HalfPlaneGRH.RHandGRH`, from its frontier `ZetaBalance.PairBound` (`ZetaBalance.rhAndGRH_of_pairBound`).
+`HalfPlaneGRH.RHandGRH`, conditionally on the half-plane, from its frontiers `ZetaBalance.PairBound` and
+`ZetaBalance.SixTermBound` below it (`ZetaBalance.rhAndGRH_of_pairBound`, `ZetaBalance.rhAndGRH_of_sixTermBound`).
 `LinnikGRH.DirichletRH` is GRH in the archive's words.
 
 *Implication.* `HalfPlaneGRH` has already passed from primitive characters to every character, through the Euler
 factors, so the lemma is one line. With it, `LinnikGRH.linnik_two` and `LinnikAlmostAll.almostAll_one` follow from the
-rebuild's frontier.
+rebuild's frontiers.
 
 ## `ShortPrimesHalfPlane`: the zero-free region of the short-primes theorems from the half-plane
 
@@ -70,7 +71,9 @@ character; `CrossCriteria.WeylBound` (`lib/core/CrossCriteria.lean`) is the same
 `q = 1`, where the only character's L-function is ζ (`DirichletCharacter.LFunction_modOne_eq`).
 
 *Implication.* A proof of the Weyl bound for ζ alone would not discharge `PYWeyl`, which is uniform in `q`; `PYWeyl` is
-the stronger hypothesis and `WeylBound` its case `q = 1`. Both are hypotheses in the library, and neither is proved here.
+the stronger hypothesis and `WeylBound` its case `q = 1`. Both are hypotheses in the library, and neither is proved here
+unconditionally. `WeylBound` follows from the rebuild's top, RH with GRH (`HalfPlaneGRH.RHandGRH.weylBound`), which
+counts as proved for this repository; the library does not derive `PYWeyl` from it.
 
 ## `LonelyJoins`: the lonely primes, the exponent `Θ` and short intervals
 

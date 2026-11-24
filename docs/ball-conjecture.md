@@ -13,8 +13,8 @@ has towards it, what any version of it must survive, and the first steps.
 
 The tests so far tell against that lattice statement as a route to RH. In both its forms, the pivot inequality and
 the shortest vector, it fails for curves over finite fields, where RH is proved, and for a positive proportion of
-Dirichlet `L`-functions, where GRH is expected. So as stated it is specific to `ζ` ("What it must survive", the last
-item).
+Dirichlet `L`-functions, where GRH is expected and now counts as proven (below). So as stated it is specific to `ζ`
+("What it must survive", the last item).
 
 For `ζ` itself the statement is equivalent to RH (`PivotSharp.rh_iff_orbitLattice`). Under RH every Gram–Schmidt
 pivot of the orbit after the first is at least `0.0577`, against `d_1 = 0.0462` (`PivotSharp.pivot_ge_rh`), so
@@ -24,6 +24,11 @@ RH would need"). And the lattice is there, with `w_1` as a shortest vector: RH h
 orbit, computed from the primes, is at least `K_H(1) = Q(δ_1)` at every nonzero integer vector, for every `N`
 (`PivotSharp.rh_iff_shortest`), and under RH `±w_1` are its only shortest vectors (`PivotSharp.shortest_unique`). So
 under RH the orbit of `w_1` spans a discrete lattice in every realization, with `w_1` as a shortest vector.
+
+*24 November:* RH and GRH now count as proven for the library: L. Alpöge's Lean archive proves them, an input of
+[account.md](account.md), and in the library's Lean they stay a hypothesis, the top of its rebuild of that proof
+([rh-rebuild.md](rh-rebuild.md)). So for `ζ` the lattice statement holds (`PivotSharp.orbitLattice_of_rh`), and
+the direction is no longer a route to an open problem.
 
 ## The conjecture
 
@@ -217,13 +222,13 @@ and `LocalTeeth.card_four_sq` (the local densities of the points on a sphere).
     proportion with `d_2 < d_1` tends to `P(X > ½ log(27/4)) = 0.0511` and `P(X > (3/2) log(4/3)) = 0.1609`, where `X`
     is Lamzouri's random model ([d2-density.md](d2-density.md)). That is a written proof, unconditional, and a Lean
     proof, `D2Good.d2_density_pos_closed`, conditional on the half-plane. These characters are expected to satisfy GRH,
-    and under GRH their Weil forms are positive.
+    which now counts as proven for the library, and under GRH their Weil forms are positive.
   - **Where the two forms part.** The analogue this page starts from, the orbit of the Frobenius graphs, has the Gram
     matrix of E. Hallouin and M. Perret (Trans. AMS 372 (2019)). Its orbit vectors are dependent, so (A) fails for
     every curve. Their integer span is still a lattice, `ℤ[z]/(m)` with `m` the minimal polynomial, and (B) holds
     there. It holds by integrality when `m` is irreducible, and holds in the whole sample (§7).
   - **The conclusion.** So neither form follows from the structure that gives RH, or GRH, elsewhere. Both fail for
-    curves, where RH is proved, and for characters where GRH is expected.
+    curves, where RH is proved, and for characters where GRH is expected and now counts as proven.
   - **For `ζ`.** Both forms hold under RH for every `N`, with room to spare. Every `k ≥ 2` has
     `d_k ≥ 0.0577 = 1.249·d_1` (`PivotSharp.pivot_ge_rh`), and every integer vector other than `±δ_1` has
     `Q(a) ≥ 0.0577` (`PivotSharp.lattice_gap`). The true values are larger: `d_2/d_1 = 1.718`, and on `n ≤ 30` the

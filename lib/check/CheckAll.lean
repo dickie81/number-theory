@@ -451,6 +451,7 @@ import ZetaThin
 import ZetaPair
 import SixTerm
 import RHJoinsLinnik
+import RHHarvest
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -2246,6 +2247,17 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ZetaBalance.rhAndGRH_of_pairBound
 #print axioms ZetaBalance.rhAndGRH_of_sixTermBound
 #print axioms LinnikGRH.dirichletRH_of_rhAndGRH
+#print axioms HalfPlaneGRH.RHandGRH.LFunction_ne_zero
+#print axioms HalfPlaneGRH.RHandGRH.riemannZeta_ne_zero
+#print axioms HalfPlaneGRH.RHandGRH.weylBound
+#print axioms HalfPlaneGRH.RHandGRH.zeta_bound
+#print axioms HalfPlaneGRH.RHandGRH.short_primes
+#print axioms HalfPlaneGRH.RHandGRH.psi_isBigO
+#print axioms HalfPlaneGRH.RHandGRH.psiChi_isBigO
+#print axioms HalfPlaneGRH.RHandGRH.psiAP_isBigO
+#print axioms HalfPlaneGRH.RHandGRH.divisor_isBigO
+#print axioms HalfPlaneGRH.RHandGRH.squarefree_isBigO
+#print axioms HalfPlaneGRH.RHandGRH.corollaries
 
 /-! ### What `cglDensity` uses
 

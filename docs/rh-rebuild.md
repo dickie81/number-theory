@@ -7,7 +7,8 @@ proof is enormous: 10.7 million lines in the dependency cone of `riemannHypothes
 
 The archive carries no licence, so none of it is in this repository. This file plans a proof in the library itself,
 written fresh from the mathematics, in the library's style, on its own Lean and Mathlib, and published under the
-library's licence.
+library's licence. The library counts RH and GRH as proven, with the archive as an input (`docs/account.md`); in its
+Lean they stay a hypothesis, `HalfPlaneGRH.RHandGRH`, the top of the proof planned here.
 
 ## Rules
 
@@ -51,13 +52,20 @@ library's licence.
 | 4. Lattices | `SlopeFrame`, `GramVolume`, `EuclidLattice`, `PlaceLattice`, `HermitianLattice`, `ZetaFrame` | about 1,750 | about 6,600 (hermitian lattices, Bost, polygons, `TheoremF`), and `ch_top`, about 3,000 | Done for `ζ` and every primitive `χ`: `ZetaBalance.riemannHypothesis_of_zetaLatticeBound`, `ZetaBalance.rhAndGRH_of_latticeBound`. The frames may be Euclidean (`EuclidLattice.frame`) or, as the archive's are, hermitian over a totally complex `K` with heights averaged over the places (`HermitianLattice.frame`) |
 | The analytic inputs | `PsiExplicit`, `ZetaThin`, `PrimeCharSums`, `MeanSquareSup`, `TwistFamily`, `ZetaTwist`, `ZetaPair` | about 2,410 | about 28,000 for the twists, mostly a prime number theorem in progressions | Done for `ζ` and every primitive `χ`, conditionally on the half-plane `Re s > 11/12`: `ZetaBalance.riemannHypothesis_of_zetaPairBound`, `ZetaBalance.rhAndGRH_of_pairBound` |
 | The six-term interface | `SixTerm` | 265 | the rest of `ch_top` (counted in step 4) | Done for `ζ` and every primitive `χ`, conditionally on the half-plane: `ZetaBalance.rhAndGRH_of_sixTermBound` |
+| The corollaries of the top | `RHHarvest` | 156 | | Done: `HalfPlaneGRH.RHandGRH.corollaries`, the classical consequences of RH and GRH through the library's results for a zero-free half-plane, at `1/2`; so they follow from every frontier, conditionally on the half-plane |
 | 5–6. | | | almost all of 10.7 million lines | Later |
 
 Library line counts include the documentation; the archive has none.
 
-**The frontier now** is `WindowGRH.WindowBound`: for every primitive `χ` and every `θ > 1/2`, the weighted error
-`(WindowGRH.cyclic χ).G` is at most `C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large, for some `λ > 1` and
-`C`. The archive's core theorem proves this in the form `HasWindows {x | Gm x ≤ x^θ} (3/2)`, which is stronger.
+**The frontiers now**, conditionally on the half-plane `Re s > 11/12`, are `ZetaBalance.SixTermBound`, which gives
+`ZetaBalance.PairBound`, which gives RH and GRH; and `ZetaBalance.ZetaPairBound` for RH alone (the last paragraphs
+below). They quantify over free lattices, so frames of rank one still satisfy them whenever the averaged gap bound
+holds: each is as strong as what it gives (section "The construction, measured"). The paragraphs below follow the
+frontier down from step 2.
+
+**After step 2**, the frontier is `WindowGRH.WindowBound`: for every primitive `χ` and every `θ > 1/2`, the weighted
+error `(WindowGRH.cyclic χ).G` is at most `C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large, for some `λ > 1`
+and `C`. The archive's core theorem proves this in the form `HasWindows {x | Gm x ≤ x^θ} (3/2)`, which is stronger.
 
 **For RH alone**, step 2 leaves a statement about `Λ` only. `WindowGRH.ZetaWindowBound` asks, for every
 `θ > 1/2`, that `Σ_{n≤x} Λ(n)(x/n − 1) − x log x + (1 + γ)x ≤ C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large.
@@ -476,8 +484,9 @@ So the honest next frontier is the archive's interface evaluated at a canonical 
   `1/|Aut L|`; Weyl-module coefficients with a Fock norm; the Petersson norm; the forms of level `T_ω`;
 - **periods:** theta kernels, their chain, the periods `B_ω`, and the target `C = RR^∨`.
 
-Stating it is estimated at 5,000–10,000 lines. Mathlib has CM fields, infinite places, adeles, sesquilinear forms and
-double cosets as types. It has no hermitian spaces over CM fields, unitary groups, genus theory, mass formulas,
+Stating it is estimated at 5,000–10,000 lines (*24 November:* a design study puts the definitions at about
+2,500–4,500 lines; "Next", item 2). Mathlib has CM fields, infinite places, adeles, sesquilinear forms and double
+cosets as types. It has no hermitian spaces over CM fields, unitary groups, genus theory, mass formulas,
 highest-weight theory or theta correspondence.
 
 **The sizes.** Rule-`L` cones, from the archive's declaration map:
@@ -525,7 +534,9 @@ For `ζ` and every Dirichlet `L`-function, every step above the construction is 
 `ZetaBalance.PairBound`, and from `ZetaBalance.SixTermBound` below it; RH alone follows from
 `ZetaBalance.ZetaPairBound`. These frontiers ask only for the construction: lattice data on a sub-window, for every
 pair `(q, d)` with the archive's arithmetic. Their frames may be the archive's own, hermitian lattices over a totally
-complex `K` with heights averaged over the places (`HermitianLattice.frame`). In order:
+complex `K` with heights averaged over the places (`HermitianLattice.frame`). The top's corollaries are done too
+(`RHHarvest`, above). But the frontiers leave the lattices free, so trivial witnesses still meet them ("The
+construction, measured"). In order:
 
 1. **The six-term interface.** Done on 24 November 2026 (`SixTerm`, 265 lines, 57 of them the module's
    documentation): G1–G6, the key identity (`ZetaBalance.Setting.key_identity`) with its cancellations, and the frame
@@ -536,7 +547,13 @@ complex `K` with heights averaged over the places (`HermitianLattice.frame`). In
      losses of the frame inequality.
 
    It is still equivalent to the gap bound, as above: frames of rank one satisfy it whenever that bound holds.
-2. **Self-contained components:**
+2. **A sharp frontier**, being designed (24 November 2026). A design study chose `ZetaBalance.SixTermBound` with a
+   canonical frame: as sources the forms whose periods are integral, as target the integral period functionals, and
+   as maps the period maps. Defining these objects is what "The construction, measured" finds a frontier needs before
+   it can have content. The definitions are estimated at about 2,500–4,500 lines, in layers L0 to L7. Open: whether
+   the untwisted target suffices, and the choice of the target's metric. The first layer, `O_K`-lattices with metrics
+   at the complex places as hermitian lattices (`HermitianLattice`), is being written.
+3. **Self-contained components:**
    - the sizes of the auxiliary primes;
    - the frame condition at one complex place (`LinkS`, about 100K archive lines). The step from it to (RS) is done
      (24 November 2026, `FrameAtPlace`, 550 lines, 113 of them documentation; the linear algebra takes 317, 47 of
@@ -560,5 +577,5 @@ complex `K` with heights averaged over the places (`HermitianLattice.frame`). In
      What remains is (I) and (T) for the construction's period maps at one complex place;
    - the slopes of algebraic modular forms through the mass formula (250K);
    - local divisibility at inert primes (`LinkG`, 160K), given the Weil-representation statements.
-3. **The theta layer**, with the theta constants and Howe duality first taken as stated inputs.
-4. **The mass-formula route to the covolume bound**, tried before any toroidal work.
+4. **The theta layer**, with the theta constants and Howe duality first taken as stated inputs.
+5. **The mass-formula route to the covolume bound**, tried before any toroidal work.
