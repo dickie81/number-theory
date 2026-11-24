@@ -50,6 +50,7 @@ library's licence.
 | 3. Balance | `ZetaBalance`, `ZetaGap` | about 1,520 | about 4,000 (`ChBalance`, `ChCore`, `core_gm`) | Done for `ζ` and every primitive `χ`: `ZetaBalance.riemannHypothesis_of_zetaBalanceBound`, `ZetaBalance.rhAndGRH_of_balanceBound` |
 | 4. Lattices | `SlopeFrame`, `GramVolume`, `EuclidLattice`, `PlaceLattice`, `HermitianLattice`, `ZetaFrame` | about 1,750 | about 6,600 (hermitian lattices, Bost, polygons, `TheoremF`), and `ch_top`, about 3,000 | Done for `ζ` and every primitive `χ`: `ZetaBalance.riemannHypothesis_of_zetaLatticeBound`, `ZetaBalance.rhAndGRH_of_latticeBound`. The frames may be Euclidean (`EuclidLattice.frame`) or, as the archive's are, hermitian over a totally complex `K` with heights averaged over the places (`HermitianLattice.frame`) |
 | The analytic inputs | `PsiExplicit`, `ZetaThin`, `PrimeCharSums`, `MeanSquareSup`, `TwistFamily`, `ZetaTwist`, `ZetaPair` | about 2,410 | about 28,000 for the twists, mostly a prime number theorem in progressions | Done for `ζ` and every primitive `χ`, conditionally on the half-plane `Re s > 11/12`: `ZetaBalance.riemannHypothesis_of_zetaPairBound`, `ZetaBalance.rhAndGRH_of_pairBound` |
+| The six-term interface | `SixTerm` | 265 | the rest of `ch_top` (counted in step 4) | Done for `ζ` and every primitive `χ`, conditionally on the half-plane: `ZetaBalance.rhAndGRH_of_sixTermBound` |
 | 5–6. | | | almost all of 10.7 million lines | Later |
 
 Library line counts include the documentation; the archive has none.
@@ -98,6 +99,11 @@ primes `(q, d)` with the arithmetic of `ZetaTwist.WinPair` has a sub-window `[Y�
 primitive `χ`, in settings with a character `κ` of `A` lifting `χ`. `ZetaBalance.rhAndGRH_of_pairBound` gives the
 Riemann hypothesis for `ζ` and every Dirichlet `L`-function from it, and `LinnikGRH.dirichletRH_of_rhAndGRH` turns that
 into the hypothesis of the library's results under GRH (`LinnikGRH.linnik_two`, `LinnikAlmostAll.almostAll_one`).
+
+**Below `PairBound`**, the frontier is `ZetaBalance.SixTermBound` (`SixTerm`): the same with six-term data in place of
+lattice data. At each translate, numbers of the words and of the translate meet the archive's six inequalities G1–G6,
+and a key identity sums them to (G). `ZetaBalance.rhAndGRH_of_sixTermBound` gives RH and GRH from it. Like the
+frontiers above it, frames of rank one satisfy it whenever the averaged gap bound holds.
 
 **What step 2 simplified against the archive.**
 - Landau's theorem on windows is proved once, for any finite family of characters with positive weights. The
@@ -516,14 +522,20 @@ Fresh-rebuild estimates, all rough:
 ## Next
 
 For `ζ` and every Dirichlet `L`-function, every step above the construction is done. RH and GRH follow from
-`ZetaBalance.PairBound`, and RH alone from `ZetaBalance.ZetaPairBound`. These frontiers ask only for the construction:
-lattice data on a sub-window, for every pair `(q, d)` with the archive's arithmetic. Their frames may be the archive's
-own, hermitian lattices over a totally complex `K` with heights averaged over the places (`HermitianLattice.frame`).
-In order:
+`ZetaBalance.PairBound`, and from `ZetaBalance.SixTermBound` below it; RH alone follows from
+`ZetaBalance.ZetaPairBound`. These frontiers ask only for the construction: lattice data on a sub-window, for every
+pair `(q, d)` with the archive's arithmetic. Their frames may be the archive's own, hermitian lattices over a totally
+complex `K` with heights averaged over the places (`HermitianLattice.frame`). In order:
 
-1. **The six-term interface.** G1–G6 with the vanishing ideal, the key identity and its cancellations, and the frame
-   inequality give `PairBound`. That is about 500 lines against the archive's 3,000 for `ch_top`. It is still
-   equivalent to the gap bound, as above.
+1. **The six-term interface.** Done on 24 November 2026 (`SixTerm`, 265 lines, 57 of them the module's
+   documentation): G1–G6, the key identity (`ZetaBalance.Setting.key_identity`) with its cancellations, and the frame
+   inequality give `PairBound` (`ZetaBalance.rhAndGRH_of_sixTermBound`). With `ZetaFrame`'s 109 lines, that is the
+   algebra of `ch_top`, about 3,000 archive lines. Against the archive:
+   - G5 is one-sided, and the range condition (R) stays a hypothesis of the frame;
+   - the words' losses and the archive's slack sizes merge into one slack per inequality, all in one budget with the
+     losses of the frame inequality.
+
+   It is still equivalent to the gap bound, as above: frames of rank one satisfy it whenever that bound holds.
 2. **Self-contained components:**
    - the sizes of the auxiliary primes;
    - the frame condition at one complex place (`LinkS`, about 100K archive lines);

@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1874 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1875 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -15,7 +15,7 @@ note of `formalisations/` that names it, if one does.
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 209 | 733 |
-| `lib/pnt` | 353 | 1028 |
+| `lib/pnt` | 354 | 1029 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -3357,6 +3357,10 @@ note of `formalisations/` that names it, if one does.
 - `SieveWeight.exists_mellin_bound`: The Mellin transform of `ψ_P`, uniformly in `P ≥ 4`
 - `SieveWeight.norm_Sw_wy_le`: Lemma 1 for the weights `ψ_P`, in `Λ` form, uniformly in `P ≥ 4`
 - `SieveWeight.norm_Sp_le`: Lemma 1 for primes *paper* ([note](../formalisations/chen-gupta-li-density.md))
+
+#### `SixTerm`: The six-term interface below the frame inequality — CONDITIONAL on the half-plane
+
+- `ZetaBalance.rhAndGRH_of_sixTermBound`: CONDITIONAL. The Riemann hypothesis for `ζ` and every Dirichlet `L`-function from the six-term frontier ([note](../formalisations/alpoge-rh.md))
 
 #### `SmallPrimes`: The small primes generate the units mod `q`
 

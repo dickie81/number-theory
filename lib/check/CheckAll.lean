@@ -448,6 +448,7 @@ import EuclidLattice
 import HermitianLattice
 import ZetaThin
 import ZetaPair
+import SixTerm
 import RHJoinsLinnik
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
@@ -2237,6 +2238,7 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms TwistFamily.exists_good_fin
 #print axioms ZetaBalance.riemannHypothesis_of_zetaPairBound
 #print axioms ZetaBalance.rhAndGRH_of_pairBound
+#print axioms ZetaBalance.rhAndGRH_of_sixTermBound
 #print axioms LinnikGRH.dirichletRH_of_rhAndGRH
 
 /-! ### What `cglDensity` uses

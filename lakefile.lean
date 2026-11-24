@@ -153,7 +153,7 @@ lean_lib Core where
     .one `ZetaBalance, .one `ZetaDiscs, .one `ZetaDiscsR, .one `ZetaFrame,
     .one `ZetaGap, .one `ZetaInputs]
 
-/-- lib/pnt: 647 modules, the 1232 of LinnikCert aside. -/
+/-- lib/pnt: 648 modules, the 1232 of LinnikCert aside. -/
 lean_lib PNT where
   srcDir := "lib/pnt"
   globs := #[
@@ -312,13 +312,13 @@ lean_lib PNT where
     .one `SieveTypeIBEv, .one `SieveTypeIBFam, .one `SieveTypeIBLeaf, .one `SieveTypeIBPairWide,
     .one `SieveTypeIBSum, .one `SieveTypeIBSumWide, .one `SieveTypeIBWide, .one `SieveTypeII,
     .one `SieveTypeIIGen, .one `SieveTypeIIR, .one `SieveTypeIIU, .one `SieveUnwGen,
-    .one `SieveUnwLo, .one `SieveUnwTwo, .one `SieveWeight, .one `SmallPrimes,
-    .one `SmoothPerron, .one `SquarefreeCount, .one `Subconvexity, .one `SubconvexityCrit,
-    .one `TwinKV, .one `TwistFamily, .one `ZetaAFE, .one `ZetaFourth,
-    .one `ZetaGMBlock, .one `ZetaGMDensity, .one `ZetaGMHux, .one `ZetaGMIngham,
-    .one `ZetaGMLV, .one `ZetaGMProp, .one `ZetaGMS3, .one `ZetaGMTrace,
-    .one `ZetaGMWin, .one `ZetaHuxley, .one `ZetaIngham, .one `ZetaKernel,
-    .one `ZetaPair, .one `ZetaThin, .one `ZetaTwist]
+    .one `SieveUnwLo, .one `SieveUnwTwo, .one `SieveWeight, .one `SixTerm,
+    .one `SmallPrimes, .one `SmoothPerron, .one `SquarefreeCount, .one `Subconvexity,
+    .one `SubconvexityCrit, .one `TwinKV, .one `TwistFamily, .one `ZetaAFE,
+    .one `ZetaFourth, .one `ZetaGMBlock, .one `ZetaGMDensity, .one `ZetaGMHux,
+    .one `ZetaGMIngham, .one `ZetaGMLV, .one `ZetaGMProp, .one `ZetaGMS3,
+    .one `ZetaGMTrace, .one `ZetaGMWin, .one `ZetaHuxley, .one `ZetaIngham,
+    .one `ZetaKernel, .one `ZetaPair, .one `ZetaThin, .one `ZetaTwist]
 
 /-- lib/dh: 68 modules. -/
 lean_lib DH where
