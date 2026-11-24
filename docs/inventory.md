@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1916 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1919 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 216 | 763 |
+| `lib/core` | 217 | 766 |
 | `lib/pnt` | 355 | 1040 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -477,6 +477,12 @@ note of `formalisations/` that names it, if one does.
 #### `FirstFailure`: The first positivity failure
 
 - `WeilForm.first_failure`: The first positivity failure ([note](../formalisations/weil-positivity.md))
+
+#### `ForcedOrders`: The forced orders
+
+- `ZetaBalance.Setting.lpF_nonneg_le`: `0 ≤ lpF(ℓ, n, D) ≤ ℓ/(ℓ² − 1)·Σ D` for `ℓ > 1` and `D ≥ 0` (the archive's `FactLpF`). ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.Setting.Ranks.FTypeG_nonpos`: The forced order at `g₀, g₁` is at most `0`. ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.Setting.Ranks.FInert_nonneg`: The forced order at an inert or signal prime is nonnegative when the weights are. ([note](../formalisations/alpoge-rh.md))
 
 #### `FourSquareResidue`: `ζ(2) = π²/6` from the points of `ℤ⁴` in a ball
 

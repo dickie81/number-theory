@@ -453,6 +453,7 @@ import HermClasses
 import WeylFock
 import CMHost
 import HermForms
+import ForcedOrders
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2268,6 +2269,9 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms HermForms.dOp_mem
 #print axioms HermForms.gram_isHermitian
 #print axioms HermForms.source_G
+#print axioms ZetaBalance.Setting.lpF_nonneg_le
+#print axioms ZetaBalance.Setting.Ranks.FTypeG_nonpos
+#print axioms ZetaBalance.Setting.Ranks.FInert_nonneg
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
 #print axioms ZetaBalance.rhAndGRH_of_latticeBound
 #print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound
