@@ -48,7 +48,7 @@ library's licence.
 | 1. The top | `HalfPlaneGRH` | 183 | about 130 | Done: `HalfPlaneGRH.rhAndGRH_of_zeroFreeRightOf`, with its converse `zeroFreeRightOf_half_iff` |
 | 2. Landau on windows | `WindowKernel`, `WindowPole`, `WindowNearest`, `LandauWindow`, `RampLaplace`, `WindowGRH` | about 1,600 | about 2,100 (the declarations `lemmaL` and `formB` name) | Done: `WindowGRH.rhAndGRH_of_windowBound` |
 | 3. Balance | `ZetaBalance`, `ZetaGap` | about 1,520 | about 4,000 (`ChBalance`, `ChCore`, `core_gm`) | Done for `ζ` and every primitive `χ`: `ZetaBalance.riemannHypothesis_of_zetaBalanceBound`, `ZetaBalance.rhAndGRH_of_balanceBound` |
-| 4. Lattices | `SlopeFrame`, `GramVolume`, `EuclidLattice`, `ZetaFrame` | about 1,060 | about 6,600 (hermitian lattices, Bost, polygons, `TheoremF`), and `ch_top`, about 3,000 | Done for Euclidean lattices, for `ζ` and every primitive `χ`: `ZetaBalance.riemannHypothesis_of_zetaLatticeBound`, `ZetaBalance.rhAndGRH_of_latticeBound`. Hermitian lattices with heights averaged over places, later |
+| 4. Lattices | `SlopeFrame`, `GramVolume`, `EuclidLattice`, `PlaceLattice`, `HermitianLattice`, `ZetaFrame` | about 1,750 | about 6,600 (hermitian lattices, Bost, polygons, `TheoremF`), and `ch_top`, about 3,000 | Done for `ζ` and every primitive `χ`: `ZetaBalance.riemannHypothesis_of_zetaLatticeBound`, `ZetaBalance.rhAndGRH_of_latticeBound`. The frames may be Euclidean (`EuclidLattice.frame`) or, as the archive's are, hermitian over a totally complex `K` with heights averaged over the places (`HermitianLattice.frame`) |
 | The analytic inputs | `PsiExplicit`, `ZetaThin`, `PrimeCharSums`, `MeanSquareSup`, `TwistFamily`, `ZetaTwist`, `ZetaPair` | about 2,410 | about 28,000 for the twists, mostly a prime number theorem in progressions | Done for `ζ` and every primitive `χ`, conditionally on the half-plane `Re s > 11/12`: `ZetaBalance.riemannHypothesis_of_zetaPairBound`, `ZetaBalance.rhAndGRH_of_pairBound` |
 | 5–6. | | | almost all of 10.7 million lines | Later |
 
@@ -310,7 +310,31 @@ The frame inequality at each `u` gives the averaged gap bound of `ZetaBalance.Ba
 - (G) is needed only on average over translates, not at each;
 - its cancelling pairs merge;
 - the archive's `−log|W|` slack goes, since closure under sums is exact here;
-- (B1) comes from Hadamard place by place (`GramVolume`) rather than by rescaling.
+- (B1) comes from Hadamard place by place (`GramVolume.volLe_iSup`) rather than by rescaling.
+
+**Hermitian lattices, done** (23 November 2026). The frames of the frontiers can now be the archive's own.
+- **Lattices with places** (`PlaceLattice`). A discrete subgroup carries pairwise orthogonal subspaces `V v` at its
+  places, and a class `S` of saturated sublattices: a sublattice of `Sat Λ` with `0` and `Λ`, whose spans are balanced,
+  `|P|·dim (U ∩ V v) = dim U` at each place. Balance makes a span the orthogonal sum of its parts, so no separate
+  compatibility condition is needed. `S` is a slope lattice, closed under sums, by `EuclidLattice`'s modularity.
+- **Bost with averaged heights** (`PlaceLattice.bost`). If `‖φ x‖ ≤ e^{h v}‖x‖` on each `V v`, and images and preimages
+  keep to the classes, then `μ_min(img φ a) ≥ μ_min(a) − h̄`, with `h̄ = |P|⁻¹ Σ_v h v`. `EuclidLattice.bost_le` now asks
+  only that `φ` multiply volumes in `W = span a ⊖ span K` by at most `e^{h·dim W}` (`GramVolume.VolLe`). `W` is
+  balanced when `span a` and `span K` are (`PlaceLattice.Balanced.orthogonal_inf`), and Hadamard place by place gives
+  the factor (`GramVolume.volLe_iSup`). Fischer's inequality joins the places, so the map need not be block-diagonal:
+  only its norm on each `V v` counts.
+- **Hermitian `O_K`-lattices** (`HermitianLattice`), for a totally complex `K`. `E` is a complex inner product space,
+  the orthogonal sum of `V v` over the complex places, with `k ∈ K` acting by `σ_v(k)` on `V v`. The class is the
+  `O_K`-stable saturated sublattices. Their spans are balanced (`HermitianLattice.balanced`) by two facts:
+  - `O_K` spans `K ⊗ ℝ` (Mathlib's `latticeBasis`), so spans are `K ⊗ ℝ`-stable and contain their parts;
+  - a count of ranks: the `O_K`-span of `d` vectors independent at one place has rank `d·[K:ℚ] = 2d·n_∞`, while its
+    part at each place has dimension at most `2d`.
+
+  No `K`-vector space, Galois group or unit enters. Maps that commute with `O_K` keep the classes, so hermitian lattices
+  form frames with the archive's averaged heights (`HermitianLattice.frame`). The archive's units,
+  `μ = 2·deg/rk_ℤ − log 2 + log|d_K|/[K:ℚ]` and `h = 2h̄`, double and shift these.
+- **Size.** `PlaceLattice` has 220 lines and `HermitianLattice` 345. `GramVolume` grew by 111 lines, and `EuclidLattice`
+  by 10.
 
 **Order of work.**
 1. **In parallel:** Lemma B with its objects, and the abstract frame inequality.
@@ -427,14 +451,83 @@ the namespace `ZetaBalance`. `ζ` is the case `χ = 1`.
   the library's results under it (`LinnikGRH.dirichletRH_of_rhAndGRH`, in `RHJoinsLinnik`): `PairBound` gives
   `LinnikGRH.linnik_two` and `LinnikAlmostAll.almostAll_one`, conditionally on the half-plane.
 
+## The construction, measured
+
+Two studies of the archive (23 November 2026) measured what lies below the frontier.
+
+**No cut with free objects has content.** Suppose a frontier leaves the lattice of forms, the target `C` and the period
+maps existential, however much structure it demands. Then rank-one witnesses satisfy it whenever the gap bound holds.
+- **The witness.** Take one word, `C = O_K`, `N = C` and `B = id`. Choose the orders so that the split-prime term and
+  the gain balance the main term, and scale `C`'s metric so its slope is that main term.
+- **What holds.** The six gain inequalities G1–G6 (the archive's `QuotientSlopeBoundsWith`, `Slopes`, `DIV`,
+  `Count5`, `EComp5`, `LossBounds`), the range, depth and rank spreading all hold. G6 holds exactly when the gap bound
+  does.
+- **Where content starts.** Content appears only once the objects are *defined*: the periods up to scalars, `C` with its
+  metric, and the integral forms.
+
+So the honest next frontier is the archive's interface evaluated at a canonical theta datum. The objects behind it:
+- **forms:** definite hermitian spaces over a CM field `E`; lattices in a genus, up to isometry, with mass weights
+  `1/|Aut L|`; Weyl-module coefficients with a Fock norm; the Petersson norm; the forms of level `T_ω`;
+- **periods:** theta kernels, their chain, the periods `B_ω`, and the target `C = RR^∨`.
+
+Stating it is estimated at 5,000–10,000 lines. Mathlib has CM fields, infinite places, adeles, sesquilinear forms and
+double cosets as types. It has no hermitian spaces over CM fields, unitary groups, genus theory, mass formulas,
+highest-weight theory or theta correspondence.
+
+**The sizes.** Rule-`L` cones, from the archive's declaration map:
+
+| Part | Lines | Of which literature |
+|---|---|---|
+| `riemannHypothesis` | 10.23M | 2.98M |
+| the 182 published results, taken as given | frees only 1.05M | |
+| the construction itself | 9.2M | |
+
+- **Why so little is freed.** The construction reuses most of the literature's cone directly, and 31 of the 182
+  published statements are never consumed (18K lines).
+- **Redundancy** is about 10–20%: repeated statements, trivial lemmas, unused structure fields. The rest of any saving
+  must come from writing the proofs differently.
+- **The rebuild's own ratio so far:** 0.28 for steps 1–4, 0.11 for the lattices, 0.09 for the twists (with the
+  half-plane).
+
+The core theorem's seven inputs, and what to do with each:
+- **The covolume bound (`hX`, 2.16M).** It is the largest prize: taking it as given frees 1.66M lines (toroidal
+  compactifications, Arakelov geometry, vanishing theorems, Hironaka). A mass-formula route may exist, but the bound is
+  on the indefinite side and the mass formula on the definite side.
+- **The window input (`VWin`, 2.23M).** It bounds Tate–Shafarevich-type groups of the host cyclotomic fields, through
+  automorphy lifting and `p`-adic Hodge theory. It is fed by **Row** (2.26M): Galois representations for regular
+  algebraic polarized cuspidal representations over CM fields, proved through theta lifts. If Row is as broad as its
+  statement reads, that is a new proof of a major theorem; this has not been audited. Both are best kept as stated
+  inputs.
+- **The theta constants (`hA`, `hM`, 0.48M).** Matched local data and Rallis-type step identities, with the closing
+  theorem `theoremK` (0.29M).
+- **The published bundles `P` and `F`.** Representation theory of unitary groups, Siegel–Weil, the Weil representation
+  and Howe duality. Their statements total about 31K lines.
+- **Local Langlands (`hL`).** Only the tame part, 57K lines; not Harris–Taylor.
+- **The core proper (5.9M).** It proves the unitary mass formula itself (252K lines).
+
+Fresh-rebuild estimates, all rough:
+
+| Taken as stated inputs | Estimated size |
+|---|---|
+| The seven inputs and Row | 0.5–1.5M lines |
+| Only the 182 published results | 0.8–2.5M lines |
+| Nothing | 1.0–3.2M lines |
+
 ## Next
 
 For `ζ` and every Dirichlet `L`-function, every step above the construction is done. RH and GRH follow from
 `ZetaBalance.PairBound`, and RH alone from `ZetaBalance.ZetaPairBound`. These frontiers ask only for the construction:
-lattice data on a sub-window, for every pair `(q, d)` with the archive's arithmetic. Remaining, in order:
+lattice data on a sub-window, for every pair `(q, d)` with the archive's arithmetic. Their frames may be the archive's
+own, hermitian lattices over a totally complex `K` with heights averaged over the places (`HermitianLattice.frame`).
+In order:
 
-- **Hermitian lattices.** Euclidean lattices with an action of `O_K` and heights averaged over the places, as the
-  archive's frames use, with Bost's inequality place by place (`GramVolume`).
-- **A cut with content.** Split the gain (G) into the archive's statements: vanishing at inert primes, the slopes of
-  algebraic modular forms, the sizes of the auxiliary primes. Before starting on the construction itself, measure
-  which of its 176 published inputs the proof reaches.
+1. **The six-term interface.** G1–G6 with the vanishing ideal, the key identity and its cancellations, and the frame
+   inequality give `PairBound`. That is about 500 lines against the archive's 3,000 for `ch_top`. It is still
+   equivalent to the gap bound, as above.
+2. **Self-contained components:**
+   - the sizes of the auxiliary primes;
+   - the frame condition at one complex place (`LinkS`, about 100K archive lines);
+   - the slopes of algebraic modular forms through the mass formula (250K);
+   - local divisibility at inert primes (`LinkG`, 160K), given the Weil-representation statements.
+3. **The theta layer**, with the theta constants and Howe duality first taken as stated inputs.
+4. **The mass-formula route to the covolume bound**, tried before any toroidal work.

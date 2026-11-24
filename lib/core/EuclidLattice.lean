@@ -18,7 +18,9 @@ frame inequality of `SlopeFrame`, with Bost's slope inequality on images.
   slope at least `θ` have minimal slope at least `θ` (`supClosed`).
 * **Bost's inequality** (`bost`): if `φ : E → F` sends `Λ` into `Λ'` and `‖φ‖ ≤ eʰ`, then `img φ a`, the saturation of
   `φ(a)`, has `μ_min(img φ a) ≥ μ_min(a) − h`. At `b ≤ img φ a` it uses the slope bound for `a` only at
-  `a ⊓ preimg φ b` (`bost_le`), so it also serves sublattices of `Sat Λ` closed under `⊓` that contain these.
+  `K = a ⊓ preimg φ b`, and of `φ` only how it multiplies volumes in `W = (span K)ᗮ ⊓ span a`, the complement of
+  `span K` in `span a` (`bost_le`). So it also serves sublattices of `Sat Λ` closed under `⊓` that contain these, with
+  heights averaged over places (`PlaceLattice`).
 
 The facts used:
 
@@ -39,8 +41,9 @@ The two inequalities:
 * **Bost.** For `b ≤ img φ a`, the sublattice `K = a ⊓ preimg φ b = a ∩ φ⁻¹ b` is saturated. Take a basis `(k, x)` of
   `a` adapted to `K`, and a basis `β` of `b`. As `span K = span a ∩ φ⁻¹(span b)`, the family `(β, φx)` is
   independent, and it spans `img φ a`. So `covol (img φ a) ≤ vol (β, φx) = covol b·vol (π_b φ π_K x) ≤
-  covol b·‖φ‖ʳ·covol a/covol K`, with `r = rk a − rk K = rk (img φ a) − rk b`, and the slope bound for `a` at `K`
-  finishes.
+  covol b·vol (φ π_K x)`. The `π_K x` are `r = rk a − rk K = rk (img φ a) − rk b` vectors of `W`, of volume
+  `covol a/covol K`, so `vol (φ π_K x) ≤ eʳʰ·covol a/covol K` when `φ` multiplies volumes in `W` by at most `eʳʰ`, as
+  it does when `‖φ‖ ≤ eʰ`. The slope bound for `a` at `K` finishes.
 -/
 
 namespace EuclidLattice
@@ -391,16 +394,6 @@ theorem supClosed : (slopeLattice Λ).SupClosed :=
 
 /-! ### Bost's inequality -/
 
-omit [FiniteDimensional ℝ E] in
-/-- **Hadamard** after a projection: `vol (π ∘ ψ ∘ y) ≤ ‖ψ‖ⁿ·vol y`, for `π` the projection onto `Vᗮ`. -/
-theorem vol_starProjection_comp_le (V : Submodule ℝ F) (ψ : E →L[ℝ] F) {n : ℕ} (y : Fin n → E) :
-    vol (fun j => Vᗮ.starProjection (ψ (y j))) ≤ ‖ψ‖ ^ n * vol y := by
-  have h := vol_comp_le (Vᗮ.starProjection ∘L ψ) y
-  rw [Fintype.card_fin] at h
-  refine h.trans (mul_le_mul_of_nonneg_right (pow_le_pow_left₀ (norm_nonneg _) ?_ n) (vol_nonneg y))
-  exact (ContinuousLinearMap.opNorm_comp_le _ _).trans
-    (mul_le_of_le_one_left (norm_nonneg _) (starProjection_norm_le _))
-
 /-- If `ψ` sends `W` into `V`, then `ψ` and `ψ` after the projection onto `Wᗮ` agree after the projection onto `Vᗮ`. -/
 theorem starProjection_comp_eq {W : Submodule ℝ E} {V : Submodule ℝ F} {ψ : E →L[ℝ] F} (h : ∀ w ∈ W, ψ w ∈ V)
     (v : E) : Vᗮ.starProjection (ψ (Wᗮ.starProjection v)) = Vᗮ.starProjection (ψ v) := by
@@ -421,11 +414,14 @@ def img (φ : E →L[ℝ] F) (a : Sat Λ) : Sat Λ' :=
 def preimg (φ : E →L[ℝ] F) (b : Sat Λ') : Sat Λ :=
   ⟨sat Λ ((span ℝ (b.1 : Set F)).comap (φ : E →ₗ[ℝ] F)), sat_isSat _⟩
 
-/-- **Bost's inequality** at one quotient: if `φ` sends `Λ` into `Λ'`, `‖φ‖ ≤ eʰ` and `b ≤ img φ a`, then the slope
-bound for `a` at `a ⊓ preimg φ b` gives the bound for `img φ a` at `b`, less `h`. -/
-theorem bost_le [DiscreteTopology Λ'] (φ : E →L[ℝ] F) (hφΛ : ∀ x ∈ Λ, φ x ∈ Λ') {h : ℝ} (hφ : ‖φ‖ ≤ Real.exp h)
-    {a : Sat Λ} {b : Sat Λ'} (hb : b ≤ img φ a) {θ : ℝ}
-    (ha : θ * (((slopeLattice Λ).rk a : ℝ) - (slopeLattice Λ).rk (a ⊓ preimg φ b)) ≤
+/-- **Bost's inequality** at one quotient: suppose `φ` sends `Λ` into `Λ'` and `b ≤ img φ a`, and put
+`K = a ⊓ preimg φ b`. If `φ` multiplies volumes in `W = (span K)ᗮ ⊓ span a`, the complement of `span K` in `span a`,
+by at most `e^{h·dim W}`, then the slope bound for `a` at `K` gives the bound for `img φ a` at `b`, less `h`. -/
+theorem bost_le [DiscreteTopology Λ'] (φ : E →L[ℝ] F) (hφΛ : ∀ x ∈ Λ, φ x ∈ Λ') {a : Sat Λ} {b : Sat Λ'}
+    (hb : b ≤ img φ a) {h : ℝ}
+    (hφ : VolLe φ ((span ℝ ((a ⊓ preimg φ b).1 : Set E))ᗮ ⊓ span ℝ (a.1 : Set E))
+      (Real.exp (finrank ℝ ↥((span ℝ ((a ⊓ preimg φ b).1 : Set E))ᗮ ⊓ span ℝ (a.1 : Set E)) * h)))
+    {θ : ℝ} (ha : θ * (((slopeLattice Λ).rk a : ℝ) - (slopeLattice Λ).rk (a ⊓ preimg φ b)) ≤
       (slopeLattice Λ).deg a - (slopeLattice Λ).deg (a ⊓ preimg φ b)) :
     (θ - h) * (((slopeLattice Λ').rk (img φ a) : ℝ) - (slopeLattice Λ').rk b) ≤
       (slopeLattice Λ').deg (img φ a) - (slopeLattice Λ').deg b := by
@@ -442,10 +438,16 @@ theorem bost_le [DiscreteTopology Λ'] (φ : E →L[ℝ] F) (hφΛ : ∀ x ∈ �
       rw [span_eq]
       exact subset_span (R := ℝ) (s := (b.1 : Set F)) hxb
   have hKa : a ⊓ preimg φ b ≤ a := inf_le_left
-  generalize a ⊓ preimg φ b = K at hK1 hKa ha
+  generalize a ⊓ preimg φ b = K at hK1 hKa ha hφ
   have hspanK := span_inf_comap (A := a.1) b.2.1 (φ : E →ₗ[ℝ] F) fun x hx => hφΛ x (a.2.1 hx)
   rw [← hK1] at hspanK
   obtain ⟨n, x, hxa, hn, hspa, hli, hdisj, hca⟩ := exists_adapted hKa
+  have hKa' : span ℝ (K.1 : Set E) ≤ span ℝ (a.1 : Set E) := span_mono (show (K.1 : Set E) ⊆ a.1 from hKa)
+  -- `n` is the dimension of `W`.
+  have hnW : n = finrank ℝ ↥((span ℝ (K.1 : Set E))ᗮ ⊓ span ℝ (a.1 : Set E)) := by
+    have := finrank_add_inf_finrank_orthogonal hKa'
+    rw [finrank_span, finrank_span] at this
+    omega
   -- `φ` sends `span K` into `span b`, the span of a basis `β` of `b`.
   have hβ := span_basis (finBasis ℤ b.1)
   have hφK (v : E) (hv : v ∈ span ℝ (K.1 : Set E)) :
@@ -498,9 +500,14 @@ theorem bost_le [DiscreteTopology Λ'] (φ : E →L[ℝ] F) (hφΛ : ∀ x ∈ �
     rw [hwvol]
     refine mul_le_mul_of_nonneg_left ?_ (covol_pos _).le
     rw [← funext fun j => starProjection_comp_eq hφK (x j)]
-    refine (vol_starProjection_comp_le _ φ _).trans ?_
-    rw [Real.exp_nat_mul]
-    exact mul_le_mul_of_nonneg_right (pow_le_pow_left₀ (norm_nonneg φ) hφ n) (vol_nonneg _)
+    have hW (j : Fin n) : (span ℝ (K.1 : Set E))ᗮ.starProjection (x j) ∈
+        (span ℝ (K.1 : Set E))ᗮ ⊓ span ℝ (a.1 : Set E) := by
+      refine ⟨starProjection_apply_mem _ _, ?_⟩
+      rw [starProjection_orthogonal_val]
+      exact sub_mem (subset_span (hxa j)) (hKa' (starProjection_apply_mem _ _))
+    have := hφ n _ hnW hW
+    rw [← hnW] at this
+    exact (vol_starProjection_le _ _).trans this
   have hlog := Real.log_le_log (covol_pos _) key
   rw [Real.log_mul (covol_pos _).ne' (mul_pos (Real.exp_pos _) hV).ne', Real.log_mul (Real.exp_pos _).ne' hV.ne',
     Real.log_exp] at hlog
@@ -523,7 +530,10 @@ theorem bost_le [DiscreteTopology Λ'] (φ : E →L[ℝ] F) (hφΛ : ∀ x ∈ �
 `μ_min(img φ a) ≥ μ_min(a) − h`. -/
 theorem bost [DiscreteTopology Λ'] (φ : E →L[ℝ] F) (hφΛ : ∀ x ∈ Λ, φ x ∈ Λ') {h : ℝ} (hφ : ‖φ‖ ≤ Real.exp h)
     {a : Sat Λ} {θ : ℝ} (ha : (slopeLattice Λ).SlopeGe a θ) : (slopeLattice Λ').SlopeGe (img φ a) (θ - h) :=
-  fun _ hb => bost_le φ hφΛ hφ hb (ha _ inf_le_left)
+  fun _ hb => bost_le φ hφΛ hb (by
+    rw [Real.exp_nat_mul]
+    exact volLe_of_norm_le (Real.exp_pos h).le fun x _ =>
+      (φ.le_opNorm x).trans (mul_le_mul_of_nonneg_right hφ (norm_nonneg x))) (ha _ inf_le_left)
 
 end EuclidLattice
 

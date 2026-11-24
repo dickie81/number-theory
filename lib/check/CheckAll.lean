@@ -445,6 +445,7 @@ import ParityGround
 import WindowGRH
 import ZetaFrame
 import EuclidLattice
+import HermitianLattice
 import ZetaThin
 import ZetaPair
 import RHJoinsLinnik
@@ -2223,6 +2224,11 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms EuclidLattice.bost
 #print axioms EuclidLattice.supClosed
 #print axioms EuclidLattice.frame
+#print axioms GramVolume.volLe_iSup
+#print axioms PlaceLattice.bost
+#print axioms PlaceLattice.frame
+#print axioms HermitianLattice.balanced
+#print axioms HermitianLattice.frame
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
 #print axioms ZetaBalance.rhAndGRH_of_latticeBound
 #print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound

@@ -114,6 +114,19 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   of norm at most `e^h` lowers minimal slopes by at most `h`. Closure under sums holds (`EuclidLattice.supClosed`),
   because the covolume is supermodular. So Euclidean lattices and maps between them form frames
   (`EuclidLattice.frame`).
+- **Heights averaged over places.** `PlaceLattice.bost` works with lattices that have places: pairwise orthogonal
+  subspaces `V v`, and a class of saturated sublattices whose spans are balanced, meeting each `V v` in `1/|P|` of their
+  dimension. Take a map of norm at most `e^{h_v}` on each `V v`, whose images and preimages keep to the classes. It
+  lowers minimal slopes by at most the averaged height `|P|⁻¹ Σ_v h_v`, where `EuclidLattice.bost` loses the largest
+  `h_v`. The proof is Hadamard's inequality place by place (`GramVolume.volLe_iSup`); Fischer's inequality joins the
+  places, so the map need not respect any decomposition of the target. Such lattices form frames
+  (`PlaceLattice.frame`).
+- **Hermitian lattices** over the ring of integers `O_K` of a totally complex field `K` are such lattices
+  (`HermitianLattice.balanced`). The span of an `O_K`-stable discrete subgroup has the same dimension at every complex
+  place. The proof uses only that `O_K` spans `K ⊗ ℝ`, and a count of ranks: the `O_K`-span of `d` vectors independent
+  at one place has rank `d·[K:ℚ]`. `HermitianLattice.frame`: hermitian lattices and maps that commute with `O_K` form
+  frames, with heights averaged over the places. These are the frames of the archive's `ch_top`, so the frames that
+  the frontiers ask for (`ZetaBalance.LatticeData`) can be the archive's own.
 
 ## How the statements differ from the archive's
 

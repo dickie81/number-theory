@@ -17,11 +17,18 @@ spans. It is `LinearMap.normDet` of `c ↦ Σ cᵢ vᵢ` (`LinearMap.normDet_sq_
   `‖f‖²·gram v − gram (f ∘ v)` is positive semidefinite (`Matrix.posSemidef_opNorm_smul_gram_sub_gram`), and `det`
   is monotone on positive semidefinite matrices (`det_le_det`);
 * `vol_sumElim_le`, Fischer's inequality: `vol (u, w) ≤ vol u·vol w`, from the two above, as `‖π‖ ≤ 1`.
+
+**Hadamard place by place** (`volLe_iSup`), for heights averaged over places (`PlaceLattice`). Say `f` multiplies
+volumes in a subspace `W` by at most `k` (`VolLe f W k`) when `vol (f ∘ w) ≤ k·vol w` for every `dim W` vectors `w` of
+`W`. If `‖f x‖ ≤ c_v‖x‖` on each of pairwise orthogonal subspaces `W_v`, then `f` multiplies volumes in their sum by at
+most `∏ c_v^{dim W_v}`. Hadamard gives it on each `W_v` (`volLe_of_norm_le`). Fischer's inequality, on a basis adapted
+to two orthogonal subspaces, whose volume is the product of theirs, joins them (`VolLe.sup`), and `vol_comb` passes to
+any other family (`volLe_of_span`). Nothing is asked of `f` across places: Fischer absorbs the cross terms.
 -/
 
 namespace GramVolume
 
-open Matrix Submodule
+open Matrix Submodule Module
 
 variable {E F : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [NormedAddCommGroup F]
   [InnerProductSpace ℝ F] {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
@@ -104,12 +111,115 @@ theorem vol_comp_le (f : E →L[ℝ] F) (v : ι → E) : vol (f ∘ v) ≤ ‖f�
   rw [det_smul, pow_right_comm, ← vol_sq, ← vol_sq, ← mul_pow] at h
   exact le_of_pow_le_pow_left₀ two_ne_zero (mul_nonneg (by positivity) (vol_nonneg v)) h
 
+/-- **Projections do not increase volume**: `vol (π ∘ w) ≤ vol w`, for `π` an orthogonal projection. -/
+theorem vol_starProjection_le (K : Submodule ℝ E) [K.HasOrthogonalProjection] (w : ι → E) :
+    vol (fun i => K.starProjection (w i)) ≤ vol w :=
+  (vol_comp_le K.starProjection w).trans
+    (mul_le_of_le_one_left (vol_nonneg w) (pow_le_one₀ (norm_nonneg _) (starProjection_norm_le _)))
+
 /-- **Fischer's inequality**: `vol (u, w) ≤ vol u·vol w`. -/
 theorem vol_sumElim_le [FiniteDimensional ℝ E] (u : ι → E) (w : κ → E) : vol (Sum.elim u w) ≤ vol u * vol w := by
   rw [vol_sumElim]
-  refine mul_le_mul_of_nonneg_left ((vol_comp_le (span ℝ (Set.range u))ᗮ.starProjection w).trans ?_)
-    (vol_nonneg u)
-  exact mul_le_of_le_one_left (vol_nonneg w) (pow_le_one₀ (norm_nonneg _) (starProjection_norm_le _))
+  exact mul_le_mul_of_nonneg_left (vol_starProjection_le _ w) (vol_nonneg u)
+
+/-! ### Hadamard place by place -/
+
+/-- `f` multiplies volumes in `W` by at most `k`: `vol (f ∘ w) ≤ k·vol w` for every `dim W` vectors `w` of `W`. -/
+def VolLe (f : E →L[ℝ] F) (W : Submodule ℝ E) (k : ℝ) : Prop :=
+  ∀ (n : ℕ) (w : Fin n → E), n = finrank ℝ W → (∀ i, w i ∈ W) → vol (f ∘ w) ≤ k * vol w
+
+/-- `VolLe` holds once it holds for one family of `dim W` vectors whose span contains `W`, since every other family
+is a combination of it (`vol_comb`). -/
+theorem volLe_of_span {f : E →L[ℝ] F} {W : Submodule ℝ E} {k : ℝ} (z : ι → E)
+    (hc : Fintype.card ι = finrank ℝ W) (hz : W ≤ span ℝ (Set.range z)) (h : vol (f ∘ z) ≤ k * vol z) :
+    VolLe f W k := by
+  intro n w hn hw
+  let e : ι ≃ Fin n := Fintype.equivFinOfCardEq (hc.trans hn.symm)
+  choose c hc' using fun j => (mem_span_range_iff_exists_fun ℝ).1 (hz (hw (e j)))
+  have h1 : w ∘ e = fun j => ∑ i, Matrix.of (fun i j => c j i) i j • z i := funext fun j => (hc' j).symm
+  have h2 : (f ∘ w) ∘ e = fun j => ∑ i, Matrix.of (fun i j => c j i) i j • (f ∘ z) i := funext fun j => by
+    simp [← hc' j, map_sum, map_smul]
+  rw [← vol_comp_equiv w e, ← vol_comp_equiv (f ∘ w) e, h1, h2, vol_comb, vol_comb, mul_left_comm]
+  exact mul_le_mul_of_nonneg_left h (abs_nonneg _)
+
+/-- **Hadamard on a subspace**: if `‖f x‖ ≤ c‖x‖` on `W`, then `f` multiplies volumes in `W` by at most `c^dim W`. -/
+theorem volLe_of_norm_le {f : E →L[ℝ] F} {W : Submodule ℝ E} [W.HasOrthogonalProjection] {c : ℝ} (hc : 0 ≤ c)
+    (hf : ∀ x ∈ W, ‖f x‖ ≤ c * ‖x‖) : VolLe f W (c ^ finrank ℝ W) := by
+  rintro n w rfl hw
+  have h := vol_comp_le (f ∘L W.starProjection) w
+  rw [Fintype.card_fin] at h
+  have hw' : (f ∘L W.starProjection) ∘ w = f ∘ w := funext fun i => by
+    simp [starProjection_eq_self_iff.2 (hw i)]
+  rw [hw'] at h
+  refine h.trans (mul_le_mul_of_nonneg_right (pow_le_pow_left₀ (norm_nonneg _) ?_ _) (vol_nonneg w))
+  exact ContinuousLinearMap.opNorm_le_bound _ hc fun x =>
+    (hf _ (starProjection_apply_mem W x)).trans (mul_le_mul_of_nonneg_left (norm_starProjection_apply_le W x) hc)
+
+/-- Orthogonal subspaces: `dim (W₁ ⊔ W₂) = dim W₁ + dim W₂`. -/
+theorem finrank_sup_of_isOrtho [FiniteDimensional ℝ E] {W₁ W₂ : Submodule ℝ E} (h : W₁ ⟂ W₂) :
+    finrank ℝ ↥(W₁ ⊔ W₂) = finrank ℝ W₁ + finrank ℝ W₂ := by
+  have := Submodule.finrank_sup_add_finrank_inf_eq W₁ W₂
+  rwa [h.disjoint.eq_bot, finrank_bot, add_zero] at this
+
+/-- **Fischer's inequality** on orthogonal subspaces: if `f` multiplies volumes in `W₁` by at most `k₁` and in `W₂` by
+at most `k₂`, and `W₁ ⟂ W₂`, then it multiplies volumes in `W₁ ⊔ W₂` by at most `k₁k₂`. Take bases `z₁` of `W₁` and
+`z₂` of `W₂`: `vol (f z₁, f z₂) ≤ vol (f z₁)·vol (f z₂)`, while `vol (z₁, z₂) = vol z₁·vol z₂`. -/
+theorem VolLe.sup [FiniteDimensional ℝ E] [FiniteDimensional ℝ F] {f : E →L[ℝ] F} {W₁ W₂ : Submodule ℝ E}
+    {k₁ k₂ : ℝ} (h₁ : VolLe f W₁ k₁) (h₂ : VolLe f W₂ k₂) (hW : W₁ ⟂ W₂) : VolLe f (W₁ ⊔ W₂) (k₁ * k₂) := by
+  have hspan (W : Submodule ℝ E) : span ℝ (Set.range fun i => (finBasis ℝ W i : E)) = W := by
+    have h := congrArg (map W.subtype) (finBasis ℝ W).span_eq
+    rwa [map_span, Submodule.map_top, range_subtype, ← Set.range_comp] at h
+  let z₁ i := (finBasis ℝ W₁ i : E)
+  let z₂ i := (finBasis ℝ W₂ i : E)
+  have hz₁ i : z₁ i ∈ W₁ := (finBasis ℝ W₁ i).2
+  have hz₂ i : z₂ i ∈ W₂ := (finBasis ℝ W₂ i).2
+  refine volLe_of_span (Sum.elim z₁ z₂) (by simp [finrank_sup_of_isOrtho hW]) ?_ ?_
+  · rw [Set.Sum.elim_range, span_union, hspan, hspan]
+  · have h0 : vol (Sum.elim z₁ z₂) = vol z₁ * vol z₂ := by
+      rw [vol_sumElim]
+      congr 2
+      exact funext fun i => starProjection_eq_self_iff.2
+        (orthogonal_le (span_le.2 (Set.range_subset_iff.2 hz₁)) (hW.symm (hz₂ i)))
+    rw [h0, Sum.comp_elim]
+    have := h₁ _ z₁ rfl hz₁
+    have := h₂ _ z₂ rfl hz₂
+    have := vol_nonneg (f ∘ z₁)
+    have := vol_nonneg (f ∘ z₂)
+    nlinarith [vol_sumElim_le (f ∘ z₁) (f ∘ z₂)]
+
+/-- **Hadamard place by place**: if `‖f x‖ ≤ c v·‖x‖` on each of pairwise orthogonal subspaces `W v`, then `f`
+multiplies volumes in their sum by at most `∏ c v ^ dim W v`. -/
+theorem volLe_iSup [FiniteDimensional ℝ E] [FiniteDimensional ℝ F] {P : Type*} [Fintype P] {f : E →L[ℝ] F}
+    {W : P → Submodule ℝ E} (hW : Pairwise fun v w => W v ⟂ W w) {c : P → ℝ} (hc : ∀ v, 0 ≤ c v)
+    (hf : ∀ v, ∀ x ∈ W v, ‖f x‖ ≤ c v * ‖x‖) : VolLe f (⨆ v, W v) (∏ v, c v ^ finrank ℝ (W v)) := by
+  classical
+  rw [← Finset.sup_univ_eq_iSup]
+  generalize (Finset.univ : Finset P) = s
+  induction s using Finset.induction_on with
+  | empty =>
+    rintro n w rfl _
+    have : IsEmpty (Fin (finrank ℝ ↥((∅ : Finset P).sup W))) := by
+      rw [Finset.sup_empty, finrank_bot]
+      infer_instance
+    simp [vol_of_isEmpty]
+  | insert v s hv ih =>
+    rw [Finset.sup_insert, Finset.prod_insert hv]
+    refine (volLe_of_norm_le (hc v) (hf v)).sup ih ?_
+    rw [Finset.sup_eq_iSup]
+    exact isOrtho_iSup_right.2 fun w => isOrtho_iSup_right.2 fun hw => hW (ne_of_mem_of_not_mem hw hv).symm
+
+/-- The dimension of a sum of pairwise orthogonal subspaces is the sum of their dimensions. -/
+theorem finrank_iSup_of_isOrtho [FiniteDimensional ℝ E] {P : Type*} [Fintype P] {W : P → Submodule ℝ E}
+    (hW : Pairwise fun v w => W v ⟂ W w) : finrank ℝ ↥(⨆ v, W v) = ∑ v, finrank ℝ (W v) := by
+  classical
+  rw [← Finset.sup_univ_eq_iSup]
+  generalize (Finset.univ : Finset P) = s
+  induction s using Finset.induction_on with
+  | empty => simp
+  | insert v s hv ih =>
+    rw [Finset.sup_insert, Finset.sum_insert hv, finrank_sup_of_isOrtho, ih]
+    rw [Finset.sup_eq_iSup]
+    exact isOrtho_iSup_right.2 fun w => isOrtho_iSup_right.2 fun hw => hW (ne_of_mem_of_not_mem hw hv).symm
 
 end GramVolume
 
@@ -117,3 +227,4 @@ end GramVolume
 #print axioms GramVolume.vol_sumElim
 #print axioms GramVolume.vol_comp_le
 #print axioms GramVolume.vol_sumElim_le
+#print axioms GramVolume.volLe_iSup

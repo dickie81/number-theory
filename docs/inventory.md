@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1869 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1874 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 207 | 728 |
+| `lib/core` | 209 | 733 |
 | `lib/pnt` | 353 | 1028 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -504,6 +504,7 @@ note of `formalisations/` that names it, if one does.
 #### `GramVolume`: Volumes of parallelotopes
 
 - `GramVolume.vol_comp_le`: Hadamard's inequality for maps ([note](../formalisations/alpoge-rh.md))
+- `GramVolume.volLe_iSup`: Hadamard place by place ([note](../formalisations/alpoge-rh.md))
 
 #### `GroundState`: Ground states of Weil's form: the structural facts
 
@@ -576,6 +577,11 @@ note of `formalisations/` that names it, if one does.
 - `HasseEisenstein.card_points_of_mod_three_eq_two`: `y² = x³ + D` has `q + 1` points when `q ≡ 2 (mod 3)`
 - `HasseEisenstein.exists_eisenstein_trace`: The Frobenius of `y² = x³ + D` is an Eisenstein integer of norm `q`
 - `HasseEisenstein.abs_trace_le`: Hasse's bound for `y² = x³ + D`
+
+#### `HermitianLattice`: Hermitian lattices over a totally complex field
+
+- `HermitianLattice.balanced`: Spans of stable discrete subgroups are balanced ([note](../formalisations/alpoge-rh.md))
+- `HermitianLattice.frame`: Hermitian frames ([note](../formalisations/alpoge-rh.md))
 
 #### `HodgeCounting`: The Hodge index theorem from counting: Minkowski's theorem as the bridge to `BallWeil`
 
@@ -796,6 +802,11 @@ note of `formalisations/` that names it, if one does.
 - `PivotTop.mertens_le_small`: Mertens' bound, small range *paper*
 - `PivotTop.mertens_le_uniform`: Mertens' bound, uniform *paper* ([note](../formalisations/ball-rate.md))
 - `PivotTop.top_bound`: The top vertex keeps 13/10 of its diagonal *paper* ([note](../formalisations/ball-rate.md))
+
+#### `PlaceLattice`: Lattices with places, and heights averaged over them
+
+- `PlaceLattice.bost`: Bost's inequality with averaged heights ([note](../formalisations/alpoge-rh.md))
+- `PlaceLattice.frame`: Frames with averaged heights ([note](../formalisations/alpoge-rh.md))
 
 #### `PoleRelax`: Past `λ₀ = 0`: the pole term through a finite relaxation
 
