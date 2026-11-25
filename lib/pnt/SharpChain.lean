@@ -84,8 +84,8 @@ levels `j < m` (the frontier reads only each word's last step, so the index clau
 **Twist characters** (spec-7 §1c–1d, `SharpData.RealisedPinned`). Each level `μ` has a twist `ξ_μ` (`ξT`, read by
 `IsThetaCol` through `Shp`), `1` at `μ0` and `δ_ℓ·ψ_w` at `μ(w) ≠ μ0`, `ℓ` the residue characteristic of `w`:
 `δ_ℓ` is `δ` (`Hecke.IsDelta pde`), or `δ′` (`IsDelta pde′`) when `ℓ = pde`, with `pde`, `pde′` existential primes
-`≠ T_ω`; `ψ_w` is `Hecke.IsPsi ℓ Q_w`. `GoodTw`, for every conjugate `ψ_w^a` (`a` prime to `ℓ`), at every level with that
-twist (no level is required to exist): the twisted kernel lattice is the `O_K`-span of the columns
+`≠ T_ω`; `ψ_w` is `Hecke.IsPsi ℓ Q_w`. `GoodTw`, for every conjugate `ψ_w^a` (`a` prime to `ℓ`), at every level
+with that twist (no level is required to exist): the twisted kernel lattice is the `O_K`-span of the columns
 `col_{μ′}(M_ω)` of the integral sources (the archive's lattice at `(j, b)` is not available: `Data` is existential
 inside `IsThetaCol`), of the untwisted rank, and of `ℓ`-index (`idxW`) at most that at `μ0` plus `ε_ω`, `ε ≥ 0`,
 `Σ ε ≤ ℓ⁻²`.
