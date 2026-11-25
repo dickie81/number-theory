@@ -108,10 +108,13 @@ places above `g₀g₁` (`eW`, `Sg`),
 
 **Source pins** (L4.3, L6.5, audit of `KLattice.G`): through each word's `e` (the one every level reads), the pinned
 frontier takes `K` normal over `ℚ` with a star (not CM: the archive's `K` contains `j(cc)`), `M_ω` the `O_K`-span of
-the integral forms `HermForms.Mω` of `X ⊓ V_ω`, and the source metrics `G_v = σ_v(H_ω)`, `H_ω` the Petersson form
-`HermForms.pet` (hermitian for the star), in the coordinates of the frame (`KFrame.RealisesPet`). The target metric
-stays existential. Every level's `X`, `lsh`, `V0` are pinned by one clause on `SG ∪ QE μ` with `ST = ∅` (spec-7 §2c,
-spec-9; "Rows" below). Not pinned: a lower bound on `X` or on the words.
+the integral forms `HermForms.Mω` of `X ⊓ V_ω`, and the source metric at `v` the complex Petersson form
+`H_{ω,σ_v}` (`HermForms.petAt`: `σ_v` on the coefficients, then the Fock form over `ℂ`; the archive's metric at every
+place), in the coordinates of the frame (`KFrame.RealisesPet`). Not `σ_v(H_ω)` with the star of `K`: that is hermitian
+only where the star is conjugation, and depends on the basis elsewhere (the two agree where the star is conjugation,
+`HermForms.petAt_eq_map`). The target metric stays existential. Every level's `X`, `lsh`, `V0` are pinned by one
+clause on `SG ∪ QE μ` with `ST = ∅` (spec-7 §2c, spec-9; "Rows" below). Not pinned: a lower bound on `X` or on the
+words.
 
 **Rows** (spec-9; `RowSpace`). At every level `μ` (`QE μ0 = ∅`): `G μ ≃* Grp E n (SG ∪ QE μ) Λ_μ` and `X μ ≃ points Λ_μ`
 with `ST = ∅`, compatibly, `Λ_μ = rowLevel SG (QE μ)` (`HKJ` at `SG`: block upper triangular for `(r, t, …, t)` with the
@@ -449,28 +452,28 @@ variable {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] {Φ : Type*} 
 
 open Classical in
 /-- **Realised, with the source metrics pinned** (L4.3, L6.5): `KFrame.Realises`, and in the same coordinates `e ω`
-as the lattices and the maps, the metric of `N_ω` at `v` is the Gram matrix of the hermitian form `hV ω` (in the
-pinned frontier, the Petersson form `H_ω` of `X ⊓ V_ω`, `IsThetaCol`): `G_v(i, j) = σ_v(hV(e⁻¹δ_i, e⁻¹δ_j))`, as in
-`HermForms.gram` and `HermForms.source_G`. -/
+as the lattices and the maps, the metric of `N_ω` at `v` is the Gram matrix of the form `hV ω σ_v` at the place's
+embedding (in the pinned frontier, the complex Petersson form `H_{ω,σ_v}` of `X ⊓ V_ω`, `HermForms.petAt`,
+`IsThetaCol`): `G_v(i, j) = hV_{σ_v}(e⁻¹δ_i, e⁻¹δ_j)`, as in `HermForms.gram` and `HermForms.source_G`. -/
 def KFrame.RealisesPet (F : KFrame K) {Vs : F.ι → Type*} [∀ ω, AddCommGroup (Vs ω)] [∀ ω, Module K (Vs ω)]
     [∀ ω, Module (𝓞 K) (Vs ω)] [∀ ω, IsScalarTower (𝓞 K) K (Vs ω)]
     (D : PeriodTarget.PerData Φ n E K G X Vs) (μ0 : T) (tw : PeriodTarget.Twist D μ0)
-    (𝔞p 𝔞n : F.ι → Ideal (𝓞 K)) (M : ∀ ω, Submodule (𝓞 K) (Vs ω)) (hV : ∀ ω, Vs ω → Vs ω → K) : Prop :=
+    (𝔞p 𝔞n : F.ι → Ideal (𝓞 K)) (M : ∀ ω, Submodule (𝓞 K) (Vs ω)) (hV : ∀ ω, (K →+* ℂ) → Vs ω → Vs ω → ℂ) :
+    Prop :=
   tw.IsTransfer ∧ (∀ w ∉ tw.Tw, tw.μw w = μ0) ∧ (∀ ω, 𝔞p ω ≠ ⊥ ∧ 𝔞n ω ≠ ⊥) ∧
     ∃ (e : ∀ ω, Vs ω ≃ₗ[K] (F.n ω → K)) (eC : (D.V0 μ0 → K) →ₗ[K] (F.κ → K)), Set.InjOn eC (D.W μ0) ∧
       (∀ ω, (F.src ω).M =
         (PeriodTarget.Nsrc τ tw 𝔞p 𝔞n M ω).map (((e ω : Vs ω →ₗ[K] (F.n ω → K))).restrictScalars (𝓞 K))) ∧
       F.tgt.M = (PeriodTarget.Ctgt τ tw).map (eC.restrictScalars (𝓞 K)) ∧
       (∀ ω φ, eC (D.P μ0 ω φ) = F.B ω (e ω φ)) ∧
-      ∀ ω v i j, (F.src ω).G v i j =
-        v.1.embedding (hV ω ((e ω).symm (Pi.single i 1)) ((e ω).symm (Pi.single j 1)))
+      ∀ ω v i j, (F.src ω).G v i j = hV ω v.1.embedding ((e ω).symm (Pi.single i 1)) ((e ω).symm (Pi.single j 1))
 
 omit [NumberField E] in
 /-- **Sanity:** realised with the metrics pinned is realised. -/
 theorem KFrame.RealisesPet.realises {F : KFrame K} {Vs : F.ι → Type*} [∀ ω, AddCommGroup (Vs ω)]
     [∀ ω, Module K (Vs ω)] [∀ ω, Module (𝓞 K) (Vs ω)] [∀ ω, IsScalarTower (𝓞 K) K (Vs ω)]
     {D : PeriodTarget.PerData Φ n E K G X Vs} {μ0 : T} {tw : PeriodTarget.Twist D μ0}
-    {𝔞p 𝔞n : F.ι → Ideal (𝓞 K)} {M : ∀ ω, Submodule (𝓞 K) (Vs ω)} {hV : ∀ ω, Vs ω → Vs ω → K}
+    {𝔞p 𝔞n : F.ι → Ideal (𝓞 K)} {M : ∀ ω, Submodule (𝓞 K) (Vs ω)} {hV : ∀ ω, (K →+* ℂ) → Vs ω → Vs ω → ℂ}
     (h : F.RealisesPet τ D μ0 tw 𝔞p 𝔞n M hV) :
     F.Realises τ D μ0 tw 𝔞p 𝔞n M := by
   obtain ⟨h1, h2, h3, e, eC, h4, h5, h6, h7, -⟩ := h
@@ -577,10 +580,11 @@ chain's CM type equal to `τ_K`,
 the branching maps pinned (`BrPinned`) at `λ_ω = λ_m` (`lamW`) of the word's HC family `hcW ω` (the archive's `hcW u`:
 equal to `hc u` in `v`, `b`, `e`, `u_0`, `u_{k−1}`, so the words may differ in the middle `u_i`; the chain weights `λ_j`
 of `Shp`, `λ_0` included, are `hcW ω`'s) and `σ = sgT` (`sgW`) of `hc u`, the source lattices `M_ω`
-the `O_K`-span of the integral forms `HermForms.Mω` of `X ⊓ V_ω` and the source metrics the Petersson form `H_ω` (both
-through the word's isomorphism `e ω` with `X_ω ⊓ V_ω`, the one `IsThetaCol` reads at every level; metrics by
-`KFrame.RealisesPet`), nonzero row spaces at the twisted levels, the untwisted level the decorated lattices with `ST =
-∅` on the chains' `SG` (`lsh = N`, the chains' points, spec-8 F4), per word `tz_ω` the element `(a + b√−d)/2` of
+the `O_K`-span of the integral forms `HermForms.Mω` of `X ⊓ V_ω` and the source metric at each place `v` the complex
+Petersson form `H_{ω,σ_v}` (`HermForms.petAt`; both through the word's isomorphism `e ω` with `X_ω ⊓ V_ω`, the one
+`IsThetaCol` reads at every level; metrics by `KFrame.RealisesPet`), nonzero row spaces at the twisted levels, the
+untwisted level the decorated lattices with `ST = ∅` on the chains' `SG` (`lsh = N`, the chains' points, spec-8 F4),
+per word `tz_ω` the element `(a + b√−d)/2` of
 `T_ω` (up to conjugation; each word its own `T_ω`, as the archive's `Pr.T u`, `Pr.piT u`), `𝔞⁺ ∣ aBd` and
 `𝔞⁻ ∣ aBdN`, and one pin (`pin`) for the base thetas of every step of every chain (audit 13; the archive's
 `Base`). The chain shape and `sd` at every level are `SharpData.Shp`. `SG` is half the places over `g₀g₁` (spec-5
@@ -667,7 +671,8 @@ def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
           a ≡ b + 2 [ZMOD 2 * ((S.QS * S.q * S.d * (D.g₀ * D.g₁) ^ 2 : ℕ) : ℤ)] ∧
           P.tz ω = ((a : S.E) + (b : S.E) * s) / 2) ∧
         (∀ ω, ((D.aBd u ω : ℕ) : 𝓞 K) ∈ 𝔞p ω ∧ ((D.aBdN u ω : ℕ) : 𝓞 K) ∈ 𝔞n ω) ∧
-        (D.fr u).RealisesPet τK P μ0 tw 𝔞p 𝔞n M fun ω φ ψ => HermForms.pet (ST ω) (lam0 ω) (e ω φ).1 (e ω ψ).1
+        (D.fr u).RealisesPet τK P μ0 tw 𝔞p 𝔞n M
+          fun ω σ φ ψ => HermForms.petAt (ST ω) (lam0 ω) σ (e ω φ).1 (e ω ψ).1
 
 /-- Pinned realisation gives realisation with the theta hook. -/
 theorem SharpData.RealisedPinned.realised {D : SharpData S κ x ε X K} (h : D.RealisedPinned) :

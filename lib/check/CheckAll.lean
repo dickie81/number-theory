@@ -2281,6 +2281,7 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms HermForms.dOp_mem
 #print axioms HermForms.gram_isHermitian
 #print axioms HermForms.source_G
+#print axioms HermForms.petAt_eq_map
 #print axioms ZetaBalance.Setting.lpF_nonneg_le
 #print axioms ZetaBalance.Setting.Ranks.FTypeG_nonpos
 #print axioms ZetaBalance.Setting.Ranks.FInert_nonneg

@@ -405,7 +405,7 @@ def PinsAt (C : SharpCoeff S) (u : S.A) (F : KFrame C.K) (T : F.ι → ℕ) : Pr
       (RowSpace.rowLevel (Dg.R.N Dg.R.m - 1) Dg.rr Dg.R.t SG (QE μ))),
     Dg.pinBody C u T G Xp Vs ST SG P μ0 tw M hcW n0 lam0 χ0 Xc e QE xi0 ξT mu0 pin tzO eX
       ((∀ ω, ((Dg.aBd C.K u (T ω) : ℕ) : 𝓞 C.K) ∈ 𝔞p ω ∧ ((Dg.aBdN C.K u (T ω) : ℕ) : 𝓞 C.K) ∈ 𝔞n ω) ∧
-        F.RealisesPet C.τK P μ0 tw 𝔞p 𝔞n M fun ω φ ψ => HermForms.pet (ST ω) (lam0 ω) (e ω φ).1 (e ω ψ).1)
+        F.RealisesPet C.τK P μ0 tw 𝔞p 𝔞n M fun ω σ φ ψ => HermForms.petAt (ST ω) (lam0 ω) σ (e ω φ).1 (e ω ψ).1)
 
 end SharpDesign
 
@@ -433,15 +433,16 @@ def Pinned (u : S.A) : Prop :=
 open Classical in
 /-- **A frame realises the object**, in coordinates `c ω` of the sources and `eC` of the target (the clauses of
 `KFrame.RealisesPet` inside its existential, then two more): `N_ω`, `C_u`, `B_ω = P_{μ0}` and the Petersson metrics
-of the sources, the target metric is the object's `g` on `W_u`, and the heights are the object's. -/
+of the sources (at each place `v`, the complex Petersson form `HermForms.petAt` at `σ_v`), the target metric is the
+object's `g` on `W_u`, and the heights are the object's. -/
 def RealWith (F : FrameOn C.K b.Ω) (c : ∀ ω, b.Vs ω ≃ₗ[C.K] (F.n ω → C.K))
     (eC : (b.P.V0 b.μ0 → C.K) →ₗ[C.K] (F.κ → C.K)) : Prop :=
   Set.InjOn eC (b.P.W b.μ0) ∧
     (∀ ω, (F.src ω).M = (b.N ω).map (((c ω : b.Vs ω →ₗ[C.K] (F.n ω → C.K))).restrictScalars (𝓞 C.K))) ∧
     F.tgt.M = (PeriodTarget.Ctgt C.τK b.tw).map (eC.restrictScalars (𝓞 C.K)) ∧
     (∀ ω φ, eC (b.P.P b.μ0 ω φ) = F.B ω (c ω φ)) ∧
-    (∀ ω v i j, (F.src ω).G v i j = v.1.embedding (HermForms.pet (b.ST ω) (b.lam0 ω)
-      (b.e ω ((c ω).symm (Pi.single i 1))).1 (b.e ω ((c ω).symm (Pi.single j 1))).1)) ∧
+    (∀ ω v i j, (F.src ω).G v i j = HermForms.petAt (b.ST ω) (b.lam0 ω) v.1.embedding
+      (b.e ω ((c ω).symm (Pi.single i 1))).1 (b.e ω ((c ω).symm (Pi.single j 1))).1) ∧
     (∀ v, ∀ y ∈ b.P.W b.μ0, ∀ z ∈ b.P.W b.μ0,
       b.g v y z = ∑ i, ∑ k, starRingEnd ℂ (v.1.embedding (eC y i)) * F.tgt.G v i k * v.1.embedding (eC z k)) ∧
     ∀ ω v, F.ht ω v = b.ht ω v
@@ -459,7 +460,7 @@ theorem realisesPet {F : FrameOn C.K b.Ω} {c : ∀ ω, b.Vs ω ≃ₗ[C.K] (F.n
     {eC : (b.P.V0 b.μ0 → C.K) →ₗ[C.K] (F.κ → C.K)} (h : b.RealWith F c eC) (htw : b.tw.IsTransfer)
     (hU : ∀ w ∉ b.tw.Tw, b.tw.μw w = b.μ0) (hne : ∀ ω, b.𝔞p ω ≠ ⊥ ∧ b.𝔞n ω ≠ ⊥) :
     F.toKFrame.RealisesPet C.τK b.P b.μ0 b.tw b.𝔞p b.𝔞n b.M
-      fun ω φ ψ => HermForms.pet (b.ST ω) (b.lam0 ω) (b.e ω φ).1 (b.e ω ψ).1 := by
+      fun ω σ φ ψ => HermForms.petAt (b.ST ω) (b.lam0 ω) σ (b.e ω φ).1 (b.e ω ψ).1 := by
   obtain ⟨h1, h2, h3, h4, h5, -⟩ := h
   exact ⟨htw, hU, hne, c, eC, h1, h2, h3, h4, h5⟩
 
@@ -654,8 +655,10 @@ def FiniteClasses : Prop :=
 open scoped ComplexOrder in
 /-- **The forms are finite-dimensional, the integral forms a lattice** (C2; archive: `rowsFinDim_link`): for a
 dominant weight, the forms are finite-dimensional, the `O_L`-span of the integral forms of the cut is a lattice
-(`span_bidet`), and where the star of `L` is complex conjugation at every place the Petersson Gram matrix is positive
-definite there. Serves the sources `N_ω` of the frame (`HermForms.source` is then a `KLattice`). -/
+(`span_bidet`), and the Gram matrix of the Petersson form at every place (`HermForms.gram` at `σ_v`, of
+`HermForms.petAt`) is positive definite: automatic given finitely many classes, each with a finite stabiliser
+(`FiniteClasses`), as `H_σ(F, F)` is a positive combination of Fock norms of the `σF(rep c)` and a form vanishing at
+every representative is `0`. Serves the sources `N_ω` of the frame (`HermForms.source` is then a `KLattice`). -/
 def FormsLattice : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (ST SG : Finset (HeightOneSpectrum (𝓞 E)))
     (Λ : Subgroup (∀ w : SG, GL (Fin n) (𝓞 E ⧸ w.1.asIdeal))) (Φ : Type) [Fintype Φ] [DecidableEq Φ]
@@ -663,8 +666,7 @@ def FormsLattice : Prop :=
     (∀ ρ, Antitone (lam ρ)) →
     FiniteDimensional L (HermForms.Forms ST τ χ lam) ∧
       ∃ _ : FiniteDimensional L (HermForms.Vω ST τ χ lam), (HermForms.Mlat ST τ χ lam).IsLattice L ∧
-        ∀ [StarRing L], (∀ (v : Pl L) (a : L), v.1.embedding (star a) = starRingEnd ℂ (v.1.embedding a)) →
-          ∀ v : Pl L, ((HermForms.gram ST τ χ lam).map v.1.embedding).PosDef
+        ∀ v : Pl L, (HermForms.gram ST τ χ lam v.1.embedding).PosDef
 
 /-- **The statements to prove in the library** (proof plan §3–§4), with the inputs as hypotheses where a piece
 uses them. Two fields are choices, not statements: `adm`, the conditions the construction asks of the parameters,

@@ -10,7 +10,7 @@ places, become the hermitian lattices of `HermitianLattice`, and `K`-linear maps
 
 **The data** (`KLattice K ι`): an `O_K`-lattice `M` in `K^ι` (Mathlib's `Submodule.IsLattice`), and positive definite
 hermitian matrices `G v`, the metrics on `ℂ^ι = K^ι ⊗_{K,σ_v} ℂ` at the complex places `v`, defined or only known to
-exist. The `K`-rational case `G v = σ_v(H)` is `ofForm` (for a star on `K`, see `isHermitian_map`).
+exist. The `K`-rational case `G v = σ_v(H)` needs a star that is conjugation at each place (`isHermitian_map`).
 
 **The hermitian lattice** (`toPlaceLattice`) lives in `⊕_v ℂ^ι` (`Space`, which keeps only the complex structure of
 `EuclideanSpace`: the real inner product of `PiLp` would clash with the `Re⟪·,·⟫` of `HermitianLattice`), with the
@@ -451,16 +451,10 @@ theorem deg_scale {c : ℝ} (hc : 0 < c) :
 
 /-! ### The `K`-rational case -/
 
-/-- **The `K`-rational case**: a matrix `H` over `K` positive definite at every complex place gives the metrics
-`G v = σ_v(H)`. -/
-noncomputable abbrev ofForm (M : Submodule (𝓞 K) (ι → K)) [M.IsLattice K] (H : Matrix ι ι K)
-    (hH : ∀ v : Pl K, (H.map v.1.embedding).PosDef) : KLattice K ι :=
-  ⟨M, fun v => H.map v.1.embedding, hH⟩
-
 omit [Fintype ι] [NumberField K] [IsTotallyComplex K] in
 /-- A matrix hermitian for a star on `K` is hermitian at an embedding `σ` where the star is complex conjugation,
-`σ ∘ star = conj ∘ σ`. The frontier asks this at one embedding `σ₀` only (`K` need not be CM): at the other places,
-`σ_v(H)` hermitian is part of the positivity that `ofForm` asks. -/
+`σ ∘ star = conj ∘ σ`. On a field that is not CM, `σ_v(H)` need not be hermitian at the other places: the sources'
+metrics are then the per-place forms `HermForms.petAt`, not `σ_v` of one form. -/
 theorem isHermitian_map [StarRing K] {H : Matrix ι ι K} (hH : H.IsHermitian) {σ : K →+* ℂ}
     (hσ : ∀ x, σ (star x) = starRingEnd ℂ (σ x)) : (H.map σ).IsHermitian :=
   hH.map _ hσ
