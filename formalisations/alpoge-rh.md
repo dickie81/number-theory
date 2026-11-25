@@ -161,6 +161,61 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   the class are balanced. The components are projections of the maps, so no `O_K`-linearity is used. For hermitian
   frames the place is a complex place of `K`, the components are complex-linear, and the condition is asked of them
   over `ℂ`, as the archive states it.
+- **`O_K`-lattices with metrics at the places** (`lib/core/KLattice.lean`), the first layer of a sharp frontier
+  (`docs/rh-rebuild.md`, "Next"). An `O_K`-lattice in `K^ι` with a positive definite hermitian metric `G v` at each
+  complex place `v` is a hermitian lattice. Its realisation `x ↦ (A_v σ_v(x))_v`, with `A_vᴴA_v = G_v`, has inner
+  products `Σ_v σ_v(x)ᴴ G_v σ_v(y)`, so it depends on the metrics alone (`KLattice.inner_ψ`). The metrics may be
+  `K`-rational, `σ_v(H)` for a hermitian `H` over a CM field (`KLattice.isHermitian_map`), or only known to exist.
+  - A `K`-linear map extends to the realisations (`KLattice.hom_ψ`).
+  - A real-linear map that commutes with `O_K` is complex-linear at every place (`HermitianLattice.component`). So
+    the frame condition at one complex place spreads ranks, with no padding at full rank
+    (`KLattice.spread_of_frameCond`).
+  - The index and the slope: for `O_K`-lattices `N ≤ M`, `μ(N) = μ(M) − log [M : N]/rk`, with `rk = [K:ℚ]·|ι|`
+    (`KLattice.slope_withLattice`, `KLattice.rk_top`).
+  - Scaling the metrics by `c > 0` lowers the degree by `(rk/2)·log c` (`KLattice.deg_scale`).
+- **The layers of the sharp frontier, in progress** (`docs/rh-rebuild.md`, "Next"). Each defines objects that the
+  frontier will state; their sanity theorems guard the definitions.
+  - Units: frames in the archive's units, with every hypothesis and the conclusion of the frame inequality
+    unchanged (`SlopeFrame.Frame.Spread.loss_le_rescale`, `SlopeFrame.Frame.loss_le_rescale_iff`,
+    `SlopeFrame.Frame.slope_rescale`, `SlopeFrame.SlopeLattice.muMax_rescale`); the largest and smallest slopes
+    (`SlopeFrame.SlopeLattice.muMin_le_slope_le_muMax`, `SlopeFrame.SlopeLattice.slopeGe_iff_le_muMin`); duals and
+    saturation (`HermitianLattice.dual_anti`, `HermitianLattice.saturation_top`).
+  - Classes: decorated unimodular hermitian lattices, the group acting on them, classes and mass weights
+    (`HermClasses.instMulActionDeco`, `HermClasses.Lsh_of_isEmpty`, `HermClasses.dia_smul`, `HermClasses.mass_mk`,
+    `HermClasses.act_ext_eLast`).
+  - Coefficients: dual Weyl modules as polynomials, the Fock form and the lattices `Δ_N` (`WeylFock.hw_mem_nabla`,
+    `WeylFock.DeltaOL_subset_DeltaN_std`).
+  - The host: the CM field of a setting, of degree `4|A|`, and its CM type (`ZetaBalance.Setting.f_eq`,
+    `ZetaBalance.Setting.card_gal`, `ZetaBalance.Setting.τ_eq`).
+  - Forms: equivariant functions on decorated lattices with Weyl-module values, the integral forms, the Petersson
+    form, the diamond operators and the ramified cut; the source as a `KLattice` with metrics `σ_v(H_ω)`
+    (`HermForms.conj_pet`, `HermForms.dOp_mem`, `HermForms.gram_isHermitian`, `HermForms.source_G`).
+  - Forced orders: the explicit function `Fo` of the parameters that the frontier pins, with its linear program
+    (`ZetaBalance.Setting.lpF_nonneg_le`, `ZetaBalance.Setting.Ranks.FTypeG_nonpos`,
+    `ZetaBalance.Setting.Ranks.FInert_nonneg`).
+  - Periods and target: the interlacing weight, the branching map, the period, the integral rows, the twisted
+    target lattice `C_u` and the sources `N_ω` (`PeriodTarget.coeff_coefLast`, `PeriodTarget.per_eq_classSum`,
+    `PeriodTarget.mem_Ctgt`, `PeriodTarget.Nsrc_le`).
+  - The theta chain: Hecke and splitting characters, theta functions by the archive's recipe from an existential
+    standard theta, jets, the kernels `κ_j`, the lifts and the chain; the local factors at the auxiliary places
+    are a parameter with their invariance (`ThetaChain.opU_zero`, `ThetaChain.Chain.comp_zero`,
+    `ThetaChain.Chain.lift_add`, `ThetaChain.detShift_wt_succ`); its top step maps straight to the row points,
+    with the archive's coupled and top factors (`ThetaChain.Top.col_of_isEmpty`).
+  - The frontier: `ZetaBalance.rhAndGRH_of_sharpBound` gives RH with GRH from `ZetaBalance.SharpBound`, through a
+    proved bridge to the six-term interface (`ZetaBalance.SharpData.nonempty_sixTermData`,
+    `ZetaBalance.SharpData.toSixTermData_Fo`): defined sources, target and periods, the forced orders fixed, and
+    nonnegative slacks. `ZetaBalance.rhAndGRH_of_sharpBoundPinned` pins every object to the archive's construction
+    (through `ZetaBalance.sharpBoundTheta_of_pinned`): the theta chain, its top step straight to the row points
+    (`ThetaChain.Data.comp_zero_inp`, `ThetaChain.Top.col_of_isEmpty`, `ThetaChain.instMulActionDecoF`); the local
+    factors read through the frames, with the level-T indicator, the archive's level groups at `SG` and `Q`, and
+    representatives in its normal form at `Q` (`ThetaVol.volN_pos`, `ThetaVol.XiFull.scale`); the base theta by
+    the archive's fourth-power identity, with the Weierstrass `σ` of a lattice of discriminant 1
+    (`ThetaNorm.th0_zero`, `ThetaNorm.F0_zero`, `ThetaNorm.sgStar_zero`); and the row space as the image of a
+    character idempotent on Weyl-module-valued forms equivariant under the archive's row level groups
+    (`RowSpace.idemOf_empty`, `RowSpace.map_Amb_eq_range`, `RowSpace.tyPt_mul`, `RowSpace.tyRep_apply`). The last
+    of twelve adversarial audits finds it true, up to inferred steps, and with no trivial witness. Existential:
+    the archive's own freedom (the cusp subspace, the twist characters within their shape, the transfers, the
+    target metric, unit phases).
 
 ## How the statements differ from the archive's
 
@@ -200,6 +255,7 @@ The steps were written from the mathematics. Parts were written by helpers given
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function | `WindowGRH.WindowBound`: for every primitive `χ` and `θ > 1/2`, the weighted error of the ramp sums of the cyclic family of `χ` is at most `C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large | `WindowGRH.rhAndGRH_of_windowBound` |
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function, also resting on the half-plane `Re s > 11/12` for `ζ` and every Dirichlet `L`-function, a result formalised in the library that no referee has read ([openai-half-plane.md](openai-half-plane.md)) | `ZetaBalance.PairBound`, the construction alone: for every primitive `χ` and every `ε₀ > 0` there are `ε ∈ (0, ε₀)` and `A ≥ 1` such that, for every large `Y`, every pair of primes `(q, d)` meeting `ZetaTwist.WinPair ε Y` has a sub-window `[Y′, Y′²]`, with `Y ≤ Y′ ≤ Y^{A/2}`, at every `x` of which a setting `S` with `S.q = q` and `S.d = d` and a character `κ` of `A` lifting `χ` (`ZetaBalance.Setting.Lifts`) has lattice data (`ZetaBalance.LatticeData S κ x ε X`) whose thin classes lie beyond `X = (Nx)^{log x}` | `ZetaBalance.rhAndGRH_of_pairBound` |
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function, also resting on the half-plane `Re s > 11/12` for `ζ` and every Dirichlet `L`-function, a result formalised in the library that no referee has read ([openai-half-plane.md](openai-half-plane.md)) | `ZetaBalance.SixTermBound`: `ZetaBalance.PairBound` with six-term data (`ZetaBalance.SixTermData S κ x ε X`) in place of lattice data: weights and, at each translate of the kernel `A₀` of `κ`, a frame meeting the hypotheses of the frame inequality at its rank-weighted mean slope (`SlopeFrame.Frame.mean`), with numbers of its words (the slope of the forms, the split primes, the auxiliary prime) and of the translate (the vanishing gain, the forced vanishing, a scale `v > 0`, `log(g₀g₁)`, six slacks) that meet the archive's six inequalities G1–G6, and one budget for the slacks and the losses of the frame inequality | `ZetaBalance.rhAndGRH_of_sixTermBound` |
+| The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function, also resting on the half-plane `Re s > 11/12` for `ζ` and every Dirichlet `L`-function, a result formalised in the library that no referee has read ([openai-half-plane.md](openai-half-plane.md)) | `ZetaBalance.SharpBoundPinned`, the sharp frontier: `ZetaBalance.SixTermBound`'s shape with the frames realised by the construction's defined objects (sources from the forms with the Petersson metric, the target from the integral rows, the periods through the theta chain), each pinned to the archive's construction, with the forced orders fixed and nonnegative slacks; `ZetaBalance.SharpBoundTheta` is the same with fewer pins | `ZetaBalance.rhAndGRH_of_sharpBoundPinned`, `ZetaBalance.sharpBoundTheta_of_pinned` |
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function | `ZetaBalance.LatticeBound`: for every primitive `χ` and `ε > 0`, on windows `[Y, Y^λ]` with `Y` arbitrarily large, every `x` has a setting `S` with a character `κ` of `A` lifting `χ` (`ZetaBalance.Setting.Lifts`), thin at some `X`, with small twists (`ZetaBalance.Setting.Twists S κ`), and lattice data (`ZetaBalance.LatticeData S κ x ε X`): weights and, at each translate of the kernel `A₀` of `κ`, a frame meeting the hypotheses of the frame inequality, whose gain covers the inert-prime gap (G) with small losses (Z) | `ZetaBalance.rhAndGRH_of_latticeBound` |
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function | `ZetaBalance.BalanceBound`: for every primitive `χ` of order `o` and `ε > 0`, on windows `[Y, Y^λ]` with `Y` arbitrarily large, every `x` has a setting `S` with a character `κ` of `A` lifting `χ` (`ZetaBalance.Setting.Lifts`), thin at some `X`, with the `3o` twists `g_{(α,β,κ^k)}`, `(α, β) ≠ (0, 0)` and `k < o`, at most `x^{1/2+ε}` at `x`, and balance data (`ZetaBalance.BalanceData S κ x ε X`): weights with thick classes in the kernel `A₀` of `κ`, of density at least `x^{−ε}` there, translates whose shares `Σ_t a_t κ(t)^k` lie within `x^{ε−1} Σ_t a_t` of `Σ_t a_t/(3o + 1)` for `0 < k < o`, and an inert-prime gap, averaged over `A₀`, at most `x^ε Σ_t a_t` | `ZetaBalance.rhAndGRH_of_balanceBound` |
 | The Riemann hypothesis | `WindowGRH.ZetaWindowBound`: for every `θ > 1/2`, `Σ_{n≤x} Λ(n)(x/n − 1) − x log x + (1 + γ)x ≤ C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large | `WindowGRH.riemannHypothesis_of_zetaWindowBound` |

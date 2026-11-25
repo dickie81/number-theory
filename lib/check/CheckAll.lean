@@ -447,6 +447,20 @@ import ZetaFrame
 import EuclidLattice
 import HermitianLattice
 import FrameAtPlace
+import KLattice
+import FrameRescale
+import HermClasses
+import WeylFock
+import CMHost
+import HermForms
+import ForcedOrders
+import PeriodTarget
+import ThetaChain
+import SharpBound
+import SharpChain
+import ThetaNorm
+import ThetaVol
+import RowSpace
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2237,6 +2251,63 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms FrameAtPlace.FrameCond.restrictScalars
 #print axioms PlaceLattice.spread_of_frameCond
 #print axioms HermitianLattice.spread_of_frameCond
+#print axioms KLattice.inner_ψ
+#print axioms KLattice.isHermitian_map
+#print axioms KLattice.hom_ψ
+#print axioms KLattice.spread_of_frameCond
+#print axioms KLattice.slope_withLattice
+#print axioms KLattice.rk_top
+#print axioms KLattice.deg_scale
+#print axioms SlopeFrame.Frame.Spread.loss_le_rescale
+#print axioms SlopeFrame.SlopeLattice.muMax_rescale
+#print axioms SlopeFrame.Frame.loss_le_rescale_iff
+#print axioms SlopeFrame.Frame.slope_rescale
+#print axioms SlopeFrame.SlopeLattice.muMin_le_slope_le_muMax
+#print axioms SlopeFrame.SlopeLattice.slopeGe_iff_le_muMin
+#print axioms HermitianLattice.dual_anti
+#print axioms HermitianLattice.saturation_top
+#print axioms HermClasses.instMulActionDeco
+#print axioms HermClasses.Lsh_of_isEmpty
+#print axioms HermClasses.dia_smul
+#print axioms HermClasses.mass_mk
+#print axioms HermClasses.act_ext_eLast
+#print axioms WeylFock.hw_mem_nabla
+#print axioms WeylFock.DeltaOL_subset_DeltaN_std
+#print axioms ZetaBalance.Setting.f_eq
+#print axioms ZetaBalance.Setting.card_gal
+#print axioms ZetaBalance.Setting.τ_eq
+#print axioms HermForms.conj_pet
+#print axioms HermForms.dOp_mem
+#print axioms HermForms.gram_isHermitian
+#print axioms HermForms.source_G
+#print axioms ZetaBalance.Setting.lpF_nonneg_le
+#print axioms ZetaBalance.Setting.Ranks.FTypeG_nonpos
+#print axioms ZetaBalance.Setting.Ranks.FInert_nonneg
+#print axioms PeriodTarget.coeff_coefLast
+#print axioms PeriodTarget.per_eq_classSum
+#print axioms PeriodTarget.mem_Ctgt
+#print axioms PeriodTarget.Nsrc_le
+#print axioms ThetaChain.opU_zero
+#print axioms ThetaChain.Chain.comp_zero
+#print axioms ThetaChain.Chain.lift_add
+#print axioms ThetaChain.detShift_wt_succ
+#print axioms ThetaChain.Top.col_of_isEmpty
+#print axioms ThetaChain.instMulActionDecoF
+#print axioms ZetaBalance.rhAndGRH_of_sharpBound
+#print axioms ZetaBalance.SharpData.nonempty_sixTermData
+#print axioms ZetaBalance.SharpData.toSixTermData_Fo
+#print axioms ZetaBalance.rhAndGRH_of_sharpBoundPinned
+#print axioms ZetaBalance.sharpBoundTheta_of_pinned
+#print axioms ThetaChain.Data.comp_zero_inp
+#print axioms ThetaNorm.th0_zero
+#print axioms ThetaNorm.F0_zero
+#print axioms ThetaNorm.sgStar_zero
+#print axioms ThetaVol.volN_pos
+#print axioms ThetaVol.XiFull.scale
+#print axioms RowSpace.idemOf_empty
+#print axioms RowSpace.map_Amb_eq_range
+#print axioms RowSpace.tyPt_mul
+#print axioms RowSpace.tyRep_apply
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
 #print axioms ZetaBalance.rhAndGRH_of_latticeBound
 #print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound

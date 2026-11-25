@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1891 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1948 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,8 +14,8 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 210 | 738 |
-| `lib/pnt` | 355 | 1040 |
+| `lib/core` | 222 | 789 |
+| `lib/pnt` | 357 | 1046 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -255,6 +255,12 @@ note of `formalisations/` that names it, if one does.
 - `CAClosed.cA_zero`: `c₀ = −¼ log(27/4)` ([note](../formalisations/d2-density.md))
 - `CAClosed.cA_one`: `c₁ = ¾ log(3/4)` ([note](../formalisations/d2-density.md))
 
+#### `CMHost`: The CM host of a setting
+
+- `ZetaBalance.Setting.f_eq`: `f = |Φ| = 2|A|`. ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.Setting.card_gal`: `|Gal(E/ℚ)| = [E  ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.Setting.τ_eq`: `τ` does not depend on the lift ([note](../formalisations/alpoge-rh.md))
+
 #### `CertInstances`: The certificate theorems as instances of the weighted certificate
 
 - `CertInstances.weilQ_ge_of_cert'`: `PoleRelax.weilQ_ge_of_cert`, verbatim statement, as the `(K, N, T) = (2, 6, 3.033953)` instance.
@@ -472,6 +478,12 @@ note of `formalisations/` that names it, if one does.
 
 - `WeilForm.first_failure`: The first positivity failure ([note](../formalisations/weil-positivity.md))
 
+#### `ForcedOrders`: The forced orders
+
+- `ZetaBalance.Setting.lpF_nonneg_le`: `0 ≤ lpF(ℓ, n, D) ≤ ℓ/(ℓ² − 1)·Σ D` for `ℓ > 1` and `D ≥ 0` (the archive's `FactLpF`). ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.Setting.Ranks.FTypeG_nonpos`: The forced order at `g₀, g₁` is at most `0`. ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.Setting.Ranks.FInert_nonneg`: The forced order at an inert or signal prime is nonnegative when the weights are. ([note](../formalisations/alpoge-rh.md))
+
 #### `FourSquareResidue`: `ζ(2) = π²/6` from the points of `ℤ⁴` in a ball
 
 - `FourSquareResidue.latticeCount_four_sqrt`: Lattice count = shell sum
@@ -499,6 +511,17 @@ note of `formalisations/` that names it, if one does.
 - `FrameAtPlace.FrameCond.restrictScalars`: The frame condition over `ℝ` for complex-linear maps ([note](../formalisations/alpoge-rh.md))
 - `PlaceLattice.spread_of_frameCond`: Rank spreading from the frame condition at one place ([note](../formalisations/alpoge-rh.md))
 - `HermitianLattice.spread_of_frameCond`: Rank spreading for hermitian frames from the frame condition at one complex place ([note](../formalisations/alpoge-rh.md))
+
+#### `FrameRescale`: Rescaled frames, extreme slopes, duals and saturation
+
+- `SlopeFrame.Frame.slope_rescale`: The slope of the target rescales ([note](../formalisations/alpoge-rh.md))
+- `SlopeFrame.Frame.loss_le_rescale_iff`: Invariance of the conclusion ([note](../formalisations/alpoge-rh.md))
+- `SlopeFrame.Frame.Spread.loss_le_rescale`: The frame inequality in the archive's units ([note](../formalisations/alpoge-rh.md))
+- `SlopeFrame.SlopeLattice.slopeGe_iff_le_muMin`: `μ_min(a)` is the greatest `θ` with `SlopeGe a θ` ([note](../formalisations/alpoge-rh.md))
+- `SlopeFrame.SlopeLattice.muMin_le_slope_le_muMax`: `μ_min ≤ μ ≤ μ_max` ([note](../formalisations/alpoge-rh.md))
+- `SlopeFrame.SlopeLattice.muMax_rescale`: `μ_max` rescales ([note](../formalisations/alpoge-rh.md))
+- `HermitianLattice.dual_anti`: Duality reverses inclusion ([note](../formalisations/alpoge-rh.md))
+- `HermitianLattice.saturation_top`: Saturating in the whole space changes nothing ([note](../formalisations/alpoge-rh.md))
 
 #### `GapBound`: The pole-overlap gap bound
 
@@ -586,6 +609,21 @@ note of `formalisations/` that names it, if one does.
 - `HasseEisenstein.exists_eisenstein_trace`: The Frobenius of `y² = x³ + D` is an Eisenstein integer of norm `q`
 - `HasseEisenstein.abs_trace_le`: Hasse's bound for `y² = x³ + D`
 
+#### `HermClasses`: Hermitian spaces, decorated unimodular lattices and their classes
+
+- `HermClasses.instMulActionDeco`: The action is a group action ([note](../formalisations/alpoge-rh.md))
+- `HermClasses.Lsh_of_isEmpty`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `HermClasses.dia_smul`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `HermClasses.mass_mk`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `HermClasses.act_ext_eLast`: Sanity ([note](../formalisations/alpoge-rh.md))
+
+#### `HermForms`: Forms on decorated lattices, the Petersson form, the ramified cut and the source lattices
+
+- `HermForms.conj_pet`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `HermForms.dOp_mem`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `HermForms.gram_isHermitian`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `HermForms.source_G`: Sanity ([note](../formalisations/alpoge-rh.md))
+
 #### `HermitianLattice`: Hermitian lattices over a totally complex field
 
 - `HermitianLattice.balanced`: Spans of stable discrete subgroups are balanced ([note](../formalisations/alpoge-rh.md))
@@ -617,6 +655,16 @@ note of `formalisations/` that names it, if one does.
 - `JacobiFourSquares.theta_pow_four`: Jacobi's four-square identity
 - `JacobiFourSquares.r4_zero`: `r₄(0) = 1`
 - `JacobiFourSquares.r4_eq`: Jacobi's four-square theorem
+
+#### `KLattice`: Hermitian `O_K`-lattices in `K^ι`
+
+- `KLattice.inner_ψ`: The metric ([note](../formalisations/alpoge-rh.md))
+- `KLattice.rk_top`: Ranks ([note](../formalisations/alpoge-rh.md))
+- `KLattice.slope_withLattice`: The slope after an index ([note](../formalisations/alpoge-rh.md))
+- `KLattice.deg_scale`: Scaling the metrics ([note](../formalisations/alpoge-rh.md))
+- `KLattice.isHermitian_map`: On a CM field, a matrix hermitian for complex conjugation is hermitian at every complex place, so only positivity is asked of `σ_v(H)` there. ([note](../formalisations/alpoge-rh.md))
+- `KLattice.hom_ψ`: The map of `B` extends `B` ([note](../formalisations/alpoge-rh.md))
+- `KLattice.spread_of_frameCond`: Rank spreading from the frame condition at one complex place ([note](../formalisations/alpoge-rh.md))
 
 #### `KaiserBulk`: The bulk of the Kaiser probe and the doubled rate
 
@@ -759,6 +807,13 @@ note of `formalisations/` that names it, if one does.
 #### `ParitySplit`: Weil's form splits by parity: positivity for every real `g`
 
 - `WeilForm.weilQg_ge_twentieth_all`: Weil positivity for every real `g`, pure Lean ([note](../formalisations/weil-positivity.md))
+
+#### `PeriodTarget`: Branching, periods, the target `C_u` and the sources `N_ω`
+
+- `PeriodTarget.coeff_coefLast`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `PeriodTarget.per_eq_classSum`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `PeriodTarget.mem_Ctgt`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `PeriodTarget.Nsrc_le`: Sanity ([note](../formalisations/alpoge-rh.md))
 
 #### `PhiDExp`: Double-exponential upper bounds on the first three rungs
 
@@ -932,6 +987,13 @@ note of `formalisations/` that names it, if one does.
 - `WeilForm.rh_of_realRooted_limit`: Item 6's step, proved ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_ground_states`: The roadmap's endpoint, as a theorem ([note](../formalisations/weil-positivity.md))
 
+#### `RowSpace`: The row space `V0 = e·Amb`
+
+- `RowSpace.idemOf_empty`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `RowSpace.map_Amb_eq_range`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `RowSpace.tyPt_mul`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `RowSpace.tyRep_apply`: Sanity ([note](../formalisations/alpoge-rh.md))
+
 #### `ShellSchur`: Shell–interior coupling: Schur-type positivity and its finite chain
 
 - `ShellSchur.nonneg_of_coupling`: Coupling bound ⇒ nonnegativity
@@ -990,6 +1052,26 @@ note of `formalisations/` that names it, if one does.
 
 - `WeilForm.simple_iff_no_flat`: The corollary, formal in `H²` form: the ground state is simple iff no nonzero ground-space element is `H²`-flat at the edges ([note](../formalisations/weil-positivity.md))
 - `WeilForm.simple_not_flat`: A simple ground state is never edge-flat ([note](../formalisations/weil-positivity.md))
+
+#### `ThetaChain`: Hecke characters, theta kernels and the theta chain
+
+- `ThetaChain.detShift_wt_succ`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `ThetaChain.instMulActionDecoF`: The action on the points is a group action ([note](../formalisations/alpoge-rh.md))
+- `ThetaChain.Chain.comp_zero`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `ThetaChain.Chain.lift_add`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `ThetaChain.Top.col_of_isEmpty`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `ThetaChain.opU_zero`: Sanity ([note](../formalisations/alpoge-rh.md))
+
+#### `ThetaNorm`: The normalisation of the base theta
+
+- `ThetaNorm.th0_zero`: `th0(0) = 1`. ([note](../formalisations/alpoge-rh.md))
+- `ThetaNorm.F0_zero`: `F0(0) = 1` (spec-3 §2, as in the archive's `ProductThetaMem`). ([note](../formalisations/alpoge-rh.md))
+- `ThetaNorm.sgStar_zero`: Sanity ([note](../formalisations/alpoge-rh.md))
+
+#### `ThetaVol`: The local volumes of the theta kernels (spec-3 §1)
+
+- `ThetaVol.volN_pos`: The volume is positive ([note](../formalisations/alpoge-rh.md))
+- `ThetaVol.XiFull.scale`: Sanity ([note](../formalisations/alpoge-rh.md))
 
 #### `TwinLandau`: The Landau argument for twin forms, for any zero family
 
@@ -1321,6 +1403,11 @@ note of `formalisations/` that names it, if one does.
 - `WengRankTwo.rh_wengNum`: The Riemann hypothesis for the numerator
 - `WengRankTwo.rh_weng`: The Riemann hypothesis for Weng's rank-2 zeta function of `ℚ` ([note](../formalisations/weil-positivity.md))
 - `WengRankTwo.differenced_real`: The differenced `Ξ`
+
+#### `WeylFock`: Weights, dual Weyl modules, the Fock form and the lattices `Δ_N`
+
+- `WeylFock.hw_mem_nabla`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `WeylFock.DeltaOL_subset_DeltaN_std`: Sanity ([note](../formalisations/alpoge-rh.md))
 
 #### `WindowForm`: The prime-side window form: its algebra, its certification logic, and the counterexample mechanism
 
@@ -2459,6 +2546,18 @@ note of `formalisations/` that names it, if one does.
 - `RandModel.integrable_exp_X`: Finite mgf ([note](../formalisations/d2-density.md))
 - `RandModel.integrable_exp_abs_ν` ([note](../formalisations/d2-density.md))
 - `RandModel.integrable_pow_ν`: Every moment of `ν` is finite. ([note](../formalisations/d2-density.md))
+
+#### `SharpBound`: The sharp frontier `SharpBound` and its bridge to `SixTermData` — CONDITIONAL on the half-plane
+
+- `ZetaBalance.SharpData.nonempty_sixTermData`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.SharpData.toSixTermData_Fo`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.rhAndGRH_of_sharpBound`: CONDITIONAL. The Riemann hypothesis for `ζ` and every Dirichlet `L`-function from the sharp frontier ([note](../formalisations/alpoge-rh.md))
+
+#### `SharpChain`: The sharp frontier with the theta chain — CONDITIONAL on the half-plane
+
+- `ThetaChain.Data.comp_zero_inp`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.sharpBoundTheta_of_pinned`: The pinned frontier implies `SharpBoundTheta`. ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.rhAndGRH_of_sharpBoundPinned`: CONDITIONAL. RH and GRH from the pinned frontier ([note](../formalisations/alpoge-rh.md))
 
 #### `ShortCharSums`: Short character sums
 
