@@ -6,11 +6,11 @@ import ThetaChain
 
 The local factor `Ξ_j` of a step `j < m − 1` is `∏_{P ∈ S} volN_P(j)⁻¹ · E1(om(Φ_P))`, and the `E1 ∘ om ∘ Φ` part has a
 fixed scale; so the volumes `volN_P(j)` carry the scale of `Ξ_j`. This module defines them, the factor itself
-(`E1`, `om`, `PhiG`, `PhiQ`, `XiStd`; spec-2 1d) and the pins `XiFull` (`Ξ_j = XiStd`) and `XiScale` (`Ξ_j(0)` is
-`XiStd(0)` up to a unit of absolute value `1` at every complex place). The frontier (L7) uses `XiScale`: the
-orientation (the library's `x` is the transpose of the archive's), the `FC` clause `s − n′ = c` (vacuous as
-written), the triangularity sense of `PhiG` and the sharp shape `PhiGS` are not certain [I]. `XiVolPinned` (the
-root-of-unity form) is not used by the frontier.
+(`E1`, `om`, `PhiG`, `PhiQ`, `PhiGS`, `XiStd`; spec-2 1d as corrected by spec-6) and the pins `XiFull`
+(`Ξ_j = XiStd`) and `XiScale` (`Ξ_j(0)` is `XiStd(0)` up to a unit of absolute value `1` at every complex place). The frontier (L7) uses `XiFull` with the
+canonical sharp instance (`jS`, `phS`, `LocOk`, depth `m + 1`). The library's `x` is the archive's (no transpose);
+`entB` uses the archive's shuffle `fIdx` with `k₀ = k`. `XiVolPinned` (the root-of-unity form) is not used by the
+frontier.
 
 All groups are subgroups of `GL_{n+c}(E)` for the global field `E`; `P`-local integrality enters through lattices of
 `E^{n+c}` defined by valuations at `P` (`intAt`; `stdAt P = sclLat P 0` is the localised standard lattice). Following
@@ -22,13 +22,12 @@ All groups are subgroups of `GL_{n+c}(E)` for the global field `E`; `P`-local in
 * `stabL M`, `sclLat`, `scE`, `lamY`, `parL`, `JQ`; `flagU`, `flagG`, `bvecG`, `JG`.
 * `Cbe J h = R1 ⊓ hJh⁻¹`, `volN C N₀ = [C ∩ N1 : C ∩ N₀] / [N₀ : C ∩ N₀]` (Mathlib's `relIndex`), `volAt`.
 
-**Parameters.** The index shuffle `fIdx`/`fPos` of `JG` (spec-3 describes it only as moving the `c` extra
-coordinates to positions `k₀, …, k₀ + c − 1`) is a pair of functions `ℕ → ℕ`. The group at the places `SG` enters
-`XiVolPinned` as a parameter `JS` (`JG` for the unsharp kernel, the untranscribed `JGsym` for the sharp one), and so
-do the double-coset representatives `h` (to be taken from the `ChIdx` bundle of the levels, spec-3 §1 caveat).
-So are the kernel shapes `Φ_P` (`PhiG ∘ entB` unsharp, the untranscribed `PhiGS` sharp, `PhiQ ∘ entB` at `Q`), the
-additive characters `ψ_P`, the local characters `μ_P` and `sq_P = √q`, with their stated properties (`LocOk`); `E1`
-uses the depth `A = B` (a parameter; the archive's `E1` is stable for large `A`, `B`).
+**Parameters.** `JG` takes the index shuffle as a parameter; `entB` and `JGsym` use the archive's `fIdx`/`fPos`
+(spec-6 §6). `XiStd` takes the group `JS` at `SG`, the representatives `h` (the `ChIdx` bundle's, spec-3 §1 caveat),
+the kernel shapes `Φ_P`, the additive characters `ψ_P`, the local characters `μ_P` and `sq_P = √q` as parameters;
+`LocOk` pins the canonical ones (spec-6 §4), and `jS`/`phS` are the canonical sharp `JS`/`Φ_P` at `SG`. At the
+untwisted level the row set is `SG` (spec-6 §5), so `PhiQ`/`JQ` (twists) are not used by the frontier. `E1` uses
+the depth `A = B` (a parameter; the canonical one is `m + 1`).
 -/
 
 namespace ThetaVol
@@ -151,31 +150,33 @@ the `P`-units. -/
 noncomputable def locChar (Pl : HeightOneSpectrum (𝓞 E)) (muq : L) (χ : E → L) (a : E) : L :=
   muq ^ vP Pl a * χ (a / qP Pl ^ vP Pl a)
 
-/-- Entry `(l, s)` of `y` in the archive's orientation (rows `l` the source), i.e. the library's entry `(s, l)`; `0`
-out of range. The library's matrices act on columns (`homAt`), the archive's on rows [I]. -/
+/-- Entry `(l, s)` (row `l`, the target; column `s`, the source) of `y`, `0` out of range. The library's `x` is the
+archive's `x` (spec-6 §0–1: both act on columns, rows the target), so there is no transpose. -/
 def entA {a b : ℕ} (y : Matrix (Fin b) (Fin a) E) (l s : ℕ) : E :=
-  if h : s < b ∧ l < a then y ⟨s, h.1⟩ ⟨l, h.2⟩ else 0
+  if h : l < b ∧ s < a then y ⟨l, h.1⟩ ⟨s, h.2⟩ else 0
 
-/-- The free positions `FC` of `E1`, as library positions `(s, l)`: archive column `s ≥ n′`, and `s − n′ = c` or
-`l < n` or `l − n < s − n′` (spec-2 1d, verbatim). -/
+/-- The free positions `FC` of `E1` (spec-6 §2), as pairs `(row, col)`: `n ≤ col` and either `col − n = c′` (the
+last source extra coordinate; `c = c′ + 1`) or `1 ≤ col − n` and (`row < n′` or `row − n′ < col − n`). -/
 abbrev FC (n n' c c' : ℕ) :=
-  {p : Fin (n' + c') × Fin (n + c) // n' ≤ (p.1 : ℕ) ∧ ((p.1 : ℕ) - n' = c ∨ (p.2 : ℕ) < n ∨ (p.2 : ℕ) - n < p.1 - n')}
+  {p : Fin (n' + c') × Fin (n + c) // n ≤ (p.2 : ℕ) ∧
+    ((p.2 : ℕ) - n = c' ∨ (1 ≤ (p.2 : ℕ) - n ∧ ((p.1 : ℕ) < n' ∨ (p.1 : ℕ) - n' < p.2 - n)))}
 
-/-- `x̃(x, t)`: `x` in the top-left block, `t` at the free positions `FC`, `1` at archive `(n + s − n′, s)`, `0`
-elsewhere. -/
+/-- `x̃(x, t)` (rows `l`, columns `s`): `x` in the top-left block, `t` at the free positions `FC`, `1` at
+`(n′ + (s − n), s)` for `s ≥ n`, `0` elsewhere (spec-6 §2). -/
 def xTil (n n' c c' : ℕ) (x : Matrix (Fin n') (Fin n) E) (t : FC n n' c c' → E) :
     Matrix (Fin (n' + c')) (Fin (n + c)) E :=
-  fun s l => if h : (s : ℕ) < n' ∧ (l : ℕ) < n then x ⟨s, h.1⟩ ⟨l, h.2⟩
-    else if h' : n' ≤ (s : ℕ) ∧ ((s : ℕ) - n' = c ∨ (l : ℕ) < n ∨ (l : ℕ) - n < s - n') then t ⟨(s, l), h'⟩
-    else if n' ≤ (s : ℕ) ∧ (l : ℕ) = n + (s - n') then 1 else 0
+  fun l s => if h : (l : ℕ) < n' ∧ (s : ℕ) < n then x ⟨l, h.1⟩ ⟨s, h.2⟩
+    else if h' : n ≤ (s : ℕ) ∧ ((s : ℕ) - n = c' ∨ (1 ≤ (s : ℕ) - n ∧ ((l : ℕ) < n' ∨ (l : ℕ) - n' < s - n)))
+      then t ⟨(l, s), h'⟩
+    else if n ≤ (s : ℕ) ∧ (l : ℕ) = n' + (s - n) then 1 else 0
 
-/-- `E1(Φ)(x) = q^{−A·|FC|}·Σ_t Φ(x̃(x, t))·ψ(−Σ_{i<c} x̃_{n+i, n′+i+1})`, `t` over `valsQ^{FC}`, `valsQ =
-{i/q^A : 0 ≤ i < q^{2A}}` (representatives of `q^{−A}O_P/q^A O_P`; the spec's `A = B`). -/
+/-- `E1(Φ)(x) = q^{−A·|FC|}·Σ_t Φ(x̃(x, t))·ψ(−Σ_{i<c′} x̃_{n′+i, n+i+1})`, `t` over `valsQ^{FC}`, `valsQ =
+{i/q^A : 0 ≤ i < q^{2A}}` (representatives of `q^{−A}O_P/q^A O_P`; the archive's `A = B`; spec-6 §1). -/
 noncomputable def E1 (q A n n' c c' : ℕ) (ψ : E → L) (Φ : Matrix (Fin (n' + c')) (Fin (n + c)) E → L)
     (x : Matrix (Fin n') (Fin n) E) : L :=
   ((q : L) ^ (A * Fintype.card (FC n n' c c')))⁻¹ * ∑ t : FC n n' c c' → Fin (q ^ (2 * A)),
     Φ (xTil n n' c c' x fun p => ((t p : ℕ) : E) / (q : E) ^ A) *
-      ψ (-∑ i : Fin c, entA (xTil n n' c c' x fun p => ((t p : ℕ) : E) / (q : E) ^ A) (n + i) (n' + i + 1))
+      ψ (-∑ i : Fin c', entA (xTil n n' c c' x fun p => ((t p : ℕ) : E) / (q : E) ^ A) (n' + i) (n + i + 1))
 
 /-- The level twist `om(Φ)(x) = μ(det g)·μ(det h)⁻¹·sq^{−v(det g)·b}·sq^{v(det h)·a}·Φ(h⁻¹xg)`, `g ∈ GL_a`,
 `h ∈ GL_b` the representatives, `sq = √q`. -/
@@ -185,11 +186,45 @@ noncomputable def om (Pl : HeightOneSpectrum (𝓞 E)) {a b : ℕ} (μ : E → L
     sq ^ (-(vP Pl (g : Matrix (Fin a) (Fin a) E).det * b)) * sq ^ (vP Pl (h : Matrix (Fin b) (Fin b) E).det * a) *
     Φ (((h⁻¹ : GL (Fin b) E) : Matrix (Fin b) (Fin b) E) * x * (g : Matrix (Fin a) (Fin a) E))
 
-/-- `entB(y)`: `y` in the archive orientation with rows and columns shuffled by `fR`, `fC` (the `fIdx` shuffle,
-a parameter) and entry `(p, p′)` scaled by `q^{exC(p′) − exR(p)}`. -/
-noncomputable def entB {a b : ℕ} (Pl : HeightOneSpectrum (𝓞 E)) (fR fC : ℕ → ℕ) (exR exC : ℕ → ℤ)
-    (y : Matrix (Fin b) (Fin a) E) (p p' : ℕ) : E :=
-  qP Pl ^ (exC p' - exR p) * entA y (fR p) (fC p')
+/-- The index shuffle position `↦` index (spec-6 §6): `fIdx k₀ c n s = s` (`s < k₀`), `n + (s − k₀)`
+(`k₀ ≤ s < k₀ + c`), `s − c` otherwise; it moves the `c` extra coordinates to the positions `k₀, …, k₀ + c − 1`. -/
+def fIdx (k₀ c n s : ℕ) : ℕ := if s < k₀ then s else if s < k₀ + c then n + (s - k₀) else s - c
+
+/-- Its inverse on `[0, n + c)`, index `↦` position: `fPos k₀ c n l = l` (`l < k₀`), `l + c` (`k₀ ≤ l < n`),
+`k₀ + (l − n)` (`l ≥ n`). -/
+def fPos (k₀ c n l : ℕ) : ℕ := if l < k₀ then l else if l < n then l + c else k₀ + (l - n)
+
+/-- The sharp reordering (spec-6 §6): `symIdx k rS l = l + rS` (`l < k`), `l − k` (`k ≤ l < k + rS`), `l` otherwise;
+it lists the positions `[k, k + rS)` first, then `[0, k)`. -/
+def symIdx (k rS l : ℕ) : ℕ := if l < k then l + rS else if l < k + rS then l - k else l
+
+/-- The inverse of `symIdx`: `l + k` (`l < rS`), `l − rS` (`rS ≤ l < rS + k`), `l` otherwise. -/
+def symIdxInv (k rS l : ℕ) : ℕ := if l < rS then l + k else if l < rS + k then l - rS else l
+
+/-- `bd5 k₀ rS s = rS` if `s = rS + k₀`, else `s` (spec-6 §6). -/
+def bd5 (k₀ rS s : ℕ) : ℕ := if s = rS + k₀ then rS else s
+
+/-- The sharp flag `flagS(s) = sclLat(l ↦ scE n (i ↦ i + 1) l + [bd5 s ≤ symIdx(fPos l)])` (spec-6 §6). -/
+def flagS (n c : ℕ) (Pl : HeightOneSpectrum (𝓞 E)) (k₀ rS s : ℕ) : Set (Fin (n + c) → E) :=
+  sclLat Pl fun l => scE n (fun i => i + 1) l + if bd5 k₀ rS s ≤ symIdx k₀ rS (fPos k₀ c n l) then 1 else 0
+
+/-- The sharp flag vectors `bvecS(s) = bvecG(symIdxInv s)`, with the archive's shuffle `fIdx k₀ c n` (spec-6 §6). -/
+noncomputable def bvecS (n c : ℕ) (Pl : HeightOneSpectrum (𝓞 E)) (k₀ rS s : ℕ) : Fin (n + c) → E :=
+  bvecG n c Pl (fIdx k₀ c n) (symIdxInv k₀ rS s)
+
+/-- `J` at a place of `SG` for the sharp kernel (spec-6 §6): `JGsym = stabL(lamY(i ↦ i + 1)) ∩ flagU(flagS, bvecS,
+r, {r + i·t})`. The frontier's `JS` (`jS`). -/
+noncomputable def JGsym (n c : ℕ) (Pl : HeightOneSpectrum (𝓞 E)) (k₀ rS r t : ℕ) : Subgroup (GL (Fin (n + c)) E) :=
+  stabL (lamY n c Pl fun i => i + 1) ⊓ flagU (flagS n c Pl k₀ rS) (bvecS n c Pl k₀ rS) r {s | ∃ i, s = r + i * t}
+
+/-- `entB(y)` (spec-6 §1): `M p p′ = y[fIdx k₀ c′ n′ p, fIdx k₀ c n p′]·q^{scE n ex (fIdx k₀ c n p′) −
+scE n′ ex (fIdx k₀ c′ n′ p)}`, row `p` a target position, column `p′` a source position; `0` outside
+`[0, n′ + c′) × [0, n + c)` (spec-6 §3: else the shuffle aliases out-of-range positions and `PhiG`, `PhiQ` vanish). -/
+noncomputable def entB (Pl : HeightOneSpectrum (𝓞 E)) (k₀ n n' c c' : ℕ) (ex : ℕ → ℤ)
+    (y : Matrix (Fin (n' + c')) (Fin (n + c)) E) (p p' : ℕ) : E :=
+  if p < n' + c' ∧ p' < n + c then
+    qP Pl ^ (scE n ex (fIdx k₀ c n p') - scE n' ex (fIdx k₀ c' n' p)) * entA y (fIdx k₀ c' n' p) (fIdx k₀ c n p')
+  else 0
 
 /-- The `k × k` determinant of `M` on the indices `o, …, o + k − 1`. -/
 noncomputable def blkDet (M : ℕ → ℕ → E) (o k : ℕ) : E := (Matrix.of fun p p' : Fin k => M (o + p) (o + p')).det
@@ -205,6 +240,22 @@ noncomputable def PhiG (Pl : HeightOneSpectrum (𝓞 E)) (ψ : E → L) (χ : �
       (∀ p' < r, inP Pl (M p' p' - 1)) ∧ (∀ p p', p' < p → p < r + i * t → p' < r → inP Pl (M p p')) ∧
       (∀ p p', r ≤ p' → p < r + i * t → (p' - r) / t < (p - r) / t → inP Pl (M p p'))
   then ψ ((∑ p ∈ Finset.range (r - 1), M p (p + 1)) / qP Pl) *
+    (∏ l ∈ Finset.range i, χ l (blkDet M (r + l * t) t)) * (χ i (blkDet M 0 (r + i * t)))⁻¹
+  else 0
+
+open Classical in
+/-- The sharp kernel shape at `P ∈ SG` (spec-6 §6; `M = entB(x)`, `a = r + i·t`): `0` unless (i) as `PhiG`;
+(ii) `M_{p′p′} ≡ 1` for `p′ < r`, and `M_{pp′} ≡ 0` for `p < a`, `p ≠ p′` with `r ≤ p`, `symIdx p′ < symIdx p` or
+(`p′ = k₀ + rS` and `p < k₀`); (iii) as `PhiG`; then `ψ₀(Σ_{l<k₀−1} M_{l,l+1} + Σ_{l<r−k₀−1} M_{k₀+l,k₀+l+1})·
+∏_{l<i} χ_l(det block_l)·χ_i(det M_{<a,<a})⁻¹`, with `ψ₀(red y) = ψ(y/q)`. -/
+noncomputable def PhiGS (Pl : HeightOneSpectrum (𝓞 E)) (ψ : E → L) (χ : ℕ → E → L) (k₀ rS r t i : ℕ)
+    (M : ℕ → ℕ → E) : L :=
+  if (∀ p p', p' < r + i * t → intAt Pl (M p p') ∧ (r + i * t ≤ p → inP Pl (M p p'))) ∧
+      (∀ p' < r, inP Pl (M p' p' - 1) ∧ ∀ p < r + i * t, p ≠ p' →
+        (r ≤ p ∨ symIdx k₀ rS p' < symIdx k₀ rS p ∨ (p' = k₀ + rS ∧ p < k₀)) → inP Pl (M p p')) ∧
+      (∀ p p', r ≤ p' → p < r + i * t → (p' - r) / t < (p - r) / t → inP Pl (M p p'))
+  then ψ ((∑ l ∈ Finset.range (k₀ - 1), M l (l + 1) +
+      ∑ l ∈ Finset.range (r - k₀ - 1), M (k₀ + l) (k₀ + l + 1)) / qP Pl) *
     (∏ l ∈ Finset.range i, χ l (blkDet M (r + l * t) t)) * (χ i (blkDet M 0 (r + i * t)))⁻¹
   else 0
 
@@ -226,16 +277,35 @@ noncomputable def XiStd (n n' c c' A : ℕ) (R SG : Finset (HeightOneSpectrum (�
   ∏ Pl ∈ R, (((volAt n' c' SG (JS Pl) kj (h Pl) Pl)⁻¹ : ℚ) : L) *
     E1 (Ideal.absNorm Pl.asIdeal) A n n' c c' (ψ Pl) (om Pl (μ Pl) (sq Pl) (g Pl) (h Pl) (Ph Pl)) x
 
-/-- The local parameters' stated properties (spec-2 1d) at the places `R`: `sq² = q`; `ψ` additive, trivial on
-`O_(P)`, with `ψ(a/q) = ψ₀(red a)` through `σ₀`; `μ = locChar(muq, χ)`; `Φ_P` valued in the roots of unity and `0`.
+/-- `x` is the idele with component `a` at `P` and `1` elsewhere, so that `ν x = ν_P(a)` is the local component of a
+character `ν` of the ideles (it stands for the archive's local components, which the library does not define). -/
+def IsLocAt (Pl : HeightOneSpectrum (𝓞 E)) (a : E) (x : Ideles E) : Prop :=
+  (∀ w ≠ Pl, (x : FiniteAdeleRing (𝓞 E) E) w = 1) ∧
+    (x : FiniteAdeleRing (𝓞 E) E) Pl = algebraMap E (Pl.adicCompletion E) a
+
+/-- `χ = ν_P⁻¹` on the `P`-units and `0` off them (the archive's `unitV ∘ red`; spec-6 §4). -/
+def ChiOk (Pl : HeightOneSpectrum (𝓞 E)) (ν : Ideles E →* Lˣ) (χ : E → L) : Prop :=
+  ∀ a, (Pl.valuation E a = 1 → ∀ x, IsLocAt Pl a x → χ a = ((ν x : Lˣ) : L)⁻¹) ∧ (Pl.valuation E a ≠ 1 → χ a = 0)
+
+open Classical in
+/-- The local parameters of a step at the places `R` (spec-6 §4, the canonical instance), for the step's lift
+character `ν = μ_{0,i}` and twist `ξ`: `sq² = q`; `ψ` additive on `q⁻¹O_(P)` (the archive's `ψ` is additive only on
+`q^{−D}O_P`, `D ≥ 1`) and trivial on `O_(P)`; at `SG`, `ψ(a/q) = ψ₀(red a)` through `σ₀` and `ψ = 1` off `q⁻¹O_(P)`
+(`ciPsi`); `μ = locChar(muq, χ)` with `χ = ν_P⁻¹` on the units at `SG` (`Ch.chi i`, tied to `μ_{0,i}` as in the
+archive's `mu0G`) and `ξ_P⁻¹` at `Q` (`resChar⁻¹`), and at `SG` `muq = ν_P(q)⁻¹·ξ_P(q)⁻¹` (`(μ_{0,i})_P(q)⁻¹·qValC⁻¹`,
+reading `qValC(ξ, P)` as `ξ_P(q)` [I]; at the untwisted level `ξ = 1`). `muq` at `Q` (`Ch.muVal`) is not pinned.
 Meant for L7. -/
-def LocOk (σ₀ : L →+* ℂ) (xi0 : E) (R : Finset (HeightOneSpectrum (𝓞 E))) (ψ μ : HeightOneSpectrum (𝓞 E) → E → L)
-    (sq : HeightOneSpectrum (𝓞 E) → L) {a b : ℕ} (Ph : HeightOneSpectrum (𝓞 E) → Matrix (Fin b) (Fin a) E → L) :
+def LocOk (σ₀ : L →+* ℂ) (xi0 : E) (R SG : Finset (HeightOneSpectrum (𝓞 E))) (ν ξ : Ideles E →* Lˣ)
+    (ψ μ : HeightOneSpectrum (𝓞 E) → E → L) (sq : HeightOneSpectrum (𝓞 E) → L) (χ : HeightOneSpectrum (𝓞 E) → E → L) :
     Prop :=
-  ∀ Pl ∈ R, sq Pl ^ 2 = (Ideal.absNorm Pl.asIdeal : L) ∧ (∀ y z, ψ Pl (y + z) = ψ Pl y * ψ Pl z) ∧
+  ∀ Pl ∈ R, sq Pl ^ 2 = (Ideal.absNorm Pl.asIdeal : L) ∧
+    (∀ y z, intAt Pl (qP Pl * y) → intAt Pl (qP Pl * z) → ψ Pl (y + z) = ψ Pl y * ψ Pl z) ∧
     (∀ y, intAt Pl y → ψ Pl y = 1) ∧
-    (∀ y : 𝓞 E, σ₀ (ψ Pl ((y : E) / qP Pl)) = psi0 xi0 Pl (Ideal.Quotient.mk Pl.asIdeal y)) ∧
-    (∃ muq χ, μ Pl = locChar Pl muq χ) ∧ ∀ y, Ph Pl y = 0 ∨ ∃ r, 0 < r ∧ Ph Pl y ^ r = 1
+    (Pl ∈ SG → (∀ y : 𝓞 E, σ₀ (ψ Pl ((y : E) / qP Pl)) = psi0 xi0 Pl (Ideal.Quotient.mk Pl.asIdeal y)) ∧
+      ∀ y, ¬ intAt Pl (qP Pl * y) → ψ Pl y = 1) ∧
+    ChiOk Pl (if Pl ∈ SG then ν else ξ) (χ Pl) ∧
+    ∃ muq, μ Pl = locChar Pl muq (χ Pl) ∧
+      (Pl ∈ SG → ∀ x, IsLocAt Pl (qP Pl) x → muq = ((ν x : Lˣ) : L)⁻¹ * ((ξ x : Lˣ) : L)⁻¹)
 
 end Kernel
 
@@ -254,6 +324,21 @@ def XiVolPinned (D : Data τ) (m k : ℕ) (h : ∀ j, D.β j → D.S → GL (Fin
     D.Xi j c c' 0 = (((∏ᶠ Pl : D.S, volAt (D.n (j + 1)) (m - 1 - (j + 1)) D.SG (JS (j + 1) Pl)
       (k + (j + 1)) (h (j + 1) c'.1 Pl) Pl : ℚ)⁻¹ : ℚ) : L) * ζ
 
+/-- The canonical sharp kernel shape of step `j` at `P ∈ SG` (spec-6 §6, `PhiAt` with `sharp = true`): `PhiGS ∘ entB`
+with `k₀ = k`, `rS = m/2 − 1`, `r = k + m − 1`, `ex = (i ↦ i + 1)`, `ψ_P` and the characters `χ_l` of the steps `l ≤ j`.
+The frontier's `Ph`. -/
+noncomputable def phS (D : Data τ) (m k t : ℕ) (ψ χ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (j : ℕ)
+    (Pl : HeightOneSpectrum (𝓞 E)) (y : Matrix (Fin (D.n (j + 1) + (m - 1 - (j + 1)))) (Fin (D.n j + (m - 1 - j))) E) :
+    L :=
+  PhiGS Pl (ψ j Pl) (fun l => χ l Pl) k (m / 2 - 1) (k + m - 1) t j
+    (entB Pl k (D.n j) (D.n (j + 1)) (m - 1 - j) (m - 1 - (j + 1)) (fun i => i + 1) y)
+
+/-- The canonical sharp group of level `j` at `P ∈ SG` (spec-6 §4, §6, `Jat` with `sharp = true`):
+`JGsym(k, m/2 − 1, k + m − 1, t)` at size `N_j + c_j`. The frontier's `JS`. -/
+noncomputable def jS (D : Data τ) (m k t j : ℕ) (Pl : HeightOneSpectrum (𝓞 E)) :
+    Subgroup (GL (Fin (D.n j + (m - 1 - j))) E) :=
+  JGsym (D.n j) (m - 1 - j) Pl k (m / 2 - 1) (k + m - 1) t
+
 /-- `XiStd` at step `j < m − 1` of `D`: sizes `N_j + c_j → N_{j+1} + c_{j+1}` (`c_j = m − 1 − j`), representatives
 `g = h_{j,c}`, `h = h_{j+1,c′}`, `J = JS` at `SG` and `JQ(k + j + 1)` at `Q = R \ SG`; local parameters per step. -/
 noncomputable def xiStd (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E)))
@@ -268,7 +353,8 @@ noncomputable def xiStd (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectr
     (h (j + 1) c'.1) (ψ j) (μ j) (sq j) (Ph j)
 
 /-- **The local factors are pinned** (spec-3 §1): `Ξ_j = XiStd` for `j < m − 1`, with the representatives `h` (the
-`ChIdx` bundle's), the groups `JS` and the local parameters passed in. The full form; the frontier uses `XiScale`. -/
+`ChIdx` bundle's), the groups `JS` and the local parameters passed in. The frontier (L7, `IsThetaCol` at the
+untwisted level) uses it with `JS = jS`, `Ph = phS`, `A = m + 1` and `LocOk`. -/
 def XiFull (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E)))
     (h : ∀ j, D.β j → HeightOneSpectrum (𝓞 E) → GL (Fin (D.n j + (m - 1 - j))) E)
     (JS : ∀ j, HeightOneSpectrum (𝓞 E) → Subgroup (GL (Fin (D.n j + (m - 1 - j))) E))
@@ -279,7 +365,7 @@ def XiFull (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E)))
 
 /-- **The scale of `Ξ_j` is pinned** (spec-3 §1, verdict): for `j < m − 1`, `Ξ_j(c, c′)` at the trivial coset is
 `XiStd` there up to a unit `u` with `|u| = 1` at every complex place (harmless for slopes by the product formula).
-Meant for L7 (`IsThetaCol`, untwisted level). -/
+The weaker pin the frontier used before spec-6; kept for `XiFull.scale`. -/
 def XiScale (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E)))
     (h : ∀ j, D.β j → HeightOneSpectrum (𝓞 E) → GL (Fin (D.n j + (m - 1 - j))) E)
     (JS : ∀ j, HeightOneSpectrum (𝓞 E) → Subgroup (GL (Fin (D.n j + (m - 1 - j))) E))

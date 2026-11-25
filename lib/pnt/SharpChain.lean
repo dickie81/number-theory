@@ -22,9 +22,10 @@ Closes the chain hook of `SharpBound` (L7): the canonical hook `thetaHook`, whos
 * (d) `Data` existential, with `ChIdx`'s conditions on the fields `Data` has: `β 0` and `β(m−1)` singletons, every
   `β j` finite, `Λ 0 = uniUT`; its level data `(β, Λ)` are a `ChIdx`'s (`S = ST ∪ SG`, `σ₀` of `P`), up to a
   bijection of the index types; its characters are `μ_{0,j}ξ` with `μ_{0,j}` a `LiftChars` for given `e`, `Sg`.
-  When `U`, the scale of the local factors `Ξ_j`, `j < m − 1`, is pinned (`ThetaVol.XiScale` over the row set `SG`,
-  spec-3 §1): `Ξ_j(0) = ∏_P volN_P⁻¹·E1(om(Φ_P))(0)` up to a unit of absolute value `1` at every complex place, with
-  the representatives `h` the same `ChIdx`'s, and `J` at `SG`, the depth, `Φ_P`, `ψ_P`, `μ_P`, `√q` existential
+  When `U`, the local factors `Ξ_j`, `j < m − 1`, are pinned at every coset (`ThetaVol.XiFull` over the row set
+  `SG`, spec-3 §1, spec-6): `Ξ_j = ∏_P volN_P⁻¹·E1(om(Φ_P))`, with the representatives `h` the same `ChIdx`'s, the
+  canonical sharp instance (`J = JGsym`, `Φ_P = PhiGS ∘ entB`, depth `m + 1`, `N_j = k + j(t + 1)`), and `ψ_P`,
+  `μ_P`, `χ_P`, `√q` existential with the canonical properties for `μ_{0,j} = D.mu j` and the trivial twist
   (`ThetaVol.LocOk`).
   Against `κ ≡ 0`: `S = ST ∪ SG` (the archive's place set of `homAt`), `cA, cB > 0`, the Heisenberg data have
   `SA, SB ≠ ∅` and `vol > 0`, and every class at a level `j + 1 ≤ m` meets a nonzero `Ξ`.
@@ -137,9 +138,12 @@ def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
       (∀ j < m, ∀ c', ∃ c x, D.Xi j c c' x ≠ 0) ∧
       ∀ c c' x, D.Xi (m - 1) c c' x = 0 ∨ ∃ k, 0 < k ∧ D.Xi (m - 1) c c' x ^ k = 1) ∧
     (∃ (C : ChIdx D.SG D.n m (D.ST ∪ D.SG) xi0 D.P.σ₀) (eβ : ∀ j, C.β j ≃ D.β j), (∀ j b, D.Λ j (eβ j b) = C.Λ j b) ∧
-      (U → ∃ A k JS ψ μ sq Ph, (∀ j, ThetaVol.LocOk D.P.σ₀ xi0 D.SG (ψ j) (μ j) (sq j) (Ph j)) ∧
-        ThetaVol.XiScale D m A k D.SG
-          (fun j b Pl => if hP : Pl ∈ D.ST ∪ D.SG then C.h j ((eβ j).symm b) ⟨Pl, hP⟩ else 1) JS ψ μ sq Ph)) ∧
+      (U → ∃ (k t : ℕ) (χ ψ μ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (sq : ℕ → HeightOneSpectrum (𝓞 E) → L),
+        (∀ j, D.n j = k + j * (t + 1)) ∧
+        (∀ j, ThetaVol.LocOk D.P.σ₀ xi0 D.SG D.SG (D.mu j).toHom 1 (ψ j) (μ j) (sq j) (χ j)) ∧
+        ThetaVol.XiFull D m (m + 1) k D.SG
+          (fun j b Pl => if hP : Pl ∈ D.ST ∪ D.SG then C.h j ((eβ j).symm b) ⟨Pl, hP⟩ else 1)
+          (ThetaVol.jS D m k t) ψ μ sq (ThetaVol.phS D m k t ψ χ))) ∧
     (∃ (C : LiftChars τ m eF Sg) (ξ : Hecke E L), (U → ∀ x, ξ.toHom x = 1) ∧
       ∀ j < m, ∀ x, (D.mu j).toHom x = (C.mu j).toHom x * ξ.toHom x) ∧
     (U → D.ST = ST ∧ D.SG = SG) ∧ Shp D m ∧
