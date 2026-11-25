@@ -2,6 +2,7 @@ import SharpBound
 import ThetaChain
 import HermForms
 import ThetaNorm
+import ThetaVol
 
 /-!
 # The sharp frontier with the theta chain — CONDITIONAL on the half-plane
@@ -20,6 +21,10 @@ Closes the chain hook of `SharpBound` (L7): the canonical hook `thetaHook`, whos
 * (d) `Data` existential, with `ChIdx`'s conditions on the fields `Data` has: `β 0` and `β(m−1)` singletons, every
   `β j` finite, `Λ 0 = uniUT`; its level data `(β, Λ)` are a `ChIdx`'s (`S = ST ∪ SG`, `σ₀` of `P`), up to a
   bijection of the index types; its characters are `μ_{0,j}ξ` with `μ_{0,j}` a `LiftChars` for given `e`, `Sg`.
+  When `U`, the scale of the local factors `Ξ_j`, `j < m − 1`, is pinned (`ThetaVol.XiScale` over the row set `SG`,
+  spec-3 §1): `Ξ_j(0) = ∏_P volN_P⁻¹·E1(om(Φ_P))(0)` up to a unit of absolute value `1` at every complex place, with
+  the representatives `h` the same `ChIdx`'s, and `J` at `SG`, the depth, `Φ_P`, `ψ_P`, `μ_P`, `√q` existential
+  (`ThetaVol.LocOk`).
   Against `κ ≡ 0`: `S = ST ∪ SG` (the archive's place set of `homAt`), `cA, cB > 0`, the Heisenberg data have
   `SA, SB ≠ ∅` and `vol > 0`, and every class at a level `j + 1 ≤ m` meets a nonzero `Ξ`.
 * (e) Normalisation (audit 3, B1): the last step's `Ξ` is `PsiAt` (spec-2 1d: `om` is trivial at `g = h = 1`, no `E1`,
@@ -120,7 +125,10 @@ def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
       (∀ j c c', (D.XD j c c').SA.Nonempty ∧ (D.XD j c c').SB.Nonempty ∧ 0 < (D.XD j c c').vol) ∧ D.XDPinned ∧
       (∀ j < m, ∀ c', ∃ c x, D.Xi j c c' x ≠ 0) ∧
       ∀ c c' x, D.Xi (m - 1) c c' x = 0 ∨ ∃ k, 0 < k ∧ D.Xi (m - 1) c c' x ^ k = 1) ∧
-    (∃ (C : ChIdx D.SG D.n m (D.ST ∪ D.SG) xi0 D.P.σ₀) (eβ : ∀ j, C.β j ≃ D.β j), ∀ j b, D.Λ j (eβ j b) = C.Λ j b) ∧
+    (∃ (C : ChIdx D.SG D.n m (D.ST ∪ D.SG) xi0 D.P.σ₀) (eβ : ∀ j, C.β j ≃ D.β j), (∀ j b, D.Λ j (eβ j b) = C.Λ j b) ∧
+      (U → ∃ A k JS ψ μ sq Ph, (∀ j, ThetaVol.LocOk D.P.σ₀ xi0 D.SG (ψ j) (μ j) (sq j) (Ph j)) ∧
+        ThetaVol.XiScale D m A k D.SG
+          (fun j b Pl => if hP : Pl ∈ D.ST ∪ D.SG then C.h j ((eβ j).symm b) ⟨Pl, hP⟩ else 1) JS ψ μ sq Ph)) ∧
     (∃ (C : LiftChars τ m eF Sg) (ξ : Hecke E L), (U → ∀ x, ξ.toHom x = 1) ∧
       ∀ j < m, ∀ x, (D.mu j).toHom x = (C.mu j).toHom x * ξ.toHom x) ∧
     (U → D.ST = ST ∧ D.SG = SG) ∧ Shp D m ∧
