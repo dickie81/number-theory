@@ -142,7 +142,8 @@ imaginary quadratic subfield) with `𝔄 = cc·AA0`, `φ₀ = σ₀ ∘ τ_p` on
 (spec L5.3): `AA0 = 𝔟⁻¹ = {x | x𝔟 ⊆ O_E}` for an ideal `𝔟` of `O_E` with `𝔟 + 𝔟̄ = O_E` and `𝔟𝔟̄ = 𝔡_{E/K₀}`, stated
 through the inverse different: `(𝔟𝔟̄)⁻¹ = {x | Tr_{E/K₀}(x·O_E) ⊆ O_{K₀}}`; `K₀ ⊇ cc` the quadratic subfield. `g_τ` is
 fixed up to a unit of `O_L`; a global unit does not change slopes (product formula). The choices left (`cc`, `𝔟`,
-the basis of `Lc`, `t` mod `Lc`, `g`, `κ`, the units of `g_τ`) do not move `|θ₀|` (spec-4). Meant for the frontier (`SharpChain.IsThetaCol`). -/
+the basis of `Lc`, `t` mod `Lc`, `g`, `κ`, the units of `g_τ`) do not move `|θ₀|` (spec-4). Meant for the
+frontier (`SharpChain.IsThetaCol`). -/
 def Pin.Canonical [NumberField L] (τ : Φ → (E →+* L)) (P : TP E L Φ) (D : Pin Φ P.s) : Prop :=
   ∃ (cc : Submodule ℤ E) (AA0 : Submodule (𝓞 E) E) (Lp : PeriodPair) (K₀ : IntermediateField ℚ E)
     (𝔟 : Ideal (𝓞 E)),
