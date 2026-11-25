@@ -29,9 +29,10 @@ All groups are subgroups of `GL_{n+c}(E)` for the global field `E`; `P`-local in
 * `stabL M`, `sclLat`, `scE`, `lamY`, `parL`, `JQ`; `flagU`, `bvecG` (the sharp `flagS`, `bvecS`, `JGsym` below).
 * `Cbe J h = R1 ⊓ hJh⁻¹`, `volN C N₀ = [C ∩ N1 : C ∩ N₀] / [N₀ : C ∩ N₀]` (Mathlib's `relIndex`), `volAt`.
 * `TwNF`: the archive's normal form of the representatives at `P ∈ Q` (spec-12 F6).
-* `blkA`, `n1Arg`, `prCat`, `LevQOk`: the level group `prX(Cbe(JQ, h)) ∩ GL_n(O_(P))` of the classes at `P ∈ Q` and
+* `blkA`, `n1Arg`, `prX`, `LevQOk`: the level group `prX(Cbe(JQ, h)) ∩ GL_n(O_(P))` of the classes at `P ∈ Q` and
   its character `chiInv` (the archive's `grpQ`, `chrQ`, with the `ψ_P(n1Arg)` factor; spec-12 F6), which L7 ties to
-  `ChIdx.levQ`, `ChIdx.chrQ`.
+  `ChIdx.levQ`, `ChIdx.chrQ`; `IsRed`, `LevGOk`: the level group `red_w(prX(R1 ∩ J))` at `w ∈ SG` (the archive's
+  `grpG`), tied to `ChIdx.Λ`; `SameDC`: the double cosets `R1·h·J` (the archive's `inj`).
 
 **Parameters.** `bvecG` takes the index shuffle as a parameter; `entB` and `JGsym` use the archive's `fIdx`/`fPos`
 (spec-6 §6). `XiStd` takes the group `JS` at `SG`, the representatives `h` (the `ChIdx` bundle's, spec-3 §1 caveat),
@@ -112,6 +113,13 @@ variable (n c) in
 /-- `Cbe(J, h) = R1 ∩ hJh⁻¹ = {g ∈ R1 : h⁻¹gh ∈ J}`. -/
 def Cbe (J : Subgroup (GL (Fin (n + c)) E)) (h : GL (Fin (n + c)) E) : Subgroup (GL (Fin (n + c)) E) :=
   R1 n c ⊓ J.comap (MulAut.conj h⁻¹).toMonoidHom
+
+variable (n c) in
+/-- `h′ ∈ R1·h·J` (the archive's `SameDC`): `h` and `h′` lie in one double coset `R1 \ GL_{n+c}(E) / J`. Distinct
+indices of a level have representatives in distinct double cosets at some place of `Q`, with `J = JQ(k + j)` (the
+archive's `inj`; `SharpChain.IsThetaCol`). -/
+def SameDC (J : Subgroup (GL (Fin (n + c)) E)) (h h' : GL (Fin (n + c)) E) : Prop :=
+  ∃ r ∈ R1 n c, ∃ κ ∈ J, h' = r * h * κ
 
 variable (n c) in
 /-- `volN(C, N₀) = [C ∩ N1 : C ∩ N₀] / [N₀ : C ∩ N₀]` (Mathlib's `H.relIndex K = [K : H ⊓ K]`, and `N₀ ≤ N1`). -/
@@ -337,14 +345,15 @@ def n1Arg (r : GL (Fin (n + c)) E) : E :=
   ∑ i : Fin c, entA (r : Matrix (Fin (n + c)) (Fin (n + c)) E) (n + i) (n + i + 1)
 
 variable (n c) in
-/-- `prCat(kj, h)` (the archive's `prX(Cbe(JQ(kj), h))`): the blocks `A(r)` of the `r ∈ R1 ∩ h·JQ(kj)·h⁻¹`. As
-`r ↦ A(r)` is multiplicative on the block upper triangular `R1`, they form a group (the closure adds nothing). -/
-def prCat (Pl : HeightOneSpectrum (𝓞 E)) (kj : ℕ) (h : GL (Fin (n + c)) E) : Subgroup (GL (Fin n) E) :=
-  Subgroup.closure {g | ∃ r ∈ Cbe n c (JQ n c Pl kj) h, blkA r = g}
+/-- `prX(C)` (the archive's `prX`): the blocks `A(r)` of the `r ∈ C`. For `C ≤ R1` (the archive's `prCat =
+prX(Cbe(J, h))` at `Q`, `prX(R1 ∩ J)` at `SG`) they form a group, as `r ↦ A(r)` is multiplicative on the block upper
+triangular `R1` (the closure adds nothing). -/
+def prX (C : Subgroup (GL (Fin (n + c)) E)) : Subgroup (GL (Fin n) E) :=
+  Subgroup.closure {g | ∃ r ∈ C, blkA r = g}
 
 variable (n c) in
 /-- **The level at `P ∈ Q` is pinned** (the archive's `grpQ`, `chrQ`, `chiInv`; spec-11 §2, spec-12 F6): the group is
-`H = prCat(kj, h) ∩ GL_n(O_(P))` (in `glInt`), and its character is
+`H = prX(R1 ∩ h·JQ(kj)·h⁻¹) ∩ GL_n(O_(P))` (in `glInt`), and its character is
 `λ(g) = ψ_P(n1Arg r)⁻¹·ξ_P(det(h⁻¹rh)_{[kj,n)²})⁻¹` for every `r ∈ R1 ∩ h·JQ(kj)·h⁻¹` with `A(r) = g`, with
 `χ = ξ_P⁻¹` on the `P`-units and `0` off them (`LocOk` at `Q`; the archive's `unitV`). For the representatives `h` in
 the normal form `TwNF` the `ψ_P` factor is not `1` in general (`r` need not be integral), and `H` contains
@@ -353,10 +362,27 @@ the normal form `TwNF` the `ψ_P` factor is not `1` in general (`r` need not be 
 levels `1 ≤ j < m` (level `0` is `ChIdx.zero_Q`). -/
 def LevQOk (Pl : HeightOneSpectrum (𝓞 E)) (kj : ℕ) (h : GL (Fin (n + c)) E) (ψ χ : E → L)
     (H : Subgroup (glInt n Pl)) (lam : H →* Lˣ) : Prop :=
-  H = (prCat n c Pl kj h).subgroupOf (glInt n Pl) ∧ ∀ g : H, ∀ r ∈ Cbe n c (JQ n c Pl kj) h,
+  H = (prX n c (Cbe n c (JQ n c Pl kj) h)).subgroupOf (glInt n Pl) ∧ ∀ g : H, ∀ r ∈ Cbe n c (JQ n c Pl kj) h,
     blkA r = ((g : GL (Fin n) E) : Matrix (Fin n) (Fin n) E) →
     ((lam g : Lˣ) : L) = (ψ (n1Arg r))⁻¹ *
       χ (blkDet (entA ((h⁻¹ * r * h : GL (Fin (n + c)) E) : Matrix (Fin (n + c)) (Fin (n + c)) E)) kj (n - kj))
+
+/-- `ḡ` is the reduction mod `P` of `g` (the archive's `red_w`): every entry of `g` is congruent mod `P·O_(P)` to an
+element of `O_E` lifting the entry of `ḡ` (so `g` is `P`-integral). For `LevGOk`. -/
+def IsRed (Pl : HeightOneSpectrum (𝓞 E)) (g : Matrix (Fin n) (Fin n) E)
+    (gb : Matrix (Fin n) (Fin n) (𝓞 E ⧸ Pl.asIdeal)) : Prop :=
+  ∀ a b, ∃ y : 𝓞 E, Ideal.Quotient.mk Pl.asIdeal y = gb a b ∧ inP Pl (g a b - y)
+
+variable (n c) in
+/-- **The level at `SG` is pinned** (the archive's `grpG` with `levG = colLevSym`, audit 11): the representatives are
+`h = 1` at `SG`, and the level group is `∏_{w ∈ SG} red_w(prX(R1 ∩ J_w))`, `J_w` the level's group at `w` (`jS`, the
+sharp `JGsym`): `ḡ` is in it iff at every `w ∈ SG`, `ḡ_w` is the reduction (`IsRed`) of some `A ∈ prX(R1 ∩ J_w)`.
+Its character (`chrG`) is not pinned: no factor reads it. For `SharpChain.IsThetaCol`, at the levels `1 ≤ j < m`
+(level `0` is `ChIdx.zero_grp`). -/
+def LevGOk {SG : Finset (HeightOneSpectrum (𝓞 E))} (J : HeightOneSpectrum (𝓞 E) → Subgroup (GL (Fin (n + c)) E))
+    (Λ : Subgroup (∀ w : SG, GL (Fin n) (𝓞 E ⧸ w.1.asIdeal))) : Prop :=
+  ∀ gb, gb ∈ Λ ↔ ∀ w : SG, ∃ g ∈ prX n c (R1 n c ⊓ J w.1),
+    IsRed w.1 (g : Matrix (Fin n) (Fin n) E) (gb w : Matrix (Fin n) (Fin n) (𝓞 E ⧸ w.1.asIdeal))
 
 end LevelQ
 

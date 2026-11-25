@@ -76,10 +76,11 @@ upper unitriangular group (`uniUT`) and the generic character `u ↦ ψ₀(Σ_{i
 `ψ₀` pinned by `xi0 = −1/(N(cc)√−d)` (`psi0`), and all of `GL_{N_0}(O_(P))` with the trivial character at `P ∈ Q` (by
 spec-11 §1 the classes and masses are those with frames on `SG` alone). Steps `j ≥ 1` go through the existential
 `ChIdx`: index types, representatives, groups and characters, with the step-0 and last-step conditions exact; L7 ties
-the representatives (`ThetaVol.TwNF`) and the groups and characters at `Q` (`ThetaVol.LevQOk`: the archive's
-`grpQ`/`chrQ`), and the archive's remaining `Ok` ties (`grpG/chrG/inj/surj`) are not stated. The coset `Y` of level
-`m − 1` is the type `Yb` of `Top` (L7 takes its collapsed form `ȳ ∈ ∏_{P ∈ Q} (O/P^{m−1})^{N_{m−1}}`); `z = e_last` is
-`HermClasses.eLast`.
+the representatives (`ThetaVol.TwNF`), the groups and characters at `Q` (`ThetaVol.LevQOk`: the archive's
+`grpQ`/`chrQ`), the groups at `SG` (`ThetaVol.LevGOk`: `grpG`) and the distinct double cosets of distinct indices
+(`ThetaVol.SameDC`: `inj`); the archive's remaining `Ok` ties (`chrG`, read by no factor, and `surj`) are not
+stated. The coset `Y` of level `m − 1` is the type `Yb` of `Top` (L7 takes its collapsed form
+`ȳ ∈ ∏_{P ∈ Q} (O/P^{m−1})^{N_{m−1}}`); `z = e_last` is `HermClasses.eLast`.
 
 **Sanity theorems:** `opU_zero`, `Chain.comp_zero`, `Chain.lift_add`, `detShift_wt_succ`, `Top.col_of_isEmpty`,
 `instMulActionDecoF`.
@@ -498,9 +499,9 @@ twist places `P ∈ Q` (spec-11 §1–2; the archive's `levG`, `levQ`: subgroups
 characters. Step 0 is explicit (`β 0` a singleton, `h = 1`, `uniUT` with `lamGen` at `SG`, all of `GL_{N_0}(O_(P))`
 with the trivial character at `Q`: the archive's `zero_Q`), and so is the last level (`β(m−1)` a singleton, `h = 1`;
 the archive's chain has no level `m`). The level of the classes is the product `grp`. The ties at `Q` (the normal
-form `TwNF` of `h`, `grpQ/chrQ`) are L7's (`ThetaVol.TwNF`, `ThetaVol.LevQOk`, which need `R1` and `J`); the archive's
-remaining ties (`grpG/chrG` at `SG`; `inj/surj`: `β(j+1)`
-enumerates the admissible double cosets) are not transcribed. Meant for L6/L7, which build `Data` from it. -/
+form `TwNF` of `h`, `grpQ/chrQ`), `grpG` at `SG` and `inj` are L7's (`ThetaVol.TwNF`, `ThetaVol.LevQOk`,
+`ThetaVol.LevGOk`, `ThetaVol.SameDC`, which need `R1` and `J`); the archive's remaining ties (`chrG` at `SG`; `surj`:
+every admissible double coset is enumerated) are not transcribed. Meant for L6/L7, which build `Data` from it. -/
 structure ChIdx (Q : Finset (HeightOneSpectrum (𝓞 E))) (Nj : ℕ → ℕ) (m : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E)))
     (xi0 : E) (σ₀ : L →+* ℂ) where
   /-- The index types. -/

@@ -42,7 +42,12 @@ points `x` of the level (decorated lattices `pX x` of rank `n = N_m − 1`, `ST 
   `(β, Λ)` are a `ChIdx`'s (`Λ = ChIdx.grp`, `S = ST ∪ SG ∪ Q`, `σ₀` of `P`), up to a bijection of the index types,
   with the groups and characters at `P ∈ Q` of the levels `1 ≤ j < m` pinned (`ThetaVol.LevQOk`, the archive's
   `grpQ`/`chrQ`: `prX(R1 ∩ h·JQ(k + j)·h⁻¹) ∩ GL(O_(P))` and `ψ_P(n1Arg r)⁻¹·ξ_P(det)⁻¹` on the `[k + j, N_j)` block;
-  at `h = 1` the parahoric of `(k + j, j·t)`); its characters are `μ_{0,j}ξ`
+  at `h = 1` the parahoric of `(k + j, j·t)`), and so are the groups at `SG` (`ThetaVol.LevGOk`, the archive's `grpG`:
+  `∏_{w ∈ SG} red_w(prX(R1 ∩ JGsym_j))`, `h = 1` there; its character `chrG` is read by no factor); distinct indices
+  of a level have representatives in distinct double cosets `R1·h·JQ(k + j)` at some `P ∈ Q` (`ThetaVol.SameDC`, the
+  archive's `inj`), so at the untwisted level, where `Q = ∅`, every `β j` is a subsingleton (the archive's one tuple);
+  without these, copies of an index or a smaller level at `SG` would scale `col` by a positive integer per word (audit
+  11, T3a). Its characters are `μ_{0,j}ξ`
   with `μ_{0,j}` a `LiftChars` for given `e`, `Sg`, equal to the family `mu0` passed in (the pinned frontier shares it
   across levels and words and reads it in the rows).
   At every level, the representatives are `h_{j,b}(P) = 1` at `P ∈ SG` (the archive's `twIdx`, spec-7 §2b), in the
@@ -54,8 +59,9 @@ points `x` of the level (decorated lattices `pX x` of rank `n = N_m − 1`, `ST 
   (`phQ`); depth `m + 1`, `N_j = k + j(t + 1)`), and `ψ_P`, `μ_P`, `χ_P`, `√q` existential with the canonical
   properties for `μ_{0,j}` and the twist `ξ` (`ThetaVol.LocOk`, `dQ = 2m`). `Q` (a parameter) is `sel(Qprime ξ)`:
   one place over each place where `ξ` ramifies (as a pair `{P, P̄}`), never both `P` and `P̄`, of prime norm and
-  unramified over `ℚ` (spec-7 §3a; `Q = ∅` when `U`), and off `tz` and `conj(tz)` (spec-11 §3: `N P ≠ T_ω`, the
-  archive's `PosT`; the frame of the lift `tilQ` at `P ∈ Q` divides by `conj(tz)`).
+  unramified over `ℚ` (spec-7 §3a; `Q = ∅` when `U`), off `tz` and `conj(tz)` (spec-11 §3: `N P ≠ T_ω`, the
+  archive's `PosT`; the frame of the lift `tilQ` at `P ∈ Q` divides by `conj(tz)`), and off `SG` and `conj SG` (the
+  archive's `QSep`; so `sel` can hold `SG ∪ Q` with one place of each pair).
   Against `κ ≡ 0`: `S = ST ∪ SG ∪ Q` (the archive's place set `Sall` of `homAt`, spec-8 F2b; `ST ∪ SG` when `U`),
   `cA, cB > 0`, the Heisenberg data (the top step's too) have
   `SA, SB ≠ ∅` and `vol > 0`, and every class at a level `j + 1 ≤ m − 2` meets a nonzero `Ξ` (the archive's `nonvan`,
@@ -63,7 +69,7 @@ points `x` of the level (decorated lattices `pX x` of rank `n = N_m − 1`, `ST 
 * (e) Normalisation (audit 3, B1): the determinant ideles (L5.2, `IsDetIdele`) follow the archive's `muOff` (spec-5 §4,
   spec-8 F2): for a set `sel` (existential) holding one place of each conjugate pair `v ≠ conj v`, every self-conjugate
   place, and the frame places `SG ∪ Q`, they have the valuation of `det N_c` (the largest `v(det f)`, `f ∈ N_c^n`) at
-  the places of `sel`, and valuation `0` at the others (the conjugates of `sel`, those of `SG ∪ Q` included), at every
+  the places of `sel`, and component `1` at the others (the conjugates of `sel`, those of `SG ∪ Q` included), at every
   level and over every split place, not only over `ST`; at each frame place `P` of the class (or point; `SG ∪ Q` at
   every level) the component is
   `det fr_P` (`DecoF.frAt`; the archive's `muInvDet`; the unit part is pinned there); the top step's is that of the
@@ -118,16 +124,16 @@ w)` are not defined here) but is capped: `𝔞_ω ∣ (aBd u ω)`, a parameter-d
 without limit.
 
 **Open.** Existential: `Data`'s remaining fields (theta constants, `Ξ` before the last step, weights, `ξ` at the
-twisted levels, `dI` up to units off the frame places, the side `sel` picked over each pair off `SG ∪ Q`, the top
-step's Heisenberg representatives), `N(cc)` in `xi0`, `X`, `e` (one per word, shared by every level), `𝔞` below its
-cap, the untwisted level's `ST`, `SG`, the branching projection, the `ChIdx` representatives and characters (at
-`SG`). Every level's classes carry lattice frames at `Q` (the archive's `DecoF`), so every factor reads `x` at `P ∈ Q`
-in the frames without ambiguity; residue frames would not do, as the representatives there are in `TwNF`, not integral
-(spec-12 F6). The live `ν ≤ −1` of `TwNF` (spec-12 F5) and the archive's `prCat ≤ GLint` are not pinned. Not
-stated: `Tw` by the archive's `TwistedSetDef` (the untwisted kernel indices `Ij`, `jw` and per-place forced orders are
-not defined here), the later-step `ChIdx` ties at `SG` (`grpG/chrG`) and `inj/surj`, `ψ_w`'s offset avoidance
-(`IsTwist`, `AvoidSet`), and `GoodTw` at the inner row levels `j < m` (the frontier reads only each word's last step,
-so the index clause is per word, below).
+twisted levels, `dI` up to units at the places of `sel` off the frame places, the side `sel` picked over each pair off
+`SG ∪ Q`, the top step's Heisenberg representatives), `N(cc)` in `xi0`, `X`, `e` (one per word, shared by every
+level), `𝔞` below its cap, the untwisted level's `ST`, `SG`, the branching projection, the `ChIdx` representatives and
+characters (at `SG`). Every level's classes carry lattice frames at `Q` (the archive's `DecoF`), so every factor
+reads `x` at `P ∈ Q` in the frames without ambiguity; residue frames would not do, as the representatives there are in
+`TwNF`, not integral (spec-12 F6). The live `ν ≤ −1` of `TwNF` (spec-12 F5) and the archive's `prCat ≤ GLint` are
+not pinned. Not stated: `Tw` by the archive's `TwistedSetDef` (the untwisted kernel indices `Ij`, `jw` and per-place
+forced orders are not defined here), the later-step character ties at `SG` (`chrG`) and `surj`, `ψ_w`'s offset
+avoidance (`IsTwist`, `AvoidSet`), and `GoodTw` at the inner row levels `j < m` (the frontier reads only each word's
+last step, so the index clause is per word, below).
 
 **Twist characters** (spec-7 §1c–1d, `SharpData.RealisedPinned`). Each level `μ` has a twist `ξ_μ` (`ξT`, read by
 `IsThetaCol` through `Shp`), `1` at `μ0` and `δ_ℓ·ψ_w` at `μ(w) ≠ μ0`, `ℓ` the residue characteristic of `w`:
@@ -223,9 +229,10 @@ def idxW (ℓ : ℕ) (w : HeightOneSpectrum (𝓞 L)) {V : Type*} [AddCommGroup 
 
 /-- (e) `dI` is a determinant idele of a lattice `N` with frames `fr` (L5.2; the archive's `muOff` and `muInvDet`,
 spec-5 §4, spec-8 F2): at the places of `sel` it has the valuation of `det N` (the largest `v(det f)`, `f ∈ N^a`),
-valuation `0` at the others, and at each frame place `P ∈ SF` its component is `det fr_P` (`fr_P(O_P^a) = N_P`, so the
-valuation is that of `det N`): the unit part too is read through the frames. The frames are those the factors read:
-of a class, `ThetaChain.DecoF.frAt` (frame lifts at `SG`, lattice frames at `Q`); of the lift at the top,
+its component is `1` at the others (the archive's `muOff`: the component, not only the valuation, so no free unit
+phase at the conjugates of `sel`), and at each frame place `P ∈ SF` its component is `det fr_P` (`fr_P(O_P^a) = N_P`,
+so the valuation is that of `det N`): the unit part too is read through the frames. The frames are those the factors
+read: of a class, `ThetaChain.DecoF.frAt` (frame lifts at `SG`, lattice frames at `Q`); of the lift at the top,
 `HermClasses.frAt`. -/
 def IsDetIdele (sel : Set (HeightOneSpectrum (𝓞 E))) {a : ℕ} (N : Submodule (𝓞 E) (Fin a → E))
     (SF : Finset (HeightOneSpectrum (𝓞 E))) (fr : HeightOneSpectrum (𝓞 E) → Matrix (Fin a) (Fin a) E)
@@ -233,7 +240,7 @@ def IsDetIdele (sel : Set (HeightOneSpectrum (𝓞 E))) {a : ℕ} (N : Submodule
   (∀ v : HeightOneSpectrum (𝓞 E), let dv := Valued.v (((dI : Ideles E) : FiniteAdeleRing (𝓞 E) E) v)
     (v ∈ sel → (∃ f : Fin a → N, dv = v.valuation E (Matrix.of fun i k => (f k : Fin a → E) i).det) ∧
       ∀ f : Fin a → N, v.valuation E (Matrix.of fun i k => (f k : Fin a → E) i).det ≤ dv) ∧
-    (v ∉ sel → dv = 1)) ∧
+    (v ∉ sel → ((dI : Ideles E) : FiniteAdeleRing (𝓞 E) E) v = 1)) ∧
   ∀ P ∈ SF, ((dI : Ideles E) : FiniteAdeleRing (𝓞 E) E) P = algebraMap E (P.adicCompletion E) (fr P).det
 
 open Classical in
@@ -248,7 +255,10 @@ untwisted level) (module docstring, (a)–(e)). **The representatives at `P ∈ 
 They are never integral at the live levels: at `ξ_P ≠ 1` the free last column of `E1` kills every integral coset,
 and the `ψ_P` twist at denominator `q^{−1}` pairs with `ξ_P` into a Gauss sum (spec-12 F3–F5: the live `ν` have every
 `ν_i ≤ −1` at `1 ≤ j ≤ m − 2`, `(−1, …, −1)` at `j = 1`; not pinned). An integrality pin at `Q` would keep only dead
-cosets and make the frontier false at the twisted levels. The word's source data are passed in, the
+cosets and make the frontier false at the twisted levels. **The index types and the levels at `SG`** are pinned
+(audit 11, T3a): distinct `b ≠ b′` at a level `j` have `h_{j,b′}(P) ∉ R1·h_{j,b}(P)·JQ(k + j)` at some `P ∈ Q`
+(`ThetaVol.SameDC`; at the untwisted level, `Q = ∅`, every `β j` is a subsingleton), and at `1 ≤ j < m` the level
+group at `SG` is `∏_w red_w(prX(R1 ∩ JGsym_j))` (`ThetaVol.LevGOk`). The word's source data are passed in, the
 same at every level (audit 7, T1a: the archive twists the characters, not the input form): the place sets `ST`, `SG`,
 the step-0 rank `n0`, weight `lam0` and character `χ0`, a cusp subspace `X` stable under the diamond operators, and
 an isomorphism `e` of the source with `X ⊓ V_ω`. The chain has `D.ST = ST`, `D.SG = SG`, `D.n 0 = n0`,
@@ -292,6 +302,10 @@ def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
         (∀ j b (w : D.Q), 0 < j → j < m2 + 2 →
           ThetaVol.LevQOk (D.n j) (m2 + 2 - 1 - j) w.1 (k + j) (h j (eβ j b) w.1) (ψ j w.1) (χ j w.1)
             (C.levQ j b w) (C.chrQ j b w)) ∧
+        (∀ j b, 0 < j → j < m2 + 2 →
+          ThetaVol.LevGOk (D.n j) (m2 + 2 - 1 - j) (ThetaVol.jS D (m2 + 2) k t j) (C.Λ j b)) ∧
+        (∀ j (b b' : D.β j), b ≠ b' → ∃ w : D.Q, ¬ ThetaVol.SameDC (D.n j) (m2 + 2 - 1 - j)
+          (ThetaVol.JQ (D.n j) (m2 + 2 - 1 - j) w.1 (k + j)) (h j b w.1) (h j b' w.1)) ∧
         ThetaVol.XiFull D (m2 + 2) (m2 + 3) k (D.SG ∪ Q) h (ThetaVol.jS D (m2 + 2) k t) ψ μ sq Ph ∧
           (∀ c₀ c y, Tp.Xi1 c₀ c y =
             ThetaVol.xiCpl D (m2 + 2) (m2 + 3) k (Q \ D.SG) h (ThetaVol.jS D (m2 + 2) k t) ψ μ sq Ph m2 c₀ c y) ∧
@@ -305,7 +319,8 @@ def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
           w.asIdeal ≠ v.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E)}, ξ.toHom x ≠ 1) ∧
     (∀ P ∈ Q, ∀ P' ∈ Q, P'.asIdeal ≠ P.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E)) ∧
     (∀ P ∈ Q, (Ideal.absNorm P.asIdeal).Prime ∧ ((Ideal.absNorm P.asIdeal : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2 ∧
-      tz ∉ P.asIdeal ∧ IsCMField.ringOfIntegersComplexConj E tz ∉ P.asIdeal) ∧
+      tz ∉ P.asIdeal ∧ IsCMField.ringOfIntegersComplexConj E tz ∉ P.asIdeal ∧ P ∉ SG ∧
+      ∀ w ∈ SG, P.asIdeal ≠ w.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E)) ∧
     Shp D (m2 + 2) Q ξ ∧
     (∀ j < m2 + 2, ∃ pin, ThetaNorm.Pin.Canonical τ D.P pin ∧ (D.θ j).Normalised pin) ∧
     (∃ sel : Set (HeightOneSpectrum (𝓞 E)), ↑(D.SG ∪ Q) ⊆ sel ∧ (∀ v v' : HeightOneSpectrum (𝓞 E),
