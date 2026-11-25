@@ -1056,7 +1056,7 @@ note of `formalisations/` that names it, if one does.
 #### `ThetaChain`: Hecke characters, theta kernels and the theta chain
 
 - `ThetaChain.detShift_wt_succ`: Sanity ([note](../formalisations/alpoge-rh.md))
-- `ThetaChain.instMulActionDecoF`: The action on the points is a group action
+- `ThetaChain.instMulActionDecoF`: The action on the points is a group action ([note](../formalisations/alpoge-rh.md))
 - `ThetaChain.Chain.comp_zero`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ThetaChain.Chain.lift_add`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ThetaChain.Top.col_of_isEmpty`: Sanity ([note](../formalisations/alpoge-rh.md))

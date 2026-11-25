@@ -204,16 +204,18 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   - The frontier: `ZetaBalance.rhAndGRH_of_sharpBound` gives RH with GRH from `ZetaBalance.SharpBound`, through a
     proved bridge to the six-term interface (`ZetaBalance.SharpData.nonempty_sixTermData`,
     `ZetaBalance.SharpData.toSixTermData_Fo`): defined sources, target and periods, the forced orders fixed, and
-    nonnegative slacks. `ZetaBalance.rhAndGRH_of_sharpBoundPinned` takes the frontier with the periods given by the
-    theta chain (`ThetaChain.Data.chain`, through `ZetaBalance.sharpBoundTheta_of_pinned`), the CM type, the
-    branching constant and the parameters' arithmetic pinned, and the kernels kept from vanishing
-    (`ThetaChain.Data.comp_zero_inp`). The base theta is normalised by the archive's fourth-power identity, with the
-    Weierstrass `σ` of a lattice of discriminant 1 (`ThetaNorm.th0_zero`, `ThetaNorm.F0_zero`,
-    `ThetaNorm.sgStar_zero`); the local factors of the kernels are defined in full, and their scale is required (`ThetaVol.volN_pos`,
-    `ThetaVol.XiFull.scale`). The row space as the image of a character idempotent, on Weyl-module-valued forms
-    equivariant under the archive's row level groups, with the type group acting through a Levi block
-    (`RowSpace.idemOf_empty`, `RowSpace.map_Amb_eq_range`, `RowSpace.tyPt_mul`, `RowSpace.tyRep_apply`). Still existential: the local factors at the auxiliary places, the level data
-    after step 0, the cusp subspace, the decoration lift, and the twisted levels (no `Q`-decorations yet).
+    nonnegative slacks. `ZetaBalance.rhAndGRH_of_sharpBoundPinned` pins every object to the archive's construction
+    (through `ZetaBalance.sharpBoundTheta_of_pinned`): the theta chain, its top step straight to the row points
+    (`ThetaChain.Data.comp_zero_inp`, `ThetaChain.Top.col_of_isEmpty`, `ThetaChain.instMulActionDecoF`); the local
+    factors read through the frames, with the level-T indicator, the archive's level groups at `SG` and `Q`, and
+    representatives in its normal form at `Q` (`ThetaVol.volN_pos`, `ThetaVol.XiFull.scale`); the base theta by
+    the archive's fourth-power identity, with the Weierstrass `σ` of a lattice of discriminant 1
+    (`ThetaNorm.th0_zero`, `ThetaNorm.F0_zero`, `ThetaNorm.sgStar_zero`); and the row space as the image of a
+    character idempotent on Weyl-module-valued forms equivariant under the archive's row level groups
+    (`RowSpace.idemOf_empty`, `RowSpace.map_Amb_eq_range`, `RowSpace.tyPt_mul`, `RowSpace.tyRep_apply`). The last
+    of twelve adversarial audits finds it true, up to inferred steps, and with no trivial witness. Existential:
+    the archive's own freedom (the cusp subspace, the twist characters within their shape, the transfers, the
+    target metric, unit phases).
 
 ## How the statements differ from the archive's
 

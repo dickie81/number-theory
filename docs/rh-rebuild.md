@@ -547,12 +547,17 @@ construction, measured"). In order:
      losses of the frame inequality.
 
    It is still equivalent to the gap bound, as above: frames of rank one satisfy it whenever that bound holds.
-2. **A sharp frontier**, stated on the branch `sharp-frontier` (24 November 2026). The construction's objects are
-   defined in nine modules: `KLattice`, `FrameRescale`, `CMHost`, `HermClasses`, `WeylFock`, `HermForms`,
-   `ThetaChain`, `PeriodTarget` and `ForcedOrders`. `SharpBound` states the frontier and proves its bridge to
-   `SixTermData`, and `SharpChain` pins the periods to the theta chain (`rhAndGRH_of_sharpBoundPinned`). Two reviews
-   against the archive corrected eight transcription errors. Still existential: the local factors at the auxiliary
-   places, the level data after step 0, the cusp subspace, the decoration lift, and the twisted levels.
+2. **A sharp frontier**, stated on the branch `sharp-frontier` (24–26 November 2026). The construction's objects are
+   defined in twelve modules: `KLattice`, `FrameRescale`, `CMHost`, `HermClasses`, `WeylFock`, `HermForms`,
+   `ThetaChain`, `ThetaNorm`, `ThetaVol`, `PeriodTarget`, `RowSpace` and `ForcedOrders`. `SharpBound` states the
+   frontier and proves its bridge to `SixTermData`; `SharpChain` pins every object to the archive's construction
+   (`rhAndGRH_of_sharpBoundPinned`, standard axioms, conditional on the half-plane). Twelve adversarial audits looked
+   for trivial witnesses (degenerate choices that satisfy the frontier from the averaged gap bound alone) and for
+   over-pins (conditions the archive's construction does not meet), and twelve read-only studies of the archive
+   specified the objects; each finding was fixed. The last audit finds the frontier true, up to the inferred steps
+   it records, and finds no trivial witness. What stays existential is the archive's own freedom: the cusp subspace,
+   the twist characters within their stated shape, the transfers, the target metric and unit phases. The audits
+   and specifications are working notes outside the repository.
 3. **Self-contained components:**
    - the sizes of the auxiliary primes;
    - the frame condition at one complex place (`LinkS`, about 100K archive lines). The step from it to (RS) is done
