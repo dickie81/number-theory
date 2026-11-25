@@ -4,10 +4,14 @@ import ThetaChain
 /-!
 # The local volumes of the theta kernels (spec-3 §1)
 
-The local factor `Ξ_j` of a step `j < m − 1` is `∏_{P ∈ S} volN_P(j)⁻¹ · E1(om(Φ_P))`, and the `E1 ∘ om ∘ Φ` part has a
-fixed scale; so the volumes `volN_P(j)` carry the scale of `Ξ_j`. This module defines them, the factor itself
+The local factor `Ξ_j` of a generic step `j < m − 2` is `∏_{P ∈ S} volN_P(j)⁻¹ · E1(om(Φ_P))`, and the `E1 ∘ om ∘ Φ`
+part has a fixed scale; so the volumes `volN_P(j)` carry the scale of `Ξ_j`. This module defines them, the factor itself
 (`E1`, `om`, `PhiGS`, `PhiQ`, `XiStd`; spec-2 1d as corrected by spec-6) and the pins `XiFull`
 (`Ξ_j = XiStd`) and `XiScale` (`Ξ_j(0)` is `XiStd(0)` up to a unit of absolute value `1` at every complex place). The
+two top steps differ (spec-10 F1–F5; the archive's `XiCpl1`, `XiCpl2`, coupled through the coset `Y` of level `m − 1`,
+here in its collapsed form `ȳ ∈ ∏_{P ∈ Q} (O/P)^{N_{m−1}}`): step `m − 2` is `xiCpl` (`XiStd` at `SG`;
+`q^{−N_{m−1}}·om(Φ_P)([x | ȳ_P])` at `Q`, `joinCol`, no `E1`, no `volN`) and step `m − 1` is `xiTop` (`PhiTop·ftY`, read
+on the row point's lift). Like `XiStd`, they read `x` in global coordinates (no frames). The
 frontier (L7) uses `XiFull` with the
 canonical sharp instance (`jS`, `phS`, `LocOk`, depth `m + 1`). The library's `x` is the archive's (no transpose);
 `entB` uses the archive's shuffle `fIdx` with `k₀ = k`. The unsharp kernel shape and group at `SG` and the
@@ -176,6 +180,13 @@ noncomputable def om (Pl : HeightOneSpectrum (𝓞 E)) {a b : ℕ} (μ : E → L
     sq ^ (-(vP Pl (g : Matrix (Fin a) (Fin a) E).det * b)) * sq ^ (vP Pl (h : Matrix (Fin b) (Fin b) E).det * a) *
     Φ (((h⁻¹ : GL (Fin b) E) : Matrix (Fin b) (Fin b) E) * x * (g : Matrix (Fin a) (Fin a) E))
 
+/-- `[x | y]` (the archive's `joinCol`) at sizes `n + c → n′ + c′`: `x` in the first `n` columns, `y` in column `n`, `0`
+elsewhere. At the step `m − 2` (`c = 1`, `c′ = 0`) it is exactly the `N_{m−1} × (N_{m−2} + 1)` matrix `[x | y]`. -/
+def joinCol {n n' c c' : ℕ} (x : Matrix (Fin n') (Fin n) E) (y : Fin n' → E) :
+    Matrix (Fin (n' + c')) (Fin (n + c)) E := fun l s =>
+  if h : (l : ℕ) < n' then (if h' : (s : ℕ) < n then x ⟨l, h⟩ ⟨s, h'⟩ else if (s : ℕ) = n then y ⟨l, h⟩ else 0)
+  else 0
+
 /-- The index shuffle position `↦` index (spec-6 §6): `fIdx k₀ c n s = s` (`s < k₀`), `n + (s − k₀)`
 (`k₀ ≤ s < k₀ + c`), `s − c` otherwise; it moves the `c` extra coordinates to the positions `k₀, …, k₀ + c − 1`. -/
 def fIdx (k₀ c n s : ℕ) : ℕ := if s < k₀ then s else if s < k₀ + c then n + (s - k₀) else s - c
@@ -332,18 +343,55 @@ noncomputable def xiStd (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectr
   XiStd (D.n j) (D.n (j + 1)) (m - 1 - j) (m - 1 - (j + 1)) A R D.SG (JS (j + 1)) (k + (j + 1)) (h j c.1)
     (h (j + 1) c'.1) (ψ j) (μ j) (sq j) (Ph j)
 
-/-- **The local factors are pinned** (spec-3 §1): `Ξ_j = XiStd` for `j < m − 1`, with the representatives `h` (the
-`ChIdx` bundle's), the groups `JS` and the local parameters passed in. The frontier (L7, `IsThetaCol` at the
-untwisted level) uses it with `JS = jS`, `Ph = phS`, `A = m + 1` and `LocOk`. -/
+/-- **The coupled factor of step `j = m − 2`** (spec-10 F3, F5 items 3 and 5; the archive's `XiCpl1`, the coset `Y` in
+its collapsed form `ȳ`): `∏_{P ∈ SG} XiStd_P(x)` (at `SG` the coset sum has one live coset, `y ≡ q⁻¹e_k`, which `E1`
+integrates; `volN = 1` at level `m − 1`) times `∏_{P ∈ R} q_P^{−N_{m−1}}·om_P(g = h_{j,c}, h = 1, Φ_P)([x | ȳ_P])` over
+the places `R = Q \ SG`, `ȳ_P ∈ (O/P)^{N_{m−1}}` lifted to `O_E` (`PsiAt`: no `E1`, no `volN`; `q^{−N_{m−1}}` is what
+the archive's `ftY` measure leaves after the sum over the cosets `Y ≡ ȳ (mod P)`). -/
+noncomputable def xiCpl (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E)))
+    (h : ∀ j, D.β j → HeightOneSpectrum (𝓞 E) → GL (Fin (D.n j + (m - 1 - j))) E)
+    (JS : ∀ j, HeightOneSpectrum (𝓞 E) → Subgroup (GL (Fin (D.n j + (m - 1 - j))) E))
+    (ψ μ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (sq : ℕ → HeightOneSpectrum (𝓞 E) → L)
+    (Ph : ∀ j, HeightOneSpectrum (𝓞 E) →
+      Matrix (Fin (D.n (j + 1) + (m - 1 - (j + 1)))) (Fin (D.n j + (m - 1 - j))) E → L)
+    (j : ℕ) (c : Cls D.n D.ST D.SG D.β D.Λ j) (c' : Cls D.n D.ST D.SG D.β D.Λ (j + 1))
+    (y : ∀ P : R, Fin (D.n (j + 1)) → 𝓞 E ⧸ P.1.asIdeal) (x : Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E) : L :=
+  xiStd D m A k D.SG h JS ψ μ sq Ph j c c' x *
+    ∏ P : R, ((Ideal.absNorm P.1.asIdeal : L) ^ D.n (j + 1))⁻¹ *
+      om P.1 (μ j P.1) (sq j P.1) (h j c.1 P.1) 1 (Ph j P.1) (joinCol x fun i => (((y P i).out : 𝓞 E) : E))
+
+open Classical in
+/-- **The top factor** (spec-10 F2, F5 items 4–5; the archive's `XiCpl2`, the coset as in `xiCpl`) of step
+`j = m − 1`, on `x′ ∈ M_{N_m × N_{m−1}}`: with `η = conj(tz)⁻¹·x′_last` (the last row; the archive's `π⁻¹·x′_last`) and
+`top` the other rows, `∏_{P ∈ SG} PhiTop_P(top)·1[η ∈ O_(P)]·ψ_P(−η_k/q_P)` times
+`∏_{P ∈ R} PhiTop_P(top)·1[q_P·η ∈ O_(P)]·ψ_P(−η·ȳ_P)` (`R = Q \ SG`). `PhiTop_P` is `PhiGS ∘ entB` at `SG`
+(`i = m − 1`, `ex = (i ↦ i + 1)`) and `PhiQ ∘ entB` at `Q` (`ex = 0`, `ξ_P = χ_{m−1}⁻¹`), at sizes `N_{m−1} + 0 → (N_m
+− 1) + 0`;
+its values are `0` or roots of unity at `SG`. -/
+noncomputable def xiTop (D : Data τ) (m k t : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E))) (tz : E)
+    (ψ χ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (j : ℕ) (y : ∀ P : R, Fin (D.n j) → 𝓞 E ⧸ P.1.asIdeal)
+    (x : Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E) : L :=
+  let top : Matrix (Fin (D.n (j + 1) - 1 + 0)) (Fin (D.n j + 0)) E := fun l s => entA x l s
+  let η : ℕ → E := fun s => (IsCMField.complexConj E tz)⁻¹ * entA x (D.n (j + 1) - 1) s
+  (∏ P ∈ D.SG, PhiGS P (ψ j P) (fun l => χ l P) k (m / 2 - 1) (k + m - 1) t j
+      (entB P k (D.n j) (D.n (j + 1) - 1) 0 0 (fun i => i + 1) top) *
+    if ∀ s, intAt P (η s) then ψ j P (-η k / qP P) else 0) *
+  ∏ P : R, PhiQ P.1 (fun a => (χ j P.1 a)⁻¹) (k + m - 1) (entB P.1 k (D.n j) (D.n (j + 1) - 1) 0 0 0 top) *
+    if ∀ s, intAt P.1 (qP P.1 * η s) then ψ j P.1 (-∑ s : Fin (D.n j), η s * (((y P s).out : 𝓞 E) : E)) else 0
+
+/-- **The local factors are pinned** (spec-3 §1, spec-10 F5): `Ξ_j = XiStd` at the generic steps `j < m − 2` (the
+archive's `mat`), with the representatives `h` (the `ChIdx` bundle's), the groups `JS` and the local parameters passed
+in. Step `m − 2` is the coupled `xiCpl` and step `m − 1` the top `xiTop`. The frontier (L7, `IsThetaCol`) uses it with
+`JS = jS`, `Ph = phS` at `SG` and `phQ` at `Q`, `A = m + 1` and `LocOk`. -/
 def XiFull (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E)))
     (h : ∀ j, D.β j → HeightOneSpectrum (𝓞 E) → GL (Fin (D.n j + (m - 1 - j))) E)
     (JS : ∀ j, HeightOneSpectrum (𝓞 E) → Subgroup (GL (Fin (D.n j + (m - 1 - j))) E))
     (ψ μ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (sq : ℕ → HeightOneSpectrum (𝓞 E) → L)
     (Ph : ∀ j, HeightOneSpectrum (𝓞 E) →
       Matrix (Fin (D.n (j + 1) + (m - 1 - (j + 1)))) (Fin (D.n j + (m - 1 - j))) E → L) : Prop :=
-  ∀ j, j + 1 < m → ∀ c c', D.Xi j c c' = xiStd D m A k R h JS ψ μ sq Ph j c c'
+  ∀ j, j + 2 < m → ∀ c c', D.Xi j c c' = xiStd D m A k R h JS ψ μ sq Ph j c c'
 
-/-- **The scale of `Ξ_j` is pinned** (spec-3 §1, verdict): for `j < m − 1`, `Ξ_j(c, c′)` at the trivial coset is
+/-- **The scale of `Ξ_j` is pinned** (spec-3 §1, verdict): for `j < m − 2`, `Ξ_j(c, c′)` at the trivial coset is
 `XiStd` there up to a unit `u` with `|u| = 1` at every complex place (harmless for slopes by the product formula).
 The weaker pin the frontier used before spec-6; kept for `XiFull.scale`. -/
 def XiScale (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E)))
@@ -352,7 +400,7 @@ def XiScale (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E))
     (ψ μ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (sq : ℕ → HeightOneSpectrum (𝓞 E) → L)
     (Ph : ∀ j, HeightOneSpectrum (𝓞 E) →
       Matrix (Fin (D.n (j + 1) + (m - 1 - (j + 1)))) (Fin (D.n j + (m - 1 - j))) E → L) : Prop :=
-  ∀ j, j + 1 < m → ∀ c c', ∃ u : L, (∀ σ : L →+* ℂ, ‖σ u‖ = 1) ∧
+  ∀ j, j + 2 < m → ∀ c c', ∃ u : L, (∀ σ : L →+* ℂ, ‖σ u‖ = 1) ∧
     D.Xi j c c' 0 = xiStd D m A k R h JS ψ μ sq Ph j c c' 0 * u
 
 /-- **Sanity:** the full pin gives the scale pin (`u = 1`). -/

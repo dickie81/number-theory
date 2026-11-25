@@ -199,7 +199,8 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   - The theta chain: Hecke and splitting characters, theta functions by the archive's recipe from an existential
     standard theta, jets, the kernels `κ_j`, the lifts and the chain; the local factors at the auxiliary places
     are a parameter with their invariance (`ThetaChain.opU_zero`, `ThetaChain.Chain.comp_zero`,
-    `ThetaChain.Chain.lift_add`, `ThetaChain.detShift_wt_succ`).
+    `ThetaChain.Chain.lift_add`, `ThetaChain.detShift_wt_succ`); its top step maps straight to the row points,
+    with the archive's coupled and top factors (`ThetaChain.Top.col_of_isEmpty`).
   - The frontier: `ZetaBalance.rhAndGRH_of_sharpBound` gives RH with GRH from `ZetaBalance.SharpBound`, through a
     proved bridge to the six-term interface (`ZetaBalance.SharpData.nonempty_sixTermData`,
     `ZetaBalance.SharpData.toSixTermData_Fo`): defined sources, target and periods, the forced orders fixed, and

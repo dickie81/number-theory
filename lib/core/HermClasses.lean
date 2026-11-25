@@ -38,7 +38,7 @@ state). For decorated lattices, `DCl` with the representative `DCl.rep` and its 
 `γ ↦ diag(γ, 1)` (`ext`), which fixes `e_last` (`act_ext_eLast`). **The decorated lift** `tilQ tz` (audit 9, T1) takes
 a decorated lattice of rank `n` to one of rank `n + 1` on the same frame places: the lattice `til 1 N = N ⊕ O_E·e_last`,
 the level-`T` decorations `(tz·a) mod P` on the `e_last`-coordinate `a`, and the frames `(be_w, (a/conj(tz)) mod w)`.
-With `ST` the places over `conj(tz)`, `Lsh(tilQ d) = til tz N`; L7's top step reads the lift of each row point.
+With `ST` the places over `conj(tz)`, `Lsh(tilQ d) = til tz N`; L7's top step maps to the lift of each row point.
 
 **Choices.** Matrices for `GL_n` and `U_n`, so later layers (`WeylFock`) can read `ρ(γ)` off the entries. The
 decorations are data on the lattice itself (`↥N →ₗ[O_E] …`), compared by `Deco.ext'`. Following the spec's
@@ -449,22 +449,22 @@ theorem range_tilEmb (N : Submodule (𝓞 E) (Fin n → E)) : LinearMap.range (t
 def tilEquiv (N : Submodule (𝓞 E) (Fin n → E)) : (N × 𝓞 E) ≃ₗ[𝓞 E] til 1 N :=
   (LinearEquiv.ofInjective _ (tilEmb_injective N)).trans (LinearEquiv.ofEq _ _ (range_tilEmb N))
 
-variable [NumberField E] [IsCMField E] {ST SG ST' SG' : Finset (HeightOneSpectrum (𝓞 E))}
+variable [NumberField E] [IsCMField E] {ST SG ST' : Finset (HeightOneSpectrum (𝓞 E))}
 
 /-- **The decorated lift** `tilQ tz d` (the archive's `tilQ` = `Deco.til π`, `π = conj(tz)`; audit 9, T1) of a
-decorated lattice `d = (N, f, be)` of rank `n` on the places `ST′`, `SG′`, to rank `n + 1` on `ST` and `SG ⊆ SG′`
-(frames at `SG′ \ SG` dropped; the archive keeps all, `SG = SG′`): the lattice
+decorated lattice `d = (N, f, be)` of rank `n` on the places `ST′`, `SG`, to rank `n + 1` on `ST` and the same frame
+places `SG` (all frames kept, as in the archive; L7: `SG ∪ Q` at the row points): the lattice
 `til 1 N = N ⊕ O_E·e_last` (`tilEquiv`), the level-`T` decorations `f_P(y + a·e_last) = (tz·a) mod P` at `P ∈ ST`
 (the archive's `red_P(conj(π)·x_last)`), and the frames `be_w(y + a·e_last) = (be_w y, (a/conj(tz)) mod w)` at
 `w ∈ SG` (the archive's `red_w(x_last/π)`; `Ring.inverse` is `0` if `conj(tz) ∈ w`, which the archive excludes:
 `π ∉ w`). The `f` of `d` is not read. For `N` unimodular and `ST` the places over `conj(tz)` (`conj(tz)·O_E`
 squarefree), `Lsh(tilQ d) = til tz N` (the unit `tz` at `P ∈ ST` does not move `ker f_P`). Meant for L7: the top step
-of the chain reads the lift of each row point (`SharpChain.IsThetaCol`). -/
-def tilQ (tz : 𝓞 E) (hSG : SG ⊆ SG') (d : Deco E n ST' SG') : Deco E (n + 1) ST SG where
+of the chain maps to each row point through its lift (`SharpChain.IsThetaCol`, `ThetaChain.Top`). -/
+def tilQ (tz : 𝓞 E) (d : Deco E n ST' SG) : Deco E (n + 1) ST SG where
   N := til 1 d.N
   f P := tz • (P.1.asIdeal.mkQ ∘ₗ LinearMap.snd _ _ _ ∘ₗ (tilEquiv d.N).symm.toLinearMap)
   be w := LinearMap.pi (Fin.snoc (α := fun _ => d.N × 𝓞 E →ₗ[𝓞 E] 𝓞 E ⧸ w.1.asIdeal)
-      (fun i => LinearMap.proj i ∘ₗ d.be ⟨w.1, hSG w.2⟩ ∘ₗ LinearMap.fst _ _ _)
+      (fun i => LinearMap.proj i ∘ₗ d.be w ∘ₗ LinearMap.fst _ _ _)
       (Ring.inverse (Ideal.Quotient.mk w.1.asIdeal (IsCMField.ringOfIntegersComplexConj E tz)) •
         (w.1.asIdeal.mkQ ∘ₗ LinearMap.snd _ _ _))) ∘ₗ (tilEquiv d.N).symm.toLinearMap
 

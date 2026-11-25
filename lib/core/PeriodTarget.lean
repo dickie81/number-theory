@@ -22,18 +22,17 @@ the coefficient of `∏_{τ,s} y_{τ,N,s}^{λ_{τ,s}−σ_{τ,s}}` (last row) as
 `L`-linear map with the defining property `IsFockProj` of the Fock-orthogonal projection onto `∇_L(natW σ)`, the
 `L`-span of `Δ(σ)`. (The bilinear and the hermitian projections agree: `∇_L(ν)` is defined over `ℚ`.)
 
-**The period** (L6.3, `per`). For the chain's output `Φm`, read on points of rank `N_m`, and a row `F`:
-`P(Φm, F) = Σ_c mass(c)·pair_σ(br(Φm(pt(rep c))), F(c))`, with `pair_σ` the bilinear normalised Fischer pairing
+**The period** (L6.3, `per`). For the chain's output `Φm`, a `VV(λ_m)`-valued function on the row points, and a row
+`F`: `P(Φm, F) = Σ_c mass(c)·pair_σ(br(Φm(rep c)), F(c))`, with `pair_σ` the bilinear normalised Fischer pairing
 (`fockWith id`, normalised by the highest-weight vector, as in `WeylFock.Delta`). **Rows are finitely supported**
 (`Cl →₀ Pol`): the classes are finite, so these are all functions, and the period is a finite sum, linear in `Φm`
 (`perMap`) with no finiteness hypothesis; `per_eq_classSum` recovers the spec's `Σᶠ` (`HermClasses.classSum`).
-**Interface:** `Φm` is any function on a type `Y` of points of rank `N_m` (`Col`), read at the point `pt x` over the
-representative `x` of each class (audit 8, S2–S3: the archive's column depends on the frames, not only on the
-lattice); L7 takes `Y` the decorated lattices of rank `N_m` and `pt` the decorated lift `HermClasses.tilQ`.
+**Interface:** `Φm` is a function on the row points `X` themselves (`Col`), as the archive's column `evGSD` (audit 9,
+T1a): its top step reads the decorated lift `HermClasses.tilQ` of the point with all its frames, `QE` included (L7).
 
 **Levels.** The class machinery is generic in a group action (`HermClasses.Cl`), so every level `μ` (the untwisted
 `μ0` and the twisted tuples) is the same construction on its own classes: `PerData` bundles, for each `μ`, the
-point of rank `N_m` over a point (`pt`) and its `Lsh`, the row space `V0_μ`, and the chain `col_μ`. **`V0_μ` is a
+lattice of a point (`lsh`), the row space `V0_μ`, and the chain `col_μ` on the level's points. **`V0_μ` is a
 parameter**: the spec's `e·Amb_μ` needs the type group `𝔊` and an existential set of irreducible characters
 (abstract in the archive). The integral rows are defined: `R_μ = {F ∈ V0_μ : F(c) ∈ ∇_{Lsh(rep c)}(σ) ∀c}`
 (`rows`, with `WeylFock.nablaN`).
@@ -184,21 +183,19 @@ variable {Φ : Type*} [Fintype Φ] [DecidableEq Φ] {n : ℕ} {E L : Type*} [Fie
   {G X : Type*} [Group G] [MulAction G X]
 
 variable (Φ n L) in
-/-- The chain's output, read on a type `Y` of points of rank `N_m = n + 1`: a `Pol`-valued function on them (L7: the
-decorated lattices of rank `N_m`). -/
-abbrev Col (Y : Type*) := Y → Pol Φ (n + 1) L
+/-- The chain's output on the points `X` of `X′` (rank `n`), with values of rank `N_m = n + 1` (L7: the row points, the
+archive's `evGSD`). -/
+abbrev Col (X : Type*) := X → Pol Φ (n + 1) L
 
-/-- The period `P(Φm, F) = Σ_c mass(c)·pair_σ(b(Φm(pt(rep c))), F(c))` of a row `F` (finitely supported on the
-classes `Cl G X` of `X′`), where `pt x` is the point of rank `n + 1` over a point `x` of `X′` (L7: the decorated lift
-`tilQ x`, frames included) and `b` is the branching map. -/
-def per {Y : Type*} (pt : X → Y) (b : Pol Φ (n + 1) L →ₗ[L] Pol Φ n L) (σ : Φ → Fin n → ℤ) (Φm : Col Φ n L Y)
-    (F : Cl G X →₀ Pol Φ n L) : L :=
-  F.sum fun c p => (mass c : L) * pair σ (b (Φm (pt c.out))) p
+/-- The period `P(Φm, F) = Σ_c mass(c)·pair_σ(b(Φm(rep c)), F(c))` of a row `F` (finitely supported on the classes
+`Cl G X` of `X′`), with `b` the branching map. -/
+def per (b : Pol Φ (n + 1) L →ₗ[L] Pol Φ n L) (σ : Φ → Fin n → ℤ) (Φm : Col Φ n L X) (F : Cl G X →₀ Pol Φ n L) : L :=
+  F.sum fun c p => (mass c : L) * pair σ (b (Φm c.out)) p
 
 /-- The period is `L`-linear in the chain's output. Used by `PerData.P`. -/
-def perMap {Y : Type*} (pt : X → Y) (b : Pol Φ (n + 1) L →ₗ[L] Pol Φ n L) (σ : Φ → Fin n → ℤ) :
-    Col Φ n L Y →ₗ[L] ((Cl G X →₀ Pol Φ n L) → L) where
-  toFun Φm := per pt b σ Φm
+def perMap (b : Pol Φ (n + 1) L →ₗ[L] Pol Φ n L) (σ : Φ → Fin n → ℤ) :
+    Col Φ n L X →ₗ[L] ((Cl G X →₀ Pol Φ n L) → L) where
+  toFun Φm := per b σ Φm
   map_add' Φ₁ Φ₂ := by
     funext F
     simp only [per, Pi.add_apply, map_add, pair_add_left, mul_add, Finsupp.sum_add]
@@ -209,9 +206,9 @@ def perMap {Y : Type*} (pt : X → Y) (b : Pol Φ (n + 1) L →ₗ[L] Pol Φ n L
 
 omit [DecidableEq Φ] in
 /-- **Sanity:** the period is the spec's mass-weighted `Σᶠ` over the classes (`HermClasses.classSum`). -/
-theorem per_eq_classSum [CharZero L] {Y : Type*} (pt : X → Y) (b : Pol Φ (n + 1) L →ₗ[L] Pol Φ n L)
-    (σ : Φ → Fin n → ℤ) (Φm : Col Φ n L Y) (F : Cl G X →₀ Pol Φ n L) :
-    per pt b σ Φm F = classSum fun c => pair σ (b (Φm (pt c.out))) (F c) := by
+theorem per_eq_classSum [CharZero L] (b : Pol Φ (n + 1) L →ₗ[L] Pol Φ n L) (σ : Φ → Fin n → ℤ)
+    (Φm : Col Φ n L X) (F : Cl G X →₀ Pol Φ n L) :
+    per b σ Φm F = classSum fun c => pair σ (b (Φm c.out)) (F c) := by
   rw [classSum, finsum_eq_sum_of_support_subset _ (s := F.support) fun c hc => ?_, per, Finsupp.sum]
   · simp only [Rat.smul_def]
   · contrapose! hc
@@ -241,15 +238,14 @@ section Target
 variable {Φ : Type*} [Fintype Φ] [DecidableEq Φ] {n : ℕ} {E L : Type*} [Field E] [NumberField E] [Field L]
   [NumberField L] (τ : Φ → (E →+* L)) {T : Type*} (G X : T → Type*) [∀ μ, Group (G μ)]
   [∀ μ, MulAction (G μ) (X μ)] {Ω : Type*} (Vs : Ω → Type*) [∀ ω, AddCommGroup (Vs ω)] [∀ ω, Module L (Vs ω)]
-  (Y : Type*)
 
 variable (Φ n E L) in
 /-- The data of the levels `μ` (the untwisted `μ0` and the twisted tuples) and of the words `ω`, from which periods,
 rows and the target are built:
 * `tz = conj(π_T)`, the branching weight `σ = sgT` and, per word, the branching map `br ω` (with `λ = λ_m(ω)`);
-* per level, the point `pt x ∈ Y` of rank `n + 1` at which the column is read over a point `x` of `X′` (L7: the
-  decorated lift `tilQ`), the lattice `Lsh` (`lsh`) of `x`, and the row space `V0_μ` (a parameter);
-* per level and word, the chain `col μ ω : V_ω → Col` of tuple `μ`, a function on `Y` (L5, connected by L7). -/
+* per level, the lattice `lsh x` of a point `x` of `X′` and the row space `V0_μ` (a parameter);
+* per level and word, the chain `col μ ω : V_ω → Col` of tuple `μ`, a function on the level's points `X μ` (L5,
+  connected by L7: the archive's `evGSD`, whose top step reads the decorated lift of the point). -/
 structure PerData where
   /-- `tz = conj(π_T)`. -/
   tz : E
@@ -257,20 +253,18 @@ structure PerData where
   σ : Φ → Fin n → ℤ
   /-- The branching map of a word. -/
   br : Ω → (Pol Φ (n + 1) L →ₗ[L] Pol Φ n L)
-  /-- The point of rank `n + 1` at which the column is read, over a point of `X′` at level `μ`. -/
-  pt : ∀ μ : T, X μ → Y
   /-- The lattice `Lsh` of a point of `X′` at level `μ`. -/
   lsh : ∀ μ : T, X μ → Submodule (𝓞 E) (Fin n → E)
   /-- The row space `V0_μ = e·Amb_μ`. -/
   V0 : ∀ μ : T, Submodule L (Cl (G μ) (X μ) →₀ Pol Φ n L)
-  /-- The chain `φ ↦ col_μ φ` of tuple `μ`, on the sources of a word. -/
-  col : T → ∀ ω : Ω, Vs ω →ₗ[L] Col Φ n L Y
+  /-- The chain `φ ↦ col_μ φ` of tuple `μ`, on the sources of a word, a function on the level's points. -/
+  col : ∀ μ : T, ∀ ω : Ω, Vs ω →ₗ[L] Col Φ n L (X μ)
 
-variable {G X Vs Y} (D : PerData Φ n E L G X Vs Y)
+variable {G X Vs} (D : PerData Φ n E L G X Vs)
 
 /-- The period functionals `φ ↦ P_μ(col_μ φ, ·)|_{V0_μ}`; at `μ0` this is `B_ω`. -/
 def PerData.P (μ : T) (ω : Ω) : Vs ω →ₗ[L] (D.V0 μ → L) :=
-  LinearMap.funLeft L L (Subtype.val : D.V0 μ → _) ∘ₗ perMap (D.pt μ) (D.br ω) D.σ ∘ₗ D.col μ ω
+  LinearMap.funLeft L L (Subtype.val : D.V0 μ → _) ∘ₗ perMap (D.br ω) D.σ ∘ₗ D.col μ ω
 
 /-- The integral rows `R_μ` of a level. -/
 def PerData.R (μ : T) : Set (D.V0 μ) := rows τ D.σ (D.lsh μ) (D.V0 μ)
@@ -343,7 +337,7 @@ def ainv (𝔞 : Ideal (𝓞 L)) (M : Submodule (𝓞 L) V) : Submodule (𝓞 L)
 variable {Φ : Type*} [Fintype Φ] [DecidableEq Φ] {n : ℕ} {E : Type*} [Field E] [NumberField E] [NumberField L]
   (τ : Φ → (E →+* L)) {T : Type*} {G X : T → Type*} [∀ μ, Group (G μ)] [∀ μ, MulAction (G μ) (X μ)] {Ω : Type*}
   {Vs : Ω → Type*} [∀ ω, AddCommGroup (Vs ω)] [∀ ω, Module L (Vs ω)] [∀ ω, Module (𝓞 L) (Vs ω)]
-  [∀ ω, IsScalarTower (𝓞 L) L (Vs ω)] {Y : Type*} {D : PerData Φ n E L G X Vs Y} {μ0 : T}
+  [∀ ω, IsScalarTower (𝓞 L) L (Vs ω)] {D : PerData Φ n E L G X Vs} {μ0 : T}
 
 /-- The source `N_ω = {φ ∈ 𝔞_ω⁻¹M_ω : B_ωφ ∈ C_u}`, with `M_ω` the integral forms of the word (L4.3) and `𝔞_ω` a
 nonzero ideal, both parameters. Meant for L7. -/

@@ -57,16 +57,20 @@ power is `n_τ = s♯_j(τ) + λ_{j, N_j−1}(τ)` (`nIn`), which is `≥ 0` by 
 
 **The chain** (`Chain`). `K_jφ(c′) = Σᶠ_c mass(c)·κ_j(c, c′)(φ(c))` (`Chain.lift`) and `Θ = K_{m−1} ∘ … ∘ K_0`
 (`Chain.comp`), with dependent ranks `n j`. `Data.chain` instantiates it with the classes `Σ_{b ∈ β j} DCl` of
-`HermClasses`.
+`HermClasses` and the step kernels `Data.kap`. **The top** (spec-10 F0, F4–F5; the archive has no level `m`): a chain of
+length `m = m2 + 2` runs `Data.chain` up to level `m2`; level `m2 + 1` carries the coset `Y` (pairs `(c, y)` with the
+class's mass), step `m2` reads `y` in its factor (`XiCpl1`), and the top step maps `(c, y)` straight to each row point
+`x`, through the lattice `(tilQ x).N` and its determinant idele, with the factor `XiCpl2` (`Top`, `Top.col`, the
+archive's `colCpl`). The factors of the two top steps are pinned in L7 (`ThetaVol.xiCpl`, `ThetaVol.xiTop`).
 
 **Level data** (spec-2 Item 2). Step 0 is explicit: the upper unitriangular group (`uniUT`) and the generic character
 `u ↦ ψ₀(Σ_{i<k−1} u_{i,i+1})` (`lamGen`), with `ψ₀` pinned by `xi0 = −1/(N(cc)√−d)` (`psi0`). Steps `j ≥ 1` go
 through the existential `ChIdx`: index types, representatives, groups and characters, with the step-0 and last-step
 conditions exact and the archive's remaining `Ok` ties (`grpG/chrG/grpQ/chrQ/inj/surj`, which need `prX`, `R1`, `J`)
-as a parameter predicate. The coset `Y` of the last step is not part of the frontier (no field of `Data` reads it)
-and is not defined; `z = e_last` is `HermClasses.eLast`.
+as a parameter predicate. The coset `Y` of level `m − 1` is the type `Yb` of `Top` (L7 takes its collapsed form
+`ȳ ∈ ∏_{P ∈ Q} (O/P)^{N_{m−1}}`); `z = e_last` is `HermClasses.eLast`.
 
-**Sanity theorems:** `opU_zero`, `Chain.comp_zero`, `Chain.lift_add`, `detShift_wt_succ`.
+**Sanity theorems:** `opU_zero`, `Chain.comp_zero`, `Chain.lift_add`, `detShift_wt_succ`, `Top.col_of_isEmpty`.
 -/
 
 namespace ThetaChain
@@ -470,7 +474,8 @@ noncomputable def lamGen (xi0 : E) (g : ∀ w : SG, GL (Fin n) (𝓞 E ⧸ w.1.a
 variable (SG) in
 /-- The chain index (spec-2 2b), existential: per step `j`, index types `β j`, representatives
 `h_{j,b} ∈ Π_{P ∈ S} GL_{N_j + c_j}(E)` (`c_j = m − 1 − j`), level groups `Λ_{j,b}` and their characters. Step 0 is
-explicit (`β 0` a singleton, `h = 1`, `uniUT` with `lamGen`), and so is the last step (`β(m−1)` a singleton, `h = 1`).
+explicit (`β 0` a singleton, `h = 1`, `uniUT` with `lamGen`), and so is the last level (`β(m−1)` a singleton, `h = 1`;
+the archive's chain has no level `m`).
 The archive's remaining ties (`grpG/chrG/grpQ/chrQ`: `Λ_{j,b}` and its character are the reductions of
 `prX(R1 ∩ hJh⁻¹)` and `chiInv`; `inj/surj`: `β(j+1)` enumerates the admissible double cosets) need `prX`, `R1` and
 `J`, which are not transcribed. Meant for L6/L7, which build `Data` from it. -/
@@ -584,7 +589,8 @@ structure Data where
   XD : ∀ j, Cls n ST SG β Λ j → Cls n ST SG β Λ (j + 1) → XiData (Φ × Fin (n (j + 1)) × Fin (n j))
   /-- The half-lattices in which the coset points are lifted (`liftW`; the archive's `halfAO`). -/
   HA : ∀ j, Cls n ST SG β Λ j → Cls n ST SG β Λ (j + 1) → Set (Matrix (Fin (n (j + 1))) (Fin (n j)) E)
-  /-- The local factors `Ξ_j(c, c′)` (`PsiAt` at the last step). -/
+  /-- The local factors `Ξ_j(c, c′)` of the steps between classes (the generic `XiStd` at `j < m − 2`; the two top
+  steps read the coset `Y` and use `Top`'s factors). -/
   Xi : ∀ j, Cls n ST SG β Λ j → Cls n ST SG β Λ (j + 1) → Matrix (Fin (n (j + 1))) (Fin (n j)) E → L
   Xi_inv : ∀ j c c', XiInv S (cB j) (c.2.N) (c'.2.N) (Xi j c c')
   /-- `JetsRat` on the archive's range: the jets of every coset theta that `kappa` sums (the class lattices, the
@@ -594,20 +600,79 @@ structure Data where
     jetVal P (thInd P.s P.sd (XD j c c') (thMoved τ P (θ j).θ c.2.N c'.2.N)
       (iota τ P (liftW S (cA j) (cB j) c.2.N c'.2.N (HA j c c') x))) m ∈ Set.range P.σ₀
 
-/-- The theta chain of the data: `κ_j(c, c′)` with `r = ρ_j(c)ρ′_j(c′)` and the input power `nIn`. -/
+variable {τ} in
+/-- The step kernel of `D` at step `j` from the class `c` to a lattice `N′` of rank `N_{j+1}` with determinant idele
+`d′`, Heisenberg data `XD`, half-lattice `HA` and local factor `Ξ`: `κ` with `r = ρ_j(c)ρ′_j(d′)` and the input power
+`nIn`. The chain's steps (`Data.chain`) and its top (`Top.col`, to the row points) are its instances. -/
+noncomputable def Data.kap (D : Data τ) (j : ℕ) (c : Cls D.n D.ST D.SG D.β D.Λ j)
+    (N' : Submodule (𝓞 E) (Fin (D.n (j + 1)) → E)) (d' : Ideles E)
+    (XD : XiData (Φ × Fin (D.n (j + 1)) × Fin (D.n j))) (HA : Set (Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E))
+    (Xi : Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E → L) : Pol Φ (D.n j) L →ₗ[L] Pol Φ (D.n (j + 1)) L :=
+  kappa τ D.P (D.mono j) (nIn (D.e j) (D.n (j + 1)) (D.lam j)) (D.θ j).θ D.S (D.cA j) (D.cB j) XD HA Xi
+    (rhoIn (D.mu j) (D.dI j c) * rhoOut (D.mu j) d') c.2.N N'
+
+/-- The theta chain of the data on the classes: `κ_j(c, c′)` (`Data.kap`) with `r = ρ_j(c)ρ′_j(c′)`. A chain of length
+`m2 + 2` reads it up to level `m2` and ends with `Top.col`. -/
 noncomputable def Data.chain (D : Data τ) : Chain Φ L where
   n := D.n
   C := Cls D.n D.ST D.SG D.β D.Λ
   mass _ c := mass c.2
-  kappa j c c' := kappa τ D.P (D.mono j) (nIn (D.e j) (D.n (j + 1)) (D.lam j)) (D.θ j).θ D.S (D.cA j) (D.cB j)
-    (D.XD j c c') (D.HA j c c') (D.Xi j c c')
-    (rhoIn (D.mu j) (D.dI j c) * rhoOut (D.mu j) (D.dI (j + 1) c'))
-    c.2.N c'.2.N
+  kappa j c c' := D.kap j c c'.2.N (D.dI (j + 1) c') (D.XD j c c') (D.HA j c c') (D.Xi j c c')
 
 /-- **The data's Heisenberg data and half-lattices are pinned** (`XDPin` at every step, places `S`, integers `cA j`
 and `cB j`, the latter the modulus of `liftW`'s congruence; `HA` at `cA j·cB j`). Meant for L7 (`IsThetaCol`). -/
 def Data.XDPinned (D : Data τ) : Prop :=
   ∀ j c c', XDPin τ D.P D.S (D.cA j) (D.cB j) c.2.N c'.2.N (D.XD j c c') (D.HA j c c')
+
+variable {τ} in
+/-- **The top of a chain** of length `m2 + 2` (spec-10 F0, F4–F5; the archive's coupled steps `cp1`, `cp2`): level
+`m2 + 1` carries an auxiliary coordinate `y ∈ Yb` (the coset `Y`, or its collapsed form `ȳ`), with the class's mass,
+and the top step lands on points `x ∈ X` (the row points), through the lattice `N x` of rank `N_{m2+2}` (the decorated
+lift `(tilQ x).N`) and its determinant idele `dI x`: there are no classes at level `m2 + 2`. Step `m2` keeps `D`'s
+data but its factor `Xi1` reads `y` (`XiCpl1`); the top step has its own Heisenberg data, the factor `Xi2` (`XiCpl2`),
+and `JetsRat` on its range (`θ_rat`, as `Data.θ_rat`). L7 pins the factors (`ThetaVol.xiCpl`, `ThetaVol.xiTop`). -/
+structure Top (D : Data τ) (m2 : ℕ) (Yb X : Type*) where
+  /-- The lattice of rank `N_{m2+2}` read at a point (L7: `(tilQ x).N`). -/
+  N : X → Submodule (𝓞 E) (Fin (D.n (m2 + 2)) → E)
+  /-- Its determinant idele. -/
+  dI : X → Ideles E
+  /-- The finite Heisenberg data of the top step. -/
+  XD : Cls D.n D.ST D.SG D.β D.Λ (m2 + 1) → X → XiData (Φ × Fin (D.n (m2 + 2)) × Fin (D.n (m2 + 1)))
+  /-- Its half-lattices. -/
+  HA : Cls D.n D.ST D.SG D.β D.Λ (m2 + 1) → X → Set (Matrix (Fin (D.n (m2 + 2))) (Fin (D.n (m2 + 1))) E)
+  /-- The coupled factor of step `m2` (`XiCpl1`). -/
+  Xi1 : Cls D.n D.ST D.SG D.β D.Λ m2 → Cls D.n D.ST D.SG D.β D.Λ (m2 + 1) → Yb →
+    Matrix (Fin (D.n (m2 + 1))) (Fin (D.n m2)) E → L
+  /-- The top factor (`XiCpl2`). -/
+  Xi2 : Cls D.n D.ST D.SG D.β D.Λ (m2 + 1) → Yb → X → Matrix (Fin (D.n (m2 + 2))) (Fin (D.n (m2 + 1))) E → L
+  /-- `JetsRat` on the top step's range, as `Data.θ_rat`. -/
+  θ_rat : ∀ c x (z : Cosets D.S (D.cA (m2 + 1)) (D.cB (m2 + 1)) c.2.N (N x))
+    (mm : Φ × Fin (D.n (m2 + 2)) × Fin (D.n (m2 + 1)) →₀ ℕ),
+    jetVal D.P (thInd D.P.s D.P.sd (XD c x) (thMoved τ D.P (D.θ (m2 + 1)).θ c.2.N (N x))
+      (iota τ D.P (liftW D.S (D.cA (m2 + 1)) (D.cB (m2 + 1)) c.2.N (N x) (HA c x) z))) mm ∈ Set.range D.P.σ₀
+
+variable {τ} {D : Data τ} {m2 : ℕ} {Yb X : Type*}
+
+/-- **The column on the points** (the archive's `colCpl`, spec-10 F4): from the level-`m2` output `Θ` of the chain,
+`col(x) = Σ_{c ∈ Cl_{m2+1}} Σ_{y ∈ Yb} mass(c)·κ_top(c, y, x)(Σ_{c₀ ∈ Cl_{m2}} mass(c₀)·κ_{m2}(c₀, c, y)(Θ(c₀)))`,
+with `κ_{m2}(c₀, c, y)` the step-`m2` kernel of `D` with the factor `Xi1 c₀ c y`, and `κ_top(c, y, x)` that of step
+`m2 + 1` from `c` to the lattice `N x`, with `ρ′ = (μξ)(dI x)` and the factor `Xi2 c y x` (`Data.kap`). -/
+noncomputable def Top.col (T : Top D m2 Yb X) (Θ : Cls D.n D.ST D.SG D.β D.Λ m2 → Pol Φ (D.n m2) L) (x : X) :
+    Pol Φ (D.n (m2 + 2)) L :=
+  ∑ᶠ (c : Cls D.n D.ST D.SG D.β D.Λ (m2 + 1)) (y : Yb), ((mass c.2 : ℚ) : L) •
+    D.kap (m2 + 1) c (T.N x) (T.dI x) (T.XD c x) (T.HA c x) (T.Xi2 c y x)
+      (∑ᶠ c₀, ((mass c₀.2 : ℚ) : L) •
+        D.kap m2 c₀ c.2.N (D.dI (m2 + 1) c) (D.XD m2 c₀ c) (D.HA m2 c₀ c) (T.Xi1 c₀ c y) (Θ c₀))
+
+/-- **The top step's Heisenberg data are pinned**: `XDPin` at `(N_c, N x)` with the places `S` and the integers of step
+`m2 + 1`, as `Data.XDPinned`. Meant for L7 (`IsThetaCol`). -/
+def Top.XDPinned (T : Top D m2 Yb X) : Prop :=
+  ∀ c x, XDPin τ D.P D.S (D.cA (m2 + 1)) (D.cB (m2 + 1)) c.2.N (T.N x) (T.XD c x) (T.HA c x)
+
+/-- **Sanity:** with no classes at level `m2 + 1`, the column vanishes. -/
+theorem Top.col_of_isEmpty (T : Top D m2 Yb X) [IsEmpty (Cls D.n D.ST D.SG D.β D.Λ (m2 + 1))]
+    (Θ : Cls D.n D.ST D.SG D.β D.Λ m2 → Pol Φ (D.n m2) L) (x : X) : T.col Θ x = 0 :=
+  finsum_of_isEmpty _
 
 end Data
 
