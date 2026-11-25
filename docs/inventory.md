@@ -620,7 +620,7 @@ note of `formalisations/` that names it, if one does.
 #### `HermForms`: Forms on decorated lattices, the Petersson form, the ramified cut and the source lattices
 
 - `HermForms.conj_pet`: Sanity ([note](../formalisations/alpoge-rh.md))
-- `HermForms.petAt_eq_map`: Sanity
+- `HermForms.petAt_eq_map`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `HermForms.dOp_mem`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `HermForms.gram_isHermitian`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `HermForms.source_G`: Sanity ([note](../formalisations/alpoge-rh.md))

@@ -189,7 +189,9 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     `ZetaBalance.Setting.card_gal`, `ZetaBalance.Setting.τ_eq`).
   - Forms: equivariant functions on decorated lattices with Weyl-module values, the integral forms, the Petersson
     form, the diamond operators and the ramified cut; the source as a `KLattice` with metrics `σ_v(H_ω)`
-    (`HermForms.conj_pet`, `HermForms.dOp_mem`, `HermForms.gram_isHermitian`, `HermForms.source_G`).
+    (`HermForms.conj_pet`, `HermForms.dOp_mem`, `HermForms.gram_isHermitian`, `HermForms.source_G`). The metric at
+    each place is the complex Petersson form, which agrees with `σ` of the `K`-valued form wherever the star is
+    conjugation (`HermForms.petAt_eq_map`).
   - Forced orders: the explicit function `Fo` of the parameters that the frontier pins, with its linear program
     (`ZetaBalance.Setting.lpF_nonneg_le`, `ZetaBalance.Setting.Ranks.FTypeG_nonpos`,
     `ZetaBalance.Setting.Ranks.FInert_nonneg`).
