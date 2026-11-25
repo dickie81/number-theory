@@ -40,14 +40,17 @@ the chain data (`Data.θ_rat`), on the archive's range only.
 parameter), so `vol^{−1/2}` enters twice, as in the archive; with
 the finite Heisenberg sum `xiS Φ e = Σ_{y ∈ SB} Φ̂(y)·α(y)·U_y e`, `Φ̂(y) = vol^{−1/2}(vol/|SA|)·Σ_{t ∈ SA} Φ(t)
 e^{2πi Im H(t, y)}` (`xiS`, `thInd`). The finite data `SA, SB, BC, vol` are a parameter (`XiData`), pinned by
-`Data.XDPinned` (spec-3 §3: `HA = halfAO`, `BC = ι(halfBO)` with `perO`, `twist₂`, `expS`; `IsReps`; `volS`).
-The cosets are `cA⁻¹H_S/cB·H_S` with `H_S = {x : x(N_P) ⊆ N′_P, P ∈ S}` (`homAt`, read globally: `x(N) ⊆ N′_P`, `locMem`). The local factor `Ξ = Π_P XiAt_P` (spec-2 1d: `E1 ∘ om ∘ PhiG/PhiQ` over `volN`) is
+`Data.XDPinned` (spec-3 §3, spec-5 §3: `HA = halfAO(cA·cB)`, `BC = ι(halfBO(cB))` with `perO`, `twist₂`, `expS`;
+`IsReps`; `volS`).
+The cosets are `cA⁻¹H_S/cB·H_S` with `H_S = {x : x(N_P) ⊆ N′_P, P ∈ S}` (`homAt`, read globally: `x(N) ⊆ N′_P`,
+`locMem`). The local factor `Ξ = Π_P XiAt_P` (spec-2 1d: `E1 ∘ om ∘ PhiG/PhiQ` over `volN`) is
 **a parameter** (`Data.Xi`), too heavy to transcribe here; its stated property, invariance under `cB·H_S`, is
 `XiInv`.
 
 **Jets and `κ_j`** (spec-2 1e). `jetVal θ m = cD^m·∂^m θ(0)` (`pd`, holomorphic iterated derivatives), brought to `L`
 by `desc = σ₀⁻¹` (`0` off `σ₀(L)`). The jet operator multiplies by `Π_τ det(x_τ)^{n_τ}`, substitutes
-`x_{τ,r,c} ↦ Σ_β y_{τ,β,c}·∂_{τ,β,r}` (row `r`, column `c`; `jetSub`) and replaces each `∂^m` by its jet value (`jetEval`); it is linear
+`x_{τ,r,c} ↦ Σ_β y_{τ,β,c}·∂_{τ,β,r}` (row `r`, column `c`; `jetSub`) and replaces each `∂^m` by its jet value
+(`jetEval`); it is linear
 (`jetOp`). Then `κ_j(c, c′) = Σ_{x} Ξ(x)·ρ_j(c)ρ′_j(c′)·Jet(θ_{N,N′,x})` (`kappa`). **Determinant powers.** In the
 library's convention (`WeylFock`: `VV λ` stores `F` for the function `det^{λ_{n−1}}·F`), the spec's output factor
 `Π det(y′)^{−s÷_j}` is the implicit factor of `VV(λ_{j+1})`, as `λ_{j+1, N_{j+1}−1} = −s÷_j` (L3.1), and the input
@@ -422,14 +425,15 @@ noncomputable def volS (SS : Set (HeightOneSpectrum (𝓞 E))) (M₀ M : Submodu
     ℝ :=
   ∏ᶠ Pl ∈ SS, ((locSub Pl M₀).relIndex (locSub Pl M) : ℝ) / ((locSub Pl M).relIndex (locSub Pl M₀) : ℝ)
 
-/-- **The Heisenberg data pinned** (spec-3 §3), for a step with lattices `N`, `N′`, places `SS`, integer `c` (the
-modulus of the lift congruence, as in the archive's `liftS`): `HA = halfAO(SS, perO, c)`, `BC = ι(halfBO(SS, perO,
-c))`, `SA` representatives of `(LamC ∩ AC)/(LamC ∩ AC ∩ BC)` with `0 ∈ SA`, `SB` of `BC/(BC ∩ LamC)` (`LamC =
-La(N, N′) = ι(perO)`, `AC = ι(HA)`), and `vol = volS(SS, perO(std, std′), perO(N, N′))` (it cancels). -/
-def XDPin (SS : Set (HeightOneSpectrum (𝓞 E))) (c : ℕ) (N : Submodule (𝓞 E) (Fin a → E))
+/-- **The Heisenberg data pinned** (spec-3 §3, spec-5 §3), for a step with lattices `N`, `N′`, places `SS`, integers
+`cA` and `c` (the modulus of the lift congruence, as in the archive's `liftS`): `HA = halfAO(SS, perO, cA·c)` (the
+lift of the archive's proved normal form `thInd_index`), `BC = ι(halfBO(SS, perO, c))`, `SA` representatives of
+`(LamC ∩ AC)/(LamC ∩ AC ∩ BC)` with `0 ∈ SA`, `SB` of `BC/(BC ∩ LamC)` (`LamC = La(N, N′) = ι(perO)`, `AC = ι(HA)`),
+and `vol = volS(SS, perO(std, std′), perO(N, N′))` (it cancels). -/
+def XDPin (SS : Set (HeightOneSpectrum (𝓞 E))) (cA c : ℕ) (N : Submodule (𝓞 E) (Fin a → E))
     (N' : Submodule (𝓞 E) (Fin b → E)) (XD : XiData (Φ × Fin b × Fin a)) (HA : Set (Matrix (Fin b) (Fin a) E)) :
     Prop :=
-  HA = halfAO SS (perO P.A N N') (c : E) ∧ XD.BC = iota τ P '' halfBO SS (perO P.A N N') (c : E) ∧
+  HA = halfAO SS (perO P.A N N') ((cA * c : ℕ) : E) ∧ XD.BC = iota τ P '' halfBO SS (perO P.A N N') (c : E) ∧
     IsReps XD.BC ((La τ P N N' : Set (Amb Φ a b)) ∩ iota τ P '' HA) XD.SA ∧ (0 : Amb Φ a b) ∈ XD.SA ∧
     IsReps (La τ P N N') XD.BC XD.SB ∧
     XD.vol = volS SS (perO P.A (stdLat (E := E) (n := a)) (stdLat (E := E) (n := b))) (perO P.A N N')
@@ -613,10 +617,10 @@ noncomputable def Data.chain (D : Data τ) : Chain Φ L where
     (rhoIn (D.mu j) (D.dI j c) * rhoOut (D.mu j) (D.dI (j + 1) c'))
     c.2.N c'.2.N
 
-/-- **The data's Heisenberg data and half-lattices are pinned** (`XDPin` at every step, places `S`, integer `cB j`,
-the modulus of `liftW`'s congruence). Meant for L7 (`IsThetaCol`). -/
+/-- **The data's Heisenberg data and half-lattices are pinned** (`XDPin` at every step, places `S`, integers `cA j`
+and `cB j`, the latter the modulus of `liftW`'s congruence; `HA` at `cA j·cB j`). Meant for L7 (`IsThetaCol`). -/
 def Data.XDPinned (D : Data τ) : Prop :=
-  ∀ j c c', XDPin τ D.P D.S (D.cB j) c.2.N c'.2.N (D.XD j c c') (D.HA j c c')
+  ∀ j c c', XDPin τ D.P D.S (D.cA j) (D.cB j) c.2.N c'.2.N (D.XD j c c') (D.HA j c c')
 
 end Data
 

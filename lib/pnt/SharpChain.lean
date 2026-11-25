@@ -26,14 +26,16 @@ Closes the chain hook of `SharpBound` (L7): the canonical hook `thetaHook`, whos
   no `volN`), so its values are `0` or roots of unity; the determinant ideles (L5.2) have the valuation of
   `det N_c` (the largest `v(det f)`, `f ∈ N_c^n`) at every place not conjugate to one of `S` (of `SG` only, when `U`)
   and valuation `0` at the conjugates of the `SG` places. When `U` (the untwisted level): `ξ = 1` (spec-2 4a) and the
-  chain's `ST`, `SG` are the given ones. The Heisenberg data are pinned (`Data.XDPinned`, spec-3 §3): `HA = halfAO`,
-  `BC = ι(halfBO)` (both with `c = cB`), `SA`, `SB` representatives (`IsReps`, `0 ∈ SA`), `vol = volS`. The base
+  chain's `ST`, `SG` are the given ones. The Heisenberg data are pinned (`Data.XDPinned`, spec-3 §3, spec-5 §3):
+  `HA = halfAO` with `c = cA·cB`, `BC = ι(halfBO)` with `c = cB`, `SA`, `SB` representatives (`IsReps`, `0 ∈ SA`),
+  `vol = volS`. The base
   theta of every step `j < m` is normalised (`ThetaStd.Normalised`) by a canonical pin (`ThetaNorm.Pin.Canonical`:
   `Lc = δ·φ₀(cc)` with `Δ(Lc) = 1`, `s = 1/area(Lc)`, `σ = σ*_{Lc}`, `Λ = ι(𝔄)`), so its scale is fixed up to a phase.
 
 **The pinned frontier** (`SharpBoundPinned`) adds what the hook cannot see: the chain's CM type is `τ_K`, the
-branching maps are `PeriodTarget.br` with `c_Br ≠ 0` and `IsFockProj` at `λ = λ_m` and `σ = P.σ = sgT` of `hc u`
-(`BrPinned`, `lamW`, `sgW`), the lift characters have `e_j` of `hc u` and `Sg` the places above `g₀g₁` (`eW`, `Sg`),
+branching maps are `PeriodTarget.br` with `c_Br = brConst ≠ 0` and `IsFockProj` at `λ = λ_m` and
+`σ = P.σ = sgT` of `hc u` (`BrPinned`, `lamW`, `sgW`), the lift characters have `e_j` of `hc u` and `Sg` the places
+above `g₀g₁` (`eW`, `Sg`),
 `(−d/g₀) = (−d/g₁) = 1`, and
 `T_ω = ππ̄` with `π = (a + b√−d)/2 ≡ 1 (mod M)`, `M = QS·q·d·(g₀g₁)²` (`SharpData.Arith`; for `d ≡ 3 (mod 4)`,
 `π − 1 ∈ M·O_{K₀}` iff `M ∣ b` and `a ≡ b + 2 (mod 2M)`). It implies `SharpBoundTheta`.
@@ -47,9 +49,10 @@ frontier takes `K` CM, `M_ω = O_K·MV`, and the source metrics `G_v = σ_v(hV)`
 **Untwisted level, `tz`, `𝔞`** (L2.3, L2.5, L6.5; audit 2, A4–A5). At `μ0` the level is the decorated lattices:
 `G μ0 ≃* Grp E n SG Λ` and `X μ0 ≃ points Λ` compatibly with the actions (`n = N_m − 1`), with `lat μ0 x` the lattice
 `N` and `lsh μ0 x = Lsh` of the point (so `lat μ0` is unimodular and `lsh μ0` cannot be rescaled). `ST`, `SG` are
-the `μ0` chains' `D.ST`, `D.SG` (`IsThetaCol` with `U := μ = μ0`): `ST` the places over `π_T = conj(tz)`, `SG` one
-place over each prime of `g₀g₁`, disjoint from its conjugate; `Λ` is not tied. At `μ0` the chain shape is pinned
-(`SharpData.Shp`: `m = R.m`, `n_j = N_j`, `e_j`, `λ_j` of `hc u`), and `sd = √d/2` at every level. `tz =
+the `μ0` chains' `D.ST`, `D.SG` (`IsThetaCol` with `U := μ = μ0`): `ST` the places over `π_T = conj(tz)`, `SG` half
+the places over `g₀g₁` (each in `SG` or in `conj SG`, not both); `Λ` is not tied. At `μ0` the chain shape is pinned
+(`SharpData.Shp`: `m = R.m`, `n_j = N_j`, `e_j`, `λ_j` of `hc u`, `cA = (∏_{SG} N P)^{m+1}`,
+`cB = T_ω·cA`), and `sd = √d/2` at every level. `tz =
 (a + bs)/2` with `s² = −d` and `(a, b)` as in
 `SharpData.Arith` for `T_ω`, at every word: `tz ∈ {π, π̄}` (the root `s` is not tied to the CM type), and `T_ω` is
 then the same for all words of `u` (one `tz` per `PerData`). `𝔞_ω` is not the archive's `Iu⁻¹` (the local weights
@@ -62,7 +65,7 @@ twisted levels, `dI` up to units and at the conjugates of `ST` places at twisted
 cap, the untwisted level's `ST`, `SG`, `Λ`, the branching projection, the `ChIdx` representatives and characters.
 `Ycos` (the
 last step's coset `Y`) is not reached: `Data` has no field that reads it. Not stated: `Tw` closed under conjugation
-(`K` is not assumed CM), `T_ω ∉ {pde, pde′}`, `cB = T·∏q^B`, `cA = ∏q^A` exactly, the later-step `ChIdx` ties.
+(`K` is not assumed CM), `T_ω ∉ {pde, pde′}`, `cA`, `cB` at the twisted levels, the later-step `ChIdx` ties.
 
 **Sanity theorem:** `Data.comp_zero_inp`.
 -/
@@ -158,14 +161,15 @@ theorem rhAndGRH_of_sharpBoundTheta (h : SharpBoundTheta) : HalfPlaneGRH.RHandGR
 /-! ## The pinned frontier -/
 
 /-- **The branching maps are pinned** at weights `λ`, `σ`: the rows' weight is `P.σ = σ`, and
-`br ω = PeriodTarget.br τ tz Π_σ c_Br λ σ` with `c_Br ≠ 0` and `Π_σ` the Fock projection (`IsFockProj`); one `c_Br`
-for all words (it depends on `λ`, `σ` only), so it cannot rescale one word's period against another's. -/
+`br ω = PeriodTarget.br τ tz Π_σ c_Br λ σ` with `Π_σ` the Fock projection (`IsFockProj`) and `c_Br` the closed form
+`PeriodTarget.brConst λ σ` (spec-5 §1), nonzero; one `c_Br` for all words, so it cannot rescale one word's period
+against another's. -/
 def BrPinned {Φ : Type} [Fintype Φ] [DecidableEq Φ] {n : ℕ} {E L : Type} [Field E] [NumberField E] [Field L]
     (τ : Φ → (E →+* L)) {T Ω : Type} {G X : T → Type} [∀ μ, Group (G μ)] [∀ μ, MulAction (G μ) (X μ)]
     {Vs : Ω → Type} [∀ ω, AddCommGroup (Vs ω)] [∀ ω, Module L (Vs ω)] (P : PeriodTarget.PerData Φ n E L G X Vs)
     (lam : Φ → Fin (n + 1) → ℤ) (σ : Φ → Fin n → ℤ) : Prop :=
-  P.σ = σ ∧ ∃ cBr : L, cBr ≠ 0 ∧ ∀ ω, ∃ Pr : Pol Φ n L →ₗ[L] Pol Φ n L,
-    PeriodTarget.IsFockProj σ Pr ∧ P.br ω = PeriodTarget.br τ P.tz Pr cBr lam σ
+  P.σ = σ ∧ PeriodTarget.brConst L lam σ ≠ 0 ∧ ∀ ω, ∃ Pr : Pol Φ n L →ₗ[L] Pol Φ n L,
+    PeriodTarget.IsFockProj σ Pr ∧ P.br ω = PeriodTarget.br τ P.tz Pr (PeriodTarget.brConst L lam σ) lam σ
 
 section Pet
 
@@ -254,10 +258,13 @@ def SharpData.aBd (D : SharpData S κ x ε X K) (u : S.A) (ω : (D.fr u).ι) : �
 /-- **The chain shape and constants** of `u` (L0.5–L0.6, L5.3–L5.4; audit 4, pins 2 and 5), for `IsThetaCol`'s
 `Shp`: at the untwisted level (`U`) the length is `m = R.m`, and for `j ≤ m` the ranks are `n_j = N_j`, the weights
 `e_j` are those of `hc u` (`eW`), and `λ_j = WeylFock.wt … j` with `u_i − ½`, `e` of `hc u` (as `lamW` at `j = m`);
-at every level `sd = √d/2`. -/
-def SharpData.Shp (D : SharpData S κ x ε X K) [IsCMField K] {τK : Φ S.A → (S.E →+* K)} (u : S.A) (U : Prop)
-    (D' : Data τK) (m' : ℕ) : Prop :=
+the coset integers are `cA = (∏_{P ∈ SG} N P)^{m+1}` and `cB = T_ω·(∏_{P ∈ SG} N P)^{m+1}` at every step (spec-5 §2:
+the canonical constants `A = B = m + 1`, and the twist's places `QE` are empty); at every level `sd = √d/2`. -/
+def SharpData.Shp (D : SharpData S κ x ε X K) [IsCMField K] {τK : Φ S.A → (S.E →+* K)} (u : S.A)
+    (ω : (D.fr u).ι) (U : Prop) (D' : Data τK) (m' : ℕ) : Prop :=
   (U → m' = D.R.m ∧ (∀ j ≤ m', D'.n j = D.R.N j) ∧ (∀ j ≤ m', D'.e j = D.eW u j) ∧
+    (∀ j, D'.cA j = (∏ P ∈ D'.SG, Ideal.absNorm P.asIdeal) ^ (m' + 1) ∧
+      D'.cB j = D.T u ω * (∏ P ∈ D'.SG, Ideal.absNorm P.asIdeal) ^ (m' + 1)) ∧
     ∀ j ≤ m', ∀ (h : D'.n j = D.R.k + j * (D.R.t + 1)) ρ i, D'.lam j ρ i =
       WeylFock.wt D.R.k D.R.t j (fun ρ i => ⌊(D.hc u ρ).u i - 1 / 2⌋) (fun ρ => finN (D.hc u ρ).e) ρ
         (Fin.cast h i)) ∧
@@ -270,8 +277,9 @@ the branching maps pinned (`BrPinned`) at `λ = λ_m` (`lamW`) and `σ = sgT` (`
 row spaces at the twisted levels, the untwisted level the decorated lattices (`lat`, `lsh` their `N`, `Lsh`) at the
 `μ0` chains' places `ST`, `SG`, `tz` the
 element `(a + b√−d)/2` of `T_ω` (up to conjugation), and `𝔞_ω ∣ aBd u ω`. The chain shape and `sd` at `μ0` are
-`SharpData.Shp`. `SG` has exactly one place over each prime of `g₀g₁` and none over its conjugates
-(`SG ∩ conj SG = ∅`); `ST` is the set of places over `π_T = conj(tz)` (L2.3). -/
+`SharpData.Shp`. `SG` is half the places over `g₀g₁` (spec-5 §2: all places over `conj(π_{g₀})`, `conj(π_{g₁})`,
+`f` per prime): every place over `g₀g₁` is in `SG` or in `conj SG`, and not both (`SG ∩ conj SG = ∅`); `ST` is the
+set of places over `π_T = conj(tz)` (L2.3). -/
 def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
   ∃ (_ : IsCMField K) (τK : Φ S.A → (S.E →+* K)) (j : K →+* ℂ), (∀ ρ, j.comp (τK ρ) = S.τ ρ) ∧
     ∀ u ∈ A₀ κ, ∃ (T : Type) (G X : T → Type) (_ : ∀ μ, Group (G μ)) (_ : ∀ μ, MulAction (G μ) (X μ))
@@ -280,14 +288,15 @@ def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
       (P : PeriodTarget.PerData (Φ S.A) (D.R.N D.R.m - 1) S.E K G X Vs) (μ0 : T) (tw : PeriodTarget.Twist P μ0)
       (𝔞 : (D.fr u).ι → Ideal (𝓞 K)) (M : ∀ ω, Submodule (𝓞 K) (Vs ω)) (hV : T → ∀ ω, Vs ω → Vs ω → K)
       (MV : T → ∀ ω, Set (Vs ω)) (ST SG : Finset (HeightOneSpectrum (𝓞 S.E))),
-      (∀ μ ω, IsThetaCol τK (D.eW u) D.Sg (D.R.N D.R.m - 1) (μ = μ0) ST SG (D.Shp u (μ = μ0)) (hV μ ω) (MV μ ω)
-        (P.col μ ω)) ∧
+      (∀ μ ω, IsThetaCol τK (D.eW u) D.Sg (D.R.N D.R.m - 1) (μ = μ0) ST SG (D.Shp u ω (μ = μ0)) (hV μ ω)
+        (MV μ ω) (P.col μ ω)) ∧
         BrPinned τK P (D.lamW u) (D.sgW u) ∧ (∀ ω, M ω = Submodule.span (𝓞 K) (MV μ0 ω)) ∧
         (∀ w ∈ tw.Tw, P.V0 (tw.μw w) ≠ ⊥) ∧
         (∃ (Λ : Subgroup (∀ w : SG, GL (Fin (D.R.N D.R.m - 1)) (𝓞 S.E ⧸ w.1.asIdeal)))
           (eG : G μ0 ≃* Grp S.E (D.R.N D.R.m - 1) SG Λ) (eX : X μ0 ≃ points (E := S.E) (ST := ST) Λ),
           (∀ g x, eX (g • x) = eG g • eX x) ∧ ∀ x, P.lat μ0 x = (eX x).1.N ∧ P.lsh μ0 x = Lsh (eX x).1) ∧
-        (∀ p : ℕ, p.Prime → p ∣ D.g₀ * D.g₁ → ∃! v, v ∈ SG ∧ (p : 𝓞 S.E) ∈ v.asIdeal) ∧
+        (∀ v : HeightOneSpectrum (𝓞 S.E), ((D.g₀ * D.g₁ : ℕ) : 𝓞 S.E) ∈ v.asIdeal → v ∈ SG ∨
+          ∃ w ∈ SG, v.asIdeal = w.asIdeal.comap (IsCMField.ringOfIntegersComplexConj S.E : 𝓞 S.E →+* 𝓞 S.E)) ∧
         (∀ v ∈ SG, ((D.g₀ * D.g₁ : ℕ) : 𝓞 S.E) ∈ v.asIdeal) ∧
         (∀ v ∈ SG, ∀ w ∈ SG,
           v.asIdeal ≠ w.asIdeal.comap (IsCMField.ringOfIntegersComplexConj S.E : 𝓞 S.E →+* 𝓞 S.E)) ∧

@@ -12,7 +12,8 @@ branching space is `X′ = E^n`.
 **The interlacing weight** (L6.1, `sg`, `sgT`). `sg = sgHC − ρ_n` with
 `sgHC = (v; for each q < m: −b_q, −e_q + (t−1)/2, …, −e_q − (t−1)/2)` and `ρ_n(i) = (n−1)/2 − i`, then
 `sgT = sg` (the archive's `sgTrue = sg − m·h` with its `sgHC` carrying an extra `m(t+1)/2`; the shifts cancel, so
-the block-`q` entries of `sgT` match `λ_m`). All entries are integers for the spec's ranks (`n = N_m − 1` odd, `t` odd). As in
+the block-`q` entries of `sgT` match `λ_m`). All entries are integers for the spec's ranks (`n = N_m − 1` odd, `t`
+odd). As in
 `WeylFock.wt`, the parameter families `v`, `b`, `e` are indexed by `ℕ` (extend by zero).
 
 **The branching map** (L6.1, `br`). `br = (c_Br·∏_τ τ(tz)^{−nBr(λ_τ, σ_τ)})·Π_σ ∘ coefLast`, where `coefLast` takes
@@ -139,6 +140,29 @@ theorem coeff_coefLast (ex : Φ → Fin n → ℕ) (F : Pol Φ (n + 1) L) (d : (
 
 /-- `nBr(λ, σ) = Σλ − Σσ`, the degree in the last row. -/
 def nBr (l : Fin (n + 1) → ℤ) (s : Fin n → ℤ) : ℤ := ∑ i, l i - ∑ i, s i
+
+/-- The integer factor `cBr(λ, σ) = ∏_{i<n} ∏_{v ∈ R_i ∖ {σ_i}} ∏_{j<n} ((v − (i+1)) − (σ_j − (j+1)))` (spec-5 §1),
+with `R_i = [λ_{i+1}, min(λ_i, λ_{i+1} + d₀)] ∩ ℤ` and `d₀ = Σ_i (σ_i − λ_{i+1})`; nonzero under interlacing. For
+`brConst`. -/
+def cBrZ (l : Fin (n + 1) → ℤ) (s : Fin n → ℤ) : ℤ :=
+  ∏ i : Fin n, ∏ v ∈ (Finset.Icc (l i.succ) (min (l i.castSucc) (l i.succ + ∑ k, (s k - l k.succ)))).erase (s i),
+    ∏ j : Fin n, ((v - ((i : ℕ) + 1 : ℤ)) - (s j - ((j : ℕ) + 1 : ℤ)))
+
+variable (L) in
+/-- `ξ = ∏_τ ∏_{i<n} D_{τ,i+1}^{a_i}·Z_{τ,i}^{b_i}` (spec-5 §1), rank `n + 1`, with `a_i = σ_i − λ_{i+1}`,
+`b_i = λ_i − σ_i`, `D_{i+1}` the leading `(i+1)`-minor and `Z_i` the `(i+1)`-minor on the rows `0, …, i − 1, n` and
+the first `i + 1` columns. For `brConst`. -/
+def xiBr (lam : Φ → Fin (n + 1) → ℤ) (σ : Φ → Fin n → ℤ) : Pol Φ (n + 1) L :=
+  ∏ ρ, ∏ i : Fin n, minor ρ i.castSucc (Fin.castLE i.castSucc.isLt) ^ (σ ρ i - lam ρ i.succ).toNat *
+    minor ρ i.castSucc (fun r => if h : (r : ℕ) < i then ⟨r, by have := i.isLt; omega⟩ else Fin.last n) ^
+      (lam ρ i.castSucc - σ ρ i).toNat
+
+variable (L) in
+/-- **The branching constant** `c_Br = ∏_τ cBr(λ_τ, σ_τ)·fock(ξ_τ, ξ_τ)/fock(hw_{λ_τ}, hw_{λ_τ})` (spec-5 §1), with
+`fock` the Fock form without conjugation. The `τ`-factors' Fock quotients are taken together, as `pair λ ξ ξ` with
+`ξ = xiBr` the product over `τ`: the Fock form is multiplicative over disjoint blocks. Pins `BrPinned`'s `c_Br` (L7). -/
+def brConst (lam : Φ → Fin (n + 1) → ℤ) (σ : Φ → Fin n → ℤ) : L :=
+  (∏ ρ, (cBrZ (lam ρ) (σ ρ) : L)) * pair lam (xiBr L lam σ) (xiBr L lam σ)
 
 variable {E : Type*} [Field E] (τ : Φ → (E →+* L))
 
