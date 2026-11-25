@@ -43,9 +43,8 @@ e^{2πi Im H(t, y)}` (`xiS`, `thInd`). The finite data `SA, SB, BC, vol` are a p
 `Data.XDPinned` (spec-3 §3, spec-5 §3: `HA = halfAO(cA·cB)`, `BC = ι(halfBO(cB))` with `perO`, `twist₂`, `expS`;
 `IsReps`; `volS`).
 The cosets are `cA⁻¹H_S/cB·H_S` with `H_S = {x : x(N_P) ⊆ N′_P, P ∈ S}` (`homAt`, read globally: `x(N) ⊆ N′_P`,
-`locMem`). The local factor `Ξ = Π_P XiAt_P` (spec-2 1d: `E1 ∘ om ∘ PhiG/PhiQ` over `volN`) is
-**a parameter** (`Data.Xi`), too heavy to transcribe here; its stated property, invariance under `cB·H_S`, is
-`XiInv`.
+`locMem`). The local factor `Ξ = Π_P XiAt_P` (spec-2 1d as corrected by spec-6: `E1 ∘ om ∘ PhiGS/PhiQ` over `volN`,
+`ThetaVol`) is **a parameter** (`Data.Xi`) here; its stated property, invariance under `cB·H_S`, is `XiInv`.
 
 **Jets and `κ_j`** (spec-2 1e). `jetVal θ m = cD^m·∂^m θ(0)` (`pd`, holomorphic iterated derivatives), brought to `L`
 by `desc = σ₀⁻¹` (`0` off `σ₀(L)`). The jet operator multiplies by `Π_τ det(x_τ)^{n_τ}`, substitutes
@@ -64,7 +63,8 @@ power is `n_τ = s♯_j(τ) + λ_{j, N_j−1}(τ)` (`nIn`), which is `≥ 0` by 
 `u ↦ ψ₀(Σ_{i<k−1} u_{i,i+1})` (`lamGen`), with `ψ₀` pinned by `xi0 = −1/(N(cc)√−d)` (`psi0`). Steps `j ≥ 1` go
 through the existential `ChIdx`: index types, representatives, groups and characters, with the step-0 and last-step
 conditions exact and the archive's remaining `Ok` ties (`grpG/chrG/grpQ/chrQ/inj/surj`, which need `prX`, `R1`, `J`)
-as a parameter predicate. The coset `Y` of the last step is explicit (`Ycos`); `z = e_last` is `HermClasses.eLast`.
+as a parameter predicate. The coset `Y` of the last step is not part of the frontier (no field of `Data` reads it)
+and is not defined; `z = e_last` is `HermClasses.eLast`.
 
 **Sanity theorems:** `opU_zero`, `Chain.comp_zero`, `Chain.lift_add`, `detShift_wt_succ`.
 -/
@@ -490,19 +490,6 @@ structure ChIdx (Nj : ℕ → ℕ) (m : ℕ) (S : Finset (HeightOneSpectrum (�
   zero_chr : ∀ b g, σ₀ (chr 0 b g : L) = lamGen xi0 (g : ∀ w : SG, GL (Fin (Nj 0)) (𝓞 E ⧸ w.1.asIdeal))
   last_unique : Unique (β (m - 1))
   last_h : ∀ b, h (m - 1) b = 1
-
-/-- `locLat_S(N; ex) = {z : q_P^{−ex_P}·z ∈ N_P for P ∈ S}`, `q_P = N(P)`. -/
-def locLat (S : Set (HeightOneSpectrum (𝓞 E))) (ex : HeightOneSpectrum (𝓞 E) → ℤ) (N : Submodule (𝓞 E) (Fin n → E)) :
-    AddSubgroup (Fin n → E) :=
-  AddSubgroup.closure {z | ∀ Pl ∈ S, locMem Pl N (((Ideal.absNorm Pl.asIdeal : ℕ) : E) ^ (-ex Pl) • z)}
-
-open Classical in
-/-- The coset space `Y` of the last step (spec-2 2c): `locLat_S(N; −1 at SG, −M at Q)` modulo
-`locLat_S(N; 0 at SG, M at Q)`, `S = SG ∪ Q`, i.e. `Π_{SG} q⁻¹N_P/N_P × Π_Q q^{−M}N_P/q^M N_P`. Meant for L6. -/
-abbrev Ycos (SG Q : Set (HeightOneSpectrum (𝓞 E))) (M : ℕ) (N : Submodule (𝓞 E) (Fin n → E)) :=
-  locLat (SG ∪ Q) (fun Pl => if Pl ∈ SG then -1 else -(M : ℤ)) N ⧸
-    (locLat (SG ∪ Q) (fun Pl => if Pl ∈ SG then 0 else (M : ℤ)) N).addSubgroupOf
-      (locLat (SG ∪ Q) (fun Pl => if Pl ∈ SG then -1 else -(M : ℤ)) N)
 
 end Level
 

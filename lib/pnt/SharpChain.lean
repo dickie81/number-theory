@@ -75,11 +75,10 @@ then the same for all words of `u` (one `tz` per `PerData`). `𝔞_ω` is not th
 twisted levels, `dI` up to units, the side `sel` picked over each `ST` pair), `N(cc)` in `xi0`, `lift`,
 `X`, `e` (one per level and word, so a twisted chain may lift another form than the untwisted one), `𝔞` below its
 cap, the untwisted level's `ST`, `SG`, the branching projection, the `ChIdx` representatives and characters.
-`Ycos` (the
-last step's coset `Y`) is not reached: `Data` has no field that reads it. Not stated: `Tw` by the archive's
-`TwistedSetDef` (the untwisted kernel indices `Ij`, `jw` and per-place forced orders are not defined here),
-the later-step `ChIdx` ties at `Q`, `ψ_w`'s offset avoidance (`IsTwist`, `AvoidSet`), and `GoodTw` at the inner row
-levels `j < m` (the frontier reads only each word's last step, so the index clause is per word, below).
+The last step's coset `Y` is not part of the frontier (`Data` has no field that reads it). Not stated: `Tw` by the
+archive's `TwistedSetDef` (the untwisted kernel indices `Ij`, `jw` and per-place forced orders are not defined
+here), the later-step `ChIdx` ties at `Q`, `ψ_w`'s offset avoidance (`IsTwist`, `AvoidSet`), and `GoodTw` at the
+inner row levels `j < m` (the frontier reads only each word's last step, so the index clause is per word, below).
 
 **Twist characters** (spec-7 §1c–1d, `SharpData.RealisedPinned`). Each level `μ` has a twist `ξ_μ` (`ξT`, read by
 `IsThetaCol` through `Shp`), `1` at `μ0` and `δ_ℓ·ψ_w` at `μ(w) ≠ μ0`, `ℓ` the residue characteristic of `w`:

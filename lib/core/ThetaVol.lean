@@ -6,12 +6,12 @@ import ThetaChain
 
 The local factor `Ξ_j` of a step `j < m − 1` is `∏_{P ∈ S} volN_P(j)⁻¹ · E1(om(Φ_P))`, and the `E1 ∘ om ∘ Φ` part has a
 fixed scale; so the volumes `volN_P(j)` carry the scale of `Ξ_j`. This module defines them, the factor itself
-(`E1`, `om`, `PhiG`, `PhiQ`, `PhiGS`, `XiStd`; spec-2 1d as corrected by spec-6) and the pins `XiFull`
+(`E1`, `om`, `PhiGS`, `PhiQ`, `XiStd`; spec-2 1d as corrected by spec-6) and the pins `XiFull`
 (`Ξ_j = XiStd`) and `XiScale` (`Ξ_j(0)` is `XiStd(0)` up to a unit of absolute value `1` at every complex place). The
 frontier (L7) uses `XiFull` with the
 canonical sharp instance (`jS`, `phS`, `LocOk`, depth `m + 1`). The library's `x` is the archive's (no transpose);
-`entB` uses the archive's shuffle `fIdx` with `k₀ = k`. `XiVolPinned` (the root-of-unity form) is not used by the
-frontier.
+`entB` uses the archive's shuffle `fIdx` with `k₀ = k`. The unsharp kernel shape and group at `SG` and the
+root-of-unity form of the scale pin are not part of the frontier and are not defined.
 
 All groups are subgroups of `GL_{n+c}(E)` for the global field `E`; `P`-local integrality enters through lattices of
 `E^{n+c}` defined by valuations at `P` (`intAt`; `stdAt P = sclLat P 0` is the localised standard lattice). Following
@@ -20,10 +20,10 @@ All groups are subgroups of `GL_{n+c}(E)` for the global field `E`; `P`-local in
 
 * `R1 n c`: the matrices `[[A, B], [0, U]]` with `U` upper unitriangular and column `n` equal to `e_n`; `fixX`
   (`A = I`); `N1 = R1 ⊓ fixX`.
-* `stabL M`, `sclLat`, `scE`, `lamY`, `parL`, `JQ`; `flagU`, `flagG`, `bvecG`, `JG`.
+* `stabL M`, `sclLat`, `scE`, `lamY`, `parL`, `JQ`; `flagU`, `bvecG` (the sharp `flagS`, `bvecS`, `JGsym` below).
 * `Cbe J h = R1 ⊓ hJh⁻¹`, `volN C N₀ = [C ∩ N1 : C ∩ N₀] / [N₀ : C ∩ N₀]` (Mathlib's `relIndex`), `volAt`.
 
-**Parameters.** `JG` takes the index shuffle as a parameter; `entB` and `JGsym` use the archive's `fIdx`/`fPos`
+**Parameters.** `bvecG` takes the index shuffle as a parameter; `entB` and `JGsym` use the archive's `fIdx`/`fPos`
 (spec-6 §6). `XiStd` takes the group `JS` at `SG`, the representatives `h` (the `ChIdx` bundle's, spec-3 §1 caveat),
 the kernel shapes `Φ_P`, the additive characters `ψ_P`, the local characters `μ_P` and `sq_P = √q` as parameters;
 `LocOk` pins the canonical ones (spec-6 §4, spec-7 §3), `jS`/`phS` are the canonical sharp `JS`/`Φ_P` at `SG`, and
@@ -65,7 +65,7 @@ def stabL (M : Set (Fin (n + c) → E)) : Subgroup (GL (Fin (n + c)) E) :=
 /-- `x ∈ O_(P)`. -/
 def intAt (Pl : HeightOneSpectrum (𝓞 E)) (x : E) : Prop := Pl.valuation E x ≤ 1
 
-/-- `q_P = N(P)`, as in `ThetaChain.locLat`. -/
+/-- `q_P = N(P)`. -/
 noncomputable def qP (Pl : HeightOneSpectrum (𝓞 E)) : E := ((Ideal.absNorm Pl.asIdeal : ℕ) : E)
 
 /-- The scaled lattice `sclLat(e) = {v : q^{−e(l)} v_l ∈ O_(P) for all l}`. -/
@@ -94,20 +94,9 @@ def flagU (M : ℕ → Set (Fin (n + c) → E)) (e : ℕ → Fin (n + c) → E) 
   Subgroup.closure {κ | (∀ s ∈ st, κ ∈ stabL (M s)) ∧ ∀ s < r, κ ∈ stabL (M s) ∧ κ.1.mulVec (e s) - e s ∈ M s}
 
 variable (n c) in
-/-- `flagG(s) = sclLat(l ↦ scE n (i ↦ i + 1) l + [s ≤ fPos l])`; the shuffle `fPos` is a parameter. -/
-def flagG (Pl : HeightOneSpectrum (𝓞 E)) (fPos : ℕ → ℕ) (s : ℕ) : Set (Fin (n + c) → E) :=
-  sclLat Pl fun l => scE n (fun i => i + 1) l + if s ≤ fPos l then 1 else 0
-
-variable (n c) in
 /-- `bvecG(s) = q^{scE(fIdx s)} e_{fIdx s}`; the shuffle `fIdx` is a parameter. -/
 noncomputable def bvecG (Pl : HeightOneSpectrum (𝓞 E)) (fIdx : ℕ → ℕ) (s : ℕ) : Fin (n + c) → E :=
   qP Pl ^ scE n (fun i => i + 1) (fIdx s) • eN (fIdx s)
-
-variable (n c) in
-/-- `J` at a place of `SG` (unsharp): `JG = stabL(lamY(i ↦ i + 1)) ∩ flagU(flagG, bvecG, r, {r + i·t})`, for a given
-index shuffle `fIdx`/`fPos`. Meant for L7, as a value of `XiVolPinned`'s parameter `JS`. -/
-noncomputable def JG (Pl : HeightOneSpectrum (𝓞 E)) (fIdx fPos : ℕ → ℕ) (r t : ℕ) : Subgroup (GL (Fin (n + c)) E) :=
-  stabL (lamY n c Pl fun i => i + 1) ⊓ flagU (flagG n c Pl fPos) (bvecG n c Pl fIdx) r {s | ∃ i, s = r + i * t}
 
 variable (n c) in
 /-- `Cbe(J, h) = R1 ∩ hJh⁻¹ = {g ∈ R1 : h⁻¹gh ∈ J}`. -/
@@ -220,7 +209,7 @@ noncomputable def JGsym (n c : ℕ) (Pl : HeightOneSpectrum (𝓞 E)) (k₀ rS r
 
 /-- `entB(y)` (spec-6 §1): `M p p′ = y[fIdx k₀ c′ n′ p, fIdx k₀ c n p′]·q^{scE n ex (fIdx k₀ c n p′) −
 scE n′ ex (fIdx k₀ c′ n′ p)}`, row `p` a target position, column `p′` a source position; `0` outside
-`[0, n′ + c′) × [0, n + c)` (spec-6 §3: else the shuffle aliases out-of-range positions and `PhiG`, `PhiQ` vanish). -/
+`[0, n′ + c′) × [0, n + c)` (spec-6 §3: else the shuffle aliases out-of-range positions and `PhiGS`, `PhiQ` vanish). -/
 noncomputable def entB (Pl : HeightOneSpectrum (𝓞 E)) (k₀ n n' c c' : ℕ) (ex : ℕ → ℤ)
     (y : Matrix (Fin (n' + c')) (Fin (n + c)) E) (p p' : ℕ) : E :=
   if p < n' + c' ∧ p' < n + c then
@@ -231,24 +220,12 @@ noncomputable def entB (Pl : HeightOneSpectrum (𝓞 E)) (k₀ n n' c c' : ℕ) 
 noncomputable def blkDet (M : ℕ → ℕ → E) (o k : ℕ) : E := (Matrix.of fun p p' : Fin k => M (o + p) (o + p')).det
 
 open Classical in
-/-- The kernel shape at `P ∈ SG` (unsharp; `M = entB(x)`, `a = r + i·t`): `0` unless (i) the first `a` columns
-are integral, their rows `≥ a` in `P`; (ii) `M_{p′p′} ≡ 1` for `p′ < r` and `M_{pp′} ≡ 0` for `p′ < p < a`,
-`p′ < r`; (iii) the `t × t` blocks beyond `r` are block triangular in the same sense; then
-`ψ₀(Σ_{p<r−1} M_{p,p+1})·∏_{l<i} χ_l(det block_l)·χ_i(det M_{<a,<a})⁻¹`, with `ψ₀(red y) = ψ(y/q)`. -/
-noncomputable def PhiG (Pl : HeightOneSpectrum (𝓞 E)) (ψ : E → L) (χ : ℕ → E → L) (r t i : ℕ)
-    (M : ℕ → ℕ → E) : L :=
-  if (∀ p p', p' < r + i * t → intAt Pl (M p p') ∧ (r + i * t ≤ p → inP Pl (M p p'))) ∧
-      (∀ p' < r, inP Pl (M p' p' - 1)) ∧ (∀ p p', p' < p → p < r + i * t → p' < r → inP Pl (M p p')) ∧
-      (∀ p p', r ≤ p' → p < r + i * t → (p' - r) / t < (p - r) / t → inP Pl (M p p'))
-  then ψ ((∑ p ∈ Finset.range (r - 1), M p (p + 1)) / qP Pl) *
-    (∏ l ∈ Finset.range i, χ l (blkDet M (r + l * t) t)) * (χ i (blkDet M 0 (r + i * t)))⁻¹
-  else 0
-
-open Classical in
-/-- The sharp kernel shape at `P ∈ SG` (spec-6 §6; `M = entB(x)`, `a = r + i·t`): `0` unless (i) as `PhiG`;
-(ii) `M_{p′p′} ≡ 1` for `p′ < r`, and `M_{pp′} ≡ 0` for `p < a`, `p ≠ p′` with `r ≤ p`, `symIdx p′ < symIdx p` or
-(`p′ = k₀ + rS` and `p < k₀`); (iii) as `PhiG`; then `ψ₀(Σ_{l<k₀−1} M_{l,l+1} + Σ_{l<r−k₀−1} M_{k₀+l,k₀+l+1})·
-∏_{l<i} χ_l(det block_l)·χ_i(det M_{<a,<a})⁻¹`, with `ψ₀(red y) = ψ(y/q)`. -/
+/-- The sharp kernel shape at `P ∈ SG` (spec-6 §6; `M = entB(x)`, `a = r + i·t`): `0` unless (i) the first `a`
+columns are integral, their rows `≥ a` in `P`; (ii) `M_{p′p′} ≡ 1` for `p′ < r`, and `M_{pp′} ≡ 0` for `p < a`,
+`p ≠ p′` with `r ≤ p`, `symIdx p′ < symIdx p` or (`p′ = k₀ + rS` and `p < k₀`); (iii) the `t × t` blocks beyond `r`
+are block triangular (`M_{pp′} ≡ 0` for `p < a` in a later block than `p′ ≥ r`); then
+`ψ₀(Σ_{l<k₀−1} M_{l,l+1} + Σ_{l<r−k₀−1} M_{k₀+l,k₀+l+1})·∏_{l<i} χ_l(det block_l)·χ_i(det M_{<a,<a})⁻¹`, with
+`ψ₀(red y) = ψ(y/q)`. -/
 noncomputable def PhiGS (Pl : HeightOneSpectrum (𝓞 E)) (ψ : E → L) (χ : ℕ → E → L) (k₀ rS r t i : ℕ)
     (M : ℕ → ℕ → E) : L :=
   if (∀ p p', p' < r + i * t → intAt Pl (M p p') ∧ (r + i * t ≤ p → inP Pl (M p p'))) ∧
@@ -268,8 +245,8 @@ noncomputable def PhiQ (Pl : HeightOneSpectrum (𝓞 E)) (ξ : E → L) (r : ℕ
   then ξ (blkDet M 0 r) else 0
 
 /-- **The local factor** `Ξ(x) = ∏_{P ∈ R} volN_P⁻¹·E1(om(Φ_P))(x)` of a step from size `n + c` to `n′ + c′`, `R` the
-row set, `g`, `h` the representatives, `Φ_P` the kernel shapes (`PhiG ∘ entB` or the untranscribed sharp `PhiGS` at
-`SG`, `PhiQ ∘ entB` at `Q`: a parameter, as `JS`). -/
+row set, `g`, `h` the representatives, `Φ_P` the kernel shapes (`PhiGS ∘ entB` at `SG`, `PhiQ ∘ entB` at `Q`: a
+parameter, as `JS`; the canonical ones are `phS`, `phQ`). -/
 noncomputable def XiStd (n n' c c' A : ℕ) (R SG : Finset (HeightOneSpectrum (𝓞 E)))
     (JS : HeightOneSpectrum (𝓞 E) → Subgroup (GL (Fin (n' + c')) E)) (kj : ℕ)
     (g : HeightOneSpectrum (𝓞 E) → GL (Fin (n + c)) E) (h : HeightOneSpectrum (𝓞 E) → GL (Fin (n' + c')) E)
@@ -319,16 +296,6 @@ section Pin
 
 variable {E L : Type*} [Field E] [NumberField E] [IsCMField E] [Field L] {Φ : Type*} [Fintype Φ] [DecidableEq Φ]
   {τ : Φ → (E →+* L)}
-
-/-- **The scale of `Ξ_j` is pinned** (spec-3 §1): for `j < m − 1`, `Ξ_j(c, c′)` at the trivial coset is
-`(∏_{P ∈ S} volN_P(j))⁻¹` times a root of unity, the volumes taken at size `N_{j+1} + (m − 2 − j)` with the
-representatives `h_{j+1, c′}`, `J = JS` at `SG` and `JQ(k + j + 1)` at `Q = S \ SG`. `h` and `JS` are parameters
-(the `ChIdx` representatives; `JG` or the sharp `JGsym`). Meant for L7. -/
-def XiVolPinned (D : Data τ) (m k : ℕ) (h : ∀ j, D.β j → D.S → GL (Fin (D.n j + (m - 1 - j))) E)
-    (JS : ∀ j, HeightOneSpectrum (𝓞 E) → Subgroup (GL (Fin (D.n j + (m - 1 - j))) E)) : Prop :=
-  ∀ j, j + 1 < m → ∀ c c', ∃ ζ : L, (∃ r, 0 < r ∧ ζ ^ r = 1) ∧
-    D.Xi j c c' 0 = (((∏ᶠ Pl : D.S, volAt (D.n (j + 1)) (m - 1 - (j + 1)) D.SG (JS (j + 1) Pl)
-      (k + (j + 1)) (h (j + 1) c'.1 Pl) Pl : ℚ)⁻¹ : ℚ) : L) * ζ
 
 /-- The canonical sharp kernel shape of step `j` at `P ∈ SG` (spec-6 §6, `PhiAt` with `sharp = true`): `PhiGS ∘ entB`
 with `k₀ = k`, `rS = m/2 − 1`, `r = k + m − 1`, `ex = (i ↦ i + 1)`, `ψ_P` and the characters `χ_l` of the steps `l ≤ j`.
