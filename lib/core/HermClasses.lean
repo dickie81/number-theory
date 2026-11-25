@@ -24,9 +24,9 @@ on `N` is the spec's `f_P` on `N_(P)`. The attached lattice is `Lsh(d) = (N ∩ 
 group with a generic character), and the archive picks them by existence choices at the later steps. The diamond
 operators `dia` (L4.2) rescale the `f_P` and commute with `𝒢` (`dia_smul`).
 
-**The twist `Q`.** The twisted case adds the frames `fr_P` at `P ∈ Q` and the factor `Θ_Q`; nothing below depends on
-`Q = ∅` except `Deco` and `Grp`. The class machinery (`Cl`, `stab`, `mass`, `classSum`) is generic in a group action,
-so a twisted point set plugs into it unchanged.
+**The twist `Q`.** The twisted case puts the frames on `SG ∪ Q`: `Deco` and `Grp` are generic in the frame places, and
+residue frames at `P ∈ Q` stand for the archive's lattice frames `fr_P` (spec-11 §2a). `Deco.forget` drops the frames
+off `SG`. The class machinery (`Cl`, `stab`, `mass`, `classSum`) is generic in a group action.
 
 **Classes** (L2.4). `Cl G X = G\X` (`MulAction.orbitRel.Quotient`), `stab c` the stabiliser of the chosen
 representative, the mass weight `mass c = 1/|Stab(c)|` (`Nat.card`, so `0` for an infinite stabiliser), which does
@@ -182,6 +182,19 @@ structure Deco.Good [IsCMField E] (d : Deco E n ST SG) : Prop where
   f_ne : ∀ P, d.f P ≠ 0
   be_surj : ∀ w, Function.Surjective (d.be w)
   be_ker : ∀ w (x : d.N), d.be w x = 0 ↔ (x : Fin n → E) ∈ w.1.asIdeal • d.N
+
+/-- **Forget the frames** off `SG ⊆ SF`: `(N, f, be) ↦ (N, f, be|_SG)` (spec-11 §1, the archive's `DecoF.deco`). The
+chain's classes carry frames on `SG ∪ Q`, and its input reads a form on the decorated lattices with frames on `SG`
+through this map (`SharpChain`'s `Data.inp`). -/
+def Deco.forget {SF : Finset (HeightOneSpectrum (𝓞 E))} (h : SG ⊆ SF) (d : Deco E n ST SF) : Deco E n ST SG where
+  N := d.N
+  f := d.f
+  be w := d.be ⟨w.1, h w.2⟩
+
+/-- Forgetting frames keeps the conditions. -/
+theorem Deco.Good.forget [IsCMField E] {SF : Finset (HeightOneSpectrum (𝓞 E))} {d : Deco E n ST SF} (hd : d.Good)
+    (h : SG ⊆ SF) : (d.forget h).Good :=
+  ⟨hd.unimod, hd.f_ne, fun _ => hd.be_surj _, fun _ => hd.be_ker _⟩
 
 
 /-- The inverse of `γ`, from `γN` back to `N`. -/
@@ -461,10 +474,11 @@ decorated lattice `d = (N, f, be)` of rank `n` on the places `ST′`, `SG`, to r
 places `SG` (all frames kept, as in the archive; L7: `SG ∪ Q` at the row points): the lattice
 `til 1 N = N ⊕ O_E·e_last` (`tilEquiv`), the level-`T` decorations `f_P(y + a·e_last) = (tz·a) mod P` at `P ∈ ST`
 (the archive's `red_P(conj(π)·x_last)`), and the frames `be_w(y + a·e_last) = (be_w y, (a/conj(tz)) mod w)` at
-`w ∈ SG` (the archive's `red_w(x_last/π)`; `Ring.inverse` is `0` if `conj(tz) ∈ w`, which the archive excludes:
-`π ∉ w`). The `f` of `d` is not read. For `N` unimodular and `ST` the places over `conj(tz)` (`conj(tz)·O_E`
-squarefree), `Lsh(tilQ d) = til tz N` (the unit `tz` at `P ∈ ST` does not move `ker f_P`). Meant for L7: the top step
-of the chain maps to each row point through its lift (`SharpChain.IsThetaCol`, `ThetaChain.Top`). -/
+`w ∈ SG` (the archive's `red_w(x_last/π)`; `Ring.inverse` is `0` if `conj(tz) ∈ w`, which the archive excludes,
+`π ∉ w`, and L7 too: `IsThetaCol` keeps `Q` off `conj(tz)`, spec-11 §3). The `f` of `d` is not read. For `N`
+unimodular and `ST` the places over `conj(tz)` (`conj(tz)·O_E` squarefree), `Lsh(tilQ d) = til tz N` (the unit `tz`
+at `P ∈ ST` does not move `ker f_P`). Meant for L7: the top step of the chain maps to each row point through its lift
+(`SharpChain.IsThetaCol`, `ThetaChain.Top`). -/
 def tilQ (tz : 𝓞 E) (d : Deco E n ST' SG) : Deco E (n + 1) ST SG where
   N := til 1 d.N
   f P := tz • (P.1.asIdeal.mkQ ∘ₗ LinearMap.snd _ _ _ ∘ₗ (tilEquiv d.N).symm.toLinearMap)

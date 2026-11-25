@@ -26,17 +26,21 @@ points `x` of the level (decorated lattices `pX x` of rank `n = N_m − 1`, `ST 
   (`Top.col`) at every point: no class representative of `[tilQ x]`, no transport, no character `χ_m` (the archive's
   `evRho` law is a consequence, not a datum);
 * (b) the cast `N_m = n + 1` (`polCast`, `latCast`);
-* (c) `inp`: forms → the chain's input, `F ↦ (c ↦ F(rep c))` (`Data.inp`), after an `L`-isomorphism `e` of the source
+* (c) `inp`: forms → the chain's input, `F ↦ (c ↦ F(rep c))` with the frames of `rep c` at `Q` forgotten (`Data.inp`,
+  `Deco.forget`; the archive's `startC`, spec-11 §1), after an `L`-isomorphism `e` of the source
   with `X ⊓ V_ω` (`HermForms.Vω` at step 0, with the explicit level `uniUT` and a character over `lamGen`), for a
   cusp subspace `X` stable under the diamond operators (L7 notes, item 3; `X ≤ Forms` adds nothing to `X ⊓ V_ω`).
   `X`, `e` and the step-0 data (`ST`, `SG`, `n0`, `λ_0`, `χ0`) are chosen once per word and passed in, the same at
   every level (audit 7, T1a: the archive twists the lift characters, not the input form); each level's chain
   agrees with them (`D.ST = ST`, `D.SG = SG`, `D.n 0 = n0`, `D.lam 0 = λ_0`) and reads `e φ` through `fnCast`;
-* (d) `Data` and its top `Top` existential, with `ChIdx`'s conditions on the fields `Data` has: `β 0` and `β(m−1)`
-  singletons, every
-  `β j` finite, `Λ 0 = uniUT`; its level data `(β, Λ)` are a `ChIdx`'s (`S = ST ∪ SG ∪ Q`, `σ₀` of `P`), up to a
-  bijection of the index types; its characters are `μ_{0,j}ξ` with `μ_{0,j}` a `LiftChars` for given `e`, `Sg`,
-  equal to the family `mu0` passed in (the pinned frontier shares it across levels and words and reads it in the rows).
+* (d) `Data` and its top `Top` existential, with `ChIdx`'s conditions on the fields `Data` has: the classes of every
+  level, step 0 included, carry frames on `SG ∪ Q` (`D.Q = Q`; spec-11 §1–2), `β 0` and `β(m−1)` singletons, every
+  `β j` finite, `Λ 0 = uniUT` at `SG` and all of `GL_{N_0}(O/P)` at `P ∈ Q`; its level data `(β, Λ)` are a `ChIdx`'s
+  (`Λ = ChIdx.grp`, `S = ST ∪ SG ∪ Q`, `σ₀` of `P`), up to a bijection of the index types, with the groups and
+  characters at `P ∈ Q` of the levels `1 ≤ j < m` pinned (`ThetaVol.LevQOk`: `red_P(prX(R1 ∩ h·JQ(k + j)·h⁻¹))` and
+  `ξ_P(det)⁻¹` on the `[k + j, N_j)` block; at `h = 1` the parabolic `(k + j, j·t)`); its characters are `μ_{0,j}ξ`
+  with `μ_{0,j}` a `LiftChars` for given `e`, `Sg`, equal to the family `mu0` passed in (the pinned frontier shares it
+  across levels and words and reads it in the rows).
   At every level, the representatives are `h_{j,b}(P) = 1` at `P ∈ SG` (the archive's `twIdx`, spec-7 §2b), and the
   local factors are pinned at every coset: `Ξ_j`, `j < m − 2`, by `ThetaVol.XiFull` over the row set `SG ∪ Q` (spec-3
   §1, spec-6, spec-7 §3, spec-10 F5 item 1): `Ξ_j = ∏_P volN_P⁻¹·E1(om(Φ_P))`; the two top factors by `xiCpl` and
@@ -45,7 +49,8 @@ points `x` of the level (decorated lattices `pX x` of rank `n = N_m − 1`, `ST 
   (`phQ`); depth `m + 1`, `N_j = k + j(t + 1)`), and `ψ_P`, `μ_P`, `χ_P`, `√q` existential with the canonical
   properties for `μ_{0,j}` and the twist `ξ` (`ThetaVol.LocOk`, `dQ = 2m`). `Q` (a parameter) is `sel(Qprime ξ)`:
   one place over each place where `ξ` ramifies (as a pair `{P, P̄}`), never both `P` and `P̄`, of prime norm and
-  unramified over `ℚ` (spec-7 §3a; `Q = ∅` when `U`).
+  unramified over `ℚ` (spec-7 §3a; `Q = ∅` when `U`), and off `tz` and `conj(tz)` (spec-11 §3: `N P ≠ T_ω`, the
+  archive's `PosT`; the frame of the lift `tilQ` at `P ∈ Q` divides by `conj(tz)`).
   Against `κ ≡ 0`: `S = ST ∪ SG ∪ Q` (the archive's place set `Sall` of `homAt`, spec-8 F2b; `ST ∪ SG` when `U`),
   `cA, cB > 0`, the Heisenberg data (the top step's too) have
   `SA, SB ≠ ∅` and `vol > 0`, and every class at a level `j + 1 ≤ m − 2` meets a nonzero `Ξ` (the archive's `nonvan`,
@@ -54,7 +59,8 @@ points `x` of the level (decorated lattices `pX x` of rank `n = N_m − 1`, `ST 
   spec-8 F2): for a set `sel` (existential) holding one place of each conjugate pair `v ≠ conj v`, every self-conjugate
   place, and the frame places `SG ∪ Q`, they have the valuation of `det N_c` (the largest `v(det f)`, `f ∈ N_c^n`) at
   the places of `sel`, and valuation `0` at the others (the conjugates of `sel`, those of `SG ∪ Q` included), at every
-  level and over every split place, not only over `ST`; at each frame place `P` of the class (or point) the component is
+  level and over every split place, not only over `ST`; at each frame place `P` of the class (or point; `SG ∪ Q` at
+  every level) the component is
   `det fr_P` (the archive's `muInvDet`; the unit part is pinned there); the top step's is that of the lift `tilQ tz (pX
   x)`, whose frames cover `SG ∪ Q` (spec-10 F4). When `U` (the untwisted level): `ξ = 1` (spec-2 4a). At every level the
   chain's `ST`, `SG` are the given ones. The Heisenberg data are pinned (`Data.XDPinned`, spec-3 §3, spec-5 §3;
@@ -108,13 +114,14 @@ without limit.
 **Open.** Existential: `Data`'s remaining fields (theta constants, `Ξ` before the last step, weights, `ξ` at the
 twisted levels, `dI` up to units off the frame places, the side `sel` picked over each pair off `SG ∪ Q`, the top
 step's Heisenberg representatives), `N(cc)` in `xi0`, `X`, `e` (one per word, shared by every level), `𝔞` below its
-cap, the untwisted level's `ST`, `SG`, the branching projection, the `ChIdx` representatives and characters.
-The inner levels' classes carry frames at `SG` only, so at `P ∈ Q` the inner factors read `x` in global coordinates
-(audit 10, T1d: the `Q` frames, the archive's `levQ`, are open; `Tw = ∅` is not affected); the coset `Y` is in its
-collapsed form (needs `h_{m−2} ∈ GL(O_P)` at `Q`, pinned, and `ξ_P` tame). Not stated: `Tw` by the
-archive's `TwistedSetDef` (the untwisted kernel indices `Ij`, `jw` and per-place forced orders are not defined
-here), the later-step `ChIdx` ties at `Q`, `ψ_w`'s offset avoidance (`IsTwist`, `AvoidSet`), and `GoodTw` at the
-inner row levels `j < m` (the frontier reads only each word's last step, so the index clause is per word, below).
+cap, the untwisted level's `ST`, `SG`, the branching projection, the `ChIdx` representatives and characters (at
+`SG`). Every level's classes carry residue frames at `SG ∪ Q` (spec-11 §1–2), so every factor reads `x` at `P ∈ Q` in
+the frames; residue frames suffice because the representatives are pinned integral at `Q` (spec-11 §2a), and so does
+the collapsed form of the coset `Y` (`h_{m−2} ∈ GL(O_P)` at `Q`, and `ξ_P` tame). That pin is an **over-pin risk**
+(`IsThetaCol`; spec-11 §2b). Not stated: `Tw` by the archive's `TwistedSetDef` (the untwisted kernel indices `Ij`,
+`jw` and per-place forced orders are not defined here), the later-step `ChIdx` ties at `SG` (`grpG/chrG`) and
+`inj/surj`, `ψ_w`'s offset avoidance (`IsTwist`, `AvoidSet`), and `GoodTw` at the inner row levels `j < m` (the
+frontier reads only each word's last step, so the index clause is per word, below).
 
 **Twist characters** (spec-7 §1c–1d, `SharpData.RealisedPinned`). Each level `μ` has a twist `ξ_μ` (`ξT`, read by
 `IsThetaCol` through `Shp`), `1` at `μ0` and `δ_ℓ·ψ_w` at `μ(w) ≠ μ0`, `ℓ` the residue characteristic of `w`:
@@ -159,16 +166,23 @@ def fnCast {ST ST' SG SG' : Finset (HeightOneSpectrum (𝓞 E))} {n0 n0' : ℕ} 
     (h3 : n0 = n0') : HermForms.Fn ST (uniUT SG n0) Φ L →ₗ[L] HermForms.Fn ST' (uniUT SG' n0') Φ L := by
   subst h1 h2 h3; exact LinearMap.id
 
-/-- (c) The chain's input from functions on decorated lattices: `F ↦ (c ↦ F(rep c))` on the step-0 classes. -/
+open Classical in
+/-- (c) The chain's input from functions on decorated lattices with frames on `SG`: `F ↦ (c ↦ F(rep c))` on the step-0
+classes, after forgetting the frames of `rep c` at `Q` (spec-11 §1, the archive's `startC`: `φ ↦ (p ↦ φ(p.deco))`). -/
 def _root_.ThetaChain.Data.inp (D : Data τ) (Λ : Subgroup (∀ w : D.SG, GL (Fin (D.n 0)) (𝓞 E ⧸ w.1.asIdeal))) :
     HermForms.Fn D.ST Λ Φ L →ₗ[L] (D.chain.C 0 → Pol Φ (D.n 0) L) :=
-  LinearMap.funLeft L _ fun c => ⟨c.2.rep, c.2.good⟩
+  LinearMap.funLeft L _ fun c =>
+    ⟨c.2.rep.forget Finset.subset_union_left, c.2.good.forget Finset.subset_union_left⟩
 
+open Classical in
 omit [NumberField L] in
-/-- **Sanity:** the chain of length `0` reads a form at the representative of each class. -/
+/-- **Sanity:** the chain of length `0` reads a form at the representative of each class, its frames at `Q`
+forgotten. -/
 theorem _root_.ThetaChain.Data.comp_zero_inp (D : Data τ)
     (Λ : Subgroup (∀ w : D.SG, GL (Fin (D.n 0)) (𝓞 E ⧸ w.1.asIdeal))) (F : HermForms.Fn D.ST Λ Φ L)
-    (c : D.chain.C 0) : D.chain.comp 0 (D.inp Λ F) c = F ⟨c.2.rep, c.2.good⟩ :=
+    (c : D.chain.C 0) :
+    D.chain.comp 0 (D.inp Λ F) c =
+      F ⟨c.2.rep.forget Finset.subset_union_left, c.2.good.forget Finset.subset_union_left⟩ :=
   rfl
 
 /-- The archive's `IsDelta p` (spec-7 §1c, spec-2 4a): `δ` is of finite order, tame, unramified away from the
@@ -220,7 +234,14 @@ open Classical in
 `m = m2 + 2` (`ThetaChain.Top.col`, the archive's `colCpl`) at the decorated lift `tilQ tz (pX x)` of the point, for
 theta data `D` with `ChIdx`'s conditions, the anti-degeneracy and normalisation conditions (at every level, the
 `ChIdx` representatives `h_{j,b}(P)` in `GL(O_(P))`, entrywise through `intAt` on `h` and `h⁻¹`, at `Q` too; `U`:
-the untwisted level) (module docstring, (a)–(e)). The word's source data are passed in, the
+the untwisted level) (module docstring, (a)–(e)). **Over-pin risk** (spec-11 §2b): the archive's representatives at
+`P ∈ Q` are in the normal form `TwNF`, `h·O^{N_j+c_j} = {v : v_{<N_j} − v_{N_j}·z ∈ O^{N_j}, v_{N_j+i} ∈ q^{ν_i}O}`
+with `z ∈ O^{N_j}` and `−j ≤ ν_i ≤ 0`, and a double coset `R1·h·J` meets `GL(O_(P))` iff `ν = 0`; so the integrality
+pin keeps only the `ν = 0` double cosets at `Q`. Whether some `ν ≠ 0` coset is live (passes `TwCand`: a nonvanishing
+`E1`) is open; if one is, the chain here omits classes the archive's has (`inj/surj` are not stated, so nothing flags
+it), and for it the residue frames at `Q`, the residue level `ThetaVol.grpQ` (`1 + P·M(O_(P)) ⊄ H`), its character
+(the archive's `ψ_P(n1Arg r)` factor, `1` only for integral `h`) and the collapsed `Y` would all need redoing, with
+frames mod `P^j` or the archive's lattice frames. The word's source data are passed in, the
 same at every level (audit 7, T1a: the archive twists the characters, not the input form): the place sets `ST`, `SG`,
 the step-0 rank `n0`, weight `lam0` and character `χ0`, a cusp subspace `X` stable under the diamond operators, and
 an isomorphism `e` of the source with `X ⊓ V_ω`. The chain has `D.ST = ST`, `D.SG = SG`, `D.n 0 = n0`,
@@ -237,14 +258,15 @@ def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
     (Cμ : LiftChars τ (m2 + 2) eF Sg) (ξ : Hecke E L)
     (Tp : Top D m2 (SG ∪ Q) (∀ P : ↥(Q \ D.SG), Fin (D.n (m2 + 1)) → 𝓞 E ⧸ P.1.asIdeal) Xr),
     Cμ.mu = mu0 ∧ (Nonempty (Unique (D.β 0)) ∧ Nonempty (Unique (D.β (m2 + 1))) ∧ (∀ j, Finite (D.β j)) ∧
-      (∀ b, D.Λ 0 b = uniUT D.SG (D.n 0)) ∧ (∀ ρ i, D.lam 0 ρ i = lam0 ρ (Fin.cast h0 i)) ∧
+      D.Q = Q ∧ (∀ b, D.Λ 0 b = (uniUT D.SG (D.n 0)).comap (resSG D.SG (D.n 0) D.Q)) ∧
+      (∀ ρ i, D.lam 0 ρ i = lam0 ρ (Fin.cast h0 i)) ∧
       ∀ g, D.P.σ₀ (χ0 g) = lamGen xi0 (g : ∀ w : SG, GL (Fin n0) (𝓞 E ⧸ w.1.asIdeal))) ∧
     (D.S = ↑D.ST ∪ ↑D.SG ∪ ↑Q ∧ (∀ j, 0 < D.cA j ∧ 0 < D.cB j) ∧
       (∀ j c c', (D.XD j c c').SA.Nonempty ∧ (D.XD j c c').SB.Nonempty ∧ 0 < (D.XD j c c').vol) ∧ D.XDPinned ∧
       (∀ c x, (Tp.XD c x).SA.Nonempty ∧ (Tp.XD c x).SB.Nonempty ∧ 0 < (Tp.XD c x).vol) ∧ Tp.XDPinned ∧
       ∀ j < m2, ∀ c', ∃ c x, D.Xi j c c' x ≠ 0) ∧
-    (∃ (C : ChIdx D.SG D.n (m2 + 2) (D.ST ∪ D.SG ∪ Q) xi0 D.P.σ₀) (eβ : ∀ j, C.β j ≃ D.β j),
-      (∀ j b, D.Λ j (eβ j b) = C.Λ j b) ∧
+    (∃ (C : ChIdx D.SG D.Q D.n (m2 + 2) (D.ST ∪ D.SG ∪ Q) xi0 D.P.σ₀) (eβ : ∀ j, C.β j ≃ D.β j),
+      (∀ j b, D.Λ j (eβ j b) = C.grp j b) ∧
       (∀ j b (Pl : ↥(D.ST ∪ D.SG ∪ Q)), Pl.1 ∈ D.SG → C.h j b Pl = 1) ∧
       (∀ j b (Pl : ↥(D.ST ∪ D.SG ∪ Q)) a a', ThetaVol.intAt Pl.1 ((C.h j b Pl).val a a') ∧
           ThetaVol.intAt Pl.1 ((C.h j b Pl).inv a a')) ∧
@@ -257,6 +279,9 @@ def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
         let Ph : ∀ j, HeightOneSpectrum (𝓞 E) →
             Matrix (Fin (D.n (j + 1) + (m2 + 2 - 1 - (j + 1)))) (Fin (D.n j + (m2 + 2 - 1 - j))) E → L :=
           fun j Pl => if Pl ∈ D.SG then ThetaVol.phS D (m2 + 2) k t ψ χ j Pl else ThetaVol.phQ D (m2 + 2) k χ j Pl
+        (∀ j b (w : D.Q), 0 < j → j < m2 + 2 →
+          ThetaVol.LevQOk (D.n j) (m2 + 2 - 1 - j) w.1 (k + j) (h j (eβ j b) w.1) (χ j w.1) (C.levQ j b w)
+            (C.chrQ j b w)) ∧
         ThetaVol.XiFull D (m2 + 2) (m2 + 3) k (D.SG ∪ Q) h (ThetaVol.jS D (m2 + 2) k t) ψ μ sq Ph ∧
           (∀ c₀ c y, Tp.Xi1 c₀ c y =
             ThetaVol.xiCpl D (m2 + 2) (m2 + 3) k (Q \ D.SG) h (ThetaVol.jS D (m2 + 2) k t) ψ μ sq Ph m2 c₀ c y) ∧
@@ -267,13 +292,14 @@ def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
         ∃ x ∈ unitsAway {w | w ≠ v ∧
           w.asIdeal ≠ v.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E)}, ξ.toHom x ≠ 1) ∧
     (∀ P ∈ Q, ∀ P' ∈ Q, P'.asIdeal ≠ P.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E)) ∧
-    (∀ P ∈ Q, (Ideal.absNorm P.asIdeal).Prime ∧ ((Ideal.absNorm P.asIdeal : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2) ∧
+    (∀ P ∈ Q, (Ideal.absNorm P.asIdeal).Prime ∧ ((Ideal.absNorm P.asIdeal : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2 ∧
+      tz ∉ P.asIdeal ∧ IsCMField.ringOfIntegersComplexConj E tz ∉ P.asIdeal) ∧
     Shp D (m2 + 2) Q ξ ∧
     (∀ j < m2 + 2, ∃ pin, ThetaNorm.Pin.Canonical τ D.P pin ∧ (D.θ j).Normalised pin) ∧
     (∃ sel : Set (HeightOneSpectrum (𝓞 E)), ↑(D.SG ∪ Q) ⊆ sel ∧ (∀ v v' : HeightOneSpectrum (𝓞 E),
         v'.asIdeal = v.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E) →
           (v ∈ sel ↔ v = v' ∨ v' ∉ sel)) ∧
-      (∀ j < m2 + 2, ∀ c : Cls D.n D.ST D.SG D.β D.Λ j, IsDetIdele sel c.2.rep (D.dI j c)) ∧
+      (∀ j < m2 + 2, ∀ c : Cls D.n D.ST D.SF D.β D.Λ j, IsDetIdele sel c.2.rep (D.dI j c)) ∧
       ∀ x, IsDetIdele sel (Tp.pt x) (Tp.dI x)) ∧
     (∀ a, ∀ F ∈ X, HermForms.dOp a F ∈ X) ∧
     (∀ x, Tp.pt x = decoCast hm.symm (tilQ (ST := D.ST) tz (pX x))) ∧

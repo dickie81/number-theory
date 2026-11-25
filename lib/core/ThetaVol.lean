@@ -27,6 +27,8 @@ All groups are subgroups of `GL_{n+c}(E)` for the global field `E`; `P`-local in
   (`A = I`); `N1 = R1 ⊓ fixX`.
 * `stabL M`, `sclLat`, `scE`, `lamY`, `parL`, `JQ`; `flagU`, `bvecG` (the sharp `flagS`, `bvecS`, `JGsym` below).
 * `Cbe J h = R1 ⊓ hJh⁻¹`, `volN C N₀ = [C ∩ N1 : C ∩ N₀] / [N₀ : C ∩ N₀]` (Mathlib's `relIndex`), `volAt`.
+* `grpQ`, `LevQOk`: the level group `red_P(prX(Cbe(JQ, h)))` of the classes at `P ∈ Q` and its character (spec-11 §2a,
+  the residue forms of the archive's `grpQ`, `chrQ`), which L7 ties to `ChIdx.levQ`, `ChIdx.chrQ`.
 
 **Parameters.** `bvecG` takes the index shuffle as a parameter; `entB` and `JGsym` use the archive's `fIdx`/`fPos`
 (spec-6 §6). `XiStd` takes the group `JS` at `SG`, the representatives `h` (the `ChIdx` bundle's, spec-3 §1 caveat),
@@ -306,6 +308,41 @@ def LocOk (σ₀ : L →+* ℂ) (xi0 : E) (dQ : ℕ) (R SG : Finset (HeightOneSp
 
 end Kernel
 
+section LevelQ
+
+variable {E L : Type*} [Field E] [NumberField E] [Field L] {n c : ℕ}
+
+/-- `x ∈ O_(P)` reduces to `a ∈ O_E/P`: `x − a′ ∈ P·O_(P)` for a lift `a′ ∈ O_E` of `a`. -/
+def redTo (Pl : HeightOneSpectrum (𝓞 E)) (x : E) (a : 𝓞 E ⧸ Pl.asIdeal) : Prop :=
+  ∃ a' : 𝓞 E, Ideal.Quotient.mk Pl.asIdeal a' = a ∧ inP Pl (x - a')
+
+/-- The top-left `n × n` block `A(r)` of `r = [[A, B], [0, U]]` reduces to `ḡ` mod `P`. -/
+def blkRed (Pl : HeightOneSpectrum (𝓞 E)) (r : GL (Fin (n + c)) E) (g : GL (Fin n) (𝓞 E ⧸ Pl.asIdeal)) : Prop :=
+  ∀ a b : Fin n, redTo Pl ((r : Matrix (Fin (n + c)) (Fin (n + c)) E) (Fin.castAdd c a) (Fin.castAdd c b))
+    ((g : Matrix (Fin n) (Fin n) (𝓞 E ⧸ Pl.asIdeal)) a b)
+
+variable (n c) in
+/-- **The level group at `P ∈ Q`** (spec-11 §2a, the residue form of the archive's `grpQ`): the reductions mod `P` of
+the blocks `A(r)` of `r ∈ Cbe(JQ(kj), h) = R1 ∩ h·JQ(kj)·h⁻¹`. For `h ∈ GL_{n+c}(O_(P))` they form a group (the closure
+adds nothing); at `h = 1` it is the parabolic of `GL_n(O/P)` fixing `span(e_l : l < kj)`, all of `GL_n(O/P)` when
+`kj = n`. -/
+def grpQ (Pl : HeightOneSpectrum (𝓞 E)) (kj : ℕ) (h : GL (Fin (n + c)) E) :
+    Subgroup (GL (Fin n) (𝓞 E ⧸ Pl.asIdeal)) :=
+  Subgroup.closure {g | ∃ r ∈ Cbe n c (JQ n c Pl kj) h, blkRed Pl r g}
+
+variable (n c) in
+/-- **The level at `P ∈ Q` is pinned** (spec-11 §2a, the residue forms of the archive's `grpQ`, `chrQ`): the group
+`H` is `grpQ(kj, h)` and its character is `λ(ḡ) = ξ_P(red det(h⁻¹rh)_{[kj,n)²})⁻¹` for every lift `r ∈ Cbe(JQ(kj), h)`
+of `ḡ`, with `χ = ξ_P⁻¹` on the `P`-units (`LocOk` at `Q`). The archive's factor `ψ_P(n1Arg r)⁻¹` is `1` for integral
+`h` (then `r` is integral and `ψ_P` is trivial on `O_(P)`). For `SharpChain.IsThetaCol`, at the levels `1 ≤ j < m`. -/
+def LevQOk (Pl : HeightOneSpectrum (𝓞 E)) (kj : ℕ) (h : GL (Fin (n + c)) E) (χ : E → L)
+    (H : Subgroup (GL (Fin n) (𝓞 E ⧸ Pl.asIdeal))) (lam : H →* Lˣ) : Prop :=
+  H = grpQ n c Pl kj h ∧ ∀ g : H, ∀ r ∈ Cbe n c (JQ n c Pl kj) h, blkRed Pl r g →
+    ((lam g : Lˣ) : L) = χ (blkDet (entA ((h⁻¹ * r * h : GL (Fin (n + c)) E) : Matrix (Fin (n + c)) (Fin (n + c)) E))
+      kj (n - kj))
+
+end LevelQ
+
 section Pin
 
 variable {E L : Type*} [Field E] [NumberField E] [IsCMField E] [Field L] {Φ : Type*} [Fintype Φ] [DecidableEq Φ]
@@ -337,14 +374,15 @@ open Classical in
 /-- `XiStd` at step `j < m − 1` of `D`: sizes `N_j + c_j → N_{j+1} + c_{j+1}` (`c_j = m − 1 − j`), representatives
 `g = h_{j,c}`, `h = h_{j+1,c′}`, `J = JS` at `SG` and `JQ(k + j + 1)` at `Q = R \ SG`; local parameters per step. As in
 the archive's `XiEntry`, `x` is read at each `P` in the frames of the representatives, `inFr(fr_P(c), fr_P(c′), x)`
-(`HermClasses.frAt`: the frame lifts at `SG`, none elsewhere), times the level-`T` indicator `phiT(c, c′, x)`. -/
+(`HermClasses.frAt`: the frame lifts at the frame places `SG ∪ Q` of the classes, spec-11 §1–2; none elsewhere),
+times the level-`T` indicator `phiT(c, c′, x)`. -/
 noncomputable def xiStd (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E)))
     (h : ∀ j, D.β j → HeightOneSpectrum (𝓞 E) → GL (Fin (D.n j + (m - 1 - j))) E)
     (JS : ∀ j, HeightOneSpectrum (𝓞 E) → Subgroup (GL (Fin (D.n j + (m - 1 - j))) E))
     (ψ μ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (sq : ℕ → HeightOneSpectrum (𝓞 E) → L)
     (Ph : ∀ j, HeightOneSpectrum (𝓞 E) →
       Matrix (Fin (D.n (j + 1) + (m - 1 - (j + 1)))) (Fin (D.n j + (m - 1 - j))) E → L)
-    (j : ℕ) (c : Cls D.n D.ST D.SG D.β D.Λ j) (c' : Cls D.n D.ST D.SG D.β D.Λ (j + 1)) :
+    (j : ℕ) (c : Cls D.n D.ST D.SF D.β D.Λ j) (c' : Cls D.n D.ST D.SF D.β D.Λ (j + 1)) :
     Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E → L := fun x =>
   (if phiT c.2.rep c'.2.rep x then 1 else 0) *
     XiStd (D.n j) (D.n (j + 1)) (m - 1 - j) (m - 1 - (j + 1)) A R D.SG (JS (j + 1)) (k + (j + 1)) (h j c.1)
@@ -362,7 +400,7 @@ noncomputable def xiCpl (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectr
     (ψ μ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (sq : ℕ → HeightOneSpectrum (𝓞 E) → L)
     (Ph : ∀ j, HeightOneSpectrum (𝓞 E) →
       Matrix (Fin (D.n (j + 1) + (m - 1 - (j + 1)))) (Fin (D.n j + (m - 1 - j))) E → L)
-    (j : ℕ) (c : Cls D.n D.ST D.SG D.β D.Λ j) (c' : Cls D.n D.ST D.SG D.β D.Λ (j + 1))
+    (j : ℕ) (c : Cls D.n D.ST D.SF D.β D.Λ j) (c' : Cls D.n D.ST D.SF D.β D.Λ (j + 1))
     (y : ∀ P : R, Fin (D.n (j + 1)) → 𝓞 E ⧸ P.1.asIdeal) (x : Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E) : L :=
   xiStd D m A k D.SG h JS ψ μ sq Ph j c c' x *
     ∏ P : R, ((Ideal.absNorm P.1.asIdeal : L) ^ D.n (j + 1))⁻¹ *
@@ -381,7 +419,7 @@ not move the factor), with `η = X′_last` (the last row; the archive's `π⁻�
 `N_{m−1} + 0 → (N_m − 1) + 0`; its values are `0` or roots of unity at `SG`. -/
 noncomputable def xiTop (D : Data τ) (m k t : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E)))
     {SF : Finset (HeightOneSpectrum (𝓞 E))} (ψ χ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (j : ℕ)
-    (c : Cls D.n D.ST D.SG D.β D.Λ j) (d' : Deco E (D.n (j + 1)) D.ST SF)
+    (c : Cls D.n D.ST D.SF D.β D.Λ j) (d' : Deco E (D.n (j + 1)) D.ST SF)
     (y : ∀ P : R, Fin (D.n j) → 𝓞 E ⧸ P.1.asIdeal) (x : Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E) : L :=
   let top : HeightOneSpectrum (𝓞 E) → Matrix (Fin (D.n (j + 1) - 1 + 0)) (Fin (D.n j + 0)) E :=
     fun P l s => entA (inFr (frAt c.2.rep P) (frAt d' P) x) l s

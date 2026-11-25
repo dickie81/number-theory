@@ -20,8 +20,8 @@ the residue units at `g` (it lives with the level data, spec-2 2a).
 
 **Splitting characters** (L5.2). For the determinant idele `d` of a class, `ρ_j = (μξ)(d)⁻¹` (`rhoIn`) and
 `ρ′_j = (μξ)(d)` (`rhoOut`), as in the archive's step kernel: no `χ_ψ` (its powers would cancel only against a
-`chiFac` on the theta, which `thMoved` does not carry). The determinant idele needs the frames at `SG ∪ Q`, which the
-decorated lattices of `HermClasses` do not carry; it is a parameter of the chain data (`Data.dI`).
+`chiFac` on the theta, which `thMoved` does not carry). The determinant idele is a parameter of the chain data
+(`Data.dI`), pinned in L7 through the frames of the classes at `SG ∪ Q` (`SharpChain.IsDetIdele`).
 
 **Theta functions** (spec-2, 1a and 1e). On `V = (Φ × Fin b × Fin a → ℂ)` (`Amb`): the form
 `H(z, w) = s·Σ z·w̄` (`Hf`), the semicharacter `α(x) = (−1)^{round(sd·Re H(x, x))}` (`al`, `sd = √d/2`), the Heisenberg
@@ -45,8 +45,8 @@ e^{2πi Im H(t, y)}` (`xiS`, `thInd`). The finite data `SA, SB, BC, vol` are a p
 The cosets are `cA⁻¹H_S/cB·H_S` with `H_S = {x : x(N_P) ⊆ N′_P, P ∈ S}` (`homAt`, read globally: `x(N) ⊆ N′_P`,
 `locMem`). The local factor `Ξ = Π_P XiAt_P` (spec-2 1d as corrected by spec-6: `E1 ∘ om ∘ PhiGS/PhiQ` over `volN`,
 `ThetaVol`) is **a parameter** (`Data.Xi`) here, pinned in L7. Its invariance under `cB·H_S` is not a field: read in
-the frames it holds for the pinned factor (the archive's `psiInv`), but the inner classes have no frames at `Q` yet, and
-for an opaque representative it fails at a split `P` read in global coordinates (audit 10, T1d.1).
+the frames at `SG ∪ Q`, which every level's classes carry (spec-11 §1–2), it holds for the pinned factor by spec-11 §4
+(the archive's `psiInv`, with `Q` off `conj(tz)`; not proved here), so it would be a redundant pin.
 
 **Jets and `κ_j`** (spec-2 1e). `jetVal θ m = cD^m·∂^m θ(0)` (`pd`, holomorphic iterated derivatives), brought to `L`
 by `desc = σ₀⁻¹` (`0` off `σ₀(L)`). The jet operator multiplies by `Π_τ det(x_τ)^{n_τ}`, substitutes
@@ -65,12 +65,15 @@ class's mass), step `m2` reads `y` in its factor (`XiCpl1`), and the top step ma
 `x`, through its decorated lift `tilQ x` and its determinant idele, with the factor `XiCpl2` (`Top`, `Top.col`, the
 archive's `colCpl`). The factors of the two top steps are pinned in L7 (`ThetaVol.xiCpl`, `ThetaVol.xiTop`).
 
-**Level data** (spec-2 Item 2). Step 0 is explicit: the upper unitriangular group (`uniUT`) and the generic character
-`u ↦ ψ₀(Σ_{i<k−1} u_{i,i+1})` (`lamGen`), with `ψ₀` pinned by `xi0 = −1/(N(cc)√−d)` (`psi0`). Steps `j ≥ 1` go
-through the existential `ChIdx`: index types, representatives, groups and characters, with the step-0 and last-step
-conditions exact and the archive's remaining `Ok` ties (`grpG/chrG/grpQ/chrQ/inj/surj`, which need `prX`, `R1`, `J`)
-as a parameter predicate. The coset `Y` of level `m − 1` is the type `Yb` of `Top` (L7 takes its collapsed form
-`ȳ ∈ ∏_{P ∈ Q} (O/P)^{N_{m−1}}`); `z = e_last` is `HermClasses.eLast`.
+**Level data** (spec-2 Item 2, spec-11 §1–2). The classes of every level, step 0 included, are decorated lattices with
+frames on `SG ∪ Q` (`Data.SF`; `Q` the twist places), and the level groups are products over `SG ∪ Q` (`ChIdx.grp`).
+Step 0 is explicit: the upper unitriangular group (`uniUT`) and the generic character `u ↦ ψ₀(Σ_{i<k−1} u_{i,i+1})`
+(`lamGen`) at `SG`, with `ψ₀` pinned by `xi0 = −1/(N(cc)√−d)` (`psi0`), and all of `GL_{N_0}(O/P)` with the trivial
+character at `P ∈ Q` (`resSG`; by spec-11 §1 the classes and masses are those with frames on `SG` alone). Steps `j ≥ 1`
+go through the existential `ChIdx`: index types, representatives, groups and characters, with the step-0 and
+last-step conditions exact; L7 ties the groups at `Q` (`ThetaVol.LevQOk`), and the archive's remaining `Ok` ties
+(`grpG/chrG/inj/surj`) are not stated. The coset `Y` of level `m − 1` is the type `Yb` of `Top` (L7 takes its
+collapsed form `ȳ ∈ ∏_{P ∈ Q} (O/P)^{N_{m−1}}`); `z = e_last` is `HermClasses.eLast`.
 
 **Sanity theorems:** `opU_zero`, `Chain.comp_zero`, `Chain.lift_add`, `detShift_wt_succ`, `Top.col_of_isEmpty`.
 -/
@@ -454,6 +457,16 @@ def uniUT : Subgroup (∀ w : SG, GL (Fin n) (𝓞 E ⧸ w.1.asIdeal)) :=
   Subgroup.closure {g | ∀ w, ((g w : Matrix (Fin n) (Fin n) (𝓞 E ⧸ w.1.asIdeal))).BlockTriangular id ∧
     ∀ i, (g w : Matrix (Fin n) (Fin n) (𝓞 E ⧸ w.1.asIdeal)) i i = 1}
 
+open Classical in
+variable (SG n) in
+/-- The restriction `∏_{w ∈ SG ∪ Q} GL_n(O_E/w) → ∏_{w ∈ SG} GL_n(O_E/w)`, forgetting the components at `Q` (spec-11
+§1): the chain's level groups live on the frame places `SG ∪ Q` (`ChIdx.grp`, `Data`). -/
+def resSG (Q : Finset (HeightOneSpectrum (𝓞 E))) :
+    (∀ w : ↥(SG ∪ Q), GL (Fin n) (𝓞 E ⧸ w.1.asIdeal)) →* ∀ w : SG, GL (Fin n) (𝓞 E ⧸ w.1.asIdeal) where
+  toFun g w := g ⟨w.1, Finset.mem_union_left Q w.2⟩
+  map_one' := rfl
+  map_mul' _ _ := rfl
+
 /-- The least `b ∈ ℕ` with `b ≡ xi0·c (mod w)`. -/
 noncomputable def resRep (xi0 : E) (w : HeightOneSpectrum (𝓞 E)) (c : 𝓞 E ⧸ w.asIdeal) : ℕ :=
   sInf {b : ℕ | ∃ c' : 𝓞 E, Ideal.Quotient.mk w.asIdeal c' = c ∧ w.valuation E ((b : E) - xi0 * c') < 1}
@@ -470,13 +483,15 @@ noncomputable def lamGen (xi0 : E) (g : ∀ w : SG, GL (Fin n) (𝓞 E ⧸ w.1.a
 
 variable (SG) in
 /-- The chain index (spec-2 2b), existential: per step `j`, index types `β j`, representatives
-`h_{j,b} ∈ Π_{P ∈ S} GL_{N_j + c_j}(E)` (`c_j = m − 1 − j`), level groups `Λ_{j,b}` and their characters. Step 0 is
-explicit (`β 0` a singleton, `h = 1`, `uniUT` with `lamGen`), and so is the last level (`β(m−1)` a singleton, `h = 1`;
-the archive's chain has no level `m`).
-The archive's remaining ties (`grpG/chrG/grpQ/chrQ`: `Λ_{j,b}` and its character are the reductions of
-`prX(R1 ∩ hJh⁻¹)` and `chiInv`; `inj/surj`: `β(j+1)` enumerates the admissible double cosets) need `prX`, `R1` and
-`J`, which are not transcribed. Meant for L6/L7, which build `Data` from it. -/
-structure ChIdx (Nj : ℕ → ℕ) (m : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E))) (xi0 : E) (σ₀ : L →+* ℂ) where
+`h_{j,b} ∈ Π_{P ∈ S} GL_{N_j + c_j}(E)` (`c_j = m − 1 − j`), level groups `Λ_{j,b}` at `SG` and `levQ_{j,b}(P)` at the
+twist places `P ∈ Q` (spec-11 §1–2; the archive's `levG`, `levQ`), and their characters. Step 0 is explicit (`β 0` a
+singleton, `h = 1`, `uniUT` with `lamGen` at `SG`, all of `GL_{N_0}(O/P)` with the trivial character at `Q`: the
+archive's `zero_Q`), and so is the last level (`β(m−1)` a singleton, `h = 1`; the archive's chain has no level `m`).
+The level of the classes is the product `grp` on the frame places `SG ∪ Q`. The ties at `Q` (`grpQ/chrQ`) are L7's
+(`ThetaVol.LevQOk`, which needs `R1` and `J`); the archive's remaining ties (`grpG/chrG` at `SG`; `inj/surj`: `β(j+1)`
+enumerates the admissible double cosets) are not transcribed. Meant for L6/L7, which build `Data` from it. -/
+structure ChIdx (Q : Finset (HeightOneSpectrum (𝓞 E))) (Nj : ℕ → ℕ) (m : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E)))
+    (xi0 : E) (σ₀ : L →+* ℂ) where
   /-- The index types. -/
   β : ℕ → Type
   finite : ∀ j, Finite (β j)
@@ -486,12 +501,27 @@ structure ChIdx (Nj : ℕ → ℕ) (m : ℕ) (S : Finset (HeightOneSpectrum (�
   Λ : ∀ j, β j → Subgroup (∀ w : SG, GL (Fin (Nj j)) (𝓞 E ⧸ w.1.asIdeal))
   /-- Their characters. -/
   chr : ∀ j b, Λ j b →* Lˣ
+  /-- The level groups at the places `P ∈ Q` (the archive's `levQ`; residue form, spec-11 §2a). -/
+  levQ : ∀ j, β j → ∀ w : Q, Subgroup (GL (Fin (Nj j)) (𝓞 E ⧸ w.1.asIdeal))
+  /-- Their characters (the archive's `chrQ`). -/
+  chrQ : ∀ j b w, levQ j b w →* Lˣ
   zero_unique : Unique (β 0)
   zero_h : ∀ b, h 0 b = 1
   zero_grp : ∀ b, Λ 0 b = uniUT SG (Nj 0)
   zero_chr : ∀ b g, σ₀ (chr 0 b g : L) = lamGen xi0 (g : ∀ w : SG, GL (Fin (Nj 0)) (𝓞 E ⧸ w.1.asIdeal))
+  zero_Q : ∀ b w, levQ 0 b w = ⊤ ∧ ∀ g, chrQ 0 b w g = 1
   last_unique : Unique (β (m - 1))
   last_h : ∀ b, h (m - 1) b = 1
+
+open Classical in
+/-- The level group of the classes of `(j, b)` on the frame places `SG ∪ Q`: `Λ_{j,b}` at `SG` times `levQ_{j,b}(P)` at
+each `P ∈ Q` (the archive's `FrmG = U × levG × ∏_{P ∈ Q} H(P)`). At step 0 it is `uniUT` at `SG` and everything at `Q`.
+Meant for L7 (`IsThetaCol`: `Data.Λ`). -/
+def ChIdx.grp {Q : Finset (HeightOneSpectrum (𝓞 E))} {Nj : ℕ → ℕ} {m : ℕ} {S : Finset (HeightOneSpectrum (𝓞 E))}
+    {xi0 : E} {σ₀ : L →+* ℂ} (C : ChIdx SG Q Nj m S xi0 σ₀) (j : ℕ) (b : C.β j) :
+    Subgroup (∀ w : ↥(SG ∪ Q), GL (Fin (Nj j)) (𝓞 E ⧸ w.1.asIdeal)) :=
+  (C.Λ j b).comap (resSG SG (Nj j) Q) ⊓ ⨅ w : Q, (C.levQ j b w).comap
+    (Pi.evalMonoidHom (fun w : ↥(SG ∪ Q) => GL (Fin (Nj j)) (𝓞 E ⧸ w.1.asIdeal)) ⟨w.1, Finset.mem_union_right SG w.2⟩)
 
 end Level
 
@@ -542,16 +572,19 @@ section Data
 
 variable {E L : Type*} [Field E] [NumberField E] [IsCMField E] [Field L] {Φ : Type*} [Fintype Φ] [DecidableEq Φ]
 
-/-- The classes at step `j`: `Σ_{b ∈ β j}` of the decorated classes for the level group `Λ_{j,b}`. -/
-abbrev Cls (n : ℕ → ℕ) (ST SG : Finset (HeightOneSpectrum (𝓞 E))) (β : ℕ → Type)
-    (Λ : ∀ j, β j → Subgroup (∀ w : SG, GL (Fin (n j)) (𝓞 E ⧸ w.1.asIdeal))) (j : ℕ) :=
+/-- The classes at step `j`: `Σ_{b ∈ β j}` of the decorated classes for the level group `Λ_{j,b}` on the frame places
+`SF` (`SG ∪ Q` in `Data`). -/
+abbrev Cls (n : ℕ → ℕ) (ST SF : Finset (HeightOneSpectrum (𝓞 E))) (β : ℕ → Type)
+    (Λ : ∀ j, β j → Subgroup (∀ w : SF, GL (Fin (n j)) (𝓞 E ⧸ w.1.asIdeal))) (j : ℕ) :=
   Σ b : β j, DCl E (n j) ST (Λ j b)
 
 variable (τ : Φ → (E →+* L))
 
-/-- The data of a theta chain: ranks `N_j`, the theta constants, the place sets, the level data, the weights `λ_j`
-and `e_j`, the characters `μ_{0,j}ξ`, the determinant ideles, the base thetas, the coset parameters and
-the local factors `Ξ`. L7 builds it from a setting and a `ChIdx`. -/
+open Classical in
+/-- The data of a theta chain: ranks `N_j`, the theta constants, the place sets, the level data on the frame places
+`SG ∪ Q` (spec-11 §1–2: every level, step 0 included, carries frames at `Q`), the weights `λ_j` and `e_j`, the
+characters `μ_{0,j}ξ`, the determinant ideles, the base thetas, the coset parameters and the local factors `Ξ`. L7
+builds it from a setting and a `ChIdx`. -/
 structure Data where
   /-- The ranks `N_j`. -/
   n : ℕ → ℕ
@@ -562,12 +595,14 @@ structure Data where
   ST : Finset (HeightOneSpectrum (𝓞 E))
   /-- The level places `SG`. -/
   SG : Finset (HeightOneSpectrum (𝓞 E))
-  /-- The row set `S = SG ∪ Q`. -/
+  /-- The twist places `Q` (frames at `SG ∪ Q`). -/
+  Q : Finset (HeightOneSpectrum (𝓞 E))
+  /-- The place set `S` of the cosets (L7: `ST ∪ SG ∪ Q`). -/
   S : Set (HeightOneSpectrum (𝓞 E))
   /-- The index types of the components. -/
   β : ℕ → Type
-  /-- The level groups. -/
-  Λ : ∀ j, β j → Subgroup (∀ w : SG, GL (Fin (n j)) (𝓞 E ⧸ w.1.asIdeal))
+  /-- The level groups, on the frame places `SG ∪ Q`. -/
+  Λ : ∀ j, β j → Subgroup (∀ w : ↥(SG ∪ Q), GL (Fin (n j)) (𝓞 E ⧸ w.1.asIdeal))
   /-- The weights `e_j`. -/
   e : ℕ → Φ → ℤ
   /-- The weights `λ_j`. -/
@@ -575,7 +610,7 @@ structure Data where
   /-- The characters `μ_{0,j}ξ_μ`. -/
   mu : ℕ → Hecke E L
   /-- The determinant ideles `d(N_c)` (L5.2). -/
-  dI : ∀ j, Cls n ST SG β Λ j → Ideles E
+  dI : ∀ j, Cls n ST (SG ∪ Q) β Λ j → Ideles E
   /-- The base thetas. -/
   θ : ∀ j, ThetaStd τ P (n j) (n (j + 1))
   /-- The integers `cA`, `cB` of the coset sums. -/
@@ -583,24 +618,28 @@ structure Data where
   /-- See `cA`. -/
   cB : ℕ → ℕ
   /-- The finite Heisenberg data. -/
-  XD : ∀ j, Cls n ST SG β Λ j → Cls n ST SG β Λ (j + 1) → XiData (Φ × Fin (n (j + 1)) × Fin (n j))
+  XD : ∀ j, Cls n ST (SG ∪ Q) β Λ j → Cls n ST (SG ∪ Q) β Λ (j + 1) → XiData (Φ × Fin (n (j + 1)) × Fin (n j))
   /-- The half-lattices in which the coset points are lifted (`liftW`; the archive's `halfAO`). -/
-  HA : ∀ j, Cls n ST SG β Λ j → Cls n ST SG β Λ (j + 1) → Set (Matrix (Fin (n (j + 1))) (Fin (n j)) E)
+  HA : ∀ j, Cls n ST (SG ∪ Q) β Λ j → Cls n ST (SG ∪ Q) β Λ (j + 1) → Set (Matrix (Fin (n (j + 1))) (Fin (n j)) E)
   /-- The local factors `Ξ_j(c, c′)` of the steps between classes (the generic `XiStd` at `j < m − 2`; the two top
   steps read the coset `Y` and use `Top`'s factors). -/
-  Xi : ∀ j, Cls n ST SG β Λ j → Cls n ST SG β Λ (j + 1) → Matrix (Fin (n (j + 1))) (Fin (n j)) E → L
+  Xi : ∀ j, Cls n ST (SG ∪ Q) β Λ j → Cls n ST (SG ∪ Q) β Λ (j + 1) → Matrix (Fin (n (j + 1))) (Fin (n j)) E → L
   /-- `JetsRat` on the archive's range: the jets of every coset theta that `kappa` sums (the class lattices, the
   lifted coset points `liftW x` of `cA⁻¹H_S`, the data's own `XD`) lie in `σ₀(L)`. -/
-  θ_rat : ∀ j (c : Cls n ST SG β Λ j) (c' : Cls n ST SG β Λ (j + 1)) (x : Cosets S (cA j) (cB j) c.2.N c'.2.N)
-    (m : Φ × Fin (n (j + 1)) × Fin (n j) →₀ ℕ),
+  θ_rat : ∀ j (c : Cls n ST (SG ∪ Q) β Λ j) (c' : Cls n ST (SG ∪ Q) β Λ (j + 1))
+    (x : Cosets S (cA j) (cB j) c.2.N c'.2.N) (m : Φ × Fin (n (j + 1)) × Fin (n j) →₀ ℕ),
     jetVal P (thInd P.s P.sd (XD j c c') (thMoved τ P (θ j).θ c.2.N c'.2.N)
       (iota τ P (liftW S (cA j) (cB j) c.2.N c'.2.N (HA j c c') x))) m ∈ Set.range P.σ₀
+
+open Classical in
+/-- The frame places `SG ∪ Q` of the classes of `D`. -/
+noncomputable abbrev Data.SF (D : Data τ) : Finset (HeightOneSpectrum (𝓞 E)) := D.SG ∪ D.Q
 
 variable {τ} in
 /-- The step kernel of `D` at step `j` from the class `c` to a lattice `N′` of rank `N_{j+1}` with determinant idele
 `d′`, Heisenberg data `XD`, half-lattice `HA` and local factor `Ξ`: `κ` with `r = ρ_j(c)ρ′_j(d′)` and the input power
 `nIn`. The chain's steps (`Data.chain`) and its top (`Top.col`, to the row points) are its instances. -/
-noncomputable def Data.kap (D : Data τ) (j : ℕ) (c : Cls D.n D.ST D.SG D.β D.Λ j)
+noncomputable def Data.kap (D : Data τ) (j : ℕ) (c : Cls D.n D.ST D.SF D.β D.Λ j)
     (N' : Submodule (𝓞 E) (Fin (D.n (j + 1)) → E)) (d' : Ideles E)
     (XD : XiData (Φ × Fin (D.n (j + 1)) × Fin (D.n j))) (HA : Set (Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E))
     (Xi : Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E → L) : Pol Φ (D.n j) L →ₗ[L] Pol Φ (D.n (j + 1)) L :=
@@ -611,7 +650,7 @@ noncomputable def Data.kap (D : Data τ) (j : ℕ) (c : Cls D.n D.ST D.SG D.β D
 `m2 + 2` reads it up to level `m2` and ends with `Top.col`. -/
 noncomputable def Data.chain (D : Data τ) : Chain Φ L where
   n := D.n
-  C := Cls D.n D.ST D.SG D.β D.Λ
+  C := Cls D.n D.ST D.SF D.β D.Λ
   mass _ c := mass c.2
   kappa j c c' := D.kap j c c'.2.N (D.dI (j + 1) c') (D.XD j c c') (D.HA j c c') (D.Xi j c c')
 
@@ -634,14 +673,14 @@ structure Top (D : Data τ) (m2 : ℕ) (SF : Finset (HeightOneSpectrum (𝓞 E))
   /-- Its determinant idele. -/
   dI : X → Ideles E
   /-- The finite Heisenberg data of the top step. -/
-  XD : Cls D.n D.ST D.SG D.β D.Λ (m2 + 1) → X → XiData (Φ × Fin (D.n (m2 + 2)) × Fin (D.n (m2 + 1)))
+  XD : Cls D.n D.ST D.SF D.β D.Λ (m2 + 1) → X → XiData (Φ × Fin (D.n (m2 + 2)) × Fin (D.n (m2 + 1)))
   /-- Its half-lattices. -/
-  HA : Cls D.n D.ST D.SG D.β D.Λ (m2 + 1) → X → Set (Matrix (Fin (D.n (m2 + 2))) (Fin (D.n (m2 + 1))) E)
+  HA : Cls D.n D.ST D.SF D.β D.Λ (m2 + 1) → X → Set (Matrix (Fin (D.n (m2 + 2))) (Fin (D.n (m2 + 1))) E)
   /-- The coupled factor of step `m2` (`XiCpl1`). -/
-  Xi1 : Cls D.n D.ST D.SG D.β D.Λ m2 → Cls D.n D.ST D.SG D.β D.Λ (m2 + 1) → Yb →
+  Xi1 : Cls D.n D.ST D.SF D.β D.Λ m2 → Cls D.n D.ST D.SF D.β D.Λ (m2 + 1) → Yb →
     Matrix (Fin (D.n (m2 + 1))) (Fin (D.n m2)) E → L
   /-- The top factor (`XiCpl2`). -/
-  Xi2 : Cls D.n D.ST D.SG D.β D.Λ (m2 + 1) → Yb → X → Matrix (Fin (D.n (m2 + 2))) (Fin (D.n (m2 + 1))) E → L
+  Xi2 : Cls D.n D.ST D.SF D.β D.Λ (m2 + 1) → Yb → X → Matrix (Fin (D.n (m2 + 2))) (Fin (D.n (m2 + 1))) E → L
   /-- `JetsRat` on the top step's range, as `Data.θ_rat`. -/
   θ_rat : ∀ c x (z : Cosets D.S (D.cA (m2 + 1)) (D.cB (m2 + 1)) c.2.N (pt x).N)
     (mm : Φ × Fin (D.n (m2 + 2)) × Fin (D.n (m2 + 1)) →₀ ℕ),
@@ -654,9 +693,9 @@ variable {τ} {D : Data τ} {m2 : ℕ} {SF : Finset (HeightOneSpectrum (𝓞 E))
 `col(x) = Σ_{c ∈ Cl_{m2+1}} Σ_{y ∈ Yb} mass(c)·κ_top(c, y, x)(Σ_{c₀ ∈ Cl_{m2}} mass(c₀)·κ_{m2}(c₀, c, y)(Θ(c₀)))`,
 with `κ_{m2}(c₀, c, y)` the step-`m2` kernel of `D` with the factor `Xi1 c₀ c y`, and `κ_top(c, y, x)` that of step
 `m2 + 1` from `c` to the lattice of `pt x`, with `ρ′ = (μξ)(dI x)` and the factor `Xi2 c y x` (`Data.kap`). -/
-noncomputable def Top.col (T : Top D m2 SF Yb X) (Θ : Cls D.n D.ST D.SG D.β D.Λ m2 → Pol Φ (D.n m2) L) (x : X) :
+noncomputable def Top.col (T : Top D m2 SF Yb X) (Θ : Cls D.n D.ST D.SF D.β D.Λ m2 → Pol Φ (D.n m2) L) (x : X) :
     Pol Φ (D.n (m2 + 2)) L :=
-  ∑ᶠ (c : Cls D.n D.ST D.SG D.β D.Λ (m2 + 1)) (y : Yb), ((mass c.2 : ℚ) : L) •
+  ∑ᶠ (c : Cls D.n D.ST D.SF D.β D.Λ (m2 + 1)) (y : Yb), ((mass c.2 : ℚ) : L) •
     D.kap (m2 + 1) c (T.pt x).N (T.dI x) (T.XD c x) (T.HA c x) (T.Xi2 c y x)
       (∑ᶠ c₀, ((mass c₀.2 : ℚ) : L) •
         D.kap m2 c₀ c.2.N (D.dI (m2 + 1) c) (D.XD m2 c₀ c) (D.HA m2 c₀ c) (T.Xi1 c₀ c y) (Θ c₀))
@@ -667,8 +706,8 @@ def Top.XDPinned (T : Top D m2 SF Yb X) : Prop :=
   ∀ c x, XDPin τ D.P D.S (D.cA (m2 + 1)) (D.cB (m2 + 1)) c.2.N (T.pt x).N (T.XD c x) (T.HA c x)
 
 /-- **Sanity:** with no classes at level `m2 + 1`, the column vanishes. -/
-theorem Top.col_of_isEmpty (T : Top D m2 SF Yb X) [IsEmpty (Cls D.n D.ST D.SG D.β D.Λ (m2 + 1))]
-    (Θ : Cls D.n D.ST D.SG D.β D.Λ m2 → Pol Φ (D.n m2) L) (x : X) : T.col Θ x = 0 :=
+theorem Top.col_of_isEmpty (T : Top D m2 SF Yb X) [IsEmpty (Cls D.n D.ST D.SF D.β D.Λ (m2 + 1))]
+    (Θ : Cls D.n D.ST D.SF D.β D.Λ m2 → Pol Φ (D.n m2) L) (x : X) : T.col Θ x = 0 :=
   finsum_of_isEmpty _
 
 end Data
