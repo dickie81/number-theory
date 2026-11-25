@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1941 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1943 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 221 | 782 |
+| `lib/core` | 222 | 784 |
 | `lib/pnt` | 357 | 1046 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -986,6 +986,11 @@ note of `formalisations/` that names it, if one does.
 
 - `WeilForm.rh_of_realRooted_limit`: Item 6's step, proved ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_ground_states`: The roadmap's endpoint, as a theorem ([note](../formalisations/weil-positivity.md))
+
+#### `RowSpace`: The row space `V0 = e·Amb`
+
+- `RowSpace.idemOf_empty`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `RowSpace.map_Amb_eq_range`: Sanity ([note](../formalisations/alpoge-rh.md))
 
 #### `ShellSchur`: Shell–interior coupling: Schur-type positivity and its finite chain
 

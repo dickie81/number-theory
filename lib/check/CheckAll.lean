@@ -460,6 +460,7 @@ import SharpBound
 import SharpChain
 import ThetaNorm
 import ThetaVol
+import RowSpace
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2300,6 +2301,8 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ThetaNorm.F0_zero
 #print axioms ThetaNorm.sgStar_zero
 #print axioms ThetaVol.volN_pos
+#print axioms RowSpace.idemOf_empty
+#print axioms RowSpace.map_Amb_eq_range
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
 #print axioms ZetaBalance.rhAndGRH_of_latticeBound
 #print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound
