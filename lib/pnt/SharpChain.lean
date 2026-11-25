@@ -18,7 +18,7 @@ archive's column depends on the frames), with
   reads it) to `y` by the equivariance law `Θ((γ, h)·x) = χ_m(h)·ρ_{λ_m}(γ)Θ(x)` (`WeylFock.rho`; `χ_m` a character
   of the level group `Λ_{m,b_m}`, existential like `ChIdx`'s later characters), for every `(γ, h)` with
   `y = (γ, h)·rep[y]`. The pinned frontier reads `col` at the decorated lift `tilQ x` of each row representative `x`
-  (`HermClasses.tilQ`: `til 1 N`, the level-`T` decorations, the frames `diag(be_w, 1)` at `SG`), so the former
+  (`HermClasses.tilQ tz`: `til 1 N`, `f_P = tz·a mod P`, the frames `(be_w, a/conj(tz) mod w)` at `SG`), so the former
   existential `lift` of bare lattices is `x ↦ [tilQ x]`, and `Lsh(tilQ x) = til tz N` is the lattice read before;
 * (b) the cast `N_m = n + 1`, `D.ST = ST`, `D.SG = SG` (`recast`);
 * (c) `inp`: forms → the chain's input, `F ↦ (c ↦ F(rep c))` (`Data.inp`), after an `L`-isomorphism `e` of the source
@@ -410,14 +410,14 @@ over `g₀g₁` (spec-5 §2: all places over `conj(π_{g₀})`, `conj(π_{g₁})
 `SG` or in `conj SG`, and not both (`SG ∩ conj SG = ∅`); `ST` is the set of places over `π_T = conj(tz)` (L2.3). The row
 spaces are pinned at every level by one clause (spec-9; module docstring, "Rows"): on the decorated lattices with `ST =
 ∅` and `SG ∪ QE μ` (`QE μ` the row places `IsThetaCol` reads at `μ`), level `rowLevel SG (QE μ)`, `lsh = N`, `pt = tilQ`
-(the column read at the decorated lift), finitely many classes, and `V0_μ` read off `V0pt = idemOf X (Amb ⊓ AmbPt)` at
-representatives, with one `X` (nonempty, irreducible) for all levels, the type group `∏_{w ∈ SG} GL_r(O_E/w)`, `r = k +
-m − 1` (`rr`), through `levi`, the level `Psym` with `j ∘ ψ = chiSym xi0`, and `rowChar` from the residues
-(`Hecke.ResAt`) of the lift characters `mu0` (the ones every `IsThetaCol` reads) at `SG` and of `ξT μ` at `QE μ`. One
-`xi0` (spec-2 item 2) serves every `IsThetaCol` and the row space: `xi0 = −1/(N·√−d)` with `N > 0` (the archive's
-`N(cc)`, not tied to the pin's `cc`), a unit at every `w ∈ SG`. The level's twist is `ξT μ`: `δ_ℓ·ψ_w` at `μ(w)`, with
-`GoodTw` for every conjugate `ψ_w^a`: the `w`-integral sources at `μ′` and at `μ0`, both in `V_ω`, have a finite index
-bounded one way (module docstring, "Twist characters"); `pde ≠ pde′`. -/
+(the column read at the decorated lift `tilQ tz`, `tz ∈ O_E` the integer `P.tz`), finitely many classes, and `V0_μ` read
+off `V0pt = idemOf X (Amb ⊓ AmbPt)` at representatives, with one `X` (nonempty, irreducible) for all levels, the type
+group `∏_{w ∈ SG} GL_r(O_E/w)`, `r = k + m − 1` (`rr`), through `levi`, the level `Psym` with `j ∘ ψ = chiSym xi0`, and
+`rowChar` from the residues (`Hecke.ResAt`) of the lift characters `mu0` (the ones every `IsThetaCol` reads) at `SG` and
+of `ξT μ` at `QE μ`. One `xi0` (spec-2 item 2) serves every `IsThetaCol` and the row space: `xi0 = −1/(N·√−d)` with `N >
+0` (the archive's `N(cc)`, not tied to the pin's `cc`), a unit at every `w ∈ SG`. The level's twist is `ξT μ`: `δ_ℓ·ψ_w`
+at `μ(w)`, with `GoodTw` for every conjugate `ψ_w^a`: the `w`-integral sources at `μ′` and at `μ0`, both in `V_ω`, have
+a finite index bounded one way (module docstring, "Twist characters"); `pde ≠ pde′`. -/
 def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
   ∃ (_ : IsCMField K) (τK : Φ S.A → (S.E →+* K)) (j : K →+* ℂ), (∀ ρ, j.comp (τK ρ) = S.τ ρ) ∧
     ∀ u ∈ A₀ κ, ∃ (T : Type) (G X : T → Type) (_ : ∀ μ, Group (G μ)) (_ : ∀ μ, MulAction (G μ) (X μ))
@@ -430,7 +430,8 @@ def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
       (χ0 : (D.fr u).ι → (uniUT SG n0 →* K))
       (Xc : (D.fr u).ι → Submodule K (HermForms.Fn ST (uniUT SG n0) (Φ S.A) K))
       (e : ∀ ω, Vs ω ≃ₗ[K] ↥(Xc ω ⊓ HermForms.Vω ST τK (χ0 ω) lam0))
-      (QE : T → Finset (HeightOneSpectrum (𝓞 S.E))) (xi0 : S.E) (ξT : T → Hecke S.E K) (mu0 : ℕ → Hecke S.E K),
+      (QE : T → Finset (HeightOneSpectrum (𝓞 S.E))) (xi0 : S.E) (ξT : T → Hecke S.E K) (mu0 : ℕ → Hecke S.E K)
+      (tzO : 𝓞 S.E),
       (∀ μ ω, IsThetaCol τK (D.eW u) D.Sg (D.R.N D.R.m - 1) (μ = μ0) (QE μ) xi0 mu0
         (fun D' k Q ξ => D.Shp u ω D' k Q ∧ ∀ x, ξ.toHom x = (ξT μ).toHom x) (e ω) (P.col μ ω)) ∧
         ((∃ (Ncc : ℕ) (s : S.E), 0 < Ncc ∧ s ^ 2 = -(S.d : S.E) ∧ xi0 * ((Ncc : S.E) * s) = -1) ∧
@@ -466,7 +467,7 @@ def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
               (eX : X μ ≃ points (E := S.E) (ST := (∅ : Finset (HeightOneSpectrum (𝓞 S.E))))
                 (RowSpace.rowLevel (D.R.N D.R.m - 1) D.rr D.R.t SG (QE μ))),
             (∀ (g : G μ) (x : X μ), (eX (g • x)).1 = eG g • (eX x).1) ∧ Finite (Cl (G μ) (X μ)) ∧
-            (∀ x, P.pt μ x = tilQ Finset.subset_union_left (eX x).1 ∧ P.lsh μ x = (eX x).1.N) ∧
+            (∀ x, P.pt μ x = tilQ tzO Finset.subset_union_left (eX x).1 ∧ P.lsh μ x = (eX x).1.N) ∧
             ∀ F, F ∈ P.V0 μ ↔ ∃ φ ∈ RowSpace.V0pt τK P.σ ∅ (RowSpace.rowLevel _ D.rr D.R.t SG (QE μ))
               (fun h => RowSpace.rowChar D.rr D.R.t D.R.m cS (cQ μ) h.1) (RowSpace.levi D.rr D.rr_le SG (QE μ))
               (RowSpace.Psym D.rr D.R.k (D.R.m / 2 - 1) SG) ψ Xg, ∀ c, F c = φ (eX c.out)) ∧
@@ -475,7 +476,7 @@ def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
         (∀ v ∈ SG, ((D.g₀ * D.g₁ : ℕ) : 𝓞 S.E) ∈ v.asIdeal) ∧
         (∀ v ∈ SG, ∀ w ∈ SG,
           v.asIdeal ≠ w.asIdeal.comap (IsCMField.ringOfIntegersComplexConj S.E : 𝓞 S.E →+* 𝓞 S.E)) ∧
-        (∀ v, v ∈ ST ↔ v.valuation S.E (IsCMField.complexConj S.E P.tz) < 1) ∧
+        (∀ v, v ∈ ST ↔ v.valuation S.E (IsCMField.complexConj S.E P.tz) < 1) ∧ (tzO : S.E) = P.tz ∧
         (∀ ω, ∃ (a b : ℤ) (s : S.E), s ^ 2 = -(S.d : S.E) ∧ 4 * (D.T u ω : ℤ) = a ^ 2 + S.d * b ^ 2 ∧
           ((S.QS * S.q * S.d * (D.g₀ * D.g₁) ^ 2 : ℕ) : ℤ) ∣ b ∧
           a ≡ b + 2 [ZMOD 2 * ((S.QS * S.q * S.d * (D.g₀ * D.g₁) ^ 2 : ℕ) : ℤ)] ∧
@@ -488,8 +489,8 @@ theorem SharpData.RealisedPinned.realised {D : SharpData S κ x ε X K} (h : D.R
     D.Realised thetaHook := by
   obtain ⟨_, τK, j, hj, hu⟩ := h
   refine ⟨τK, j, hj, fun u hu' => ?_⟩
-  obtain ⟨T, G, X, i1, i2, Vs, i3, i4, i5, i6, ST, SG, P, μ0, tw, 𝔞, M, n0, lam0, χ0, Xc, e, QE, xi0, _, _, hc, -, -,
-    -, -, -, -, -, -, -, -, -, -, hR⟩ := hu u hu'
+  obtain ⟨T, G, X, i1, i2, Vs, i3, i4, i5, i6, ST, SG, P, μ0, tw, 𝔞, M, n0, lam0, χ0, Xc, e, QE, xi0, _, _, _, hc, -,
+    -, -, -, -, -, -, -, -, -, -, -, -, hR⟩ := hu u hu'
   exact ⟨T, G, X, i1, i2, Vs, i3, i4, i5, i6, _, P, μ0, tw, 𝔞, M,
     ⟨inferInstance, inferInstance, inferInstance, τK, _, _, ST, SG, Equiv.refl _,
       fun ω => ⟨n0, lam0, χ0 ω, Xc ω, e ω, fun μ => ⟨_, _, _, _, _, hc μ ω⟩⟩⟩,
