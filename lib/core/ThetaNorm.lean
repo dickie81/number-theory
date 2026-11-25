@@ -141,13 +141,16 @@ imaginary quadratic subfield) with `𝔄 = cc·AA0`, `φ₀ = σ₀ ∘ τ_p` on
 `τ`-coordinate ideal `τ(𝔟⁻¹)·O_L` of `𝔟⁻¹ = AA0` (the spec's `𝔄 = O_{K₀}·𝔟⁻¹` is `cc·AA0` here). `AA0` is pinned
 (spec L5.3): `AA0 = 𝔟⁻¹ = {x | x𝔟 ⊆ O_E}` for an ideal `𝔟` of `O_E` with `𝔟 + 𝔟̄ = O_E` and `𝔟𝔟̄ = 𝔡_{E/K₀}`, stated
 through the inverse different: `(𝔟𝔟̄)⁻¹ = {x | Tr_{E/K₀}(x·O_E) ⊆ O_{K₀}}`; `K₀ ⊇ cc` the quadratic subfield. `g_τ` is
-fixed up to a unit of `O_L`; a global unit does not change slopes (product formula). The choices left (`cc`, `𝔟`,
+fixed up to a unit of `O_L`; a global unit does not change slopes (product formula). `K₀ = ℚ(√−d)` (`d = 4·sd²`)
+and `cc` is an `O_{K₀}`-module (audit 6's hedge). The choices left (`cc`, `𝔟`,
 the basis of `Lc`, `t` mod `Lc`, `g`, `κ`, the units of `g_τ`) do not move `|θ₀|` (spec-4). Meant for the
 frontier (`SharpChain.IsThetaCol`). -/
 def Pin.Canonical [NumberField L] (τ : Φ → (E →+* L)) (P : TP E L Φ) (D : Pin Φ P.s) : Prop :=
   ∃ (cc : Submodule ℤ E) (AA0 : Submodule (𝓞 E) E) (Lp : PeriodPair) (K₀ : IntermediateField ℚ E)
-    (𝔟 : Ideal (𝓞 E)),
-    Module.finrank ℚ K₀ = 2 ∧ (cc : Set E) ⊆ K₀ ∧ (∀ x : E, x ∈ AA0 ↔ ∀ y ∈ 𝔟, IsIntegral ℤ (x * (y : E))) ∧
+    (𝔟 : Ideal (𝓞 E)) (sqd : E) (d : ℕ),
+    4 * P.sd ^ 2 = (d : ℝ) ∧ sqd ^ 2 = -(d : E) ∧ K₀ = IntermediateField.adjoin ℚ {sqd} ∧
+    Module.finrank ℚ K₀ = 2 ∧ (cc : Set E) ⊆ K₀ ∧ (∀ y ∈ K₀, IsIntegral ℤ y → ∀ x ∈ cc, y * x ∈ cc) ∧
+    (∀ x : E, x ∈ AA0 ↔ ∀ y ∈ 𝔟, IsIntegral ℤ (x * (y : E))) ∧
     𝔟 ⊔ 𝔟.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E) = ⊤ ∧
     (∀ x : E, (∀ y ∈ 𝔟 * 𝔟.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E),
       IsIntegral ℤ (x * (y : E))) ↔ ∀ y : 𝓞 E, IsIntegral ℤ (Algebra.trace K₀ E (x * (y : E)))) ∧

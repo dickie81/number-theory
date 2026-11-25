@@ -117,11 +117,11 @@ def tyPt {ST SG : Finset (HeightOneSpectrum (𝓞 E))} {n : ℕ} {Λ : Subgroup 
 
 open Classical in
 /-- **`col` is the theta chain's** at one level and word: `col φ = recast (Θ_m(inp(e φ)) ∘ lift)` for theta data
-`D` with `ChIdx`'s conditions, the anti-degeneracy and normalisation conditions (`U`: the untwisted level), a cusp
-subspace `X`, an isomorphism `e` of the
-source with `X ⊓ V_ω`, and a lift of lattices to classes with the spec's property (module docstring, (a)–(d)).
-`Shp D m` is a further condition on the data and length, set by the caller (the pinned frontier: the chain shape,
-`sd`, through `SharpData.RealisedPinned`). -/
+`D` with `ChIdx`'s conditions, the anti-degeneracy and normalisation conditions (`U`: the untwisted level, with the
+`ChIdx` representatives `h_{j,b}(P)` in `GL(O_(P))`, entrywise through `intAt` on `h` and `h⁻¹`), a cusp subspace
+`X`, an isomorphism `e` of the source with `X ⊓ V_ω`, and a lift of lattices to classes with the spec's property
+(module docstring, (a)–(d)). `Shp D m` is a further condition on the data and length, set by the caller (the pinned
+frontier: the chain shape, `sd`, through `SharpData.RealisedPinned`). -/
 def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ) (Sg : Set (HeightOneSpectrum (𝓞 E))) (n : ℕ)
     (U : Prop) (ST SG : Finset (HeightOneSpectrum (𝓞 E))) (xi0 : E) (Shp : Data τ → ℕ → Prop) {V : Type}
     [AddCommGroup V] [Module L V] (hV : V → V → L) (MV : Set V)
@@ -140,6 +140,8 @@ def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
     (∃ (C : ChIdx D.SG D.n m (D.ST ∪ D.SG) xi0 D.P.σ₀) (eβ : ∀ j, C.β j ≃ D.β j), (∀ j b, D.Λ j (eβ j b) = C.Λ j b) ∧
       (U → ∃ (k t : ℕ) (χ ψ μ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (sq : ℕ → HeightOneSpectrum (𝓞 E) → L),
         (∀ j, D.n j = k + j * (t + 1)) ∧
+        (∀ j b (Pl : ↥(D.ST ∪ D.SG)) a a', ThetaVol.intAt Pl.1 ((C.h j b Pl).val a a') ∧
+          ThetaVol.intAt Pl.1 ((C.h j b Pl).inv a a')) ∧
         (∀ j, ThetaVol.LocOk D.P.σ₀ xi0 D.SG D.SG (D.mu j).toHom 1 (ψ j) (μ j) (sq j) (χ j)) ∧
         ThetaVol.XiFull D m (m + 1) k D.SG
           (fun j b Pl => if hP : Pl ∈ D.ST ∪ D.SG then C.h j ((eβ j).symm b) ⟨Pl, hP⟩ else 1)
