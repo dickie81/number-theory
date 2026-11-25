@@ -22,11 +22,14 @@ Closes the chain hook of `SharpBound` (L7): the canonical hook `thetaHook`, whos
 * (d) `Data` existential, with `ChIdx`'s conditions on the fields `Data` has: `β 0` and `β(m−1)` singletons, every
   `β j` finite, `Λ 0 = uniUT`; its level data `(β, Λ)` are a `ChIdx`'s (`S = ST ∪ SG`, `σ₀` of `P`), up to a
   bijection of the index types; its characters are `μ_{0,j}ξ` with `μ_{0,j}` a `LiftChars` for given `e`, `Sg`.
-  When `U`, the local factors `Ξ_j`, `j < m − 1`, are pinned at every coset (`ThetaVol.XiFull` over the row set
-  `SG`, spec-3 §1, spec-6): `Ξ_j = ∏_P volN_P⁻¹·E1(om(Φ_P))`, with the representatives `h` the same `ChIdx`'s, the
-  canonical sharp instance (`J = JGsym`, `Φ_P = PhiGS ∘ entB`, depth `m + 1`, `N_j = k + j(t + 1)`), and `ψ_P`,
-  `μ_P`, `χ_P`, `√q` existential with the canonical properties for `μ_{0,j} = D.mu j` and the trivial twist
-  (`ThetaVol.LocOk`).
+  At every level, the representatives are `h_{j,b}(P) = 1` at `P ∈ SG` (the archive's `twIdx`, spec-7 §2b), and the
+  local factors `Ξ_j`, `j < m − 1`, are pinned at every coset (`ThetaVol.XiFull` over the row set `SG ∪ Q`, spec-3
+  §1, spec-6, spec-7 §3): `Ξ_j = ∏_P volN_P⁻¹·E1(om(Φ_P))`, with the representatives `h` the same `ChIdx`'s, the
+  canonical sharp instance (`J = JGsym`, `Φ_P = PhiGS ∘ entB` at `SG`; `JQ(k + j)`, `Φ_P = PhiQ ∘ entB` at `Q`
+  (`phQ`); depth `m + 1`, `N_j = k + j(t + 1)`), and `ψ_P`, `μ_P`, `χ_P`, `√q` existential with the canonical
+  properties for `μ_{0,j}` and the twist `ξ` (`ThetaVol.LocOk`, `dQ = 2m`). `Q` (a parameter) is `sel(Qprime ξ)`:
+  one place over each place where `ξ` ramifies (as a pair `{P, P̄}`), never both `P` and `P̄`, of prime norm and
+  unramified over `ℚ` (spec-7 §3a; `Q = ∅` when `U`).
   Against `κ ≡ 0`: `S = ST ∪ SG` (the archive's place set of `homAt`), `cA, cB > 0`, the Heisenberg data have
   `SA, SB ≠ ∅` and `vol > 0`, and every class at a level `j + 1 ≤ m` meets a nonzero `Ξ`.
 * (e) Normalisation (audit 3, B1): the last step's `Ξ` is `PsiAt` (spec-2 1d: `om` is trivial at `g = h = 1`, no `E1`,
@@ -52,8 +55,8 @@ above `g₀g₁` (`eW`, `Sg`),
 **Source pins** (L4.3, L6.5, audit of `KLattice.G`): `IsThetaCol` also reads, through `e`, a hermitian form `hV`
 (the Petersson form `HermForms.pet` of `X ⊓ V_ω`) and a set `MV` (the integral forms `HermForms.Mω`); the pinned
 frontier takes `K` CM, `M_ω = O_K·MV`, and the source metrics `G_v = σ_v(hV)` in the coordinates of the frame
-(`KFrame.RealisesPet`). The target metric stays existential. Not pinned: the twisted levels' `lat`, `lsh` (only
-`V0 ≠ 0` there), a lower bound on `X` or on the words.
+(`KFrame.RealisesPet`). The target metric stays existential. The twisted levels' `X`, `lat`, `lsh`, `V0` are pinned
+as at `μ0` on `SG ∪ QE μ` with `ST = ∅` (spec-7 §2c). Not pinned: a lower bound on `X` or on the words.
 
 **Untwisted level, `tz`, `𝔞`** (L2.3, L2.5, L6.5; audit 2, A4–A5). At `μ0` the level is the decorated lattices:
 `G μ0 ≃* Grp E n SG Λ` and `X μ0 ≃ points Λ` compatibly with the actions (`n = N_m − 1`), with `lat μ0 x` the lattice
@@ -73,8 +76,10 @@ twisted levels, `dI` up to units, the side `sel` picked over each `ST` pair), `N
 `X`, `e` (one per level and word, so a twisted chain may lift another form than the untwisted one), `𝔞` below its
 cap, the untwisted level's `ST`, `SG`, the branching projection, the `ChIdx` representatives and characters.
 `Ycos` (the
-last step's coset `Y`) is not reached: `Data` has no field that reads it. Not stated: `Tw` closed under conjugation
-(`K` is not assumed CM), `T_ω ∉ {pde, pde′}`, `cA`, `cB` at the twisted levels, the later-step `ChIdx` ties.
+last step's coset `Y`) is not reached: `Data` has no field that reads it. Not stated: `Tw` by the archive's
+`TwistedSetDef` (the untwisted kernel indices `Ij`, `jw` and per-place forced orders are not defined here),
+`ξ_μ`'s shape (`IsDelta`/`IsPsi`) and `GoodTw` index bound (spec-7 §1), `T_ω ∉ {pde, pde′}`, the later-step
+`ChIdx` ties at `Q`.
 
 **Sanity theorem:** `Data.comp_zero_inp`.
 -/
@@ -123,10 +128,12 @@ open Classical in
 (module docstring, (a)–(d)). `Shp D m` is a further condition on the data and length, set by the caller (the pinned
 frontier: the chain shape, `sd`, through `SharpData.RealisedPinned`). -/
 def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ) (Sg : Set (HeightOneSpectrum (𝓞 E))) (n : ℕ)
-    (U : Prop) (ST SG : Finset (HeightOneSpectrum (𝓞 E))) (xi0 : E) (Shp : Data τ → ℕ → Prop) {V : Type}
+    (U : Prop) (ST SG Q : Finset (HeightOneSpectrum (𝓞 E))) (xi0 : E)
+    (Shp : Data τ → ℕ → Finset (HeightOneSpectrum (𝓞 E)) → Prop) {V : Type}
     [AddCommGroup V] [Module L V] (hV : V → V → L) (MV : Set V)
     (col : V →ₗ[L] PeriodTarget.Col Φ n E L) : Prop :=
-  ∃ (D : Data τ) (m : ℕ) (hm : D.n m = n + 1) (χ0 : uniUT D.SG (D.n 0) →* L)
+  ∃ (D : Data τ) (m : ℕ) (hm : D.n m = n + 1) (χ0 : uniUT D.SG (D.n 0) →* L) (Cμ : LiftChars τ m eF Sg)
+    (ξ : Hecke E L)
     (X : Submodule L (HermForms.Fn D.ST (uniUT D.SG (D.n 0)) Φ L))
     (e : V ≃ₗ[L] ↥(X ⊓ HermForms.Vω D.ST τ χ0 (D.lam 0)))
     (lift : Submodule (𝓞 E) (Fin (D.n m) → E) → D.chain.C m),
@@ -137,18 +144,27 @@ def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
       (∀ j c c', (D.XD j c c').SA.Nonempty ∧ (D.XD j c c').SB.Nonempty ∧ 0 < (D.XD j c c').vol) ∧ D.XDPinned ∧
       (∀ j < m, ∀ c', ∃ c x, D.Xi j c c' x ≠ 0) ∧
       ∀ c c' x, D.Xi (m - 1) c c' x = 0 ∨ ∃ k, 0 < k ∧ D.Xi (m - 1) c c' x ^ k = 1) ∧
-    (∃ (C : ChIdx D.SG D.n m (D.ST ∪ D.SG) xi0 D.P.σ₀) (eβ : ∀ j, C.β j ≃ D.β j), (∀ j b, D.Λ j (eβ j b) = C.Λ j b) ∧
-      (U → ∃ (k t : ℕ) (χ ψ μ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (sq : ℕ → HeightOneSpectrum (𝓞 E) → L),
-        (∀ j, D.n j = k + j * (t + 1)) ∧
-        (∀ j b (Pl : ↥(D.ST ∪ D.SG)) a a', ThetaVol.intAt Pl.1 ((C.h j b Pl).val a a') ∧
+    (∃ (C : ChIdx D.SG D.n m (D.ST ∪ D.SG ∪ Q) xi0 D.P.σ₀) (eβ : ∀ j, C.β j ≃ D.β j),
+      (∀ j b, D.Λ j (eβ j b) = C.Λ j b) ∧
+      (∀ j b (Pl : ↥(D.ST ∪ D.SG ∪ Q)), Pl.1 ∈ D.SG → C.h j b Pl = 1) ∧
+      (U → ∀ j b (Pl : ↥(D.ST ∪ D.SG ∪ Q)) a a', ThetaVol.intAt Pl.1 ((C.h j b Pl).val a a') ∧
           ThetaVol.intAt Pl.1 ((C.h j b Pl).inv a a')) ∧
-        (∀ j, ThetaVol.LocOk D.P.σ₀ xi0 D.SG D.SG (D.mu j).toHom 1 (ψ j) (μ j) (sq j) (χ j)) ∧
-        ThetaVol.XiFull D m (m + 1) k D.SG
-          (fun j b Pl => if hP : Pl ∈ D.ST ∪ D.SG then C.h j ((eβ j).symm b) ⟨Pl, hP⟩ else 1)
-          (ThetaVol.jS D m k t) ψ μ sq (ThetaVol.phS D m k t ψ χ))) ∧
-    (∃ (C : LiftChars τ m eF Sg) (ξ : Hecke E L), (U → ∀ x, ξ.toHom x = 1) ∧
-      ∀ j < m, ∀ x, (D.mu j).toHom x = (C.mu j).toHom x * ξ.toHom x) ∧
-    (U → D.ST = ST ∧ D.SG = SG) ∧ Shp D m ∧
+      ∃ (k t : ℕ) (χ ψ μ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (sq : ℕ → HeightOneSpectrum (𝓞 E) → L),
+        (∀ j, D.n j = k + j * (t + 1)) ∧
+        (∀ j, ThetaVol.LocOk D.P.σ₀ xi0 (2 * m) (D.SG ∪ Q) D.SG (Cμ.mu j).toHom ξ.toHom (ψ j) (μ j) (sq j)
+          (χ j)) ∧
+        ThetaVol.XiFull D m (m + 1) k (D.SG ∪ Q)
+          (fun j b Pl => if hP : Pl ∈ D.ST ∪ D.SG ∪ Q then C.h j ((eβ j).symm b) ⟨Pl, hP⟩ else 1)
+          (ThetaVol.jS D m k t) ψ μ sq
+          (fun j Pl => if Pl ∈ D.SG then ThetaVol.phS D m k t ψ χ j Pl else ThetaVol.phQ D m k χ j Pl)) ∧
+    ((U → ∀ x, ξ.toHom x = 1) ∧ ∀ j < m, ∀ x, (D.mu j).toHom x = (Cμ.mu j).toHom x * ξ.toHom x) ∧
+    (∀ v : HeightOneSpectrum (𝓞 E),
+      (∃ P ∈ Q, P = v ∨ P.asIdeal = v.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E)) ↔
+        ∃ x ∈ unitsAway {w | w ≠ v ∧
+          w.asIdeal ≠ v.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E)}, ξ.toHom x ≠ 1) ∧
+    (∀ P ∈ Q, ∀ P' ∈ Q, P'.asIdeal ≠ P.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E)) ∧
+    (∀ P ∈ Q, (Ideal.absNorm P.asIdeal).Prime ∧ ((Ideal.absNorm P.asIdeal : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2) ∧
+    D.ST = ST ∧ D.SG = SG ∧ Shp D m Q ∧
     (∀ j < m, ∃ pin, ThetaNorm.Pin.Canonical τ D.P pin ∧ (D.θ j).Normalised pin) ∧
     (∃ sel : Set (HeightOneSpectrum (𝓞 E)), (∀ v v' : HeightOneSpectrum (𝓞 E),
         v'.asIdeal = v.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E) → v ≠ v' →
@@ -180,8 +196,9 @@ structure on `E` and a CM type `τ`. -/
 def thetaHook : ChainHook := fun Φ _ _ n E L _ _ _ T Ω Vs _ _ col =>
   ∃ (_ : IsCMField E) (_ : NumberField L) (_ : IsCMField L) (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
     (Sg : Set (HeightOneSpectrum (𝓞 E))), ∀ (μ : T) (ω : Ω),
-      ∃ (hV : Vs ω → Vs ω → L) (MV : Set (Vs ω)) (U : Prop) (ST SG : Finset (HeightOneSpectrum (𝓞 E)))
-        (xi0 : E) (Shp : Data τ → ℕ → Prop), IsThetaCol τ eF Sg n U ST SG xi0 Shp hV MV (col μ ω)
+      ∃ (hV : Vs ω → Vs ω → L) (MV : Set (Vs ω)) (U : Prop) (ST SG Q : Finset (HeightOneSpectrum (𝓞 E)))
+        (xi0 : E) (Shp : Data τ → ℕ → Finset (HeightOneSpectrum (𝓞 E)) → Prop),
+        IsThetaCol τ eF Sg n U ST SG Q xi0 Shp hV MV (col μ ω)
 
 /-- **The sharp frontier with the theta chain**: `SharpBound` at the canonical hook. -/
 def SharpBoundTheta : Prop := SharpBound thetaHook
@@ -286,21 +303,24 @@ the archive's support (`T_ω`, `d`, `g₀g₁`, the primes up to `X″`); the ex
 def SharpData.aBd (D : SharpData S κ x ε X K) (u : S.A) (ω : (D.fr u).ι) : ℕ :=
   (D.T u ω * S.d * D.g₀ * D.g₁ * primorial ⌊S.cutX x ε⌋₊) ^ (Module.finrank ℚ K * D.wB u)
 
+open Classical in
 /-- **The chain shape and constants** of `u` (L0.5–L0.6, L5.3–L5.4; audit 4, pins 2 and 5), for `IsThetaCol`'s
 `Shp`: at the untwisted level (`U`) the length is `m = R.m`, and for `j ≤ m` the ranks are `n_j = N_j`, the weights
 `e_j` are those of `hc u` (`eW`), and `λ_j = WeylFock.wt … j` with `u_i − ½`, `e` of `hc u` (as `lamW` at `j = m`);
 the coset integers are `cA = (∏_{P ∈ SG} N P)^{m+1}` and `cB = T_ω·(∏_{P ∈ SG} N P)^{m+1}` at every step (spec-5 §2:
-the canonical constants `A = B = m + 1`, and the twist's places `QE` are empty); at every level `sd = √d/2`. -/
+the canonical constants `A = B = m + 1`), at every level over the row set `SG ∪ Q` (spec-7 §3f: `cA =
+(∏_{P ∈ SG ∪ Q} N P)^{m+1}`, `cB = T_ω·cA`); at every level `sd = √d/2`. -/
 def SharpData.Shp (D : SharpData S κ x ε X K) [IsCMField K] {τK : Φ S.A → (S.E →+* K)} (u : S.A)
-    (ω : (D.fr u).ι) (U : Prop) (D' : Data τK) (m' : ℕ) : Prop :=
+    (ω : (D.fr u).ι) (U : Prop) (D' : Data τK) (m' : ℕ) (Q : Finset (HeightOneSpectrum (𝓞 S.E))) : Prop :=
+  (∀ j, D'.cA j = (∏ P ∈ D'.SG ∪ Q, Ideal.absNorm P.asIdeal) ^ (m' + 1) ∧
+      D'.cB j = D.T u ω * (∏ P ∈ D'.SG ∪ Q, Ideal.absNorm P.asIdeal) ^ (m' + 1)) ∧
   (U → m' = D.R.m ∧ (∀ j ≤ m', D'.n j = D.R.N j) ∧ (∀ j ≤ m', D'.e j = D.eW u j) ∧
-    (∀ j, D'.cA j = (∏ P ∈ D'.SG, Ideal.absNorm P.asIdeal) ^ (m' + 1) ∧
-      D'.cB j = D.T u ω * (∏ P ∈ D'.SG, Ideal.absNorm P.asIdeal) ^ (m' + 1)) ∧
     ∀ j ≤ m', ∀ (h : D'.n j = D.R.k + j * (D.R.t + 1)) ρ i, D'.lam j ρ i =
       WeylFock.wt D.R.k D.R.t j (fun ρ i => ⌊(D.hc u ρ).u i - 1 / 2⌋) (fun ρ => finN (D.hc u ρ).e) ρ
         (Fin.cast h i)) ∧
     D'.P.sd = Real.sqrt S.d / 2
 
+open Classical in
 /-- **Realised, pinned**: `SharpData.Realised thetaHook` over a CM field `K`, with the chain's CM type equal to `τ_K`,
 the branching maps pinned (`BrPinned`) at `λ = λ_m` (`lamW`) and `σ = sgT` (`sgW`) of `hc u`, the source lattices
 `M_ω` the `O_K`-span of the integral forms `HermForms.Mω` of `X ⊓ V_ω` and the source metrics the Petersson form
@@ -316,7 +336,9 @@ with the generic character `ψ`, `j ∘ ψ = lamGen xi0`, and `ρ` the action
 `(g·F)(c) = F(g⁻¹·c)` through `be` (`tyPt`). `ρ` is existential, fixed by this on every class; it exists only if `𝔊`
 permutes the `Λ`-classes; `Λ = ⊥` (L6.2, the spec's `U(X′)`). One `xi0` (spec-2 item 2) serves every `IsThetaCol` and
 the row space: `xi0 = −1/(N·√−d)` with `N > 0` (the archive's `N(cc)`, not tied to the pin's `cc`), a unit at every
-`w ∈ SG`. -/
+`w ∈ SG`. Each twisted level `μ ≠ μ0` is pinned the same way (spec-7 §2c), on the decorated lattices with
+`ST = ∅` and `SG ∪ QE μ` (`QE μ` the row places `IsThetaCol` reads at `μ`): `lat = N`, `lsh = Lsh`, and its row
+space by `IsRowSpace` on `SG ∪ QE μ`. -/
 def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
   ∃ (_ : IsCMField K) (τK : Φ S.A → (S.E →+* K)) (j : K →+* ℂ), (∀ ρ, j.comp (τK ρ) = S.τ ρ) ∧
     ∀ u ∈ A₀ κ, ∃ (T : Type) (G X : T → Type) (_ : ∀ μ, Group (G μ)) (_ : ∀ μ, MulAction (G μ) (X μ))
@@ -324,9 +346,10 @@ def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
       (_ : ∀ ω, Module (𝓞 K) (Vs ω)) (_ : ∀ ω, IsScalarTower (𝓞 K) K (Vs ω))
       (P : PeriodTarget.PerData (Φ S.A) (D.R.N D.R.m - 1) S.E K G X Vs) (μ0 : T) (tw : PeriodTarget.Twist P μ0)
       (𝔞 : (D.fr u).ι → Ideal (𝓞 K)) (M : ∀ ω, Submodule (𝓞 K) (Vs ω)) (hV : T → ∀ ω, Vs ω → Vs ω → K)
-      (MV : T → ∀ ω, Set (Vs ω)) (ST SG : Finset (HeightOneSpectrum (𝓞 S.E))) (xi0 : S.E),
-      (∀ μ ω, IsThetaCol τK (D.eW u) D.Sg (D.R.N D.R.m - 1) (μ = μ0) ST SG xi0 (D.Shp u ω (μ = μ0)) (hV μ ω)
-        (MV μ ω) (P.col μ ω)) ∧
+      (MV : T → ∀ ω, Set (Vs ω)) (ST SG : Finset (HeightOneSpectrum (𝓞 S.E)))
+      (QE : T → Finset (HeightOneSpectrum (𝓞 S.E))) (xi0 : S.E),
+      (∀ μ ω, IsThetaCol τK (D.eW u) D.Sg (D.R.N D.R.m - 1) (μ = μ0) ST SG (QE μ) xi0 (D.Shp u ω (μ = μ0))
+        (hV μ ω) (MV μ ω) (P.col μ ω)) ∧
         ((∃ (Ncc : ℕ) (s : S.E), 0 < Ncc ∧ s ^ 2 = -(S.d : S.E) ∧ xi0 * ((Ncc : S.E) * s) = -1) ∧
           ∀ w ∈ SG, w.valuation S.E xi0 = 1) ∧
         BrPinned τK P (D.lamW u) (D.sgW u) ∧ (∀ ω, M ω = Submodule.span (𝓞 K) (MV μ0 ω)) ∧
@@ -341,6 +364,18 @@ def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
             (∀ g, j (ψ g) = lamGen xi0 (g : ∀ w : SG, GL (Fin (D.R.N D.R.m - 1)) (𝓞 S.E ⧸ w.1.asIdeal))) ∧
             (∀ g F x, ρ g F (Quotient.mk'' x) = F (Quotient.mk'' (eX.symm (tyPt g⁻¹ (eX x))))) ∧
             RowSpace.IsRowSpace ρ (uniUT SG (D.R.N D.R.m - 1)) ψ (P.V0 μ0)) ∧
+        (∀ μ, μ ≠ μ0 → ∃ (Λ : Subgroup (∀ w : ↥(SG ∪ QE μ), GL (Fin (D.R.N D.R.m - 1)) (𝓞 S.E ⧸ w.1.asIdeal)))
+          (eG : G μ ≃* Grp S.E (D.R.N D.R.m - 1) (SG ∪ QE μ) Λ)
+          (eX : X μ ≃ points (E := S.E) (ST := (∅ : Finset (HeightOneSpectrum (𝓞 S.E)))) Λ),
+          Λ = ⊥ ∧ (∀ g x, eX (g • x) = eG g • eX x) ∧ (∀ x, P.lat μ x = (eX x).1.N ∧ P.lsh μ x = Lsh (eX x).1) ∧
+          ∃ (_ : Fintype (∀ w : ↥(SG ∪ QE μ), GL (Fin (D.R.N D.R.m - 1)) (𝓞 S.E ⧸ w.1.asIdeal)))
+            (_ : Fintype (uniUT (SG ∪ QE μ) (D.R.N D.R.m - 1))) (ψ : uniUT (SG ∪ QE μ) (D.R.N D.R.m - 1) →* K)
+            (ρ : Representation K (∀ w : ↥(SG ∪ QE μ), GL (Fin (D.R.N D.R.m - 1)) (𝓞 S.E ⧸ w.1.asIdeal))
+              (Cl (G μ) (X μ) →₀ Pol (Φ S.A) (D.R.N D.R.m - 1) K)),
+            (∀ g, j (ψ g) =
+              lamGen xi0 (g : ∀ w : ↥(SG ∪ QE μ), GL (Fin (D.R.N D.R.m - 1)) (𝓞 S.E ⧸ w.1.asIdeal))) ∧
+            (∀ g F x, ρ g F (Quotient.mk'' x) = F (Quotient.mk'' (eX.symm (tyPt g⁻¹ (eX x))))) ∧
+            RowSpace.IsRowSpace ρ (uniUT (SG ∪ QE μ) (D.R.N D.R.m - 1)) ψ (P.V0 μ)) ∧
         (∀ v : HeightOneSpectrum (𝓞 S.E), ((D.g₀ * D.g₁ : ℕ) : 𝓞 S.E) ∈ v.asIdeal → v ∈ SG ∨
           ∃ w ∈ SG, v.asIdeal = w.asIdeal.comap (IsCMField.ringOfIntegersComplexConj S.E : 𝓞 S.E →+* 𝓞 S.E)) ∧
         (∀ v ∈ SG, ((D.g₀ * D.g₁ : ℕ) : 𝓞 S.E) ∈ v.asIdeal) ∧
@@ -358,10 +393,11 @@ theorem SharpData.RealisedPinned.realised {D : SharpData S κ x ε X K} (h : D.R
     D.Realised thetaHook := by
   obtain ⟨_, τK, j, hj, hu⟩ := h
   refine ⟨τK, j, hj, fun u hu' => ?_⟩
-  obtain ⟨T, G, X, i1, i2, Vs, i3, i4, i5, i6, P, μ0, tw, 𝔞, M, hV, MV, ST, SG, xi0, hc, -, -, -, -, -, -, -, -, -,
-    -, -, hR⟩ := hu u hu'
+  obtain ⟨T, G, X, i1, i2, Vs, i3, i4, i5, i6, P, μ0, tw, 𝔞, M, hV, MV, ST, SG, QE, xi0, hc, -, -, -, -, -, -, -, -, -,
+    -, -, -, hR⟩ := hu u hu'
   exact ⟨T, G, X, i1, i2, Vs, i3, i4, i5, i6, P, μ0, tw, 𝔞, M,
-    ⟨inferInstance, inferInstance, inferInstance, τK, _, _, fun μ ω => ⟨_, _, _, _, _, _, _, hc μ ω⟩⟩, hR.realises τK⟩
+    ⟨inferInstance, inferInstance, inferInstance, τK, _, _, fun μ ω => ⟨_, _, _, _, _, _, _, _, hc μ ω⟩⟩,
+    hR.realises τK⟩
 
 /-- **The pinned sharp frontier**: `SharpBoundTheta`'s shape, with pinned realisation (`τ_K` in the chain, `br`
 pinned) and the arithmetic of the parameters (`SharpData.Arith`). -/

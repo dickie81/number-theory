@@ -26,8 +26,8 @@ All groups are subgroups of `GL_{n+c}(E)` for the global field `E`; `P`-local in
 **Parameters.** `JG` takes the index shuffle as a parameter; `entB` and `JGsym` use the archive's `fIdx`/`fPos`
 (spec-6 §6). `XiStd` takes the group `JS` at `SG`, the representatives `h` (the `ChIdx` bundle's, spec-3 §1 caveat),
 the kernel shapes `Φ_P`, the additive characters `ψ_P`, the local characters `μ_P` and `sq_P = √q` as parameters;
-`LocOk` pins the canonical ones (spec-6 §4), and `jS`/`phS` are the canonical sharp `JS`/`Φ_P` at `SG`. At the
-untwisted level the row set is `SG` (spec-6 §5), so `PhiQ`/`JQ` (twists) are not used by the frontier. `E1` uses
+`LocOk` pins the canonical ones (spec-6 §4, spec-7 §3), `jS`/`phS` are the canonical sharp `JS`/`Φ_P` at `SG`, and
+`phQ` the canonical `Φ_P` at `Q`. The row set is `SG ∪ Q` (spec-7 §3a; `Q = ∅` at the untwisted level). `E1` uses
 the depth `A = B` (a parameter; the canonical one is `m + 1`).
 -/
 
@@ -292,11 +292,13 @@ open Classical in
 /-- The local parameters of a step at the places `R` (spec-6 §4, the canonical instance), for the step's lift
 character `ν = μ_{0,i}` and twist `ξ`: `sq² = q`; `ψ` additive on `q⁻¹O_(P)` (the archive's `ψ` is additive only on
 `q^{−D}O_P`, `D ≥ 1`) and trivial on `O_(P)`; at `SG`, `ψ(a/q) = ψ₀(red a)` through `σ₀` and `ψ = 1` off `q⁻¹O_(P)`
-(`ciPsi`); `μ = locChar(muq, χ)` with `χ = ν_P⁻¹` on the units at `SG` (`Ch.chi i`, tied to `μ_{0,i}` as in the
-archive's `mu0G`) and `ξ_P⁻¹` at `Q` (`resChar⁻¹`), and at `SG` `muq = ν_P(q)⁻¹·ξ_P(q)⁻¹` (`(μ_{0,i})_P(q)⁻¹·qValC⁻¹`,
-reading `qValC(ξ, P)` as `ξ_P(q)` [I]; at the untwisted level `ξ = 1`). `muq` at `Q` (`Ch.muVal`) is not pinned.
-Meant for L7. -/
-def LocOk (σ₀ : L →+* ℂ) (xi0 : E) (R SG : Finset (HeightOneSpectrum (𝓞 E))) (ν ξ : Ideles E →* Lˣ)
+(`ciPsi`); at `Q = R \ SG` (spec-7 §3d, `twPsiQ`), `ψ(a) = e(⟨xi0·a⟩_P)` on `P^{−dQ}` (`dQ = 2m`): `σ₀(ψ(a)) =
+exp(2πi·b/q^{dQ})` for `b ∈ ℤ` with `xi0·a − b/q^{dQ} ∈ O_(P)`, and `ψ(a) = 1` if `a ∉ P^{−dQ}` or no such `b` exists;
+`μ = locChar(muq, χ)` with `χ = ν_P⁻¹` on the units at `SG` (`Ch.chi i`, tied to `μ_{0,i}` as in the
+archive's `mu0G`) and `ξ_P⁻¹` at `Q` (`resChar⁻¹`), and at every `P ∈ R` `muq = ν_P(q)⁻¹·ξ_P(q)⁻¹`
+(`(μ_{0,i})_P(q)⁻¹·qValC⁻¹`, `= ((μ_{0,i}ξ)_P(q))⁻¹`, reading `qValC(ξ, P)` as `ξ_P(q)`; spec-7 §3b–3c; at the
+untwisted level `ξ = 1`). Meant for L7. -/
+def LocOk (σ₀ : L →+* ℂ) (xi0 : E) (dQ : ℕ) (R SG : Finset (HeightOneSpectrum (𝓞 E))) (ν ξ : Ideles E →* Lˣ)
     (ψ μ : HeightOneSpectrum (𝓞 E) → E → L) (sq : HeightOneSpectrum (𝓞 E) → L) (χ : HeightOneSpectrum (𝓞 E) → E → L) :
     Prop :=
   ∀ Pl ∈ R, sq Pl ^ 2 = (Ideal.absNorm Pl.asIdeal : L) ∧
@@ -304,9 +306,12 @@ def LocOk (σ₀ : L →+* ℂ) (xi0 : E) (R SG : Finset (HeightOneSpectrum (�
     (∀ y, intAt Pl y → ψ Pl y = 1) ∧
     (Pl ∈ SG → (∀ y : 𝓞 E, σ₀ (ψ Pl ((y : E) / qP Pl)) = psi0 xi0 Pl (Ideal.Quotient.mk Pl.asIdeal y)) ∧
       ∀ y, ¬ intAt Pl (qP Pl * y) → ψ Pl y = 1) ∧
+    (Pl ∉ SG → ∀ y, (∀ b : ℤ, intAt Pl (qP Pl ^ dQ * y) → intAt Pl (xi0 * y - b / qP Pl ^ dQ) →
+        σ₀ (ψ Pl y) = Complex.exp (2 * Real.pi * Complex.I * b / (Ideal.absNorm Pl.asIdeal : ℂ) ^ dQ)) ∧
+      ((¬ intAt Pl (qP Pl ^ dQ * y) ∨ ∀ b : ℤ, ¬ intAt Pl (xi0 * y - b / qP Pl ^ dQ)) → ψ Pl y = 1)) ∧
     ChiOk Pl (if Pl ∈ SG then ν else ξ) (χ Pl) ∧
     ∃ muq, μ Pl = locChar Pl muq (χ Pl) ∧
-      (Pl ∈ SG → ∀ x, IsLocAt Pl (qP Pl) x → muq = ((ν x : Lˣ) : L)⁻¹ * ((ξ x : Lˣ) : L)⁻¹)
+      ∀ x, IsLocAt Pl (qP Pl) x → muq = ((ν x : Lˣ) : L)⁻¹ * ((ξ x : Lˣ) : L)⁻¹
 
 end Kernel
 
@@ -333,6 +338,13 @@ noncomputable def phS (D : Data τ) (m k t : ℕ) (ψ χ : ℕ → HeightOneSpec
     L :=
   PhiGS Pl (ψ j Pl) (fun l => χ l Pl) k (m / 2 - 1) (k + m - 1) t j
     (entB Pl k (D.n j) (D.n (j + 1)) (m - 1 - j) (m - 1 - (j + 1)) (fun i => i + 1) y)
+
+/-- The canonical kernel shape of step `j` at `P ∈ Q` (spec-7 §3e, `PhiAt` off `SG`): `PhiQ ∘ entB` with `k₀ = k`,
+`r = k + m − 1`, `ex = 0`, and `ξ_P = χ_j⁻¹` on the units (`LocOk`: `χ_j = ξ_P⁻¹` there). The frontier's `Ph` at `Q`. -/
+noncomputable def phQ (D : Data τ) (m k : ℕ) (χ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (j : ℕ)
+    (Pl : HeightOneSpectrum (𝓞 E)) (y : Matrix (Fin (D.n (j + 1) + (m - 1 - (j + 1)))) (Fin (D.n j + (m - 1 - j))) E) :
+    L :=
+  PhiQ Pl (fun a => (χ j Pl a)⁻¹) (k + m - 1) (entB Pl k (D.n j) (D.n (j + 1)) (m - 1 - j) (m - 1 - (j + 1)) 0 y)
 
 /-- The canonical sharp group of level `j` at `P ∈ SG` (spec-6 §4, §6, `Jat` with `sharp = true`):
 `JGsym(k, m/2 − 1, k + m − 1, t)` at size `N_j + c_j`. The frontier's `JS`. -/
