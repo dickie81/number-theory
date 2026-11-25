@@ -293,7 +293,7 @@ linear map `eC` injective on `W_u`, the sources are `N_ω = {φ ∈ 𝔞_ω⁻¹
 target is `C_u` (`PeriodTarget.Ctgt`) and the maps are the period maps `B_ω = P_{μ0}(col ·)` (`PerData.P`). The
 twist data are transfers (`Twist.IsTransfer`), `μ(w) = μ0` off `Tw`, and `𝔞_ω ≠ 0`. -/
 def KFrame.Realises (F : KFrame K) {Vs : F.ι → Type*} [∀ ω, AddCommGroup (Vs ω)] [∀ ω, Module K (Vs ω)]
-    [∀ ω, Module (𝓞 K) (Vs ω)] [∀ ω, IsScalarTower (𝓞 K) K (Vs ω)] (D : PerData Φ n E K G X Vs) (μ0 : T)
+    [∀ ω, Module (𝓞 K) (Vs ω)] [∀ ω, IsScalarTower (𝓞 K) K (Vs ω)] {Y : Type*} (D : PerData Φ n E K G X Vs Y) (μ0 : T)
     (tw : Twist D μ0) (𝔞 : F.ι → Ideal (𝓞 K)) (M : ∀ ω, Submodule (𝓞 K) (Vs ω)) : Prop :=
   tw.IsTransfer ∧ (∀ w ∉ tw.Tw, tw.μw w = μ0) ∧ (∀ ω, 𝔞 ω ≠ ⊥) ∧
     ∃ (e : ∀ ω, Vs ω ≃ₗ[K] (F.n ω → K)) (eC : (D.V0 μ0 → K) →ₗ[K] (F.κ → K)), Set.InjOn eC (D.W μ0) ∧
@@ -305,16 +305,16 @@ end Realise
 /-! ## The frontier (L7.5) -/
 
 -- CHAIN HOOK: the chain enters here, and only here. `ThetaChain.Data.chain` ends on the classes
--- `Σ_b DCl` of rank `N_m`, while `PerData.col` reads a function on rank-`(n + 1)` lattices of `V_ω`-linear
--- outputs; until the lift of decorations (classes ↔ lattices `til c`) and the forms-to-classes input are fixed,
--- the chain is a predicate on the `col` of the period data.
+-- `Σ_b DCl` of rank `N_m`, while `PerData.col` reads a function on a type `Y` of points of rank `n + 1` of
+-- `V_ω`-linear outputs; the reading (points ↔ classes, the forms-to-classes input) is a predicate on the `col` of
+-- the period data.
 /-- **The chain hook**: which `col` of the period data (`PeriodTarget.PerData.col`) count as the theta chain's
-output on the lattices of rank `N_m = n + 1`. The frontier is meant for `col_μ = ` the last step of
-`ThetaChain.Data.chain` of tuple `μ`, read on `til(c)`. -/
+output on the points `Y` of rank `N_m = n + 1`. The frontier is meant for `Y` the decorated lattices of rank `N_m`
+and `col_μ = ` the last step of `ThetaChain.Data.chain` of tuple `μ`, read at each point (`SharpChain`). -/
 abbrev ChainHook : Type 1 :=
   ∀ (Φ : Type) [Fintype Φ] [DecidableEq Φ] (n : ℕ) (E L : Type) [Field E] [NumberField E] [Field L]
-    (T Ω : Type) (Vs : Ω → Type) [∀ ω, AddCommGroup (Vs ω)] [∀ ω, Module L (Vs ω)],
-    (T → ∀ ω, Vs ω →ₗ[L] PeriodTarget.Col Φ n E L) → Prop
+    (T Ω : Type) (Vs : Ω → Type) [∀ ω, AddCommGroup (Vs ω)] [∀ ω, Module L (Vs ω)] (Y : Type),
+    (T → ∀ ω, Vs ω →ₗ[L] PeriodTarget.Col Φ n L Y) → Prop
 
 /-- **Sharp data realised by the defined objects**: a CM type `τ_K` on `E = Setting.E` with values in `K` that lifts
 `Setting.τ`, and at each translate `u ∈ A₀` period data whose chain is `chain`'s, of rank `n = N_m − 1`, realised by
@@ -324,10 +324,10 @@ def SharpData.Realised (chain : ChainHook) {S : Setting} {κ : S.A →* ℂˣ} {
   ∃ (τK : Φ S.A → (S.E →+* K)) (j : K →+* ℂ), (∀ ρ, j.comp (τK ρ) = S.τ ρ) ∧
     ∀ u ∈ A₀ κ, ∃ (T : Type) (G X : T → Type) (_ : ∀ μ, Group (G μ)) (_ : ∀ μ, MulAction (G μ) (X μ))
       (Vs : (D.fr u).ι → Type) (_ : ∀ ω, AddCommGroup (Vs ω)) (_ : ∀ ω, Module K (Vs ω))
-      (_ : ∀ ω, Module (𝓞 K) (Vs ω)) (_ : ∀ ω, IsScalarTower (𝓞 K) K (Vs ω))
-      (P : PeriodTarget.PerData (Φ S.A) (D.R.N D.R.m - 1) S.E K G X Vs) (μ0 : T) (tw : PeriodTarget.Twist P μ0)
+      (_ : ∀ ω, Module (𝓞 K) (Vs ω)) (_ : ∀ ω, IsScalarTower (𝓞 K) K (Vs ω)) (Y : Type)
+      (P : PeriodTarget.PerData (Φ S.A) (D.R.N D.R.m - 1) S.E K G X Vs Y) (μ0 : T) (tw : PeriodTarget.Twist P μ0)
       (𝔞 : (D.fr u).ι → Ideal (𝓞 K)) (M : ∀ ω, Submodule (𝓞 K) (Vs ω)),
-      chain (Φ S.A) (D.R.N D.R.m - 1) S.E K T (D.fr u).ι Vs P.col ∧ (D.fr u).Realises τK P μ0 tw 𝔞 M
+      chain (Φ S.A) (D.R.N D.R.m - 1) S.E K T (D.fr u).ι Vs Y P.col ∧ (D.fr u).Realises τK P μ0 tw 𝔞 M
 
 /-- **The sharp frontier** (spec L7.5): `SixTermBound`'s outer shape, with realised sharp data in place of six-term
 data. For every primitive `χ`, at arbitrarily small `ε` there is `A ≥ 1` such that, for every large `Y`, every pair

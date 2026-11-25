@@ -35,7 +35,10 @@ state). For decorated lattices, `DCl` with the representative `DCl.rep` and its 
 
 **The branching geometry** (L2.5). `X′ = E^n ⊂ X = E^{n+1} = X′ ⊕ E·z` (`incl`), with `z = e_last` (`eLast`), the lift
 `til(L′) = L′ ⊕ tz⁻¹·O_E·e_last` (`til`, with `tz = conj(π_T)` a parameter), and `ext : U(X′) → U(X)`,
-`γ ↦ diag(γ, 1)` (`ext`), which fixes `e_last` (`act_ext_eLast`).
+`γ ↦ diag(γ, 1)` (`ext`), which fixes `e_last` (`act_ext_eLast`). **The decorated lift** `tilQ` (audit 8, S2–S3) takes a
+decorated lattice of rank `n` to one of rank `n + 1`: the lattice `til 1 N = N ⊕ O_E·e_last`, the level-`T`
+decorations `a mod P` on the `e_last`-coordinate `a`, and the frames `diag(be_w, 1)` at `SG`. With `ST` the places over
+`conj(tz)`, `Lsh(tilQ d) = til tz N`; L7 reads the chain's output at `tilQ` of a row point.
 
 **Choices.** Matrices for `GL_n` and `U_n`, so later layers (`WeylFock`) can read `ρ(γ)` off the entries. The
 decorations are data on the lattice itself (`↥N →ₗ[O_E] …`), compared by `Deco.ext'`. Following the spec's
@@ -410,6 +413,59 @@ theorem act_ext_eLast (γ : U E n) : act (ext γ).1 eLast = eLast := by
   | cast i => simp [h, blk_mulVec_castSucc, eLast, ← Pi.zero_def]
 
 end Branch
+
+/-! ### The decorated lift -/
+
+section Lift
+
+variable {E : Type*} [Field E] {n : ℕ}
+
+/-- `N × O_E → E^{n+1}`, `(y, a) ↦ incl y + a·e_last`: an isomorphism onto `til 1 N = N ⊕ O_E·e_last` (`tilEquiv`). -/
+def tilEmb (N : Submodule (𝓞 E) (Fin n → E)) : (N × 𝓞 E) →ₗ[𝓞 E] (Fin (n + 1) → E) :=
+  (incl ∘ₗ N.subtype).coprod (LinearMap.toSpanSingleton (𝓞 E) _ eLast)
+
+/-- `tilEmb` is injective: the first `n` coordinates give `y`, the last gives `a`. -/
+theorem tilEmb_injective (N : Submodule (𝓞 E) (Fin n → E)) : Function.Injective (tilEmb N) := by
+  rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
+  rintro ⟨y, a⟩ h
+  have hi (x : Fin n → E) (j) : incl (E := E) x j = Function.extend Fin.castSucc x 0 j := rfl
+  have h1 (i : Fin n) := congrFun h i.castSucc
+  have h2 := congrFun h (Fin.last n)
+  simp only [tilEmb, LinearMap.coprod_apply, LinearMap.coe_comp, Function.comp_apply, Submodule.coe_subtype,
+    LinearMap.toSpanSingleton_apply, Pi.add_apply, Pi.smul_apply, Pi.zero_apply, hi,
+    (Fin.castSucc_injective n).extend_apply, eLast] at h1 h2
+  rw [Function.extend_apply' _ _ _ fun ⟨i, hi⟩ => Fin.castSucc_ne_last i hi] at h2
+  simp only [Pi.single_eq_same, Pi.zero_apply, zero_add] at h2
+  simp only [Pi.single_eq_of_ne (Fin.castSucc_ne_last _), smul_zero, add_zero] at h1
+  rw [Algebra.smul_def, mul_one, map_eq_zero_iff _ (FaithfulSMul.algebraMap_injective _ _)] at h2
+  exact Prod.ext (Subtype.ext (funext h1)) h2
+
+/-- The range of `tilEmb` is `til 1 N`. -/
+theorem range_tilEmb (N : Submodule (𝓞 E) (Fin n → E)) : LinearMap.range (tilEmb N) = til 1 N := by
+  rw [tilEmb, LinearMap.range_coprod, LinearMap.range_comp, Submodule.range_subtype,
+    ← LinearMap.span_singleton_eq_range, til, inv_one, one_smul]
+
+/-- `N × O_E ≃ til 1 N = N ⊕ O_E·e_last`, `(y, a) ↦ incl y + a·e_last`. For `tilQ`. -/
+def tilEquiv (N : Submodule (𝓞 E) (Fin n → E)) : (N × 𝓞 E) ≃ₗ[𝓞 E] til 1 N :=
+  (LinearEquiv.ofInjective _ (tilEmb_injective N)).trans (LinearEquiv.ofEq _ _ (range_tilEmb N))
+
+variable [NumberField E] {ST SG ST' SG' : Finset (HeightOneSpectrum (𝓞 E))}
+
+/-- **The decorated lift** `tilQ d` (the archive's `tilQ`, evaluated on `tilC`; audit 8, S2–S3) of a decorated
+lattice `d = (N, f, be)` of rank `n` on the places `ST′`, `SG′`, to rank `n + 1` on `ST` and `SG ⊆ SG′`: the lattice
+`til 1 N = N ⊕ O_E·e_last` (`tilEquiv`), the level-`T` decorations `f_P(y + a·e_last) = a mod P` at `P ∈ ST`, and
+the frames `be_w(y + a·e_last) = (be_w y, a mod w)` at `w ∈ SG` (the frame `diag(fr_w, 1)`); the frames at `SG′ \ SG`
+and the `f` of `d` are not read. For `N` unimodular and `ST` the places over `conj(tz)` (`conj(tz)·O_E` squarefree),
+`Lsh(tilQ d) = til tz N`, the lattice at which the period used to read the column. Meant for L7: the period reads the
+chain's output at `tilQ` of each row representative (`PeriodTarget.PerData.pt`). -/
+def tilQ (hSG : SG ⊆ SG') (d : Deco E n ST' SG') : Deco E (n + 1) ST SG where
+  N := til 1 d.N
+  f P := P.1.asIdeal.mkQ ∘ₗ LinearMap.snd _ _ _ ∘ₗ (tilEquiv d.N).symm.toLinearMap
+  be w := LinearMap.pi (Fin.snoc (α := fun _ => d.N × 𝓞 E →ₗ[𝓞 E] 𝓞 E ⧸ w.1.asIdeal)
+      (fun i => LinearMap.proj i ∘ₗ d.be ⟨w.1, hSG w.2⟩ ∘ₗ LinearMap.fst _ _ _)
+      (w.1.asIdeal.mkQ ∘ₗ LinearMap.snd _ _ _)) ∘ₗ (tilEquiv d.N).symm.toLinearMap
+
+end Lift
 
 end
 
