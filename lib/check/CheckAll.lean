@@ -461,6 +461,7 @@ import SharpChain
 import ThetaNorm
 import ThetaVol
 import RowSpace
+import SharpInputs
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2297,6 +2298,8 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ZetaBalance.SharpData.nonempty_sixTermData
 #print axioms ZetaBalance.SharpData.toSixTermData_Fo
 #print axioms ZetaBalance.rhAndGRH_of_sharpBoundPinned
+#print axioms ZetaBalance.sharpBoundPinned_of_inputs
+#print axioms ZetaBalance.rhAndGRH_of_inputs
 #print axioms ZetaBalance.sharpBoundTheta_of_pinned
 #print axioms ThetaChain.Data.comp_zero_inp
 #print axioms ThetaNorm.th0_zero
