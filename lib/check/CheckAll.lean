@@ -2304,6 +2304,8 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ThetaVol.XiFull.scale
 #print axioms RowSpace.idemOf_empty
 #print axioms RowSpace.map_Amb_eq_range
+#print axioms RowSpace.tyPt_mul
+#print axioms RowSpace.tyRep_apply
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
 #print axioms ZetaBalance.rhAndGRH_of_latticeBound
 #print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound

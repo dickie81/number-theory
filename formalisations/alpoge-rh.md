@@ -209,8 +209,9 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     (`ThetaChain.Data.comp_zero_inp`). The base theta is normalised by the archive's fourth-power identity, with the
     Weierstrass `σ` of a lattice of discriminant 1 (`ThetaNorm.th0_zero`, `ThetaNorm.F0_zero`,
     `ThetaNorm.sgStar_zero`); the local factors of the kernels are defined in full, and their scale is required (`ThetaVol.volN_pos`,
-    `ThetaVol.XiFull.scale`). The row space as the image of a character idempotent on the isotypic part
-    (`RowSpace.idemOf_empty`, `RowSpace.map_Amb_eq_range`), not yet required. Still existential: the local factors at the auxiliary places, the level data
+    `ThetaVol.XiFull.scale`). The row space as the image of a character idempotent, on Weyl-module-valued forms
+    equivariant under the archive's row level groups, with the type group acting through a Levi block
+    (`RowSpace.idemOf_empty`, `RowSpace.map_Amb_eq_range`, `RowSpace.tyPt_mul`, `RowSpace.tyRep_apply`). Still existential: the local factors at the auxiliary places, the level data
     after step 0, the cusp subspace, the decoration lift, and the twisted levels (no `Q`-decorations yet).
 
 ## How the statements differ from the archive's
