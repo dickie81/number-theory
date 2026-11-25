@@ -24,14 +24,14 @@ on `N` is the spec's `f_P` on `N_(P)`. The attached lattice is `Lsh(d) = (N ∩ 
 group with a generic character), and the archive picks them by existence choices at the later steps. The diamond
 operators `dia` (L4.2) rescale the `f_P` and commute with `𝒢` (`dia_smul`).
 
-**The twist `Q`.** The twisted case puts the frames on `SG ∪ Q`: `Deco` and `Grp` are generic in the frame places, and
-residue frames at `P ∈ Q` stand for the archive's lattice frames `fr_P` (spec-11 §2a). `Deco.forget` drops the frames
-off `SG`. The class machinery (`Cl`, `stab`, `mass`, `classSum`) is generic in a group action.
+**The twist `Q`.** `Deco` and `Grp` are generic in the frame places: the row points carry residue frames on `SG ∪ Q`
+(the archive's `DecoSet`), while the theta chain's points carry lattice frames at `Q` (`ThetaChain.DecoF`, the
+archive's `DecoF`; spec-12 F6). The class machinery (`Cl`, `stab`, `mass`, `classSum`) is generic in a group action.
 
 **Classes** (L2.4). `Cl G X = G\X` (`MulAction.orbitRel.Quotient`), `stab c` the stabiliser of the chosen
 representative, the mass weight `mass c = 1/|Stab(c)|` (`Nat.card`, so `0` for an infinite stabiliser), which does
 not depend on the representative (`mass_mk`), and `classSum F = Σᶠ_c mass(c)·F(c)` (`finsum`: no finiteness needed to
-state). For decorated lattices, `DCl` with the representative `DCl.rep` and its lattice `DCl.N`, which L5.2 reads.
+state). For decorated lattices, `DCl` with the representative `DCl.rep` (the chain reads `ThetaChain.DClF`).
 
 **The branching geometry** (L2.5). `X′ = E^n ⊂ X = E^{n+1} = X′ ⊕ E·z` (`incl`), with `z = e_last` (`eLast`), the lift
 `til(L′) = L′ ⊕ tz⁻¹·O_E·e_last` (`til`, with `tz = conj(π_T)` a parameter), and `ext : U(X′) → U(X)`,
@@ -182,20 +182,6 @@ structure Deco.Good [IsCMField E] (d : Deco E n ST SG) : Prop where
   f_ne : ∀ P, d.f P ≠ 0
   be_surj : ∀ w, Function.Surjective (d.be w)
   be_ker : ∀ w (x : d.N), d.be w x = 0 ↔ (x : Fin n → E) ∈ w.1.asIdeal • d.N
-
-/-- **Forget the frames** off `SG ⊆ SF`: `(N, f, be) ↦ (N, f, be|_SG)` (spec-11 §1, the archive's `DecoF.deco`). The
-chain's classes carry frames on `SG ∪ Q`, and its input reads a form on the decorated lattices with frames on `SG`
-through this map (`SharpChain`'s `Data.inp`). -/
-def Deco.forget {SF : Finset (HeightOneSpectrum (𝓞 E))} (h : SG ⊆ SF) (d : Deco E n ST SF) : Deco E n ST SG where
-  N := d.N
-  f := d.f
-  be w := d.be ⟨w.1, h w.2⟩
-
-/-- Forgetting frames keeps the conditions. -/
-theorem Deco.Good.forget [IsCMField E] {SF : Finset (HeightOneSpectrum (𝓞 E))} {d : Deco E n ST SF} (hd : d.Good)
-    (h : SG ⊆ SF) : (d.forget h).Good :=
-  ⟨hd.unimod, hd.f_ne, fun _ => hd.be_surj _, fun _ => hd.be_ker _⟩
-
 
 /-- The inverse of `γ`, from `γN` back to `N`. -/
 def back (γ : GL (Fin n) E) (N : Submodule (𝓞 E) (Fin n → E)) : N.map (act γ) →ₗ[𝓞 E] N :=
@@ -360,12 +346,6 @@ variable {Λ}
 
 /-- The chosen representative of a class, the decorated lattice that later layers read (L5.2). -/
 def DCl.rep (c : DCl E n ST Λ) : Deco E n ST SG := (c.out : Deco E n ST SG)
-
-/-- The lattice `N_c` of a class. -/
-def DCl.N (c : DCl E n ST Λ) : Submodule (𝓞 E) (Fin n → E) := c.rep.N
-
-/-- The representative is a decorated lattice: it satisfies `Deco.Good`. -/
-theorem DCl.good (c : DCl E n ST Λ) : c.rep.Good := c.out.2
 
 end DecoClasses
 

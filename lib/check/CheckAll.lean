@@ -2292,6 +2292,7 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ThetaChain.Chain.lift_add
 #print axioms ThetaChain.detShift_wt_succ
 #print axioms ThetaChain.Top.col_of_isEmpty
+#print axioms ThetaChain.instMulActionDecoF
 #print axioms ZetaBalance.rhAndGRH_of_sharpBound
 #print axioms ZetaBalance.SharpData.nonempty_sixTermData
 #print axioms ZetaBalance.SharpData.toSixTermData_Fo
