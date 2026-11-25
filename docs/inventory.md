@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1948 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1951 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,8 +14,8 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 222 | 789 |
-| `lib/pnt` | 357 | 1046 |
+| `lib/core` | 222 | 790 |
+| `lib/pnt` | 358 | 1048 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -620,6 +620,7 @@ note of `formalisations/` that names it, if one does.
 #### `HermForms`: Forms on decorated lattices, the Petersson form, the ramified cut and the source lattices
 
 - `HermForms.conj_pet`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `HermForms.petAt_eq_map`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `HermForms.dOp_mem`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `HermForms.gram_isHermitian`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `HermForms.source_G`: Sanity ([note](../formalisations/alpoge-rh.md))
@@ -2558,6 +2559,11 @@ note of `formalisations/` that names it, if one does.
 - `ThetaChain.Data.comp_zero_inp`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.sharpBoundTheta_of_pinned`: The pinned frontier implies `SharpBoundTheta`. ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.rhAndGRH_of_sharpBoundPinned`: CONDITIONAL. RH and GRH from the pinned frontier ([note](../formalisations/alpoge-rh.md))
+
+#### `SharpInputs`: The sharp frontier from its inputs and its pieces — CONDITIONAL on the half-plane
+
+- `ZetaBalance.sharpBoundPinned_of_inputs`: The sharp frontier from the inputs and the pieces ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.rhAndGRH_of_inputs`: CONDITIONAL. RH and GRH from the inputs and the pieces ([note](../formalisations/alpoge-rh.md))
 
 #### `ShortCharSums`: Short character sums
 
