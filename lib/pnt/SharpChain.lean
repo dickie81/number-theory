@@ -43,15 +43,19 @@ points `x` of the level (decorated lattices `pX x` of rank `n = N_m − 1`, `ST 
   with the groups and characters at `P ∈ Q` of the levels `1 ≤ j < m` pinned (`ThetaVol.LevQOk`, the archive's
   `grpQ`/`chrQ`: `prX(R1 ∩ h·JQ(k + j)·h⁻¹) ∩ GL(O_(P))` and `ψ_P(n1Arg r)⁻¹·ξ_P(det)⁻¹` on the `[k + j, N_j)` block;
   at `h = 1` the parahoric of `(k + j, j·t)`), and so are the groups at `SG` (`ThetaVol.LevGOk`, the archive's `grpG`:
-  `∏_{w ∈ SG} red_w(prX(R1 ∩ JGsym_j))`, `h = 1` there; its character `chrG` is read by no factor); distinct indices
-  of a level have representatives in distinct double cosets `R1·h·JQ(k + j)` at some `P ∈ Q` (`ThetaVol.SameDC`, the
-  archive's `inj`), so at the untwisted level, where `Q = ∅`, every `β j` is a subsingleton (the archive's one tuple);
-  without these, copies of an index or a smaller level at `SG` would scale `col` by a positive integer per word (audit
-  11, T3a). Conversely no live double coset is dropped (the archive's `surj`, in a weaker form that suffices by
-  induction from the unique level `0`; audit 12, T4): for `j < m − 2`, a `TwNF` tuple `hh` at level `j + 1` that some
-  `h_{j,b}` reaches with a step-`j` factor nonzero somewhere at the places of `Q` (`ThetaVol.XiStdAt`, the factor of
-  `XiStd` at one place) is in `R1·h_{j+1,b′}(P)·JQ(k + j + 1)` for one `b′` at every `P ∈ Q` (at `Q = ∅`: the
-  `β j`, `j ≤ m − 2`, are nonempty); without it, a choice of a live-closed subset of the double cosets would change
+  `∏_{w ∈ SG} red_w(prX(R1 ∩ JGsym_j))`, `h = 1` there) and their characters (the archive's `chrG` with its `chiInv`
+  at `h = 1`, spec-13 F4–F5: `ḡ ↦ ∏_{w ∈ SG} ψ_w(n1Arg r_w)⁻¹·lamGS(entB(r_w))` for every family of lifts
+  `r_w ∈ R1 ∩ JGsym_j` with `A(r_w)` reducing to `ḡ_w`, `ThetaVol.lamGS` the archive's `lamGvS`; read by no factor);
+  distinct indices of a level have representatives in distinct double cosets `R1·h·JQ(k + j)` at some `P ∈ Q`
+  (`ThetaVol.SameDC`, the archive's `inj`), so at the untwisted level, where `Q = ∅`, every `β j` is a subsingleton
+  (the archive's one tuple); without these, copies of an index or a smaller level at `SG` would scale `col` by a
+  positive integer per word (audit 11, T3a). Indices in one double coset at `P ∈ Q` have one representative there
+  (the archive's `IdxProd`). Conversely no live double coset is dropped (the archive's `surj` at `Q`, spec-13 F1–F3,
+  F7): for `j < m − 2` with `β j` nonempty, a `TwNF` tuple `hh` at level `j + 1` that is reached at every `P ∈ Q` by
+  some `h_{j,b}`, `b` depending on `P`, with the step-`j` factor at `P` nonzero (`ThetaVol.XiStdAt`, the factor of
+  `XiStd` at one place) is in `R1·h_{j+1,b′}(P)·JQ(k + j + 1)` for one `b′` at every `P ∈ Q`; with `inj` and the
+  nonvanishing clause below, `β(j + 1)` is then the product over `Q` of the live double cosets at each place (the
+  archive's `twNext`; spec-13 F8). Without it, a choice of a live-closed subset of the double cosets would change
   `col`. Its characters are `μ_{0,j}ξ`
   with `μ_{0,j}` a `LiftChars` for given `e`, `Sg`, equal to the family `mu0` passed in (the pinned frontier shares it
   across levels and words and reads it in the rows).
@@ -131,17 +135,22 @@ without limit.
 **Open.** Existential: `Data`'s remaining fields (theta constants, `Ξ` before the last step, weights, `ξ` at the
 twisted levels, `dI` up to units at the places of `sel` off the frame places, the side `sel` picked over each pair off
 `SG ∪ Q`, the top step's Heisenberg representatives), `N(cc)` in `xi0`, `X`, `e` (one per word, shared by every
-level), `𝔞` below its cap, the untwisted level's `ST`, `SG`, the branching projection, the `ChIdx` representatives and
-characters (at `SG`). Every level's classes carry lattice frames at `Q` (the archive's `DecoF`), so every factor
-reads `x` at `P ∈ Q` in the frames without ambiguity; residue frames would not do, as the representatives there are in
-`TwNF`, not integral (spec-12 F6). The live `ν ≤ −1` of `TwNF` (spec-12 F5) is not pinned (redundant given the
-nonvanishing clause; audit 12). The archive's `int` (`prCat ≤ GLint`) needs no pin: at `Q` it follows from `TwNF`
-(the archive's `NF` and its `prCat_le_GLint`), at `SG` from `h = 1` and `JGsym ≤ stabL(lamY)` (audit 12, T1, T4).
-Not stated: `Tw` by the archive's `TwistedSetDef` (the untwisted kernel indices `Ij`, `jw` and per-place forced
-orders are not defined here), the later-step character ties at `SG` (`chrG`, read by no factor), `surj` in the
-archive's stronger form (the weaker one in `IsThetaCol` suffices by induction from level `0`), `ψ_w`'s offset
-avoidance (`IsTwist`, `AvoidSet`), and `GoodTw` at the inner row levels `j < m` (the frontier reads only each word's
-last step, so the index clause is per word, below).
+level), `𝔞` below its cap, the untwisted level's `ST`, `SG`, the branching projection, the `ChIdx` representatives at
+`Q` (one per double coset, in `TwNF`). Every level's classes carry lattice frames at `Q` (the archive's `DecoF`), so
+every factor reads `x` at `P ∈ Q` in the frames without ambiguity; residue frames would not do, as the representatives
+there are in `TwNF`, not integral (spec-12 F6). The live `ν ≤ −1` of `TwNF` (spec-12 F5) is not pinned (redundant
+given the nonvanishing clause; audit 12). The archive's `int` (`prCat ≤ GLint`) needs no pin: at `Q` it follows from
+`TwNF` (the archive's `NF` and its `prCat_le_GLint`), at `SG` from `h = 1` and `JGsym ≤ stabL(lamY)` (audit 12, T1,
+T4). Not stated: `Tw` by the archive's `TwistedSetDef` (the untwisted kernel indices `Ij`, `jw` and per-place forced
+orders are not defined here), the `SG` clause of the archive's `surj` (its `twSurjG`: at `w ∈ SG`, a `g ∈
+stabL(lamY)` reached from `1` with `E1` not identically `0` is in `R1·JGsym_{j+1}`; with `h = 1` there it is a closed
+statement about the canonical local objects, independent of the index, so it pins no choice; spec-13 F7),
+`ψ_w`'s offset avoidance (`IsTwist`, `AvoidSet`), and `GoodTw` at the inner row levels `j < m` (the frontier reads
+only each word's last step, so the index clause is per word, below). `surj` at `Q` asks `TwNF` and a nonzero
+`XiStdAt` at depth `m + 1`, where the archive asks `TwBdd` and `E1` not identically `0` at all large depths
+(`FiniteSumNonzeroLargeDepth`): the Lean hypothesis is never weaker (`TwNF` implies `TwBdd`; `XiStdAt ≠ 0` gives
+`E1 ≠ 0` at depth `m + 1`, where the archive's `E1` has stabilised), so the clause is implied by the archive's
+(spec-13 F3, F8).
 
 **Twist characters** (spec-7 §1c–1d, `SharpData.RealisedPinned`). Each level `μ` has a twist `ξ_μ` (`ξT`, read by
 `IsThetaCol` through `Shp`), `1` at `μ0` and `δ_ℓ·ψ_w` at `μ(w) ≠ μ0`, `ℓ` the residue characteristic of `w`:
@@ -267,11 +276,15 @@ cosets and make the frontier false at the twisted levels. The archive's `int` (`
 pinned: at `Q` by `TwNF` (the archive's `NF`, `prCat_le_GLint`), at `SG` by `h = 1`. **The index types and the
 levels at `SG`** are pinned (audit 11, T3a; audit 12): distinct `b ≠ b′` at a level `j` have
 `h_{j,b′}(P) ∉ R1·h_{j,b}(P)·JQ(k + j)` at some `P ∈ Q` (`ThetaVol.SameDC`, the archive's `inj`; at the untwisted
-level, `Q = ∅`, every `β j` is a subsingleton); conversely (the archive's `surj`, weakened to what the induction from
-the unique level `0` needs), for `j < m − 2`, every `hh` in `TwNF` at level `j + 1` that some `h_{j,b}` reaches with
-`∏_{P ∈ Q} XiStdAt_P(x_P) ≠ 0` for some `x` (`ThetaVol.XiStdAt`, the step-`j` factor at one place) is in
-`R1·h_{j+1,b′}(P)·JQ(k + j + 1)` for one `b′` at every `P ∈ Q`; and at `1 ≤ j < m` the level group at `SG` is
-`∏_w red_w(prX(R1 ∩ JGsym_j))` (`ThetaVol.LevGOk`). The word's source data are passed in, the
+level, `Q = ∅`, every `β j` is a subsingleton); `b`, `b′` in one double coset at `P ∈ Q` have
+`h_{j,b}(P) = h_{j,b′}(P)` (the archive's `IdxProd`); conversely (the archive's `surj` at `Q`, the source index chosen
+per place; spec-13 F7), for `j < m − 2` with `β j` nonempty, every `hh` in `TwNF` at level `j + 1` such that at each
+`P ∈ Q` some `h_{j,b}`, `b` depending on `P`, reaches `hh P` with `XiStdAt_P(x) ≠ 0` for some `x`
+(`ThetaVol.XiStdAt`, the step-`j` factor at one place) is in `R1·h_{j+1,b′}(P)·JQ(k + j + 1)` for one `b′` at every
+`P ∈ Q`; and at `1 ≤ j < m` the level group at `SG` is `∏_w red_w(prX(R1 ∩ JGsym_j))` (`ThetaVol.LevGOk`), with the
+character `ḡ ↦ ∏_w ψ_w(n1Arg r_w)⁻¹·lamGS_w(entB(r_w))` for every family of lifts `r_w ∈ R1 ∩ JGsym_j` with
+`IsRed(A(r_w), ḡ_w)` (the archive's `chrG` at `h = 1`; `ThetaVol.lamGS`, its `lamGvS`; `ψ`, `χ` those of
+`LocOk`). The word's source data are passed in, the
 same at every level (audit 7, T1a: the archive twists the characters, not the input form): the place sets `ST`, `SG`,
 the step-0 rank `n0`, weight `lam0` and character `χ0`, a cusp subspace `X` stable under the diamond operators, and
 an isomorphism `e` of the source with `X ⊓ V_ω`. The chain has `D.ST = ST`, `D.SG = SG`, `D.n 0 = n0`,
@@ -317,14 +330,23 @@ def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
             (C.levQ j b w) (C.chrQ j b w)) ∧
         (∀ j b, 0 < j → j < m2 + 2 →
           ThetaVol.LevGOk (D.n j) (m2 + 2 - 1 - j) (ThetaVol.jS D (m2 + 2) k t j) (C.Λ j b)) ∧
+        (∀ j b, 0 < j → j < m2 + 2 → ∀ (g : C.Λ j b) (r : D.SG → GL (Fin (D.n j + (m2 + 2 - 1 - j))) E),
+          (∀ w, r w ∈ ThetaVol.R1 (D.n j) (m2 + 2 - 1 - j) ⊓ ThetaVol.jS D (m2 + 2) k t j w.1 ∧
+            ThetaVol.IsRed w.1 (ThetaVol.blkA (r w)) (g.1 w).1) →
+          ((C.chr j b g : Lˣ) : L) = ∏ w : D.SG, (ψ j w.1 (ThetaVol.n1Arg (r w)))⁻¹ *
+            ThetaVol.lamGS w.1 (ψ j w.1) (fun l => χ l w.1) k (k + (m2 + 2) - 1) t j
+              (ThetaVol.entB w.1 k (D.n j) (D.n j) (m2 + 2 - 1 - j) (m2 + 2 - 1 - j) (fun i => i + 1) (r w).1)) ∧
         (∀ j (b b' : D.β j), b ≠ b' → ∃ w : D.Q, ¬ ThetaVol.SameDC (D.n j) (m2 + 2 - 1 - j)
           (ThetaVol.JQ (D.n j) (m2 + 2 - 1 - j) w.1 (k + j)) (h j b w.1) (h j b' w.1)) ∧
-        (∀ j < m2, ∀ (b : D.β j) (hh : HeightOneSpectrum (𝓞 E) → GL (Fin (D.n (j + 1) + (m2 + 2 - 1 - (j + 1)))) E),
+        (∀ j (b b' : D.β j) (w : D.Q), ThetaVol.SameDC (D.n j) (m2 + 2 - 1 - j)
+          (ThetaVol.JQ (D.n j) (m2 + 2 - 1 - j) w.1 (k + j)) (h j b w.1) (h j b' w.1) → h j b w.1 = h j b' w.1) ∧
+        (∀ j < m2, Nonempty (D.β j) →
+          ∀ hh : HeightOneSpectrum (𝓞 E) → GL (Fin (D.n (j + 1) + (m2 + 2 - 1 - (j + 1)))) E,
           (∀ P ∈ Q, ThetaVol.TwNF (D.n (j + 1)) (m2 + 2 - 1 - (j + 1)) P (j + 1) (hh P)) →
-          (∃ x : HeightOneSpectrum (𝓞 E) → Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E, ∏ P ∈ Q,
+          (∀ P ∈ Q, ∃ (b : D.β j) (x : Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E),
             ThetaVol.XiStdAt (D.n j) (D.n (j + 1)) (m2 + 2 - 1 - j) (m2 + 2 - 1 - (j + 1)) (m2 + 3) D.SG
               (ThetaVol.jS D (m2 + 2) k t (j + 1) P) (k + (j + 1)) (h j b P) (hh P) (ψ j P) (μ j P) (sq j P) (Ph j P) P
-              (x P) ≠ 0) →
+              x ≠ 0) →
           ∃ b' : D.β (j + 1), ∀ w : D.Q, ThetaVol.SameDC (D.n (j + 1)) (m2 + 2 - 1 - (j + 1))
             (ThetaVol.JQ (D.n (j + 1)) (m2 + 2 - 1 - (j + 1)) w.1 (k + (j + 1))) (h (j + 1) b' w.1) (hh w.1)) ∧
         ThetaVol.XiFull D (m2 + 2) (m2 + 3) k (D.SG ∪ Q) h (ThetaVol.jS D (m2 + 2) k t) ψ μ sq Ph ∧

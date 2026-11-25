@@ -32,7 +32,9 @@ All groups are subgroups of `GL_{n+c}(E)` for the global field `E`; `P`-local in
 * `blkA`, `n1Arg`, `prX`, `LevQOk`: the level group `prX(Cbe(JQ, h)) ∩ GL_n(O_(P))` of the classes at `P ∈ Q` and
   its character `chiInv` (the archive's `grpQ`, `chrQ`, with the `ψ_P(n1Arg)` factor; spec-12 F6), which L7 ties to
   `ChIdx.levQ`, `ChIdx.chrQ`; `IsRed`, `LevGOk`: the level group `red_w(prX(R1 ∩ J))` at `w ∈ SG` (the archive's
-  `grpG`), tied to `ChIdx.Λ`; `SameDC`: the double cosets `R1·h·J` (the archive's `inj`, `surj`).
+  `grpG`), tied to `ChIdx.Λ`; `lamGS`: the value of `PhiGS` before its last factor, which gives the level character at
+  `SG` (the archive's `lamGvS`, `chrG`), tied to `ChIdx.chr`; `SameDC`: the double cosets `R1·h·J` (the archive's
+  `inj`, `IdxProd`, `surj`).
 * `XiStdAt`: the factor of `XiStd` at one place (read alone at `Q` by L7's `surj`).
 
 **Parameters.** `bvecG` takes the index shuffle as a parameter; `entB` and `JGsym` use the archive's `fIdx`/`fPos`
@@ -118,8 +120,8 @@ def Cbe (J : Subgroup (GL (Fin (n + c)) E)) (h : GL (Fin (n + c)) E) : Subgroup 
 variable (n c) in
 /-- `h′ ∈ R1·h·J` (the archive's `SameDC`): `h` and `h′` lie in one double coset `R1 \ GL_{n+c}(E) / J`. Distinct
 indices of a level have representatives in distinct double cosets at some place of `Q`, with `J = JQ(k + j)` (the
-archive's `inj`), and every double coset reached by a nonzero step factor at `Q` is some index's (`surj`, weakened;
-`SharpChain.IsThetaCol`). -/
+archive's `inj`), indices in one double coset have one representative (`IdxProd`), and every tuple of double cosets
+reached place by place by nonzero step factors at `Q` is some index's (`surj`; `SharpChain.IsThetaCol`). -/
 def SameDC (J : Subgroup (GL (Fin (n + c)) E)) (h h' : GL (Fin (n + c)) E) : Prop :=
   ∃ r ∈ R1 n c, ∃ κ ∈ J, h' = r * h * κ
 
@@ -246,11 +248,21 @@ noncomputable def entB (Pl : HeightOneSpectrum (𝓞 E)) (k₀ n n' c c' : ℕ) 
 /-- The `k × k` determinant of `M` on the indices `o, …, o + k − 1`. -/
 noncomputable def blkDet (M : ℕ → ℕ → E) (o k : ℕ) : E := (Matrix.of fun p p' : Fin k => M (o + p) (o + p')).det
 
+/-- The value of the sharp shape at `SG` before its last factor (the archive's `lamGvS`; spec-13 F4, F7):
+`ψ₀(Σ_{l<k₀−1} M_{l,l+1} + Σ_{l<r−k₀−1} M_{k₀+l,k₀+l+1})·∏_{l<i} χ_l(det M_{[r+lt, r+lt+t)²})`, with
+`ψ₀(red y) = ψ(y/q)`. `PhiGS` is it times `χ_i(det M_{<a,<a})⁻¹` on its support; at `M = entB(r)` and `i = j` it is
+the level-`j` character at `SG` (`SharpChain.IsThetaCol`, the archive's `chrG`). -/
+noncomputable def lamGS (Pl : HeightOneSpectrum (𝓞 E)) (ψ : E → L) (χ : ℕ → E → L) (k₀ r t i : ℕ)
+    (M : ℕ → ℕ → E) : L :=
+  ψ ((∑ l ∈ Finset.range (k₀ - 1), M l (l + 1) + ∑ l ∈ Finset.range (r - k₀ - 1), M (k₀ + l) (k₀ + l + 1)) / qP Pl) *
+    ∏ l ∈ Finset.range i, χ l (blkDet M (r + l * t) t)
+
 open Classical in
 /-- The sharp kernel shape at `P ∈ SG` (spec-6 §6; `M = entB(x)`, `a = r + i·t`): `0` unless (i) the first `a`
 columns are integral, their rows `≥ a` in `P`; (ii) `M_{p′p′} ≡ 1` for `p′ < r`, and `M_{pp′} ≡ 0` for `p < a`,
 `p ≠ p′` with `r ≤ p`, `symIdx p′ < symIdx p` or (`p′ = k₀ + rS` and `p < k₀`); (iii) the `t × t` blocks beyond `r`
 are block triangular (`M_{pp′} ≡ 0` for `p < a` in a later block than `p′ ≥ r`); then
+`lamGS(M)·χ_i(det M_{<a,<a})⁻¹`, i.e.
 `ψ₀(Σ_{l<k₀−1} M_{l,l+1} + Σ_{l<r−k₀−1} M_{k₀+l,k₀+l+1})·∏_{l<i} χ_l(det block_l)·χ_i(det M_{<a,<a})⁻¹`, with
 `ψ₀(red y) = ψ(y/q)`. -/
 noncomputable def PhiGS (Pl : HeightOneSpectrum (𝓞 E)) (ψ : E → L) (χ : ℕ → E → L) (k₀ rS r t i : ℕ)
@@ -259,9 +271,7 @@ noncomputable def PhiGS (Pl : HeightOneSpectrum (𝓞 E)) (ψ : E → L) (χ : �
       (∀ p' < r, inP Pl (M p' p' - 1) ∧ ∀ p < r + i * t, p ≠ p' →
         (r ≤ p ∨ symIdx k₀ rS p' < symIdx k₀ rS p ∨ (p' = k₀ + rS ∧ p < k₀)) → inP Pl (M p p')) ∧
       (∀ p p', r ≤ p' → p < r + i * t → (p' - r) / t < (p - r) / t → inP Pl (M p p'))
-  then ψ ((∑ l ∈ Finset.range (k₀ - 1), M l (l + 1) +
-      ∑ l ∈ Finset.range (r - k₀ - 1), M (k₀ + l) (k₀ + l + 1)) / qP Pl) *
-    (∏ l ∈ Finset.range i, χ l (blkDet M (r + l * t) t)) * (χ i (blkDet M 0 (r + i * t)))⁻¹
+  then lamGS Pl ψ χ k₀ r t i M * (χ i (blkDet M 0 (r + i * t)))⁻¹
   else 0
 
 open Classical in
@@ -388,8 +398,8 @@ variable (n c) in
 /-- **The level at `SG` is pinned** (the archive's `grpG` with `levG = colLevSym`, audit 11): the representatives are
 `h = 1` at `SG`, and the level group is `∏_{w ∈ SG} red_w(prX(R1 ∩ J_w))`, `J_w` the level's group at `w` (`jS`, the
 sharp `JGsym`): `ḡ` is in it iff at every `w ∈ SG`, `ḡ_w` is the reduction (`IsRed`) of some `A ∈ prX(R1 ∩ J_w)`.
-Its character (`chrG`) is not pinned: no factor reads it. For `SharpChain.IsThetaCol`, at the levels `1 ≤ j < m`
-(level `0` is `ChIdx.zero_grp`). -/
+Its character (`chrG`, read by no factor) is pinned beside it in `SharpChain.IsThetaCol` through `lamGS`. For
+`SharpChain.IsThetaCol`, at the levels `1 ≤ j < m` (level `0` is `ChIdx.zero_grp`). -/
 def LevGOk {SG : Finset (HeightOneSpectrum (𝓞 E))} (J : HeightOneSpectrum (𝓞 E) → Subgroup (GL (Fin (n + c)) E))
     (Λ : Subgroup (∀ w : SG, GL (Fin n) (𝓞 E ⧸ w.1.asIdeal))) : Prop :=
   ∀ gb, gb ∈ Λ ↔ ∀ w : SG, ∃ g ∈ prX n c (R1 n c ⊓ J w.1),
