@@ -7,7 +7,8 @@ import ThetaChain
 The local factor `Ξ_j` of a step `j < m − 1` is `∏_{P ∈ S} volN_P(j)⁻¹ · E1(om(Φ_P))`, and the `E1 ∘ om ∘ Φ` part has a
 fixed scale; so the volumes `volN_P(j)` carry the scale of `Ξ_j`. This module defines them, the factor itself
 (`E1`, `om`, `PhiG`, `PhiQ`, `PhiGS`, `XiStd`; spec-2 1d as corrected by spec-6) and the pins `XiFull`
-(`Ξ_j = XiStd`) and `XiScale` (`Ξ_j(0)` is `XiStd(0)` up to a unit of absolute value `1` at every complex place). The frontier (L7) uses `XiFull` with the
+(`Ξ_j = XiStd`) and `XiScale` (`Ξ_j(0)` is `XiStd(0)` up to a unit of absolute value `1` at every complex place). The
+frontier (L7) uses `XiFull` with the
 canonical sharp instance (`jS`, `phS`, `LocOk`, depth `m + 1`). The library's `x` is the archive's (no transpose);
 `entB` uses the archive's shuffle `fIdx` with `k₀ = k`. `XiVolPinned` (the root-of-unity form) is not used by the
 frontier.
