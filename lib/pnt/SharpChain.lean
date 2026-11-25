@@ -132,14 +132,17 @@ half the places over `g₀g₁` (each in `SG` or in `conj SG`, not both). At eve
 with `s² = −d` and `(a, b)` as in `SharpData.Arith` for `T_ω`, at every word: `tz ∈ {π, π̄}` (the root `s` is not
 tied to the CM type). `tz` and `ST` are per word (`PerData.tz ω`), so the words of `u` may have different `T_ω`
 (the archive's `T` lies in a window `Tstar ≤ T ≤ (1 + 1/(fk))·Tstar` read off the word's own `ColumnsAtT`; whether one
-prime serves every word is not settled, so the frontier does not ask it). `𝔞_ω` is not the archive's `Iu⁻¹` (the local
-weights `sg(ω, w)` are not defined here) but is capped: `𝔞_ω ∣ (aBd u ω)`, a parameter-defined integer, so it cannot
-raise `μ(N_ω)` without limit.
+prime serves every word is not settled, so the frontier does not ask it). `𝔞_ω` is fractional, `𝔞⁺(𝔞⁻)⁻¹` with
+integral `𝔞⁺`, `𝔞⁻` (`PeriodTarget.Nsrc`): the archive's `𝔞_ω⁻¹ = Iu` has negative exponents where `sg(ω, w) < 0`,
+over `T_ω` and the primes of `DGam` above `X″` (verify C8), so an integral `𝔞_ω` could never shrink `N_ω` below
+`M_ω`. It is not the archive's `Iu⁻¹` (the local weights `sg(ω, w)` are not defined here) but is capped on both sides:
+`𝔞⁺ ∣ aBd u ω` and `𝔞⁻ ∣ aBdN u ω`, parameter-defined integers, so it can neither raise nor lower `μ(N_ω)` without
+limit.
 
 **Open.** Existential: `Data`'s remaining fields (theta constants, `Ξ` before the last step, weights, `ξ` at the
 twisted levels, `dI` up to units at the places of `sel` off the frame places, the side `sel` picked over each pair off
 `SG ∪ Q`, the top step's Heisenberg representatives), `N(cc)` in `xi0`, `X`, `e` (one per word, shared by every
-level), `𝔞` below its cap, the untwisted level's `ST`, `SG`, the branching projection, the `ChIdx` representatives at
+level), `𝔞⁺, 𝔞⁻` below caps, the untwisted level's `ST`, `SG`, the branching projection, the `ChIdx` representatives at
 `Q` (one per double coset, in `TwNF`). Every level's classes carry lattice frames at `Q` (the archive's `DecoF`), so
 every factor reads `x` at `P ∈ Q` in the frames without ambiguity; residue frames would not do, as the representatives
 there are in `TwNF`, not integral (spec-12 F6). The live `ν ≤ −1` of `TwNF` (spec-12 F5) is not pinned (redundant
@@ -451,12 +454,12 @@ pinned frontier, the Petersson form `H_ω` of `X ⊓ V_ω`, `IsThetaCol`): `G_v(
 `HermForms.gram` and `HermForms.source_G`. -/
 def KFrame.RealisesPet (F : KFrame K) {Vs : F.ι → Type*} [∀ ω, AddCommGroup (Vs ω)] [∀ ω, Module K (Vs ω)]
     [∀ ω, Module (𝓞 K) (Vs ω)] [∀ ω, IsScalarTower (𝓞 K) K (Vs ω)]
-    (D : PeriodTarget.PerData Φ n E K G X Vs) (μ0 : T) (tw : PeriodTarget.Twist D μ0) (𝔞 : F.ι → Ideal (𝓞 K))
-    (M : ∀ ω, Submodule (𝓞 K) (Vs ω)) (hV : ∀ ω, Vs ω → Vs ω → K) : Prop :=
-  tw.IsTransfer ∧ (∀ w ∉ tw.Tw, tw.μw w = μ0) ∧ (∀ ω, 𝔞 ω ≠ ⊥) ∧
+    (D : PeriodTarget.PerData Φ n E K G X Vs) (μ0 : T) (tw : PeriodTarget.Twist D μ0)
+    (𝔞p 𝔞n : F.ι → Ideal (𝓞 K)) (M : ∀ ω, Submodule (𝓞 K) (Vs ω)) (hV : ∀ ω, Vs ω → Vs ω → K) : Prop :=
+  tw.IsTransfer ∧ (∀ w ∉ tw.Tw, tw.μw w = μ0) ∧ (∀ ω, 𝔞p ω ≠ ⊥ ∧ 𝔞n ω ≠ ⊥) ∧
     ∃ (e : ∀ ω, Vs ω ≃ₗ[K] (F.n ω → K)) (eC : (D.V0 μ0 → K) →ₗ[K] (F.κ → K)), Set.InjOn eC (D.W μ0) ∧
       (∀ ω, (F.src ω).M =
-        (PeriodTarget.Nsrc τ tw 𝔞 M ω).map (((e ω : Vs ω →ₗ[K] (F.n ω → K))).restrictScalars (𝓞 K))) ∧
+        (PeriodTarget.Nsrc τ tw 𝔞p 𝔞n M ω).map (((e ω : Vs ω →ₗ[K] (F.n ω → K))).restrictScalars (𝓞 K))) ∧
       F.tgt.M = (PeriodTarget.Ctgt τ tw).map (eC.restrictScalars (𝓞 K)) ∧
       (∀ ω φ, eC (D.P μ0 ω φ) = F.B ω (e ω φ)) ∧
       ∀ ω v i j, (F.src ω).G v i j =
@@ -467,9 +470,9 @@ omit [NumberField E] in
 theorem KFrame.RealisesPet.realises {F : KFrame K} {Vs : F.ι → Type*} [∀ ω, AddCommGroup (Vs ω)]
     [∀ ω, Module K (Vs ω)] [∀ ω, Module (𝓞 K) (Vs ω)] [∀ ω, IsScalarTower (𝓞 K) K (Vs ω)]
     {D : PeriodTarget.PerData Φ n E K G X Vs} {μ0 : T} {tw : PeriodTarget.Twist D μ0}
-    {𝔞 : F.ι → Ideal (𝓞 K)} {M : ∀ ω, Submodule (𝓞 K) (Vs ω)} {hV : ∀ ω, Vs ω → Vs ω → K}
-    (h : F.RealisesPet τ D μ0 tw 𝔞 M hV) :
-    F.Realises τ D μ0 tw 𝔞 M := by
+    {𝔞p 𝔞n : F.ι → Ideal (𝓞 K)} {M : ∀ ω, Submodule (𝓞 K) (Vs ω)} {hV : ∀ ω, Vs ω → Vs ω → K}
+    (h : F.RealisesPet τ D μ0 tw 𝔞p 𝔞n M hV) :
+    F.Realises τ D μ0 tw 𝔞p 𝔞n M := by
   obtain ⟨h1, h2, h3, e, eC, h4, h5, h6, h7, -⟩ := h
   exact ⟨h1, h2, h3, e, eC, h4, h5, h6, h7⟩
 
@@ -525,11 +528,25 @@ def SharpData.wB (D : SharpData S κ x ε X K) (u : S.A) : ℕ :=
   D.R.k + D.R.m + D.R.t + ∑ ρ, ((∑ i, ⌈|(D.hc u ρ).u i|⌉₊) + (∑ i, ((D.hc u ρ).v i).natAbs) +
     ∑ j, (((D.hc u ρ).b j).natAbs + ((D.hc u ρ).e j).natAbs))
 
-/-- **A cap for `𝔞_ω`** (L6.5, a bound in place of the archive's `𝔞_ω = Iu⁻¹ = ∏_{w∈supp}𝔓_w^{⌊e_w sg(ω,w)⌋}`, whose
-local weights `sg(ω, w)` are not defined here): `(T_ω·d·g₀g₁·∏_{p ≤ X″} p)^{[K:ℚ]·wB(u)}`. Its prime factors cover
-the archive's support (`T_ω`, `d`, `g₀g₁`, the primes up to `X″`); the exponent is a generous parameter bound. -/
+/-- **A cap for the positive part `𝔞⁺` of `𝔞_ω = 𝔞⁺(𝔞⁻)⁻¹`** (L6.5, a bound in place of the archive's
+`𝔞_ω = Iu⁻¹ = ∏_{w∈supp}𝔓_w^{⌊e_w sg(ω,w)⌋}`, whose local weights `sg(ω, w)` are not defined here):
+`(T_ω·d·g₀g₁·∏_{p ≤ X″} p)^{[K:ℚ]·wB(u)}`. Its prime factors cover the archive's support of `sg > 0` (`d`, `g₀g₁`,
+the primes up to `X″`; `T_ω` generously); the exponent is a generous parameter bound. -/
 def SharpData.aBd (D : SharpData S κ x ε X K) (u : S.A) (ω : (D.fr u).ι) : ℕ :=
   (D.T u ω * S.d * D.g₀ * D.g₁ * primorial ⌊S.cutX x ε⌋₊) ^ (Module.finrank ℚ K * D.wB u)
+
+/-- **A cap for the negative part `𝔞⁻` of `𝔞_ω = 𝔞⁺(𝔞⁻)⁻¹`** (L6.5, verify C8): the archive's `𝔞_ω` is fractional,
+with `sg(ω, w) < 0` where its error term `E` dominates: over `T_ω` (`E = EatT`) and over the primes `p > X″` of `DGam`
+(`E ≥ v_p(DGam)`), a common multiple of the stabiliser orders (spec L2.3) not defined here. The cap is
+`(T_ω·d·g₀g₁·∏_{p ≤ max(X″, N_m[E:ℚ] + 1)} p)^{[K:ℚ]·N_m·wB(u)}`, generous on both counts. Its support adds to `T_ω`
+the support of `aBd` (where `sg` may be negative too) and every prime up to `N_m[E:ℚ] + 1`, which holds the primes of
+the stabiliser orders: a stabiliser element is fixed by its unitary part, an automorphism of a lattice of `ℤ`-rank at
+most `N_m[E:ℚ]`, and a prime dividing the order of a finite subgroup of `GL_n(ℤ)` is at most `n + 1` (Minkowski). A
+`DGam` with other primes above `X″` would need them added. The exponent, `N_m` times `aBd`'s, is a parameter bound,
+not derived from the archive's `E`. -/
+def SharpData.aBdN (D : SharpData S κ x ε X K) (u : S.A) (ω : (D.fr u).ι) : ℕ :=
+  (D.T u ω * S.d * D.g₀ * D.g₁ * primorial (max ⌊S.cutX x ε⌋₊ (D.R.N D.R.m * Module.finrank ℚ S.E + 1))) ^
+    (Module.finrank ℚ K * D.R.N D.R.m * D.wB u)
 
 open Classical in
 /-- **The chain shape and constants** of `u` (L0.5–L0.6, L5.3–L5.4; audit 4, pins 2 and 5), for `IsThetaCol`'s
@@ -562,7 +579,7 @@ the `O_K`-span of the integral forms `HermForms.Mω` of `X ⊓ V_ω` and the sou
 through the word's isomorphism `e ω` with `X_ω ⊓ V_ω`, the one `IsThetaCol` reads at every level; metrics by
 `KFrame.RealisesPet`), nonzero row spaces at the twisted levels, the untwisted level the decorated lattices with `ST =
 ∅` on the chains' `SG` (`lsh = N`, the chains' points, spec-8 F4), per word `tz_ω` the element `(a + b√−d)/2` of
-`T_ω` (up to conjugation; each word its own `T_ω`), and `𝔞_ω ∣ aBd u ω`. The chain shape and `sd` at every level
+`T_ω` (up to conjugation; each word its own `T_ω`), `𝔞⁺ ∣ aBd` and `𝔞⁻ ∣ aBdN`. The chain shape and `sd` at every level
 are `SharpData.Shp`. `SG` is half the places over `g₀g₁` (spec-5 §2: all places over `conj(π_{g₀})`, `conj(π_{g₁})`, `f`
 per prime): every place over `g₀g₁` is in `SG` or in `conj SG`, and not both (`SG ∩ conj SG = ∅`); `ST_ω` is the set of
 places over `π_{T_ω} = conj(tz_ω)` (L2.3). The row spaces are pinned at every level by one clause (spec-9; module
@@ -583,7 +600,8 @@ def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
       (_ : ∀ ω, Module (𝓞 K) (Vs ω)) (_ : ∀ ω, IsScalarTower (𝓞 K) K (Vs ω))
       (ST : (D.fr u).ι → Finset (HeightOneSpectrum (𝓞 S.E))) (SG : Finset (HeightOneSpectrum (𝓞 S.E)))
       (P : PeriodTarget.PerData (Φ S.A) (D.R.N D.R.m - 1) S.E K G X Vs)
-      (μ0 : T) (tw : PeriodTarget.Twist P μ0) (𝔞 : (D.fr u).ι → Ideal (𝓞 K)) (M : ∀ ω, Submodule (𝓞 K) (Vs ω))
+      (μ0 : T) (tw : PeriodTarget.Twist P μ0) (𝔞p 𝔞n : (D.fr u).ι → Ideal (𝓞 K))
+      (M : ∀ ω, Submodule (𝓞 K) (Vs ω))
       (hcW : (D.fr u).ι → D.R.HCFamily) (n0 : ℕ) (lam0 : (D.fr u).ι → Φ S.A → Fin n0 → ℤ)
       (χ0 : (D.fr u).ι → (uniUT SG n0 →* K))
       (Xc : ∀ ω, Submodule K (HermForms.Fn (ST ω) (uniUT SG n0) (Φ S.A) K))
@@ -642,17 +660,17 @@ def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
           ((S.QS * S.q * S.d * (D.g₀ * D.g₁) ^ 2 : ℕ) : ℤ) ∣ b ∧
           a ≡ b + 2 [ZMOD 2 * ((S.QS * S.q * S.d * (D.g₀ * D.g₁) ^ 2 : ℕ) : ℤ)] ∧
           P.tz ω = ((a : S.E) + (b : S.E) * s) / 2) ∧
-        (∀ ω, ((D.aBd u ω : ℕ) : 𝓞 K) ∈ 𝔞 ω) ∧
-        (D.fr u).RealisesPet τK P μ0 tw 𝔞 M fun ω φ ψ => HermForms.pet (ST ω) (lam0 ω) (e ω φ).1 (e ω ψ).1
+        (∀ ω, ((D.aBd u ω : ℕ) : 𝓞 K) ∈ 𝔞p ω ∧ ((D.aBdN u ω : ℕ) : 𝓞 K) ∈ 𝔞n ω) ∧
+        (D.fr u).RealisesPet τK P μ0 tw 𝔞p 𝔞n M fun ω φ ψ => HermForms.pet (ST ω) (lam0 ω) (e ω φ).1 (e ω ψ).1
 
 /-- Pinned realisation gives realisation with the theta hook. -/
 theorem SharpData.RealisedPinned.realised {D : SharpData S κ x ε X K} (h : D.RealisedPinned) :
     D.Realised thetaHook := by
   obtain ⟨_, _, τK, j, hj, hu⟩ := h
   refine ⟨τK, j, hj, fun u hu' => ?_⟩
-  obtain ⟨T, G, X, i1, i2, Vs, i3, i4, i5, i6, ST, SG, P, μ0, tw, 𝔞, M, _, n0, lam0, χ0, Xc, e, QE, xi0, _, _, tzO,
-    eX, hc, -, -, -, -, -, -, -, -, -, -, -, -, -, -, hR⟩ := hu u hu'
-  exact ⟨T, G, X, i1, i2, Vs, i3, i4, i5, i6, P, μ0, tw, 𝔞, M,
+  obtain ⟨T, G, X, i1, i2, Vs, i3, i4, i5, i6, ST, SG, P, μ0, tw, 𝔞p, 𝔞n, M, _, n0, lam0, χ0, Xc, e, QE, xi0, _, _,
+    tzO, eX, hc, -, -, -, -, -, -, -, -, -, -, -, -, -, -, hR⟩ := hu u hu'
+  exact ⟨T, G, X, i1, i2, Vs, i3, i4, i5, i6, P, μ0, tw, 𝔞p, 𝔞n, M,
     ⟨inferInstance, inferInstance, inferInstance, inferInstance, inferInstance, τK, _, _, SG,
       fun ω => ⟨ST ω, tzO ω, n0, lam0 ω, χ0 ω, Xc ω, e ω, fun μ => ⟨_, _, _, _, _, _, hc μ ω⟩⟩⟩,
     hR.realises τK⟩

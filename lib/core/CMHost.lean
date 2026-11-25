@@ -18,8 +18,18 @@ fields and parameter shapes that a `ZetaBalance.Setting` determines. The layers 
 
 **The prime classes** (`Setting.cls`): Frobenius at `p ∤ N` is `[p] = ((p/d), (p/q), [p]_A) ∈ G` (`Setting.frob`).
 The class of `p` is *split* if `(p/d) = 1`, *signal* if not and Frobenius fixes `√−q`, i.e. `(p/q) = 1`, and *inert*
-otherwise. `hP(p) = [p]_A` (`Setting.hP`), `nP(p)` is `2·ord(hP²)` for signal `p` and `ord(hP)` otherwise
-(`Setting.nP`), and the orbit position is `pos_p(σ, t; s) = (σ·(−1)^{[p signal, s odd]}, t·hP(p)^s)` (`Setting.pos`).
+otherwise. `hP(p) = [p]_A` (`Setting.hP`); with a twist `c ∈ A` (`Setting.twA`: `[−1]_A` for odd `κ`, else `1`),
+`hP_c(p) = c·[p]_A` (`Setting.hPtw`), `nP(p)` is `2·ord(hP_c²)` for signal `p` and `ord(hP_c)` otherwise
+(`Setting.nP`), and the orbit position is `pos_p(σ, t; s) = (σ·(−1)^{[p signal, s odd]}, t·hP_c(p)^s)`
+(`Setting.pos`).
+
+**The twist** (verify-A F1). For odd `χ` the archive works in the coordinates of its twisted Artin map
+`u ↦ ((u/d), (u/q), [u]_A·[−1]_A^{[(u/q) = −1]})`, where complex conjugation `c̃` is `(−1, −1, 1)` and its
+`hP(p) = [p]_A·[−1]_A^{[(p/q) = −1]}` is the `A`-part of `c̃·Frob_p`. This layer keeps the untwisted coordinates
+(`artin`, `τ`), where `c̃ = (−1, −1, [−1]_A)`. Read in them through the relabelling `(s, t) ↦ (s, t·[−1]_A^{[s = −1]})`
+of `Φ` that matches the two CM types, the archive's orbits step by `[−1]_A·[p]_A`, the `A`-part of `c̃·Frob_p` here, at
+inert and signal `p` alike: that is `hP_c` with `c = [−1]_A`. For even `χ` the archive's Artin map is untwisted
+(its `K` contains `−1`, so `[−1]_A = 1`), and `c = 1`.
 
 **The field** (`Setting.E`): `N = QS·q·d`, the Artin map `(ℤ/N)ˣ → G`, `n ↦ ((n/d), (n/q), [n]_A)` (`Setting.artin`),
 and `E` the fixed field in `ℚ(ζ_N)` of the automorphisms whose exponent lies in its kernel. So `Gal(E/ℚ) ≅ G`, and
@@ -151,13 +161,21 @@ noncomputable def cls (p : ℕ) : PrimeClass :=
 /-- `hP(p) = [p]_A`, the `A`-part of Frobenius at `p`. -/
 noncomputable def hP (p : ℕ) : S.A := (S.frob p).2.2
 
-/-- `nP(p)`: `2·ord(hP(p)²)` for signal `p` and `ord(hP(p))` otherwise. -/
-noncomputable def nP (p : ℕ) : ℕ :=
-  if S.cls p = .signal then 2 * orderOf (S.hP p ^ 2) else orderOf (S.hP p)
+/-- **The twist** of a character `κ` of `A` (verify-A F1): `[−1]_A` when `κ` is odd, `κ([−1]_A) ≠ 1` (for `κ`
+lifting `χ`, `κ([−1]_A) = χ(−1)`), and `1` when it is even. -/
+noncomputable def twA (κ : S.A →* ℂˣ) : S.A := if κ (S.mkA (-1)) = 1 then 1 else S.mkA (-1)
 
-/-- The orbit position `pos_p(σ, t; s) = (σ·(−1)^{[p signal, s odd]}, t·hP(p)^s)`. -/
-noncomputable def pos (p : ℕ) (z : Φ S.A) (s : ℕ) : Φ S.A :=
-  (z.1 * if S.cls p = .signal ∧ Odd s then -1 else 1, z.2 * S.hP p ^ s)
+/-- The twisted `hP_c(p) = c·[p]_A`: with `c = twA κ`, the archive's `hP` read in this layer's coordinates (module
+docstring, "The twist"), at inert and signal `p`. -/
+noncomputable def hPtw (c : S.A) (p : ℕ) : S.A := c * S.hP p
+
+/-- `nP(p)`: `2·ord(hP_c(p)²)` for signal `p` and `ord(hP_c(p))` otherwise. -/
+noncomputable def nP (c : S.A) (p : ℕ) : ℕ :=
+  if S.cls p = .signal then 2 * orderOf (S.hPtw c p ^ 2) else orderOf (S.hPtw c p)
+
+/-- The orbit position `pos_p(σ, t; s) = (σ·(−1)^{[p signal, s odd]}, t·hP_c(p)^s)`. -/
+noncomputable def pos (c : S.A) (p : ℕ) (z : Φ S.A) (s : ℕ) : Φ S.A :=
+  (z.1 * if S.cls p = .signal ∧ Odd s then -1 else 1, z.2 * S.hPtw c p ^ s)
 
 /-! ## The field -/
 

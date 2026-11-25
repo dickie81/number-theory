@@ -15,12 +15,14 @@ objects of the layers below, and its bridge to the six-term interface `SixTermDa
 metrics, a target `C_u` of positive rank (`W_u ≠ 0`) with its metric `g_u`, and `K`-linear maps `B_ω`. Its slope
 frame is `KLattice.frame`, rescaled to the archive's units by `c = −log 2 + log|d_K|/[K:ℚ]` (`KFrame.frame`,
 `Frame.rescale`). `KFrame.Realises` says that the frame is, in coordinates, the defined objects of L6: `N_ω = Nsrc`,
-`C_u = Ctgt`, `B_ω = P_{μ0}`, with transfers, `μ(w) = μ0` off `Tw` and `𝔞_ω ≠ 0`.
+`C_u = Ctgt`, `B_ω = P_{μ0}`, with transfers, `μ(w) = μ0` off `Tw` and the fractional `𝔞_ω = 𝔞⁺(𝔞⁻)⁻¹` nonzero
+(`𝔞⁺, 𝔞⁻ ≠ 0`).
 
 **Sharp data** (`SharpData`, L7.5): weights, the parameters of the forced orders (ranks, Harish-Chandra families with
 `w_{u,j} = e_j`, split primes `g₀ ≠ g₁`), and per translate a frame, auxiliary primes `T_ω`, the constants of the frame
 condition and slacks `c↓, c↑, c_T ≥ 0`, meeting (T), (G↓), (G↑), (S), (R) and (Z). `Fo := ForcedOrders.Fo` at the
-cut-off `X″ = x·|A|·exp(x^{ε/3})` (`Setting.cutX`, L7.1) is fixed, `v = v_E` and `lg = log(g₀g₁)`. (R) is stated with
+cut-off `X″ = x·|A|·exp(x^{ε/3})` (`Setting.cutX`, L7.1), with the twist `Setting.twA κ` of the archive's Artin map
+for odd `χ` (verify-A F1; `ForcedOrders`, "The twist `c`"), is fixed, `v = v_E` and `lg = log(g₀g₁)`. (R) is stated with
 `SlopeLe`/`SlopeGe` at the rank-weighted mean (FrameRescale: `muMax`/`muMin` need a bound).
 
 **The bridge** (`SharpData.toSixTermData`, L7.6): `Ga = ΣΣASK`, `Ee = m·(Σ_t a_t)·lg`, `μM = μ(N_ω) − Ga − Fo + Ee`,
@@ -123,7 +125,8 @@ end KFrame
 (ranks `R`, Harish-Chandra families `hc u` with `w_{u,j} = e_j`, split primes `g₀ ≠ g₁`), and at each translate `u` a
 hermitian frame of `O_K`-lattices (sources `N_ω`, target `C_u`, maps `B_ω`), auxiliary primes `T_ω`, the constants of
 the frame condition and three nonnegative slacks, meeting (T), (G↓), (G↑), (S), (R) and (Z). All slopes and heights
-are in the archive's units (`KFrame.frame`); `Fo := ForcedOrders.Fo` is fixed, `v := v_E` and `lg = log(g₀g₁)`. -/
+are in the archive's units (`KFrame.frame`); `Fo := ForcedOrders.Fo` (twisted by `twA κ`) is fixed, `v := v_E` and
+`lg = log(g₀g₁)`. -/
 structure SharpData (S : Setting) (κ : S.A →* ℂˣ) (x ε X : ℝ) (K : Type) [Field K] [NumberField K]
     [IsTotallyComplex K] extends Weights S κ x ε X where
   /-- The ranks `(k, m, t)`. -/
@@ -186,10 +189,10 @@ structure SharpData (S : Setting) (κ : S.A →* ℂˣ) (x ε X : ℝ) (K : Type
   hT : ∀ u ∈ A₀ κ, ∀ ω, S.lam (w u) S.vE (Real.log (g₀ * g₁)) - cT u ≤ Real.log (T u ω)
   /-- **(G↓)**: `μ(N_ω) ≥ Σ_t Σ_j ASK(a_t, t, w_{u,j}) − m(Σ_t a_t)·lg + Fo(𝒫_u) − c↓`. -/
   hGdn : ∀ u ∈ A₀ κ, ∀ ω, ∑ t ∈ TT, ∑ j, S.ASK (a t) t (w u j) - m * (∑ t ∈ TT, a t) * Real.log (g₀ * g₁) +
-    R.Fo (hc u) g₀ g₁ (S.cutX x ε) - cDn u ≤ ((fr u).frame.N ω).deg ⊤ / ((fr u).frame.N ω).rk ⊤
+    R.Fo (hc u) (S.twA κ) g₀ g₁ (S.cutX x ε) - cDn u ≤ ((fr u).frame.N ω).deg ⊤ / ((fr u).frame.N ω).rk ⊤
   /-- **(G↑)**: `μ_g(C_u) + h_g(B_ω) − Fo(𝒫_u) ≤ MAIN_ω + c↑`. -/
   hGup : ∀ u ∈ A₀ κ, ∀ ω, (fr u).frame.C.deg ⊤ / (fr u).frame.C.rk ⊤ + (fr u).frame.h ω -
-    R.Fo (hc u) g₀ g₁ (S.cutX x ε) ≤ S.mainW TT m a S.vE (T u ω) + cUp u
+    R.Fo (hc u) (S.twA κ) g₀ g₁ (S.cutX x ε) ≤ S.mainW TT m a S.vE (T u ω) + cUp u
   /-- **(S)**: the frame condition at `v` for the `c_ω·B_ω`, with constants `e` and `η` (the target spans, so no
   padding: `δ = 0`). -/
   hS : ∀ u ∈ A₀ κ, FrameAtPlace.FrameCond (fun ω => cω u ω • (fr u).comp ω (pl u)) (e u) (η u)
@@ -211,7 +214,7 @@ variable {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ} {K : Type} [Field K]
   (D : SharpData S κ x ε X K)
 
 /-- The forced orders of a translate, `Fo(𝒫_u) = ForcedOrders.Fo`, in the archive's units. -/
-noncomputable def Fo (u : S.A) : ℝ := D.R.Fo (D.hc u) D.g₀ D.g₁ (S.cutX x ε)
+noncomputable def Fo (u : S.A) : ℝ := D.R.Fo (D.hc u) (S.twA κ) D.g₀ D.g₁ (S.cutX x ε)
 
 /-- `lg = log(g₀g₁)`. -/
 noncomputable def lg : ℝ := Real.log (D.g₀ * D.g₁)
@@ -273,7 +276,7 @@ theorem nonempty_sixTermData (h : Nonempty (SharpData S κ x ε X K)) : Nonempty
   h.map toSixTermData
 
 /-- **Sanity:** the bridge keeps the forced orders of the parameters, `Fo = ForcedOrders.Fo`. -/
-theorem toSixTermData_Fo (u : S.A) : D.toSixTermData.Fo u = D.R.Fo (D.hc u) D.g₀ D.g₁ (S.cutX x ε) :=
+theorem toSixTermData_Fo (u : S.A) : D.toSixTermData.Fo u = D.R.Fo (D.hc u) (S.twA κ) D.g₀ D.g₁ (S.cutX x ε) :=
   rfl
 
 end SharpData
@@ -289,15 +292,17 @@ variable {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] {Φ : Type*} 
   [∀ μ, Group (G μ)] [∀ μ, MulAction (G μ) (X μ)]
 
 /-- **A hermitian frame realises the period data** (L6.3–L6.5): in coordinates `e ω` of the source spaces and a
-linear map `eC` injective on `W_u`, the sources are `N_ω = {φ ∈ 𝔞_ω⁻¹M_ω : B_ωφ ∈ C_u}` (`PeriodTarget.Nsrc`), the
-target is `C_u` (`PeriodTarget.Ctgt`) and the maps are the period maps `B_ω = P_{μ0}(col ·)` (`PerData.P`). The
-twist data are transfers (`Twist.IsTransfer`), `μ(w) = μ0` off `Tw`, and `𝔞_ω ≠ 0`. -/
+linear map `eC` injective on `W_u`, the sources are `N_ω = {φ ∈ 𝔞_ω⁻¹M_ω : B_ωφ ∈ C_u}` (`PeriodTarget.Nsrc`, with
+the fractional `𝔞_ω = 𝔞⁺(𝔞⁻)⁻¹`, `𝔞⁺ = 𝔞p ω`, `𝔞⁻ = 𝔞n ω`), the target is `C_u` (`PeriodTarget.Ctgt`) and the maps
+are the period maps `B_ω = P_{μ0}(col ·)` (`PerData.P`). The twist data are transfers (`Twist.IsTransfer`),
+`μ(w) = μ0` off `Tw`, and `𝔞⁺, 𝔞⁻ ≠ 0`. -/
 def KFrame.Realises (F : KFrame K) {Vs : F.ι → Type*} [∀ ω, AddCommGroup (Vs ω)] [∀ ω, Module K (Vs ω)]
     [∀ ω, Module (𝓞 K) (Vs ω)] [∀ ω, IsScalarTower (𝓞 K) K (Vs ω)] (D : PerData Φ n E K G X Vs) (μ0 : T)
-    (tw : Twist D μ0) (𝔞 : F.ι → Ideal (𝓞 K)) (M : ∀ ω, Submodule (𝓞 K) (Vs ω)) : Prop :=
-  tw.IsTransfer ∧ (∀ w ∉ tw.Tw, tw.μw w = μ0) ∧ (∀ ω, 𝔞 ω ≠ ⊥) ∧
+    (tw : Twist D μ0) (𝔞p 𝔞n : F.ι → Ideal (𝓞 K)) (M : ∀ ω, Submodule (𝓞 K) (Vs ω)) : Prop :=
+  tw.IsTransfer ∧ (∀ w ∉ tw.Tw, tw.μw w = μ0) ∧ (∀ ω, 𝔞p ω ≠ ⊥ ∧ 𝔞n ω ≠ ⊥) ∧
     ∃ (e : ∀ ω, Vs ω ≃ₗ[K] (F.n ω → K)) (eC : (D.V0 μ0 → K) →ₗ[K] (F.κ → K)), Set.InjOn eC (D.W μ0) ∧
-      (∀ ω, (F.src ω).M = (Nsrc τ tw 𝔞 M ω).map (((e ω : Vs ω →ₗ[K] (F.n ω → K))).restrictScalars (𝓞 K))) ∧
+      (∀ ω, (F.src ω).M =
+        (Nsrc τ tw 𝔞p 𝔞n M ω).map (((e ω : Vs ω →ₗ[K] (F.n ω → K))).restrictScalars (𝓞 K))) ∧
       F.tgt.M = (Ctgt τ tw).map (eC.restrictScalars (𝓞 K)) ∧ ∀ ω φ, eC (D.P μ0 ω φ) = F.B ω (e ω φ)
 
 end Realise
@@ -318,7 +323,7 @@ abbrev ChainHook : Type 1 :=
 
 /-- **Sharp data realised by the defined objects**: a CM type `τ_K` on `E = Setting.E` with values in `K` that lifts
 `Setting.τ`, and at each translate `u ∈ A₀` period data whose chain is `chain`'s, of rank `n = N_m − 1`, realised by
-the hermitian frame of `u` (`KFrame.Realises`: `N_ω = Nsrc`, `C_u = Ctgt`, `B_ω = P_{μ0}`, `𝔞_ω ≠ 0`). -/
+the hermitian frame of `u` (`KFrame.Realises`: `N_ω = Nsrc`, `C_u = Ctgt`, `B_ω = P_{μ0}`, `𝔞⁺, 𝔞⁻ ≠ 0`). -/
 def SharpData.Realised (chain : ChainHook) {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ} {K : Type} [Field K]
     [NumberField K] [IsTotallyComplex K] (D : SharpData S κ x ε X K) : Prop :=
   ∃ (τK : Φ S.A → (S.E →+* K)) (j : K →+* ℂ), (∀ ρ, j.comp (τK ρ) = S.τ ρ) ∧
@@ -326,8 +331,8 @@ def SharpData.Realised (chain : ChainHook) {S : Setting} {κ : S.A →* ℂˣ} {
       (Vs : (D.fr u).ι → Type) (_ : ∀ ω, AddCommGroup (Vs ω)) (_ : ∀ ω, Module K (Vs ω))
       (_ : ∀ ω, Module (𝓞 K) (Vs ω)) (_ : ∀ ω, IsScalarTower (𝓞 K) K (Vs ω))
       (P : PeriodTarget.PerData (Φ S.A) (D.R.N D.R.m - 1) S.E K G X Vs) (μ0 : T) (tw : PeriodTarget.Twist P μ0)
-      (𝔞 : (D.fr u).ι → Ideal (𝓞 K)) (M : ∀ ω, Submodule (𝓞 K) (Vs ω)),
-      chain (Φ S.A) (D.R.N D.R.m - 1) S.E K T (D.fr u).ι X Vs P.col ∧ (D.fr u).Realises τK P μ0 tw 𝔞 M
+      (𝔞p 𝔞n : (D.fr u).ι → Ideal (𝓞 K)) (M : ∀ ω, Submodule (𝓞 K) (Vs ω)),
+      chain (Φ S.A) (D.R.N D.R.m - 1) S.E K T (D.fr u).ι X Vs P.col ∧ (D.fr u).Realises τK P μ0 tw 𝔞p 𝔞n M
 
 /-- **The sharp frontier** (spec L7.5): `SixTermBound`'s outer shape, with realised sharp data in place of six-term
 data. For every primitive `χ`, at arbitrarily small `ε` there is `A ≥ 1` such that, for every large `Y`, every pair

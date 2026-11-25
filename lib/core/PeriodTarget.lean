@@ -42,9 +42,11 @@ parameter**: the spec's `e·Amb_μ` needs the type group `𝔊` and an existenti
 properties in `Twist.IsTransfer`. `τ_μ` is taken on the ambient `V0_{μ0} → L`; only its restriction to `W_u` enters.
 `C_u = {f ∈ W_u : f(R_{μ0}) ⊆ O_{L,(w)} ∀w ∉ Tw, τ_{μ(w)}(f)(R_{μ(w)}) ⊆ O_{L,(w)} ∀w ∈ Tw}` (`Ctgt`).
 
-**The sources** (L6.5). `N_ω = {φ ∈ 𝔞⁻¹M_ω : B_ωφ ∈ C_u}` (`Nsrc`), with `M_ω` an `O_L`-submodule of the source
-space `V_ω` and `𝔞` a parameter; `𝔞⁻¹M = {x : 𝔞x ⊆ M}` (`ainv`), which is the fractional-ideal product for a nonzero
-`𝔞` (L7 supplies `𝔞 ≠ 0`).
+**The sources** (L6.5). `N_ω = {φ ∈ 𝔞_ω⁻¹M_ω : B_ωφ ∈ C_u}` (`Nsrc`), with `M_ω` an `O_L`-submodule of the source
+space `V_ω` and `𝔞_ω` a parameter. `𝔞_ω` is a fractional ideal (the archive's `𝔞_ω⁻¹ = Iu` has negative exponents
+where `sg < 0`; verify C8), given by two integral ideals, `𝔞_ω = 𝔞⁺(𝔞⁻)⁻¹`: `N_ω ⊆ (𝔞⁺)⁻¹·𝔞⁻M_ω`, with
+`𝔞⁻¹M = {x : 𝔞x ⊆ M}` (`ainv`), the fractional-ideal product for a nonzero integral `𝔞` (L7 supplies `𝔞⁺, 𝔞⁻ ≠ 0`).
+For integral `𝔞_ω`, `𝔞⁻ = ⊤` and `N_ω ⊆ 𝔞⁺⁻¹M_ω`, as before (`⊤ • M = M`, `Submodule.top_smul`).
 
 **Sanity theorems:** `coeff_coefLast`, `per_eq_classSum`, `mem_Ctgt`, `Nsrc_le`.
 -/
@@ -340,16 +342,17 @@ variable {Φ : Type*} [Fintype Φ] [DecidableEq Φ] {n : ℕ} {E : Type*} [Field
   {Vs : Ω → Type*} [∀ ω, AddCommGroup (Vs ω)] [∀ ω, Module L (Vs ω)] [∀ ω, Module (𝓞 L) (Vs ω)]
   [∀ ω, IsScalarTower (𝓞 L) L (Vs ω)] {D : PerData Φ n E L G X Vs} {μ0 : T}
 
-/-- The source `N_ω = {φ ∈ 𝔞_ω⁻¹M_ω : B_ωφ ∈ C_u}`, with `M_ω` the integral forms of the word (L4.3) and `𝔞_ω` a
-nonzero ideal, both parameters. Meant for L7. -/
-def Nsrc (tw : Twist D μ0) (𝔞 : Ω → Ideal (𝓞 L)) (M : ∀ ω, Submodule (𝓞 L) (Vs ω)) (ω : Ω) :
+/-- The source `N_ω = {φ ∈ 𝔞_ω⁻¹M_ω : B_ωφ ∈ C_u}`, with `M_ω` the integral forms of the word (L4.3) and the
+fractional ideal `𝔞_ω = 𝔞⁺(𝔞⁻)⁻¹` given by nonzero integral ideals `𝔞⁺ = 𝔞p ω`, `𝔞⁻ = 𝔞n ω`, all parameters:
+`𝔞_ω⁻¹M_ω = (𝔞⁺)⁻¹·𝔞⁻M_ω` (`ainv` of `𝔞⁻ • M_ω`). With `𝔞⁻ = ⊤` it is the integral case `𝔞⁺⁻¹M_ω`. Meant for L7. -/
+def Nsrc (tw : Twist D μ0) (𝔞p 𝔞n : Ω → Ideal (𝓞 L)) (M : ∀ ω, Submodule (𝓞 L) (Vs ω)) (ω : Ω) :
     Submodule (𝓞 L) (Vs ω) :=
-  ainv (𝔞 ω) (M ω) ⊓ (Ctgt τ tw).comap ((D.P μ0 ω).restrictScalars (𝓞 L))
+  ainv (𝔞p ω) (𝔞n ω • M ω) ⊓ (Ctgt τ tw).comap ((D.P μ0 ω).restrictScalars (𝓞 L))
 
 omit [NumberField E] in
-/-- **Sanity:** `N_ω ⊆ 𝔞_ω⁻¹M_ω`, the inclusion behind the bound on `μ_max(N_ω)`. -/
-theorem Nsrc_le (tw : Twist D μ0) (𝔞 : Ω → Ideal (𝓞 L)) (M : ∀ ω, Submodule (𝓞 L) (Vs ω)) (ω : Ω) :
-    Nsrc τ tw 𝔞 M ω ≤ ainv (𝔞 ω) (M ω) :=
+/-- **Sanity:** `N_ω ⊆ 𝔞_ω⁻¹M_ω = (𝔞⁺)⁻¹𝔞⁻M_ω`, the inclusion behind the bound on `μ_max(N_ω)`. -/
+theorem Nsrc_le (tw : Twist D μ0) (𝔞p 𝔞n : Ω → Ideal (𝓞 L)) (M : ∀ ω, Submodule (𝓞 L) (Vs ω)) (ω : Ω) :
+    Nsrc τ tw 𝔞p 𝔞n M ω ≤ ainv (𝔞p ω) (𝔞n ω • M ω) :=
   inf_le_left
 
 end Sources
