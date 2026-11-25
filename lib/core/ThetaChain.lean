@@ -499,9 +499,10 @@ twist places `P ∈ Q` (spec-11 §1–2; the archive's `levG`, `levQ`: subgroups
 characters. Step 0 is explicit (`β 0` a singleton, `h = 1`, `uniUT` with `lamGen` at `SG`, all of `GL_{N_0}(O_(P))`
 with the trivial character at `Q`: the archive's `zero_Q`), and so is the last level (`β(m−1)` a singleton, `h = 1`;
 the archive's chain has no level `m`). The level of the classes is the product `grp`. The ties at `Q` (the normal
-form `TwNF` of `h`, `grpQ/chrQ`), `grpG` at `SG` and `inj` are L7's (`ThetaVol.TwNF`, `ThetaVol.LevQOk`,
-`ThetaVol.LevGOk`, `ThetaVol.SameDC`, which need `R1` and `J`); the archive's remaining ties (`chrG` at `SG`; `surj`:
-every admissible double coset is enumerated) are not transcribed. Meant for L6/L7, which build `Data` from it. -/
+form `TwNF` of `h`, `grpQ/chrQ`), `grpG` at `SG`, `inj` and `surj` (every live double coset is enumerated, in a weaker
+form than the archive's) are L7's (`ThetaVol.TwNF`, `ThetaVol.LevQOk`, `ThetaVol.LevGOk`, `ThetaVol.SameDC`,
+`ThetaVol.XiStdAt`, which need `R1` and `J`); the archive's `int` is implied (by `TwNF` at `Q`, `h = 1` at `SG`), and
+its `chrG` at `SG` (read by no factor) is not transcribed. Meant for L6/L7, which build `Data` from it. -/
 structure ChIdx (Q : Finset (HeightOneSpectrum (𝓞 E))) (Nj : ℕ → ℕ) (m : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E)))
     (xi0 : E) (σ₀ : L →+* ℂ) where
   /-- The index types. -/

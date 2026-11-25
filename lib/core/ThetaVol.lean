@@ -32,7 +32,8 @@ All groups are subgroups of `GL_{n+c}(E)` for the global field `E`; `P`-local in
 * `blkA`, `n1Arg`, `prX`, `LevQOk`: the level group `prX(Cbe(JQ, h)) ∩ GL_n(O_(P))` of the classes at `P ∈ Q` and
   its character `chiInv` (the archive's `grpQ`, `chrQ`, with the `ψ_P(n1Arg)` factor; spec-12 F6), which L7 ties to
   `ChIdx.levQ`, `ChIdx.chrQ`; `IsRed`, `LevGOk`: the level group `red_w(prX(R1 ∩ J))` at `w ∈ SG` (the archive's
-  `grpG`), tied to `ChIdx.Λ`; `SameDC`: the double cosets `R1·h·J` (the archive's `inj`).
+  `grpG`), tied to `ChIdx.Λ`; `SameDC`: the double cosets `R1·h·J` (the archive's `inj`, `surj`).
+* `XiStdAt`: the factor of `XiStd` at one place (read alone at `Q` by L7's `surj`).
 
 **Parameters.** `bvecG` takes the index shuffle as a parameter; `entB` and `JGsym` use the archive's `fIdx`/`fPos`
 (spec-6 §6). `XiStd` takes the group `JS` at `SG`, the representatives `h` (the `ChIdx` bundle's, spec-3 §1 caveat),
@@ -117,7 +118,8 @@ def Cbe (J : Subgroup (GL (Fin (n + c)) E)) (h : GL (Fin (n + c)) E) : Subgroup 
 variable (n c) in
 /-- `h′ ∈ R1·h·J` (the archive's `SameDC`): `h` and `h′` lie in one double coset `R1 \ GL_{n+c}(E) / J`. Distinct
 indices of a level have representatives in distinct double cosets at some place of `Q`, with `J = JQ(k + j)` (the
-archive's `inj`; `SharpChain.IsThetaCol`). -/
+archive's `inj`), and every double coset reached by a nonzero step factor at `Q` is some index's (`surj`, weakened;
+`SharpChain.IsThetaCol`). -/
 def SameDC (J : Subgroup (GL (Fin (n + c)) E)) (h h' : GL (Fin (n + c)) E) : Prop :=
   ∃ r ∈ R1 n c, ∃ κ ∈ J, h' = r * h * κ
 
@@ -269,18 +271,27 @@ noncomputable def PhiQ (Pl : HeightOneSpectrum (𝓞 E)) (ξ : E → L) (r : ℕ
   if (∀ p p', intAt Pl (M p p')) ∧ (∀ p p', r ≤ p → p' < r → inP Pl (M p p')) ∧ ¬ inP Pl (blkDet M 0 r)
   then ξ (blkDet M 0 r) else 0
 
-/-- **The local factor** `Ξ(x) = ∏_{P ∈ R} volN_P⁻¹·E1(om(Φ_P))(x_P)` of a step from size `n + c` to `n′ + c′`, `R` the
-row set, `x_P` the step's matrix read at `P` (in the frames there, `xiStd`), `g`, `h` the representatives, `Φ_P` the
-kernel shapes (`PhiGS ∘ entB` at `SG`, `PhiQ ∘ entB` at `Q`: a parameter, as `JS`; the canonical ones are `phS`,
-`phQ`). -/
+/-- **The factor at one place** `P` of a step from size `n + c` to `n′ + c′`: `volN_P⁻¹·E1(om(Φ_P))(x)`, for the
+representatives `g` (source) and `h` (target) at `P`, the group `JS` (read only if `P ∈ SG`), the local parameters and
+the kernel shape `Φ_P` at `P`. `XiStd` is its product over the row set; `SharpChain.IsThetaCol` reads it alone at the
+places of `Q` (the archive's `surj`). -/
+noncomputable def XiStdAt (n n' c c' A : ℕ) (SG : Finset (HeightOneSpectrum (𝓞 E)))
+    (JS : Subgroup (GL (Fin (n' + c')) E)) (kj : ℕ) (g : GL (Fin (n + c)) E) (h : GL (Fin (n' + c')) E) (ψ μ : E → L)
+    (sq : L) (Ph : Matrix (Fin (n' + c')) (Fin (n + c)) E → L) (Pl : HeightOneSpectrum (𝓞 E))
+    (x : Matrix (Fin n') (Fin n) E) : L :=
+  (((volAt n' c' SG JS kj h Pl)⁻¹ : ℚ) : L) * E1 (Ideal.absNorm Pl.asIdeal) A n n' c c' ψ (om Pl μ sq g h Ph) x
+
+/-- **The local factor** `Ξ(x) = ∏_{P ∈ R} volN_P⁻¹·E1(om(Φ_P))(x_P)` (`XiStdAt` at each `P`) of a step from size
+`n + c` to `n′ + c′`, `R` the row set, `x_P` the step's matrix read at `P` (in the frames there, `xiStd`), `g`, `h` the
+representatives, `Φ_P` the kernel shapes (`PhiGS ∘ entB` at `SG`, `PhiQ ∘ entB` at `Q`: a parameter, as `JS`; the
+canonical ones are `phS`, `phQ`). -/
 noncomputable def XiStd (n n' c c' A : ℕ) (R SG : Finset (HeightOneSpectrum (𝓞 E)))
     (JS : HeightOneSpectrum (𝓞 E) → Subgroup (GL (Fin (n' + c')) E)) (kj : ℕ)
     (g : HeightOneSpectrum (𝓞 E) → GL (Fin (n + c)) E) (h : HeightOneSpectrum (𝓞 E) → GL (Fin (n' + c')) E)
     (ψ μ : HeightOneSpectrum (𝓞 E) → E → L) (sq : HeightOneSpectrum (𝓞 E) → L)
     (Ph : HeightOneSpectrum (𝓞 E) → Matrix (Fin (n' + c')) (Fin (n + c)) E → L)
     (x : HeightOneSpectrum (𝓞 E) → Matrix (Fin n') (Fin n) E) : L :=
-  ∏ Pl ∈ R, (((volAt n' c' SG (JS Pl) kj (h Pl) Pl)⁻¹ : ℚ) : L) *
-    E1 (Ideal.absNorm Pl.asIdeal) A n n' c c' (ψ Pl) (om Pl (μ Pl) (sq Pl) (g Pl) (h Pl) (Ph Pl)) (x Pl)
+  ∏ Pl ∈ R, XiStdAt n n' c c' A SG (JS Pl) kj (g Pl) (h Pl) (ψ Pl) (μ Pl) (sq Pl) (Ph Pl) Pl (x Pl)
 
 /-- `x` is the idele with component `a` at `P` and `1` elsewhere, so that `ν x = ν_P(a)` is the local component of a
 character `ν` of the ideles (it stands for the archive's local components, which the library does not define). -/
