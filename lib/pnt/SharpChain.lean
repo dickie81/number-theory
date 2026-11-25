@@ -101,11 +101,11 @@ places above `g₀g₁` (`eW`, `Sg`),
 `π − 1 ∈ M·O_{K₀}` iff `M ∣ b` and `a ≡ b + 2 (mod 2M)`). It implies `SharpBoundTheta`.
 
 **Source pins** (L4.3, L6.5, audit of `KLattice.G`): through each word's `e` (the one every level reads), the pinned
-frontier takes `K` CM, `M_ω` the `O_K`-span of the integral forms `HermForms.Mω` of `X ⊓ V_ω`, and the source
-metrics `G_v = σ_v(H_ω)`, `H_ω` the Petersson form `HermForms.pet`, in the coordinates of the frame
-(`KFrame.RealisesPet`). The target metric stays existential. Every level's `X`, `lsh`, `V0` are pinned by
-one clause on `SG ∪ QE μ` with `ST = ∅` (spec-7 §2c, spec-9; "Rows" below). Not pinned: a lower bound on `X` or on
-the words.
+frontier takes `K` normal over `ℚ` with a star (not CM: the archive's `K` contains `j(cc)`), `M_ω` the `O_K`-span of
+the integral forms `HermForms.Mω` of `X ⊓ V_ω`, and the source metrics `G_v = σ_v(H_ω)`, `H_ω` the Petersson form
+`HermForms.pet` (hermitian for the star), in the coordinates of the frame (`KFrame.RealisesPet`). The target metric
+stays existential. Every level's `X`, `lsh`, `V0` are pinned by one clause on `SG ∪ QE μ` with `ST = ∅` (spec-7 §2c,
+spec-9; "Rows" below). Not pinned: a lower bound on `X` or on the words.
 
 **Rows** (spec-9; `RowSpace`). At every level `μ` (`QE μ0 = ∅`): `G μ ≃* Grp E n (SG ∪ QE μ) Λ_μ` and `X μ ≃ points Λ_μ`
 with `ST = ∅`, compatibly, `Λ_μ = rowLevel SG (QE μ)` (`HKJ` at `SG`: block upper triangular for `(r, t, …, t)` with the
@@ -303,8 +303,11 @@ same at every level (audit 7, T1a: the archive twists the characters, not the in
 the step-0 rank `n0`, weight `lam0` and character `χ0`, a cusp subspace `X` stable under the diamond operators, and
 an isomorphism `e` of the source with `X ⊓ V_ω`. The chain has `D.ST = ST`, `D.SG = SG`, `D.n 0 = n0`,
 `D.lam 0 = lam0`, and reads `e φ` through `fnCast`. `Shp D m Q ξ` is a further condition on the data, length, `Q`
-and twist `ξ`, set by the caller (the pinned frontier: the chain shape, `sd`, through `SharpData.RealisedPinned`). -/
-def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ) (Sg : Set (HeightOneSpectrum (𝓞 E))) (n : ℕ)
+and twist `ξ`, set by the caller (the pinned frontier: the chain shape, `sd`, through `SharpData.RealisedPinned`).
+**The star** of the coefficient field `L` is complex conjugation at the chain's embedding:
+`σ₀ ∘ star = conj ∘ σ₀`, `σ₀ = D.P.σ₀` (the archive's `Fields.Ok`). `L` need not be CM: the archive's coefficient
+field contains `j(cc)`, of odd degree `h(−d) ≥ 3` with a non-real embedding, so lies in no CM field. -/
+def IsThetaCol [StarRing L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ) (Sg : Set (HeightOneSpectrum (𝓞 E))) (n : ℕ)
     (U : Prop) {ST SG : Finset (HeightOneSpectrum (𝓞 E))} (Q : Finset (HeightOneSpectrum (𝓞 E))) (xi0 : E)
     (mu0 : ℕ → Hecke E L) (Shp : Data τ → ℕ → Finset (HeightOneSpectrum (𝓞 E)) → Hecke E L → Prop) (tz : 𝓞 E)
     {Xr : Type} (pX : Xr → Deco E n ∅ (SG ∪ Q)) {V : Type}
@@ -316,7 +319,7 @@ def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
     (Tp : Top D m2 (SG ∪ Q) (∀ P : ↥(Q \ D.SG), Fin (D.n (m2 + 1)) → 𝓞 E ⧸ P.1.asIdeal ^ (m2 + 1)) Xr),
     Cμ.mu = mu0 ∧ (Nonempty (Unique (D.β 0)) ∧ Nonempty (Unique (D.β (m2 + 1))) ∧ (∀ j, Finite (D.β j)) ∧
       D.Q = Q ∧ (∀ b, D.Λ 0 b = (uniUT D.SG (D.n 0)).prod ⊤) ∧
-      (∀ ρ i, D.lam 0 ρ i = lam0 ρ (Fin.cast h0 i)) ∧
+      (∀ ρ i, D.lam 0 ρ i = lam0 ρ (Fin.cast h0 i)) ∧ (∀ x, D.P.σ₀ (star x) = starRingEnd ℂ (D.P.σ₀ x)) ∧
       ∀ g, D.P.σ₀ (χ0 g) = lamGen xi0 (g : ∀ w : SG, GL (Fin n0) (𝓞 E ⧸ w.1.asIdeal))) ∧
     (D.S = ↑D.ST ∪ ↑D.SG ∪ ↑Q ∧ (∀ j, 0 < D.cA j ∧ 0 < D.cB j) ∧
       (∀ j c c', (D.XD j c c').SA.Nonempty ∧ (D.XD j c c').SB.Nonempty ∧ 0 < (D.XD j c c').vol) ∧ D.XDPinned ∧
@@ -396,11 +399,14 @@ end Hook
 open Classical in
 /-- **The theta hook**: at every level `μ`, the points `X μ` are decorated row points of rank `n` (through `pX`, with
 `ST = ∅` and frames on `SG ∪ Q`), and `col μ ω` is the theta chain's (`IsThetaCol`: the top step maps to the lift
-`tilQ tz` of each point) at every word `ω`, for a CM structure on `E` and a CM type `τ`, with `SG` shared by the words
+`tilQ tz` of each point) at every word `ω`, for a CM structure on `E`, a CM type `τ` and a coefficient field `L` as in
+the archive's `Fields.Ok` (normal over `ℚ`, totally complex, with a star that `IsThetaCol` makes complex conjugation at
+the chain's `σ₀`; not CM), with `SG` shared by the words
 and each word's `ST`, `tz` (its own auxiliary prime `T_ω`) and source data (`n0`, `lam0`, `χ0`, `X`, `e`) chosen once,
 outside the level (audit 7, T1a). -/
 def thetaHook : ChainHook := fun Φ _ _ n E L _ _ _ T Ω X Vs _ _ col =>
-  ∃ (_ : IsCMField E) (_ : NumberField L) (_ : IsCMField L) (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
+  ∃ (_ : IsCMField E) (_ : NumberField L) (_ : IsTotallyComplex L) (_ : Normal ℚ L) (_ : StarRing L)
+    (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
     (Sg : Set (HeightOneSpectrum (𝓞 E))) (SG : Finset (HeightOneSpectrum (𝓞 E))),
     ∀ ω : Ω, ∃ (ST : Finset (HeightOneSpectrum (𝓞 E))) (tz : 𝓞 E) (n0 : ℕ) (lam0 : Φ → Fin n0 → ℤ)
       (χ0 : uniUT SG n0 →* L)
@@ -534,7 +540,7 @@ open Classical in
 `cA = (∏_{P ∈ SG} N P)^{m+1}` and `cB = T_ω·(∏_{P ∈ SG} N P)^{m+1}` at every step (spec-5 §2: the canonical
 constants `A = B = m + 1`), over the row set `SG ∪ Q` (spec-7 §3f: `cA = (∏_{P ∈ SG ∪ Q} N P)^{m+1}`, `cB = T_ω·cA`);
 `sd = √d/2`. -/
-def SharpData.Shp (D : SharpData S κ x ε X K) [IsCMField K] {τK : Φ S.A → (S.E →+* K)} (u : S.A)
+def SharpData.Shp (D : SharpData S κ x ε X K) {τK : Φ S.A → (S.E →+* K)} (u : S.A)
     (ω : (D.fr u).ι) (hw : D.R.HCFamily) (D' : Data τK) (m' : ℕ) (Q : Finset (HeightOneSpectrum (𝓞 S.E))) :
     Prop :=
   (∀ j, D'.cA j = (∏ P ∈ D'.SG ∪ Q, Ideal.absNorm P.asIdeal) ^ (m' + 1) ∧
@@ -546,7 +552,9 @@ def SharpData.Shp (D : SharpData S κ x ε X K) [IsCMField K] {τK : Φ S.A → 
     D'.P.sd = Real.sqrt S.d / 2
 
 open Classical in
-/-- **Realised, pinned**: `SharpData.Realised thetaHook` over a CM field `K`, with the chain's CM type equal to `τ_K`,
+/-- **Realised, pinned**: `SharpData.Realised thetaHook` over a field `K` normal over `ℚ` with a star (the archive's
+`Fields.Ok`: `IsThetaCol` makes the star complex conjugation at the chain's `σ₀`; `K` need not be CM), with the
+chain's CM type equal to `τ_K`,
 the branching maps pinned (`BrPinned`) at `λ_ω = λ_m` (`lamW`) of the word's HC family `hcW ω` (the archive's `hcW u`:
 equal to `hc u` in `v`, `b`, `e`, `u_0`, `u_{k−1}`, so the words may differ in the middle `u_i`; the chain weights `λ_j`
 of `Shp`, `λ_0` included, are `hcW ω`'s) and `σ = sgT` (`sgW`) of `hc u`, the source lattices `M_ω`
@@ -569,7 +577,7 @@ of `ξT μ` at `QE μ`. One `xi0` (spec-2 item 2) serves every `IsThetaCol` and 
 at `μ(w)`, with `GoodTw` for every conjugate `ψ_w^a`: the `w`-integral sources at `μ′` and at `μ0`, both in `V_ω`, have
 finite indices whose sum over the words is bounded one way (module docstring, "Twist characters"); `pde ≠ pde′`. -/
 def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
-  ∃ (_ : IsCMField K) (τK : Φ S.A → (S.E →+* K)) (j : K →+* ℂ), (∀ ρ, j.comp (τK ρ) = S.τ ρ) ∧
+  ∃ (_ : Normal ℚ K) (_ : StarRing K) (τK : Φ S.A → (S.E →+* K)) (j : K →+* ℂ), (∀ ρ, j.comp (τK ρ) = S.τ ρ) ∧
     ∀ u ∈ A₀ κ, ∃ (T : Type) (G X : T → Type) (_ : ∀ μ, Group (G μ)) (_ : ∀ μ, MulAction (G μ) (X μ))
       (Vs : (D.fr u).ι → Type) (_ : ∀ ω, AddCommGroup (Vs ω)) (_ : ∀ ω, Module K (Vs ω))
       (_ : ∀ ω, Module (𝓞 K) (Vs ω)) (_ : ∀ ω, IsScalarTower (𝓞 K) K (Vs ω))
@@ -640,12 +648,12 @@ def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
 /-- Pinned realisation gives realisation with the theta hook. -/
 theorem SharpData.RealisedPinned.realised {D : SharpData S κ x ε X K} (h : D.RealisedPinned) :
     D.Realised thetaHook := by
-  obtain ⟨_, τK, j, hj, hu⟩ := h
+  obtain ⟨_, _, τK, j, hj, hu⟩ := h
   refine ⟨τK, j, hj, fun u hu' => ?_⟩
   obtain ⟨T, G, X, i1, i2, Vs, i3, i4, i5, i6, ST, SG, P, μ0, tw, 𝔞, M, _, n0, lam0, χ0, Xc, e, QE, xi0, _, _, tzO,
     eX, hc, -, -, -, -, -, -, -, -, -, -, -, -, -, -, hR⟩ := hu u hu'
   exact ⟨T, G, X, i1, i2, Vs, i3, i4, i5, i6, P, μ0, tw, 𝔞, M,
-    ⟨inferInstance, inferInstance, inferInstance, τK, _, _, SG,
+    ⟨inferInstance, inferInstance, inferInstance, inferInstance, inferInstance, τK, _, _, SG,
       fun ω => ⟨ST ω, tzO ω, n0, lam0 ω, χ0 ω, Xc ω, e ω, fun μ => ⟨_, _, _, _, _, _, hc μ ω⟩⟩⟩,
     hR.realises τK⟩
 

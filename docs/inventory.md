@@ -662,7 +662,7 @@ note of `formalisations/` that names it, if one does.
 - `KLattice.rk_top`: Ranks ([note](../formalisations/alpoge-rh.md))
 - `KLattice.slope_withLattice`: The slope after an index ([note](../formalisations/alpoge-rh.md))
 - `KLattice.deg_scale`: Scaling the metrics ([note](../formalisations/alpoge-rh.md))
-- `KLattice.isHermitian_map`: On a CM field, a matrix hermitian for complex conjugation is hermitian at every complex place, so only positivity is asked of `σ_v(H)` there. ([note](../formalisations/alpoge-rh.md))
+- `KLattice.isHermitian_map`: A matrix hermitian for a star on `K` is hermitian at an embedding `σ` where the star is complex conjugation, `σ ∘ star = conj ∘ σ`. ([note](../formalisations/alpoge-rh.md))
 - `KLattice.hom_ψ`: The map of `B` extends `B` ([note](../formalisations/alpoge-rh.md))
 - `KLattice.spread_of_frameCond`: Rank spreading from the frame condition at one complex place ([note](../formalisations/alpoge-rh.md))
 

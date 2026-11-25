@@ -31,10 +31,11 @@ on the first `s` columns of `x_τ`, with arbitrary rows (`rows`; repeated rows g
 subring `A ⊆ L`, `∇_A(ν)` is their `A`-span (`nablaInt`). We use only `A = O_L` and `A = O_{L,w}`.
 
 **The Fock form** (`fockWith c`) is `Σ_α c(F_α)·F′_α·α!` for a ring endomorphism `c` of `L`: `fock` takes `c` the
-complex conjugation of a CM field `L` (Mathlib's `IsCMField.complexConj`), normalised by `fock(hw, hw)`. **Δ**
-(`Delta A ν`) is the Fock dual of `∇_A(ν)` in `∇_L(ν)`: it is tested on the bideterminants, which span, and with
-`c = id`: bideterminants have integer coefficients and `conj` preserves `A`, so the hermitian and bilinear duals agree,
-and `Δ` needs no CM structure on `L`.
+star of `L` (`starRingEnd L`), normalised by `fock(hw, hw)`. `L` need not be CM: the frontier asks only that the star
+be complex conjugation at one embedding `σ₀` (the archive's coefficient field contains `j(cc)`, so lies in no CM
+field). **Δ** (`Delta A ν`) is the Fock dual of `∇_A(ν)` in `∇_L(ν)`: it is tested on the bideterminants, which span,
+and with `c = id`: bideterminants have integer coefficients, so the hermitian pairing is the star of the bilinear one,
+and `Δ` needs no star on `L`.
 
 **The action and `Δ_N`** (L3.3). `VV λ = ∇_L(natW λ)` (`VV`). For `γ ∈ GL_n(E)`,
 `ρ_λ(γ)F = ∏_τ τ(det γ)^{−λ_{τ,n−1}}·F((τ(γ)⁻¹x_τ)_τ)` (`rho`). For an `O_E`-lattice `N`, `F ∈ Δ_N(λ)` (`DeltaN`)
@@ -139,11 +140,10 @@ variable {Φ : Type*} [Fintype Φ] [DecidableEq Φ] {n : ℕ} {L : Type*} [Field
 noncomputable def fockWith (c : L →+* L) (F G : Pol Φ n L) : L :=
   ∑ d ∈ G.support, c (F.coeff d) * G.coeff d * d.prod fun _ k => (k.factorial : L)
 
-/-- The normalised Fock form `⟨F, G⟩ = fock(F, G)/fock(hw_ν, hw_ν)` on a CM field `L`, with `c` the complex
-conjugation. Meant for the Petersson form `H_j` of L4.1. -/
-noncomputable def fock [NumberField L] [IsCMField L] (ν : Φ → Fin n → ℕ) (F G : Pol Φ n L) : L :=
-  fockWith (IsCMField.complexConj L : L →+* L) F G /
-    fockWith (IsCMField.complexConj L : L →+* L) (hw L ν) (hw L ν)
+/-- The normalised Fock form `⟨F, G⟩ = fock(F, G)/fock(hw_ν, hw_ν)`, with `c` the star of `L` (complex conjugation
+at one embedding, in the frontier). Meant for the Petersson form `H_j` of L4.1. -/
+noncomputable def fock [StarRing L] (ν : Φ → Fin n → ℕ) (F G : Pol Φ n L) : L :=
+  fockWith (starRingEnd L) F G / fockWith (starRingEnd L) (hw L ν) (hw L ν)
 
 /-- `Δ_A(ν)`: the `F ∈ ∇_L(ν)` whose normalised Fock pairing with every bideterminant of shape `ν` lies in `A`, the
 Fock dual of `∇_A(ν)` (with `c = id`, see the module docstring). -/
