@@ -21,13 +21,13 @@ properties `U_t σ*(0) ≠ 0` (so `th0(0) = 1`), `g` an isometry and `|κ| = 1`.
 scale-bearing fields: `Lc = δ·φ₀(cc)` with `Δ(Lc) = 1`, `s = 1/area(Lc)`, `σ = σ*_{Lc} = σ_W·exp(−s₂z²/2)` (Weierstrass
 `σ_W`, `ζ_W` by their product and sum over Mathlib's `PeriodPair.lattice`; `g₂`, `g₃` are Mathlib's) and `Λ = ι(𝔄)`;
 `t` (a 2-torsion point), `g` and `κ` stay quantified, as they move `θ₀` by a phase only. `Pin.Canonical` and
-`Normalised` take a pin of any form `s` (`Normalised` asks `P.s = s`), so the frontier can pass one pin per step in from
-outside the chain and share it (`SharpChain.IsThetaCol`, audit 13).
+`Normalised` take a pin of any form `s` (`Normalised` asks `P.s = s`), so the frontier can pass one pin for every step
+in from outside the chain and share it (`SharpChain.IsThetaCol`, audit 13).
 
 **Freedom left.** Given a `Pin`, `θ₀` is unique up to `ζ⁴ = 1` (spec-3 §2, `ThetaVector`), and `ζ^{ab} = 1` for even
 `a, b`, so `θ_std` is pinned. Since `κ` is only constrained by `|κ| = 1`, the remaining freedom of the frontier is a
 unimodular phase, which does not change slopes; the `ℂ^×` (in particular `ℚ^×`) scale is gone. The frontier takes one
-pin per step for all chains of a translate, so `κ` is one phase per step and translate, not one per chain: a free
+pin for every step of all chains of a translate, so `κ` is one phase per translate, not one per chain: a free
 `κ` per chain could be `σ₀(γ)` with `γ = x/star x ∈ L`, of norm `1` at the infinite places but of any `w`-adic
 valuation (audit 13, T2 (i)); the archive's `κ` is fixed by the lattice datum (`KapChoice.kappa`).
 
@@ -149,7 +149,7 @@ through the inverse different: `(𝔟𝔟̄)⁻¹ = {x | Tr_{E/K₀}(x·O_E) ⊆
 fixed up to a unit of `O_L`; a global unit does not change slopes (product formula). `K₀ = ℚ(√−d)` (`d = 4·sd²`)
 and `cc` is an `O_{K₀}`-module (audit 6's hedge). The choices left (`cc`, `𝔟`,
 the basis of `Lc`, `t` mod `Lc`, `g`, `κ`, the units of `g_τ`) do not move `|θ₀|` (spec-4). Meant for the
-frontier (`SharpChain.IsThetaCol`, which shares one pin per step across a translate's chains). The pin has its own
+frontier (`SharpChain.IsThetaCol`, which shares one pin across a translate's steps and chains). The pin has its own
 form `s = 1/area(Lc)`; `Normalised` ties it to `P.s`. -/
 def Pin.Canonical [NumberField L] (τ : Φ → (E →+* L)) (P : TP E L Φ) {s : ℝ} (D : Pin Φ s) : Prop :=
   ∃ (cc : Submodule ℤ E) (AA0 : Submodule (𝓞 E) E) (Lp : PeriodPair) (K₀ : IntermediateField ℚ E)
