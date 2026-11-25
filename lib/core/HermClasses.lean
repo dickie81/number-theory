@@ -40,6 +40,11 @@ a decorated lattice of rank `n` to one of rank `n + 1` on the same frame places:
 the level-`T` decorations `(tz·a) mod P` on the `e_last`-coordinate `a`, and the frames `(be_w, (a/conj(tz)) mod w)`.
 With `ST` the places over `conj(tz)`, `Lsh(tilQ d) = til tz N`; L7's top step maps to the lift of each row point.
 
+**Frames and `phiT`** (the archive's `liftFr`, `inFr`, `phiT`). The frame lift `liftFr d w` is a matrix whose column
+`i` lies in `N` over `e_i` under `be_w` (`fr(O_(w)^n) = N_(w)` for a good `d`); `frAt d P` is it at `P ∈ SG` and `1`
+elsewhere, and `inFr(fr, fr′, x) = fr′⁻¹·x·fr` reads a map in the frames. `phiT(d, d′, x)` is the level-`T` indicator:
+`x` carries `N` into `N′_(P)` with `f′_P ∘ x = f_P` at every `P ∈ ST`. L7's factors read both (`ThetaVol`).
+
 **Choices.** Matrices for `GL_n` and `U_n`, so later layers (`WeylFock`) can read `ρ(γ)` off the entries. The
 decorations are data on the lattice itself (`↥N →ₗ[O_E] …`), compared by `Deco.ext'`. Following the spec's
 "minimal", the T-Hecke data, `rp`/`pref`, `DGam`, `autO` and `autOrd` are dropped.
@@ -469,6 +474,40 @@ def tilQ (tz : 𝓞 E) (d : Deco E n ST' SG) : Deco E (n + 1) ST SG where
         (w.1.asIdeal.mkQ ∘ₗ LinearMap.snd _ _ _))) ∘ₗ (tilEquiv d.N).symm.toLinearMap
 
 end Lift
+
+/-! ### Frames and the level-`T` indicator -/
+
+section Frames
+
+variable {E : Type*} [Field E] [NumberField E] {n a b : ℕ} {ST SG SG' : Finset (HeightOneSpectrum (𝓞 E))}
+
+/-- **The frame lift** at `w ∈ SG` (the archive's `Deco.liftFr`): the matrix whose column `i` is a chosen `v ∈ N`
+with `be_w(v) = e_i` (Hilbert choice, as the archive's `ε`). For a good `d` the columns reduce to a basis of `N/wN`,
+so `fr(O_(w)^n) = N_(w)` and `fr` is fixed up to `1 + w·M_n(O_(w))`. Meant for L7 (`frAt`, `SharpChain.IsDetIdele`). -/
+def liftFr (d : Deco E n ST SG) (w : SG) : Matrix (Fin n) (Fin n) E :=
+  Matrix.of fun r i => (@Classical.epsilon d.N ⟨0⟩ fun v => d.be w v = Pi.single i 1 : Fin n → E) r
+
+open Classical in
+/-- The frame of `d` at a place `P`: `liftFr` at `P ∈ SG`, the identity elsewhere (no frame there). The chain's
+factors read every matrix at `inFr (frAt d P) (frAt d′ P) x` (`ThetaVol.xiStd`, `xiCpl`, `xiTop`). -/
+def frAt (d : Deco E n ST SG) (P : HeightOneSpectrum (𝓞 E)) : Matrix (Fin n) (Fin n) E :=
+  if h : P ∈ SG then liftFr d ⟨P, h⟩ else 1
+
+/-- `inFr(fr, fr′, x) = fr′⁻¹·x·fr`: `x : E^a → E^b` read in the frames `fr` of the source and `fr′` of the target
+(the archive's `inFr`). Meant for L7, as `frAt`. -/
+def inFr (fr : Matrix (Fin a) (Fin a) E) (fr' : Matrix (Fin b) (Fin b) E) (x : Matrix (Fin b) (Fin a) E) :
+    Matrix (Fin b) (Fin a) E :=
+  fr'⁻¹ * x * fr
+
+/-- **The level-`T` indicator** (the archive's `phiT`): at every `P ∈ ST`, `x` maps `N` into `N′_(P)` and
+`f′_P(x y) = f_P(y)`, read on `N′` through a denominator `s ∉ P` (`f′_P(s·xy) = s·f_P(y)`; `f′_P` kills `P·N′`, so `s`
+does not matter). The only place the chain reads the decorations `f`; a factor of every step (`ThetaVol.xiStd`,
+`xiCpl`, and `xiTop` with the target the lift `tilQ`). -/
+def phiT (d : Deco E a ST SG) (d' : Deco E b ST SG') (x : Matrix (Fin b) (Fin a) E) : Prop :=
+  ∀ (P : ST) (y : d.N), ∃ s : 𝓞 E, s ∉ P.1.asIdeal ∧
+    ∃ h : (s : E) • (x *ᵥ (y : Fin a → E)) ∈ d'.N, d'.f P ⟨_, h⟩ = s • d.f P y
+
+end Frames
 
 end
 

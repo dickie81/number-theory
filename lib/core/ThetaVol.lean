@@ -11,10 +11,11 @@ part has a fixed scale; so the volumes `volN_P(j)` carry the scale of `Ξ_j`. Th
 two top steps differ (spec-10 F1–F5; the archive's `XiCpl1`, `XiCpl2`, coupled through the coset `Y` of level `m − 1`,
 here in its collapsed form `ȳ ∈ ∏_{P ∈ Q} (O/P)^{N_{m−1}}`): step `m − 2` is `xiCpl` (`XiStd` at `SG`;
 `q^{−N_{m−1}}·om(Φ_P)([x | ȳ_P])` at `Q`, `joinCol`, no `E1`, no `volN`) and step `m − 1` is `xiTop` (`PhiTop·ftY`, read
-on the row point's lift). Like `XiStd`, they read `x` in global coordinates (no frames). The
-frontier (L7) uses `XiFull` with the
-canonical sharp instance (`jS`, `phS`, `LocOk`, depth `m + 1`). The library's `x` is the archive's (no transpose);
-`entB` uses the archive's shuffle `fIdx` with `k₀ = k`. The unsharp kernel shape and group at `SG` and the
+on the row point's lift). All three read `x` at each place `P` in the frames of the source and the target
+(`HermClasses.inFr`, `frAt`: the archive's `inFr` with the frame lifts `liftFr`), and carry the level-`T` indicator
+`HermClasses.phiT` (the top's target is the lift `tilQ`, whose `f_P = tz·a` it reads). The frontier (L7) uses `XiFull`
+with the canonical sharp instance (`jS`, `phS`, `LocOk`, depth `m + 1`). The library's `x` is the archive's (no
+transpose); `entB` uses the archive's shuffle `fIdx` with `k₀ = k`. The unsharp kernel shape and group at `SG` and the
 root-of-unity form of the scale pin are not part of the frontier and are not defined.
 
 All groups are subgroups of `GL_{n+c}(E)` for the global field `E`; `P`-local integrality enters through lattices of
@@ -37,7 +38,7 @@ the depth `A = B` (a parameter; the canonical one is `m + 1`).
 
 namespace ThetaVol
 
-open NumberField IsDedekindDomain ThetaChain
+open NumberField IsDedekindDomain ThetaChain HermClasses
 
 section Groups
 
@@ -255,16 +256,18 @@ noncomputable def PhiQ (Pl : HeightOneSpectrum (𝓞 E)) (ξ : E → L) (r : ℕ
   if (∀ p p', intAt Pl (M p p')) ∧ (∀ p p', r ≤ p → p' < r → inP Pl (M p p')) ∧ ¬ inP Pl (blkDet M 0 r)
   then ξ (blkDet M 0 r) else 0
 
-/-- **The local factor** `Ξ(x) = ∏_{P ∈ R} volN_P⁻¹·E1(om(Φ_P))(x)` of a step from size `n + c` to `n′ + c′`, `R` the
-row set, `g`, `h` the representatives, `Φ_P` the kernel shapes (`PhiGS ∘ entB` at `SG`, `PhiQ ∘ entB` at `Q`: a
-parameter, as `JS`; the canonical ones are `phS`, `phQ`). -/
+/-- **The local factor** `Ξ(x) = ∏_{P ∈ R} volN_P⁻¹·E1(om(Φ_P))(x_P)` of a step from size `n + c` to `n′ + c′`, `R` the
+row set, `x_P` the step's matrix read at `P` (in the frames there, `xiStd`), `g`, `h` the representatives, `Φ_P` the
+kernel shapes (`PhiGS ∘ entB` at `SG`, `PhiQ ∘ entB` at `Q`: a parameter, as `JS`; the canonical ones are `phS`,
+`phQ`). -/
 noncomputable def XiStd (n n' c c' A : ℕ) (R SG : Finset (HeightOneSpectrum (𝓞 E)))
     (JS : HeightOneSpectrum (𝓞 E) → Subgroup (GL (Fin (n' + c')) E)) (kj : ℕ)
     (g : HeightOneSpectrum (𝓞 E) → GL (Fin (n + c)) E) (h : HeightOneSpectrum (𝓞 E) → GL (Fin (n' + c')) E)
     (ψ μ : HeightOneSpectrum (𝓞 E) → E → L) (sq : HeightOneSpectrum (𝓞 E) → L)
-    (Ph : HeightOneSpectrum (𝓞 E) → Matrix (Fin (n' + c')) (Fin (n + c)) E → L) (x : Matrix (Fin n') (Fin n) E) : L :=
+    (Ph : HeightOneSpectrum (𝓞 E) → Matrix (Fin (n' + c')) (Fin (n + c)) E → L)
+    (x : HeightOneSpectrum (𝓞 E) → Matrix (Fin n') (Fin n) E) : L :=
   ∏ Pl ∈ R, (((volAt n' c' SG (JS Pl) kj (h Pl) Pl)⁻¹ : ℚ) : L) *
-    E1 (Ideal.absNorm Pl.asIdeal) A n n' c c' (ψ Pl) (om Pl (μ Pl) (sq Pl) (g Pl) (h Pl) (Ph Pl)) x
+    E1 (Ideal.absNorm Pl.asIdeal) A n n' c c' (ψ Pl) (om Pl (μ Pl) (sq Pl) (g Pl) (h Pl) (Ph Pl)) (x Pl)
 
 /-- `x` is the idele with component `a` at `P` and `1` elsewhere, so that `ν x = ν_P(a)` is the local component of a
 character `ν` of the ideles (it stands for the archive's local components, which the library does not define). -/
@@ -330,8 +333,11 @@ noncomputable def jS (D : Data τ) (m k t j : ℕ) (Pl : HeightOneSpectrum (𝓞
     Subgroup (GL (Fin (D.n j + (m - 1 - j))) E) :=
   JGsym (D.n j) (m - 1 - j) Pl k (m / 2 - 1) (k + m - 1) t
 
+open Classical in
 /-- `XiStd` at step `j < m − 1` of `D`: sizes `N_j + c_j → N_{j+1} + c_{j+1}` (`c_j = m − 1 − j`), representatives
-`g = h_{j,c}`, `h = h_{j+1,c′}`, `J = JS` at `SG` and `JQ(k + j + 1)` at `Q = R \ SG`; local parameters per step. -/
+`g = h_{j,c}`, `h = h_{j+1,c′}`, `J = JS` at `SG` and `JQ(k + j + 1)` at `Q = R \ SG`; local parameters per step. As in
+the archive's `XiEntry`, `x` is read at each `P` in the frames of the representatives, `inFr(fr_P(c), fr_P(c′), x)`
+(`HermClasses.frAt`: the frame lifts at `SG`, none elsewhere), times the level-`T` indicator `phiT(c, c′, x)`. -/
 noncomputable def xiStd (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E)))
     (h : ∀ j, D.β j → HeightOneSpectrum (𝓞 E) → GL (Fin (D.n j + (m - 1 - j))) E)
     (JS : ∀ j, HeightOneSpectrum (𝓞 E) → Subgroup (GL (Fin (D.n j + (m - 1 - j))) E))
@@ -339,15 +345,17 @@ noncomputable def xiStd (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectr
     (Ph : ∀ j, HeightOneSpectrum (𝓞 E) →
       Matrix (Fin (D.n (j + 1) + (m - 1 - (j + 1)))) (Fin (D.n j + (m - 1 - j))) E → L)
     (j : ℕ) (c : Cls D.n D.ST D.SG D.β D.Λ j) (c' : Cls D.n D.ST D.SG D.β D.Λ (j + 1)) :
-    Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E → L :=
-  XiStd (D.n j) (D.n (j + 1)) (m - 1 - j) (m - 1 - (j + 1)) A R D.SG (JS (j + 1)) (k + (j + 1)) (h j c.1)
-    (h (j + 1) c'.1) (ψ j) (μ j) (sq j) (Ph j)
+    Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E → L := fun x =>
+  (if phiT c.2.rep c'.2.rep x then 1 else 0) *
+    XiStd (D.n j) (D.n (j + 1)) (m - 1 - j) (m - 1 - (j + 1)) A R D.SG (JS (j + 1)) (k + (j + 1)) (h j c.1)
+      (h (j + 1) c'.1) (ψ j) (μ j) (sq j) (Ph j) fun Pl => inFr (frAt c.2.rep Pl) (frAt c'.2.rep Pl) x
 
 /-- **The coupled factor of step `j = m − 2`** (spec-10 F3, F5 items 3 and 5; the archive's `XiCpl1`, the coset `Y` in
 its collapsed form `ȳ`): `∏_{P ∈ SG} XiStd_P(x)` (at `SG` the coset sum has one live coset, `y ≡ q⁻¹e_k`, which `E1`
 integrates; `volN = 1` at level `m − 1`) times `∏_{P ∈ R} q_P^{−N_{m−1}}·om_P(g = h_{j,c}, h = 1, Φ_P)([x | ȳ_P])` over
 the places `R = Q \ SG`, `ȳ_P ∈ (O/P)^{N_{m−1}}` lifted to `O_E` (`PsiAt`: no `E1`, no `volN`; `q^{−N_{m−1}}` is what
-the archive's `ftY` measure leaves after the sum over the cosets `Y ≡ ȳ (mod P)`). -/
+the archive's `ftY` measure leaves after the sum over the cosets `Y ≡ ȳ (mod P)`). As in `xiStd`, `x` is read in the
+frames of `c`, `c′` (`ȳ_P` is in the frame of `c′`), and `phiT(c, c′, x)` is a factor (that of `xiStd`). -/
 noncomputable def xiCpl (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E)))
     (h : ∀ j, D.β j → HeightOneSpectrum (𝓞 E) → GL (Fin (D.n j + (m - 1 - j))) E)
     (JS : ∀ j, HeightOneSpectrum (𝓞 E) → Subgroup (GL (Fin (D.n j + (m - 1 - j))) E))
@@ -358,26 +366,33 @@ noncomputable def xiCpl (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectr
     (y : ∀ P : R, Fin (D.n (j + 1)) → 𝓞 E ⧸ P.1.asIdeal) (x : Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E) : L :=
   xiStd D m A k D.SG h JS ψ μ sq Ph j c c' x *
     ∏ P : R, ((Ideal.absNorm P.1.asIdeal : L) ^ D.n (j + 1))⁻¹ *
-      om P.1 (μ j P.1) (sq j P.1) (h j c.1 P.1) 1 (Ph j P.1) (joinCol x fun i => (((y P i).out : 𝓞 E) : E))
+      om P.1 (μ j P.1) (sq j P.1) (h j c.1 P.1) 1 (Ph j P.1)
+        (joinCol (inFr (frAt c.2.rep P.1) (frAt c'.2.rep P.1) x) fun i => (((y P i).out : 𝓞 E) : E))
 
 open Classical in
 /-- **The top factor** (spec-10 F2, F5 items 4–5; the archive's `XiCpl2`, the coset as in `xiCpl`) of step
-`j = m − 1`, on `x′ ∈ M_{N_m × N_{m−1}}`: with `η = conj(tz)⁻¹·x′_last` (the last row; the archive's `π⁻¹·x′_last`) and
-`top` the other rows, `∏_{P ∈ SG} PhiTop_P(top)·1[η ∈ O_(P)]·ψ_P(−η_k/q_P)` times
+`j = m − 1`, from the class `c` to a decorated lattice `d′` of rank `N_m` (L7: the lift `tilQ` of the row point), on
+`x′ ∈ M_{N_m × N_{m−1}}`. At each `P`, `x′` is read in the frames, `X′ = inFr(fr_P(c), fr_P(d′), x′)` (the archive's
+`top_P`, `η_P`: the frame of `tilQ d` at `P ∈ SG ∪ Q` is `diag(fr_P(d), conj(tz))` up to `1 + P·M(O_(P))`, which does
+not move the factor), with `η = X′_last` (the last row; the archive's `π⁻¹·x′_last·fr_P(c)`) and `top` the other rows:
+`phiT(c, d′, x′)·∏_{P ∈ SG} PhiTop_P(top)·1[η ∈ O_(P)]·ψ_P(−η_k/q_P)` times
 `∏_{P ∈ R} PhiTop_P(top)·1[q_P·η ∈ O_(P)]·ψ_P(−η·ȳ_P)` (`R = Q \ SG`). `PhiTop_P` is `PhiGS ∘ entB` at `SG`
-(`i = m − 1`, `ex = (i ↦ i + 1)`) and `PhiQ ∘ entB` at `Q` (`ex = 0`, `ξ_P = χ_{m−1}⁻¹`), at sizes `N_{m−1} + 0 → (N_m
-− 1) + 0`;
-its values are `0` or roots of unity at `SG`. -/
-noncomputable def xiTop (D : Data τ) (m k t : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E))) (tz : E)
-    (ψ χ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (j : ℕ) (y : ∀ P : R, Fin (D.n j) → 𝓞 E ⧸ P.1.asIdeal)
-    (x : Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E) : L :=
-  let top : Matrix (Fin (D.n (j + 1) - 1 + 0)) (Fin (D.n j + 0)) E := fun l s => entA x l s
-  let η : ℕ → E := fun s => (IsCMField.complexConj E tz)⁻¹ * entA x (D.n (j + 1) - 1) s
-  (∏ P ∈ D.SG, PhiGS P (ψ j P) (fun l => χ l P) k (m / 2 - 1) (k + m - 1) t j
-      (entB P k (D.n j) (D.n (j + 1) - 1) 0 0 (fun i => i + 1) top) *
-    if ∀ s, intAt P (η s) then ψ j P (-η k / qP P) else 0) *
-  ∏ P : R, PhiQ P.1 (fun a => (χ j P.1 a)⁻¹) (k + m - 1) (entB P.1 k (D.n j) (D.n (j + 1) - 1) 0 0 0 top) *
-    if ∀ s, intAt P.1 (qP P.1 * η s) then ψ j P.1 (-∑ s : Fin (D.n j), η s * (((y P s).out : 𝓞 E) : E)) else 0
+(`i = m − 1`, `ex = (i ↦ i + 1)`) and `PhiQ ∘ entB` at `Q` (`ex = 0`, `ξ_P = χ_{m−1}⁻¹`), at sizes
+`N_{m−1} + 0 → (N_m − 1) + 0`; its values are `0` or roots of unity at `SG`. -/
+noncomputable def xiTop (D : Data τ) (m k t : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E)))
+    {SF : Finset (HeightOneSpectrum (𝓞 E))} (ψ χ : ℕ → HeightOneSpectrum (𝓞 E) → E → L) (j : ℕ)
+    (c : Cls D.n D.ST D.SG D.β D.Λ j) (d' : Deco E (D.n (j + 1)) D.ST SF)
+    (y : ∀ P : R, Fin (D.n j) → 𝓞 E ⧸ P.1.asIdeal) (x : Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E) : L :=
+  let top : HeightOneSpectrum (𝓞 E) → Matrix (Fin (D.n (j + 1) - 1 + 0)) (Fin (D.n j + 0)) E :=
+    fun P l s => entA (inFr (frAt c.2.rep P) (frAt d' P) x) l s
+  let η : HeightOneSpectrum (𝓞 E) → ℕ → E := fun P s => entA (inFr (frAt c.2.rep P) (frAt d' P) x) (D.n (j + 1) - 1) s
+  (if phiT c.2.rep d' x then 1 else 0) *
+    ((∏ P ∈ D.SG, PhiGS P (ψ j P) (fun l => χ l P) k (m / 2 - 1) (k + m - 1) t j
+        (entB P k (D.n j) (D.n (j + 1) - 1) 0 0 (fun i => i + 1) (top P)) *
+      if ∀ s, intAt P (η P s) then ψ j P (-η P k / qP P) else 0) *
+    ∏ P : R, PhiQ P.1 (fun a => (χ j P.1 a)⁻¹) (k + m - 1) (entB P.1 k (D.n j) (D.n (j + 1) - 1) 0 0 0 (top P.1)) *
+      if ∀ s, intAt P.1 (qP P.1 * η P.1 s) then
+        ψ j P.1 (-∑ s : Fin (D.n j), η P.1 s * (((y P s).out : 𝓞 E) : E)) else 0)
 
 /-- **The local factors are pinned** (spec-3 §1, spec-10 F5): `Ξ_j = XiStd` at the generic steps `j < m − 2` (the
 archive's `mat`), with the representatives `h` (the `ChIdx` bundle's), the groups `JS` and the local parameters passed

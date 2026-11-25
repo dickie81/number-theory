@@ -19,7 +19,10 @@ points `x` of the level (decorated lattices `pX x` of rank `n = N_m − 1`, `ST 
   step `m − 2` has the coupled factor `xiCpl` (`XiStd` at `SG`, `q^{−N_{m−1}}·om(Φ_P)([x | ȳ_P])` at `Q`), and the top
   step maps `(c, ȳ)` straight to each point `x` through the lattice of its decorated lift `tilQ tz (pX x)`
   (`HermClasses.tilQ`: `til 1 N`, `f_P = tz·a mod P`, all frames kept), with its own determinant idele and Heisenberg
-  data and the factor `xiTop` (`PhiTop·ftY`, `η = conj(tz)⁻¹·x′_last`). Then `col φ x = Θ_m(inp(e φ))(x)`
+  data and the factor `xiTop` (`PhiTop·ftY`, `η` the last row of `x′` in the lift's frame, `conj(tz)⁻¹·x′_last`). Every
+  factor reads its matrix at `P` in the frames of the source and target (`HermClasses.inFr`, `frAt`: the archive's
+  `inFr`; the lift's frames at the top) and carries the level-`T` indicator `HermClasses.phiT` (at the top with target
+  the lift, so its `f_P = tz·a` is read). Then `col φ x = Θ_m(inp(e φ))(x)`
   (`Top.col`) at every point: no class representative of `[tilQ x]`, no transport, no character `χ_m` (the archive's
   `evRho` law is a consequence, not a datum);
 * (b) the cast `N_m = n + 1` (`polCast`, `latCast`);
@@ -47,18 +50,18 @@ points `x` of the level (decorated lattices `pX x` of rank `n = N_m − 1`, `ST 
   `cA, cB > 0`, the Heisenberg data (the top step's too) have
   `SA, SB ≠ ∅` and `vol > 0`, and every class at a level `j + 1 ≤ m − 2` meets a nonzero `Ξ` (the archive's `nonvan`,
   `i < m2`; at `j = m − 2` the factor at `Q` is a Fourier transform in `ȳ`, spec-10 F3).
-* (e) Normalisation (audit 3, B1): the determinant ideles (L5.2, `IsDetIdele`) follow the archive's `muOff`
-  (spec-5 §4, spec-8 F2): for a set `sel` (existential) holding one place of each conjugate pair `v ≠ conj v`, every
-  self-conjugate place, and the frame places `SG ∪ Q`, they have the valuation of `det N_c` (the largest `v(det f)`,
-  `f ∈ N_c^n`; at a frame place `P` that of the frame's determinant, as `fr_P(O_P^n) = N_P`) at the places of `sel`,
-  and valuation `0` at the others (the conjugates of `sel`, those of `SG ∪ Q` included), at every level and over
-  every split place, not only over `ST`; the top step's is that of the lift `tilQ tz (pX x)`, whose frames cover
-  `SG ∪ Q` (spec-10 F4). When `U` (the untwisted level): `ξ = 1` (spec-2 4a). At every level the chain's `ST`, `SG`
-  are the given ones. The Heisenberg data are pinned (`Data.XDPinned`, spec-3 §3, spec-5 §3; `Top.XDPinned` at the
-  top step): `HA = halfAO` with `c = cA·cB`, `BC = ι(halfBO)` with `c = cB`, `SA`, `SB` representatives (`IsReps`,
-  `0 ∈ SA`), `vol = volS`. The base theta of every step `j < m` is normalised (`ThetaStd.Normalised`) by a canonical
-  pin (`ThetaNorm.Pin.Canonical`: `Lc = δ·φ₀(cc)` with `Δ(Lc) = 1`, `s = 1/area(Lc)`, `σ = σ*_{Lc}`,
-  `Λ = ι(𝔄)`), so its scale is fixed up to a phase.
+* (e) Normalisation (audit 3, B1): the determinant ideles (L5.2, `IsDetIdele`) follow the archive's `muOff` (spec-5 §4,
+  spec-8 F2): for a set `sel` (existential) holding one place of each conjugate pair `v ≠ conj v`, every self-conjugate
+  place, and the frame places `SG ∪ Q`, they have the valuation of `det N_c` (the largest `v(det f)`, `f ∈ N_c^n`) at
+  the places of `sel`, and valuation `0` at the others (the conjugates of `sel`, those of `SG ∪ Q` included), at every
+  level and over every split place, not only over `ST`; at each frame place `P` of the class (or point) the component is
+  `det fr_P` (the archive's `muInvDet`; the unit part is pinned there); the top step's is that of the lift `tilQ tz (pX
+  x)`, whose frames cover `SG ∪ Q` (spec-10 F4). When `U` (the untwisted level): `ξ = 1` (spec-2 4a). At every level the
+  chain's `ST`, `SG` are the given ones. The Heisenberg data are pinned (`Data.XDPinned`, spec-3 §3, spec-5 §3;
+  `Top.XDPinned` at the top step): `HA = halfAO` with `c = cA·cB`, `BC = ι(halfBO)` with `c = cB`, `SA`, `SB`
+  representatives (`IsReps`, `0 ∈ SA`), `vol = volS`. The base theta of every step `j < m` is normalised
+  (`ThetaStd.Normalised`) by a canonical pin (`ThetaNorm.Pin.Canonical`: `Lc = δ·φ₀(cc)` with `Δ(Lc) = 1`, `s =
+  1/area(Lc)`, `σ = σ*_{Lc}`, `Λ = ι(𝔄)`), so its scale is fixed up to a phase.
 
 **The pinned frontier** (`SharpBoundPinned`) adds what the hook cannot see: the chain's CM type is `τ_K`, the
 branching maps are `PeriodTarget.br` with `c_Br = brConst ≠ 0` and `IsFockProj` at `λ = λ_m` and
@@ -103,12 +106,12 @@ w)` are not defined here) but is capped: `𝔞_ω ∣ (aBd u ω)`, a parameter-d
 without limit.
 
 **Open.** Existential: `Data`'s remaining fields (theta constants, `Ξ` before the last step, weights, `ξ` at the
-twisted levels, `dI` up to units, the side `sel` picked over each pair off `SG ∪ Q`, the top step's Heisenberg
-representatives), `N(cc)` in `xi0`, `X`, `e` (one per word, shared by every level), `𝔞` below its
+twisted levels, `dI` up to units off the frame places, the side `sel` picked over each pair off `SG ∪ Q`, the top
+step's Heisenberg representatives), `N(cc)` in `xi0`, `X`, `e` (one per word, shared by every level), `𝔞` below its
 cap, the untwisted level's `ST`, `SG`, the branching projection, the `ChIdx` representatives and characters.
-The factors read `x` in global coordinates, not through the frames `fr_P` (spec-10 F1-aside 2), and carry no `ST`
-indicator `phiT` (F1-aside); the coset `Y` is in its collapsed form (needs `h_{m−2} ∈ GL(O_P)` at `Q`, pinned, and `ξ_P`
-tame). Not stated: `Tw` by the
+The inner levels' classes carry frames at `SG` only, so at `P ∈ Q` the inner factors read `x` in global coordinates
+(audit 10, T1d: the `Q` frames, the archive's `levQ`, are open; `Tw = ∅` is not affected); the coset `Y` is in its
+collapsed form (needs `h_{m−2} ∈ GL(O_P)` at `Q`, pinned, and `ξ_P` tame). Not stated: `Tw` by the
 archive's `TwistedSetDef` (the untwisted kernel indices `Ij`, `jw` and per-place forced orders are not defined
 here), the later-step `ChIdx` ties at `Q`, `ψ_w`'s offset avoidance (`IsTwist`, `AvoidSet`), and `GoodTw` at the
 inner row levels `j < m` (the frontier reads only each word's last step, so the index clause is per word, below).
@@ -145,8 +148,9 @@ variable {Φ : Type} [Fintype Φ] [DecidableEq Φ] {E L : Type} [Field E] [Numbe
 def polCast {N N' : ℕ} (h : N = N') : Pol Φ N L → Pol Φ N' L := by
   subst h; exact id
 
-/-- (b) The cast `N = N′` of a lattice (the lift's `n + 1` to the chain's `N_m`). -/
-def latCast {N N' : ℕ} (h : N = N') : Submodule (𝓞 E) (Fin N → E) → Submodule (𝓞 E) (Fin N' → E) := by
+/-- (b) The cast `N = N′` of a decorated lattice (the lift's `n + 1` to the chain's `N_m`). -/
+def decoCast {N N' : ℕ} {ST SF : Finset (HeightOneSpectrum (𝓞 E))} (h : N = N') :
+    Deco E N ST SF → Deco E N' ST SF := by
   subst h; exact id
 
 /-- (c) Forms on the place sets `ST`, `SG` at step-0 rank `n0`, read at equal ones: a word's source data are shared by
@@ -198,15 +202,17 @@ def idxW (ℓ : ℕ) (w : HeightOneSpectrum (𝓞 L)) {V : Type*} [AddCommGroup 
   let q : ℝ := Nat.card (Ow w ⧸ Ideal.span {(ℓ : Ow w)})
   Real.logb q (Aw.relIndex (Aw ⊔ Bw)) - Real.logb q (Bw.relIndex (Aw ⊔ Bw))
 
-/-- (e) `d` is a determinant idele of the lattice `N` (L5.2; the archive's `muOff`, spec-5 §4, spec-8 F2): at the
-places of `sel` it has the valuation of `det N` (the largest `v(det f)`, `f ∈ N^a`; at a frame place `P` that of the
-frame's determinant, as `fr_P(O_P^a) = N_P`), and valuation `0` at the others. -/
-def IsDetIdele (sel : Set (HeightOneSpectrum (𝓞 E))) {a : ℕ} (N : Submodule (𝓞 E) (Fin a → E)) (d : Ideles E) :
-    Prop :=
-  ∀ v : HeightOneSpectrum (𝓞 E), let dv := Valued.v (((d : Ideles E) : FiniteAdeleRing (𝓞 E) E) v)
-    (v ∈ sel → (∃ f : Fin a → N, dv = v.valuation E (Matrix.of fun i k => (f k : Fin a → E) i).det) ∧
-      ∀ f : Fin a → N, v.valuation E (Matrix.of fun i k => (f k : Fin a → E) i).det ≤ dv) ∧
-    (v ∉ sel → dv = 1)
+/-- (e) `dI` is a determinant idele of the decorated lattice `d` (L5.2; the archive's `muOff` and `muInvDet`, spec-5 §4,
+spec-8 F2): at the places of `sel` it has the valuation of `det N` (the largest `v(det f)`, `f ∈ N^a`), valuation `0`
+at the others, and at each frame place `P ∈ SF` its component is `det fr_P` (`HermClasses.liftFr`; `fr_P(O_P^a) = N_P`,
+so the valuation is that of `det N`): the unit part too is read through the frames. -/
+def IsDetIdele (sel : Set (HeightOneSpectrum (𝓞 E))) {a : ℕ} {ST' SF : Finset (HeightOneSpectrum (𝓞 E))}
+    (d : Deco E a ST' SF) (dI : Ideles E) : Prop :=
+  (∀ v : HeightOneSpectrum (𝓞 E), let dv := Valued.v (((dI : Ideles E) : FiniteAdeleRing (𝓞 E) E) v)
+    (v ∈ sel → (∃ f : Fin a → d.N, dv = v.valuation E (Matrix.of fun i k => (f k : Fin a → E) i).det) ∧
+      ∀ f : Fin a → d.N, v.valuation E (Matrix.of fun i k => (f k : Fin a → E) i).det ≤ dv) ∧
+    (v ∉ sel → dv = 1)) ∧
+  ∀ P : SF, ((dI : Ideles E) : FiniteAdeleRing (𝓞 E) E) P.1 = algebraMap E (P.1.adicCompletion E) (liftFr d P).det
 
 open Classical in
 /-- **`col` is the theta chain's** at one level and word, on the row points `x ∈ Xr` (decorated lattices `pX x` of rank
@@ -229,7 +235,7 @@ def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
     (col : V →ₗ[L] PeriodTarget.Col Φ n L Xr) : Prop :=
   ∃ (D : Data τ) (hST : D.ST = ST) (hSG : D.SG = SG) (h0 : D.n 0 = n0) (m2 : ℕ) (hm : D.n (m2 + 2) = n + 1)
     (Cμ : LiftChars τ (m2 + 2) eF Sg) (ξ : Hecke E L)
-    (Tp : Top D m2 (∀ P : ↥(Q \ D.SG), Fin (D.n (m2 + 1)) → 𝓞 E ⧸ P.1.asIdeal) Xr),
+    (Tp : Top D m2 (SG ∪ Q) (∀ P : ↥(Q \ D.SG), Fin (D.n (m2 + 1)) → 𝓞 E ⧸ P.1.asIdeal) Xr),
     Cμ.mu = mu0 ∧ (Nonempty (Unique (D.β 0)) ∧ Nonempty (Unique (D.β (m2 + 1))) ∧ (∀ j, Finite (D.β j)) ∧
       (∀ b, D.Λ 0 b = uniUT D.SG (D.n 0)) ∧ (∀ ρ i, D.lam 0 ρ i = lam0 ρ (Fin.cast h0 i)) ∧
       ∀ g, D.P.σ₀ (χ0 g) = lamGen xi0 (g : ∀ w : SG, GL (Fin n0) (𝓞 E ⧸ w.1.asIdeal))) ∧
@@ -254,7 +260,7 @@ def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
         ThetaVol.XiFull D (m2 + 2) (m2 + 3) k (D.SG ∪ Q) h (ThetaVol.jS D (m2 + 2) k t) ψ μ sq Ph ∧
           (∀ c₀ c y, Tp.Xi1 c₀ c y =
             ThetaVol.xiCpl D (m2 + 2) (m2 + 3) k (Q \ D.SG) h (ThetaVol.jS D (m2 + 2) k t) ψ μ sq Ph m2 c₀ c y) ∧
-          ∀ c y x, Tp.Xi2 c y x = ThetaVol.xiTop D (m2 + 2) k t (Q \ D.SG) tz ψ χ (m2 + 1) y) ∧
+          ∀ c y x, Tp.Xi2 c y x = ThetaVol.xiTop D (m2 + 2) k t (Q \ D.SG) ψ χ (m2 + 1) c (Tp.pt x) y) ∧
     ((U → ∀ x, ξ.toHom x = 1) ∧ ∀ j < m2 + 2, ∀ x, (D.mu j).toHom x = (Cμ.mu j).toHom x * ξ.toHom x) ∧
     (∀ v : HeightOneSpectrum (𝓞 E),
       (∃ P ∈ Q, P = v ∨ P.asIdeal = v.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E)) ↔
@@ -267,10 +273,10 @@ def IsThetaCol [IsCMField L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ)
     (∃ sel : Set (HeightOneSpectrum (𝓞 E)), ↑(D.SG ∪ Q) ⊆ sel ∧ (∀ v v' : HeightOneSpectrum (𝓞 E),
         v'.asIdeal = v.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E) →
           (v ∈ sel ↔ v = v' ∨ v' ∉ sel)) ∧
-      (∀ j < m2 + 2, ∀ c : Cls D.n D.ST D.SG D.β D.Λ j, IsDetIdele sel c.2.N (D.dI j c)) ∧
-      ∀ x, IsDetIdele sel (Tp.N x) (Tp.dI x)) ∧
+      (∀ j < m2 + 2, ∀ c : Cls D.n D.ST D.SG D.β D.Λ j, IsDetIdele sel c.2.rep (D.dI j c)) ∧
+      ∀ x, IsDetIdele sel (Tp.pt x) (Tp.dI x)) ∧
     (∀ a, ∀ F ∈ X, HermForms.dOp a F ∈ X) ∧
-    (∀ x, Tp.N x = latCast hm.symm (tilQ (ST := ST) tz (pX x)).N) ∧
+    (∀ x, Tp.pt x = decoCast hm.symm (tilQ (ST := D.ST) tz (pX x))) ∧
     ∀ φ x, col φ x = polCast hm (Tp.col (D.chain.comp m2 (D.inp _ (fnCast hST.symm hSG.symm h0.symm (e φ).1))) x)
 
 end Hook
