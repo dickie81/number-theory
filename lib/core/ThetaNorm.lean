@@ -138,11 +138,18 @@ imaginary quadratic subfield) with `𝔄 = cc·AA0`, `φ₀ = σ₀ ∘ τ_p` on
 `K`) and `δ = P.δ`, normalised by `Δ(Lc) = g₂³ − 27g₃² = 1` (equivalently `δ¹² = Δ(φ₀(cc))`, as
 `Δ(δΛ) = δ⁻¹²Δ(Λ)`); `s = 1/area(Lc)`; `σ = σ*_{Lc}`; `Λ = ι(𝔄)`; and `t` a 2-torsion point killed by neither
 `(1 ± √−d)/2` (`sd = √d/2`). The jet constants (L5.4): `cD(τ) = σ₀(g_τ)` with `g_τ` a generator of the
-`τ`-coordinate ideal `τ(𝔟⁻¹)·O_L` of `𝔟⁻¹ = AA0` (the spec's `𝔄 = O_{K₀}·𝔟⁻¹` is `cc·AA0` here). `g_τ` is
-fixed up to a unit of `O_L`; a global unit does not change slopes (product formula). The choices left (`cc`,
-`AA0`, the basis of `Lc`, `t` mod `Lc`, `g`, `κ`, the units of `g_τ`) do not move `|θ₀|` (spec-4). Meant for the frontier (`SharpChain.IsThetaCol`). -/
+`τ`-coordinate ideal `τ(𝔟⁻¹)·O_L` of `𝔟⁻¹ = AA0` (the spec's `𝔄 = O_{K₀}·𝔟⁻¹` is `cc·AA0` here). `AA0` is pinned
+(spec L5.3): `AA0 = 𝔟⁻¹ = {x | x𝔟 ⊆ O_E}` for an ideal `𝔟` of `O_E` with `𝔟 + 𝔟̄ = O_E` and `𝔟𝔟̄ = 𝔡_{E/K₀}`, stated
+through the inverse different: `(𝔟𝔟̄)⁻¹ = {x | Tr_{E/K₀}(x·O_E) ⊆ O_{K₀}}`; `K₀ ⊇ cc` the quadratic subfield. `g_τ` is
+fixed up to a unit of `O_L`; a global unit does not change slopes (product formula). The choices left (`cc`, `𝔟`,
+the basis of `Lc`, `t` mod `Lc`, `g`, `κ`, the units of `g_τ`) do not move `|θ₀|` (spec-4). Meant for the frontier (`SharpChain.IsThetaCol`). -/
 def Pin.Canonical [NumberField L] (τ : Φ → (E →+* L)) (P : TP E L Φ) (D : Pin Φ P.s) : Prop :=
-  ∃ (cc : Submodule ℤ E) (AA0 : Submodule (𝓞 E) E) (Lp : PeriodPair),
+  ∃ (cc : Submodule ℤ E) (AA0 : Submodule (𝓞 E) E) (Lp : PeriodPair) (K₀ : IntermediateField ℚ E)
+    (𝔟 : Ideal (𝓞 E)),
+    Module.finrank ℚ K₀ = 2 ∧ (cc : Set E) ⊆ K₀ ∧ (∀ x : E, x ∈ AA0 ↔ ∀ y ∈ 𝔟, IsIntegral ℤ (x * (y : E))) ∧
+    𝔟 ⊔ 𝔟.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E) = ⊤ ∧
+    (∀ x : E, (∀ y ∈ 𝔟 * 𝔟.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E),
+      IsIntegral ℤ (x * (y : E))) ↔ ∀ y : 𝓞 E, IsIntegral ℤ (Algebra.trace K₀ E (x * (y : E)))) ∧
     P.A = Submodule.span (𝓞 E) (cc : Set E) * AA0 ∧
     (∃ g : Φ → L, ∀ p, P.cD p = P.σ₀ (g p) ∧
       Submodule.span (𝓞 L) ((τ p : E → L) '' (AA0 : Set E)) = Submodule.span (𝓞 L) {g p}) ∧
