@@ -242,13 +242,14 @@ variable {Φ : Type*} [Fintype Φ] [DecidableEq Φ] {n : ℕ} {E L : Type*} [Fie
 variable (Φ n E L) in
 /-- The data of the levels `μ` (the untwisted `μ0` and the twisted tuples) and of the words `ω`, from which periods,
 rows and the target are built:
-* `tz = conj(π_T)`, the branching weight `σ = sgT` and, per word, the branching map `br ω` (with `λ = λ_m(ω)`);
+* per word, `tz ω = conj(π_{T_ω})` (each word may have its own auxiliary prime `T_ω`) and the branching map `br ω`
+  (with `λ = λ_m(ω)`), and the branching weight `σ = sgT`;
 * per level, the lattice `lsh x` of a point `x` of `X′` and the row space `V0_μ` (a parameter);
 * per level and word, the chain `col μ ω : V_ω → Col` of tuple `μ`, a function on the level's points `X μ` (L5,
   connected by L7: the archive's `evGSD`, whose top step reads the decorated lift of the point). -/
 structure PerData where
-  /-- `tz = conj(π_T)`. -/
-  tz : E
+  /-- `tz ω = conj(π_{T_ω})`, per word. -/
+  tz : Ω → E
   /-- The weight `σ = sgT` of the rows. -/
   σ : Φ → Fin n → ℤ
   /-- The branching map of a word. -/
