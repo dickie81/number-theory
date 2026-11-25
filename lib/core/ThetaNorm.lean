@@ -137,11 +137,15 @@ variable {E L : Type*} [Field E] [NumberField E] [Field L] [IsCMField E] {Φ : T
 imaginary quadratic subfield) with `𝔄 = cc·AA0`, `φ₀ = σ₀ ∘ τ_p` on `cc` for every `p` (the CM type is induced from
 `K`) and `δ = P.δ`, normalised by `Δ(Lc) = g₂³ − 27g₃² = 1` (equivalently `δ¹² = Δ(φ₀(cc))`, as
 `Δ(δΛ) = δ⁻¹²Δ(Λ)`); `s = 1/area(Lc)`; `σ = σ*_{Lc}`; `Λ = ι(𝔄)`; and `t` a 2-torsion point killed by neither
-`(1 ± √−d)/2` (`sd = √d/2`). The choices left (`cc`, `AA0`, the basis of `Lc`, `t` mod `Lc`, `g`, `κ`) do not move
-`|θ₀|` (spec-4). Meant for the frontier (`SharpChain.IsThetaCol`). -/
-def Pin.Canonical (τ : Φ → (E →+* L)) (P : TP E L Φ) (D : Pin Φ P.s) : Prop :=
+`(1 ± √−d)/2` (`sd = √d/2`). The jet constants (L5.4): `cD(τ) = σ₀(g_τ)` with `g_τ` a generator of the
+`τ`-coordinate ideal `τ(𝔟⁻¹)·O_L` of `𝔟⁻¹ = AA0` (the spec's `𝔄 = O_{K₀}·𝔟⁻¹` is `cc·AA0` here). `g_τ` is
+fixed up to a unit of `O_L`; a global unit does not change slopes (product formula). The choices left (`cc`,
+`AA0`, the basis of `Lc`, `t` mod `Lc`, `g`, `κ`, the units of `g_τ`) do not move `|θ₀|` (spec-4). Meant for the frontier (`SharpChain.IsThetaCol`). -/
+def Pin.Canonical [NumberField L] (τ : Φ → (E →+* L)) (P : TP E L Φ) (D : Pin Φ P.s) : Prop :=
   ∃ (cc : Submodule ℤ E) (AA0 : Submodule (𝓞 E) E) (Lp : PeriodPair),
     P.A = Submodule.span (𝓞 E) (cc : Set E) * AA0 ∧
+    (∃ g : Φ → L, ∀ p, P.cD p = P.σ₀ (g p) ∧
+      Submodule.span (𝓞 L) ((τ p : E → L) '' (AA0 : Set E)) = Submodule.span (𝓞 L) {g p}) ∧
     (∀ p, (Lp.lattice : Set ℂ) = (fun c => P.δ * P.σ₀ (τ p c)) '' cc) ∧ Lp.g₂ ^ 3 - 27 * Lp.g₃ ^ 2 = 1 ∧
     D.Lc = Lp.lattice.toAddSubgroup ∧ P.s = (area Lp)⁻¹ ∧ D.σ = sgStar Lp ∧
     D.Λ = AddSubgroup.closure {z | ∃ w ∈ P.A, z = fun p => P.δ * P.σ₀ (τ p w)} ∧
