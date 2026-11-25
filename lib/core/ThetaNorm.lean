@@ -20,11 +20,16 @@ lattices `L` and `Λ_M`, the isometry `g` and the phase `κ` are not transcribed
 properties `U_t σ*(0) ≠ 0` (so `th0(0) = 1`), `g` an isometry and `|κ| = 1`. `Pin.Canonical` (spec-4) fixes the
 scale-bearing fields: `Lc = δ·φ₀(cc)` with `Δ(Lc) = 1`, `s = 1/area(Lc)`, `σ = σ*_{Lc} = σ_W·exp(−s₂z²/2)` (Weierstrass
 `σ_W`, `ζ_W` by their product and sum over Mathlib's `PeriodPair.lattice`; `g₂`, `g₃` are Mathlib's) and `Λ = ι(𝔄)`;
-`t` (a 2-torsion point), `g` and `κ` stay quantified, as they move `θ₀` by a phase only.
+`t` (a 2-torsion point), `g` and `κ` stay quantified, as they move `θ₀` by a phase only. `Pin.Canonical` and
+`Normalised` take a pin of any form `s` (`Normalised` asks `P.s = s`), so the frontier can pass one pin per step in from
+outside the chain and share it (`SharpChain.IsThetaCol`, audit 13).
 
 **Freedom left.** Given a `Pin`, `θ₀` is unique up to `ζ⁴ = 1` (spec-3 §2, `ThetaVector`), and `ζ^{ab} = 1` for even
 `a, b`, so `θ_std` is pinned. Since `κ` is only constrained by `|κ| = 1`, the remaining freedom of the frontier is a
-unimodular phase, which does not change slopes; the `ℂ^×` (in particular `ℚ^×`) scale is gone.
+unimodular phase, which does not change slopes; the `ℂ^×` (in particular `ℚ^×`) scale is gone. The frontier takes one
+pin per step for all chains of a translate, so `κ` is one phase per step and translate, not one per chain: a free
+`κ` per chain could be `σ₀(γ)` with `γ = x/star x ∈ L`, of norm `1` at the infinite places but of any `w`-adic
+valuation (audit 13, T2 (i)); the archive's `κ` is fixed by the lattice datum (`KapChoice.kappa`).
 
 **Sanity theorems:** `th0_zero`, `F0_zero`, `sgStar_zero`.
 -/
@@ -144,8 +149,9 @@ through the inverse different: `(𝔟𝔟̄)⁻¹ = {x | Tr_{E/K₀}(x·O_E) ⊆
 fixed up to a unit of `O_L`; a global unit does not change slopes (product formula). `K₀ = ℚ(√−d)` (`d = 4·sd²`)
 and `cc` is an `O_{K₀}`-module (audit 6's hedge). The choices left (`cc`, `𝔟`,
 the basis of `Lc`, `t` mod `Lc`, `g`, `κ`, the units of `g_τ`) do not move `|θ₀|` (spec-4). Meant for the
-frontier (`SharpChain.IsThetaCol`). -/
-def Pin.Canonical [NumberField L] (τ : Φ → (E →+* L)) (P : TP E L Φ) (D : Pin Φ P.s) : Prop :=
+frontier (`SharpChain.IsThetaCol`, which shares one pin per step across a translate's chains). The pin has its own
+form `s = 1/area(Lc)`; `Normalised` ties it to `P.s`. -/
+def Pin.Canonical [NumberField L] (τ : Φ → (E →+* L)) (P : TP E L Φ) {s : ℝ} (D : Pin Φ s) : Prop :=
   ∃ (cc : Submodule ℤ E) (AA0 : Submodule (𝓞 E) E) (Lp : PeriodPair) (K₀ : IntermediateField ℚ E)
     (𝔟 : Ideal (𝓞 E)) (sqd : E) (d : ℕ),
     4 * P.sd ^ 2 = (d : ℝ) ∧ sqd ^ 2 = -(d : E) ∧ K₀ = IntermediateField.adjoin ℚ {sqd} ∧
@@ -158,16 +164,16 @@ def Pin.Canonical [NumberField L] (τ : Φ → (E →+* L)) (P : TP E L Φ) (D :
     (∃ g : Φ → L, ∀ p, P.cD p = P.σ₀ (g p) ∧
       Submodule.span (𝓞 L) ((τ p : E → L) '' (AA0 : Set E)) = Submodule.span (𝓞 L) {g p}) ∧
     (∀ p, (Lp.lattice : Set ℂ) = (fun c => P.δ * P.σ₀ (τ p c)) '' cc) ∧ Lp.g₂ ^ 3 - 27 * Lp.g₃ ^ 2 = 1 ∧
-    D.Lc = Lp.lattice.toAddSubgroup ∧ P.s = (area Lp)⁻¹ ∧ D.σ = sgStar Lp ∧
+    D.Lc = Lp.lattice.toAddSubgroup ∧ s = (area Lp)⁻¹ ∧ D.σ = sgStar Lp ∧
     D.Λ = AddSubgroup.closure {z | ∃ w ∈ P.A, z = fun p => P.δ * P.σ₀ (τ p w)} ∧
     2 * D.t ∈ D.Lc ∧ (1 / 2 + P.sd * Complex.I) * D.t ∉ D.Lc ∧ (1 / 2 - P.sd * Complex.I) * D.t ∉ D.Lc
 
 /-- The base theta is normalised (spec-3 §2, option (A), the archive's exact condition): `θ_std = tensPow θ₀` for a
-`θ₀` with `θ₀^{⊗4} = κ·(Iop(stdLat, g(Λ_M⁴)) F0) ∘ g` (`IsTheta0`), for the pinning data `D`. This kills the `ℂ^×`
-scale; what remains free is the phase `κ` of `D` (`|κ| = 1`), a unimodular phase, which does not change slopes, and
-a `ζ⁴ = 1` that `tensPow` absorbs for even `a, b`. Meant for the frontier. -/
-def _root_.ThetaChain.ThetaStd.Normalised (D : Pin Φ P.s) (T : ThetaStd τ P a b) : Prop :=
-  ∃ θ₀, IsTheta0 P.sd D θ₀ ∧ T.θ = tensPow θ₀
+`θ₀` with `θ₀^{⊗4} = κ·(Iop(stdLat, g(Λ_M⁴)) F0) ∘ g` (`IsTheta0`), for the pinning data `D`, whose form is that of
+`T` (`P.s = s`). This kills the `ℂ^×` scale; what remains free is the phase `κ` of `D` (`|κ| = 1`), a unimodular
+phase, which does not change slopes, and a `ζ⁴ = 1` that `tensPow` absorbs for even `a, b`. Meant for the frontier. -/
+def _root_.ThetaChain.ThetaStd.Normalised {s : ℝ} (D : Pin Φ s) (T : ThetaStd τ P a b) : Prop :=
+  P.s = s ∧ ∃ θ₀, IsTheta0 P.sd D θ₀ ∧ T.θ = tensPow θ₀
 
 end Std
 

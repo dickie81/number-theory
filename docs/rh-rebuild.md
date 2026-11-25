@@ -547,7 +547,7 @@ construction, measured"). In order:
      losses of the frame inequality.
 
    It is still equivalent to the gap bound, as above: frames of rank one satisfy it whenever that bound holds.
-2. **A sharp frontier**, stated on the branch `sharp-frontier` (24–26 November 2026). The construction's objects are
+2. **A sharp frontier**, stated 24–26 November 2026 (PR #134). The construction's objects are
    defined in twelve modules: `KLattice`, `FrameRescale`, `CMHost`, `HermClasses`, `WeylFock`, `HermForms`,
    `ThetaChain`, `ThetaNorm`, `ThetaVol`, `PeriodTarget`, `RowSpace` and `ForcedOrders`. `SharpBound` states the
    frontier and proves its bridge to `SixTermData`; `SharpChain` pins every object to the archive's construction

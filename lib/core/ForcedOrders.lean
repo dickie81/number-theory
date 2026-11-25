@@ -7,20 +7,29 @@ import CMHost
 Part of layer L7 of the sharp frontier for the library's proof of the Riemann hypothesis (`docs/rh-rebuild.md`):
 the forced orders `Fo(𝒫_u)`, an explicit function of the parameters that the frontier pins (spec L7.4). They are
 defined from the parameters only: the ranks `(k, m, t)` and the Harish-Chandra family `hc` of L0, the two split
-primes `g₀, g₁` and the cut `X″` of L7.1, which are inputs here.
+primes `g₀, g₁`, the cut `X″` of L7.1 and the twist `c` of `χ`'s parity (below), which are inputs here.
 
 For `1 ≤ j ≤ m` the weight is `w_j = e_{j−1}`; here `j` is `J + 1` for `J : Fin m`, so `w_j = wj hc J`.
 * **At `p ∈ {g₀, g₁}`** (`FTypeG`): `−½·Σ_τ (Σ_{i<k+j−1} |a⁺_{j,τ,i}| + Σ_{c<m−j} |a⁻_{j,τ,c}|)`, with
   `a⁺ = σ_i + e_{j−1} − (nV − 1 − 2i)/2 − ((k + j − 1) − (m − j))/2`, `σ_i = v_i` for `i < k − 1` and `−b_{i−k+1}`
   beyond, and `a⁻ = b_{j+c} − e_{j−1} − (t + 1 + 2c)/2`.
-* **At `p = d`** (`FRamD`): `−((k − 1)/2)·Σ_{t∈A} min(w_j(1, t), w_j(−1, t))`.
-* **At inert or signal `p ≤ X″`** (`FInert`): `Σ_ρ (k − 1)w_j(ρ)/(p² − 1)` if `p` is inert with `hP(p) = 1`, and
+* **At `p = d`** (`FRamD`): `−((k − 1)/2)·Σ_{t∈A} min(w_j(1, t), w_j(−1, c·t))`.
+* **At inert or signal `p ≤ X″`** (`FInert`): `Σ_ρ (k − 1)w_j(ρ)/(p² − 1)` if `p` is inert with `hP_c(p) = 1`, and
   otherwise `nP(p)⁻¹·Σ_{z∈Φ} lpF(p, nP(p), s ↦ (k − 1)·w_j(pos_p(z; s)))`, where (`lpF`)
   `lpF(ℓ, n, D) = ℓ/(ℓ² − 1)·Σ_s D(s) − max{Σ x_{s,i} : x ≥ 0, x_{s,i} = 0 unless i odd < n,
   Σ_i ℓ^i x_{s,i} + Σ_i x_{s−i,i} ≤ D(s)}`.
 
 Then `Fo = 2·Σ_j [FTypeG(j)·log(g₀g₁) + FRamD(j)·log d + Σ_{p ≤ X″ inert/signal} FInert(j, p)·log p]` (`Fo`), and
 in the library's units, which halve the archive's (`KLattice`, "The factor 2"), it is `FoLib = Fo/2`.
+
+**The twist `c`** (verify-A F1; `CMHost`, "The twist"). For odd `χ` the archive twists its Artin map, and so its
+coordinates on `Φ`; the frontier passes `c = Setting.twA κ` (`[−1]_A` for odd `κ`, `1` for even). This layer keeps
+`Setting.τ`'s untwisted coordinates, in which the archive's orbits step by `hP_c(p) = c·[p]_A` at inert and signal `p`
+alike (`Setting.hPtw`, through `nP` and `pos`), and its `FRamD` pairs `(1, t)` with `(−1, c·t)`: read through the
+relabelling `(s, t) ↦ (s, t·c^{[s = −1]})` of `Φ` that matches the two CM types, these are the archive's `Fo`.
+`FTypeG` and the special branch of `FInert` sum over all of `Φ`, so need no twist. **Known mismatch:** the six-term
+`ASK` of (G↓), through `Setting.partner` (`ZetaBalance`; `ZetaGap`, "Coordinates"), keeps the untwisted coordinates,
+not the archive's `askP` for odd `χ`: a known gap of the same small size, left there.
 
 **Checks.** `0 ≤ lpF(ℓ, n, D) ≤ ℓ/(ℓ² − 1)·Σ D` for `ℓ > 1` and `D ≥ 0` (`lpF_nonneg_le`, the archive's
 `FactLpF`); `FTypeG ≤ 0` (`FTypeG_nonpos`); and `FInert ≥ 0` for nonnegative weights (`FInert_nonneg`).
@@ -32,7 +41,7 @@ in the library's units, which halve the archive's (`KLattice`, "The factor 2"), 
 * The orbit index `s` runs over `Fin n`, read cyclically: `s − i` is `Fin`'s subtraction mod `n`. So `D` is a
   function on `Fin n`, and the positions `pos_p(z; s)` have period `nP(p)`.
 * The sum over primes is over `p ≤ ⌊X″⌋` with `p ∤ N` and `cls p` inert or signal; `p ∤ N` keeps `p = d` (handled
-  by `FRamD`) out, as `cls` is meant for `p ∤ N` only. "`hP(p) = 0`" of the spec is `hP(p) = 1` in `A`'s
+  by `FRamD`) out, as `cls` is meant for `p ∤ N` only. "`hP(p) = 0`" of the spec is `hP_c(p) = 1` in `A`'s
   multiplicative notation.
 * Everything is real-valued. `σ_i` is `0` past `i ≥ r`, which the sums never reach.
 -/
@@ -53,7 +62,7 @@ def LpFeasible (ℓ : ℝ) (n : ℕ) (D : Fin n → ℝ) (x : Fin n → Fin n �
 noncomputable def lpF (ℓ : ℝ) (n : ℕ) (D : Fin n → ℝ) : ℝ :=
   ℓ / (ℓ ^ 2 - 1) * ∑ s, D s - sSup {y | ∃ x, LpFeasible ℓ n D x ∧ y = ∑ s, ∑ i, x s i}
 
-variable {S : Setting} (R : S.Ranks) (hc : R.HCFamily)
+variable {S : Setting} (R : S.Ranks) (hc : R.HCFamily) (c : S.A)
 
 namespace Ranks
 
@@ -76,15 +85,16 @@ noncomputable def aMinus (H : R.HC) (J : Fin R.m) (c : Fin (R.m - J - 1)) : ℝ 
 noncomputable def FTypeG (J : Fin R.m) : ℝ :=
   -(1 / 2) * ∑ τ, (∑ i : Fin (R.k + J), |R.aPlus (hc τ) J i| + ∑ c, |R.aMinus (hc τ) J c|)
 
-/-- The forced order at `p = d`: `FRamD(j) = −((k − 1)/2)·Σ_{t∈A} min(w_j(1, t), w_j(−1, t))`. -/
+/-- The forced order at `p = d`: `FRamD(j) = −((k − 1)/2)·Σ_{t∈A} min(w_j(1, t), w_j(−1, c·t))`, with the twist `c`
+(module docstring). -/
 noncomputable def FRamD (J : Fin R.m) : ℝ :=
-  -(((R.k : ℝ) - 1) / 2) * ∑ t : S.A, (min (R.wj hc J (1, t)) (R.wj hc J (-1, t)) : ℝ)
+  -(((R.k : ℝ) - 1) / 2) * ∑ t : S.A, (min (R.wj hc J (1, t)) (R.wj hc J (-1, c * t)) : ℝ)
 
-/-- The forced order at an inert or signal `p`: `Σ_ρ (k − 1)w_j(ρ)/(p² − 1)` if `p` is inert with `hP(p) = 1`,
-and `nP(p)⁻¹·Σ_z lpF(p, nP(p), s ↦ (k − 1)·w_j(pos_p(z; s)))` otherwise. -/
+/-- The forced order at an inert or signal `p`: `Σ_ρ (k − 1)w_j(ρ)/(p² − 1)` if `p` is inert with `hP_c(p) = 1`,
+and `nP(p)⁻¹·Σ_z lpF(p, nP(p), s ↦ (k − 1)·w_j(pos_p(z; s)))` otherwise, with the twist `c` (module docstring). -/
 noncomputable def FInert (J : Fin R.m) (p : ℕ) : ℝ :=
-  if S.cls p = .inert ∧ S.hP p = 1 then ∑ ρ, ((R.k : ℝ) - 1) * R.wj hc J ρ / ((p : ℝ) ^ 2 - 1)
-  else (S.nP p : ℝ)⁻¹ * ∑ z, lpF p (S.nP p) fun s => ((R.k : ℝ) - 1) * R.wj hc J (S.pos p z s)
+  if S.cls p = .inert ∧ S.hPtw c p = 1 then ∑ ρ, ((R.k : ℝ) - 1) * R.wj hc J ρ / ((p : ℝ) ^ 2 - 1)
+  else (S.nP c p : ℝ)⁻¹ * ∑ z, lpF p (S.nP c p) fun s => ((R.k : ℝ) - 1) * R.wj hc J (S.pos c p z s)
 
 /-! ## The forced orders -/
 
@@ -92,14 +102,14 @@ noncomputable def FInert (J : Fin R.m) (p : ℕ) : ℝ :=
 noncomputable def inertPrimes (X'' : ℝ) : Finset ℕ :=
   (range (⌊X''⌋₊ + 1)).filter fun p => p.Prime ∧ ¬ p ∣ S.N ∧ S.cls p ≠ .split
 
-/-- The forced orders in the library's units:
+/-- The forced orders in the library's units, with the twist `c`:
 `Σ_j [FTypeG(j)·log(g₀g₁) + FRamD(j)·log d + Σ_{p ≤ X″ inert/signal} FInert(j, p)·log p]`. -/
 noncomputable def FoLib (g₀ g₁ : ℕ) (X'' : ℝ) : ℝ :=
-  ∑ J, (R.FTypeG hc J * Real.log (g₀ * g₁) + R.FRamD hc J * Real.log S.d +
-    ∑ p ∈ inertPrimes (S := S) X'', R.FInert hc J p * Real.log p)
+  ∑ J, (R.FTypeG hc J * Real.log (g₀ * g₁) + R.FRamD hc c J * Real.log S.d +
+    ∑ p ∈ inertPrimes (S := S) X'', R.FInert hc c J p * Real.log p)
 
 /-- The forced orders `Fo(𝒫_u)` in the archive's units, twice `FoLib`. -/
-noncomputable def Fo (g₀ g₁ : ℕ) (X'' : ℝ) : ℝ := 2 * R.FoLib hc g₀ g₁ X''
+noncomputable def Fo (g₀ g₁ : ℕ) (X'' : ℝ) : ℝ := 2 * R.FoLib hc c g₀ g₁ X''
 
 end Ranks
 
@@ -167,14 +177,14 @@ theorem FTypeG_nonpos (J : Fin R.m) : R.FTypeG hc J ≤ 0 := by
 
 /-- The forced order at an inert or signal prime is nonnegative when the weights are. -/
 theorem FInert_nonneg (J : Fin R.m) {p : ℕ} (hp : p.Prime) (hw : ∀ ρ, 0 ≤ R.wj hc J ρ) :
-    0 ≤ R.FInert hc J p := by
+    0 ≤ R.FInert hc c J p := by
   have hk : (1 : ℝ) ≤ R.k := by have := R.m_add_three_le; exact_mod_cast (by omega : 1 ≤ R.k)
   have hp1 : (1 : ℝ) < p := by exact_mod_cast hp.one_lt
   unfold FInert
   split_ifs
   · exact sum_nonneg fun ρ _ => div_nonneg (mul_nonneg (by linarith) (by exact_mod_cast hw ρ)) (by nlinarith)
   · refine mul_nonneg (by positivity) (sum_nonneg fun z _ => (lpF_nonneg_le hp1 fun s => ?_).1)
-    have := hw (S.pos p z s)
+    have := hw (S.pos c p z s)
     simp only [Pi.zero_apply]
     exact mul_nonneg (by linarith) (by exact_mod_cast this)
 

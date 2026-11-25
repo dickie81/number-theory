@@ -24,9 +24,13 @@ needed to state). The cut is `V_ω = Forms ∩ ⋂_{P ∈ ST} ker Nm_P` (`Vω`),
 
 **The source** (L6.5). In Mathlib's basis of a finite-dimensional `V_ω` (`Module.finBasis`), `M_ω` gives the
 `O_L`-span of its coordinates (`Mlat`; it is `M_ω` itself once `M_ω` is an `O_L`-module), and `H_ω` its Gram matrix
-(`gram`, hermitian by `gram_isHermitian`). With the lattice property and the positivity of `σ_v(H_ω)` at the complex
-places as hypotheses, `source` is the `K`-rational `KLattice.ofForm`. The finite-dimensionality, the lattice property
-and the positivity are not proved here.
+(`gram`, hermitian for the star by `gram_isHermitian`). With the lattice property and the positivity of `σ_v(H_ω)` at
+the complex places as hypotheses, `source` is the `K`-rational `KLattice.ofForm`. The finite-dimensionality, the
+lattice property and the positivity are not proved here.
+
+**The coefficient field** `L` carries a star (`StarRing L`), not a CM structure: the frontier asks only that the star
+be complex conjugation at one embedding (the archive's coefficient field contains `j(cc)`, so lies in no CM field).
+The Fock form, `pet`, `H_ω` and `gram` are hermitian for the star.
 
 **Sanity theorems:** `conj_pet` (`H` is hermitian, via `conj_fockWith`), `dOp_mem` (the diamond operators act on
 forms), `gram_isHermitian`, `source_G` (the metric at `v` is `σ_v(H_ω)`).
@@ -68,30 +72,28 @@ def Forms : Submodule L (Fn ST Λ Φ L) where
 def Mint : Set (Fn ST Λ Φ L) :=
   {F | F ∈ Forms ST τ χ lam ∧ ∀ c : DCl E n ST Λ, F c.out ∈ DeltaN τ lam (Lsh c.rep)}
 
-variable [IsCMField L]
+variable [StarRing L]
 
-/-- The Petersson form `H(F, G) = Σᶠ_c |Stab(c)|⁻¹·⟨F(c), G(c)⟩`. -/
+/-- The Petersson form `H(F, G) = Σᶠ_c |Stab(c)|⁻¹·⟨F(c), G(c)⟩`, hermitian for the star of `L`. -/
 def pet (F G : Fn ST Λ Φ L) : L :=
   classSum fun c : DCl E n ST Λ => fock (fun σ => natW (lam σ)) (F c.out) (G c.out)
 
 omit [Fintype Φ] [DecidableEq Φ] in
-/-- The Fock form is conjugate-symmetric: `conj fock(F, G) = fock(G, F)`. -/
+/-- The Fock form is star-symmetric: `star fock(F, G) = fock(G, F)`. -/
 theorem conj_fockWith (F G : Pol Φ n L) :
-    IsCMField.complexConj L (fockWith (IsCMField.complexConj L : L →+* L) F G) =
-      fockWith (IsCMField.complexConj L : L →+* L) G F := by
+    starRingEnd L (fockWith (starRingEnd L) F G) = fockWith (starRingEnd L) G F := by
   classical
-  simp only [fockWith, map_sum, map_mul, Finsupp.prod, map_prod, map_natCast, RingHom.coe_coe,
-    IsCMField.complexConj_apply_apply]
+  simp only [fockWith, map_sum, map_mul, Finsupp.prod, map_prod, map_natCast, starRingEnd_self_apply]
   rw [← Finset.sum_subset (Finset.inter_subset_left : G.support ∩ F.support ⊆ G.support) ?_,
     ← Finset.sum_subset (Finset.inter_subset_left : F.support ∩ G.support ⊆ F.support) ?_, Finset.inter_comm]
   · exact Finset.sum_congr rfl fun _ _ => by ring
   all_goals intro x hx hx'; simp_all [MvPolynomial.mem_support_iff]
 
 omit [DecidableEq Φ] in
-/-- **Sanity:** the Petersson form is hermitian, `conj H(F, G) = H(G, F)`. -/
-theorem conj_pet (F G : Fn ST Λ Φ L) : IsCMField.complexConj L (pet ST lam F G) = pet ST lam G F := by
-  refine ((IsCMField.complexConj L).toAddEquiv.map_finsum _).trans (finsum_congr fun c => ?_)
-  change IsCMField.complexConj L (mass c • fock _ _ _) = _
+/-- **Sanity:** the Petersson form is hermitian for the star, `star H(F, G) = H(G, F)`. -/
+theorem conj_pet (F G : Fn ST Λ Φ L) : starRingEnd L (pet ST lam F G) = pet ST lam G F := by
+  refine ((starAddEquiv : L ≃+ L).map_finsum _).trans (finsum_congr fun c => ?_)
+  change starRingEnd L (mass c • fock _ _ _) = _
   rw [map_rat_smul]
   unfold fock
   rw [map_div₀, conj_fockWith, conj_fockWith]
@@ -135,7 +137,7 @@ def Vω : Submodule L (Fn ST Λ Φ L) := Forms ST τ χ lam ⊓ ⨅ P, LinearMap
 /-- The integral cut forms `M_ω = M ∩ V_ω`. -/
 def Mω : Set (Fn ST Λ Φ L) := Mint ST τ χ lam ∩ (Vω ST τ χ lam : Set (Fn ST Λ Φ L))
 
-variable [IsCMField L]
+variable [StarRing L]
 
 /-- The Petersson form on the cut, `H_ω = H|_{V_ω}`. -/
 def Hω (F G : Vω ST τ χ lam) : L := pet ST lam (F : Fn ST Λ Φ L) G
@@ -158,14 +160,14 @@ abbrev coords : Vω ST τ χ lam ≃ₗ[L] (Idx ST τ χ lam → L) := (Module.f
 def Mlat : Submodule (𝓞 L) (Idx ST τ χ lam → L) :=
   Submodule.span (𝓞 L) (coords ST τ χ lam '' {F | (F : Fn ST Λ Φ L) ∈ Mω ST τ χ lam})
 
-variable [IsCMField L]
+variable [StarRing L]
 
 /-- The Gram matrix of `H_ω` in the basis. -/
 def gram : Matrix (Idx ST τ χ lam) (Idx ST τ χ lam) L :=
   fun i j => Hω ST τ χ lam (Module.finBasis L _ i) (Module.finBasis L _ j)
 
-/-- **Sanity:** the Gram matrix is hermitian, so `σ_v(H)` is hermitian at every complex place
-(`KLattice.isHermitian_map`) and only its positivity is a hypothesis of `source`. -/
+/-- **Sanity:** the Gram matrix is hermitian for the star, so `σ(H)` is hermitian at an embedding `σ` where the star
+is complex conjugation (`KLattice.isHermitian_map`); at the other places `source` asks it with the positivity. -/
 theorem gram_isHermitian : (gram ST τ χ lam).IsHermitian :=
   Matrix.ext fun _ _ => conj_pet ST lam _ _
 
