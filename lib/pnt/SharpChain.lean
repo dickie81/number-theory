@@ -3,6 +3,7 @@ import ThetaChain
 import HermForms
 import ThetaNorm
 import ThetaVol
+import RowSpace
 
 /-!
 # The sharp frontier with the theta chain — CONDITIONAL on the half-plane
@@ -102,6 +103,14 @@ theorem _root_.ThetaChain.Data.comp_zero_inp (D : Data τ)
     (Λ : Subgroup (∀ w : D.SG, GL (Fin (D.n 0)) (𝓞 E ⧸ w.1.asIdeal))) (F : HermForms.Fn D.ST Λ Φ L)
     (c : D.chain.C 0) : D.chain.comp 0 (D.inp Λ F) c = F ⟨c.2.rep, c.2.good⟩ :=
   rfl
+
+/-- The type group `𝔊 = ∏_{w ∈ SG} GL_n(O_E/w)` on a decorated lattice, through its `SG` component:
+`g·(N, f, be) = (N, f, g·be)`, the action of `(1, g) ∈ U_n(E) × ∏_{w ∈ SG} GL_n(O_E/w)`. It keeps `Deco.Good`, so it
+maps `points Λ` to itself for every `Λ` (L6.2: `𝔊` on the rows, `SharpData.RealisedPinned`). -/
+def tyPt {ST SG : Finset (HeightOneSpectrum (𝓞 E))} {n : ℕ} {Λ : Subgroup (∀ w : SG, GL (Fin n) (𝓞 E ⧸ w.1.asIdeal))}
+    (g : ∀ w : SG, GL (Fin n) (𝓞 E ⧸ w.1.asIdeal)) (x : points (E := E) (ST := ST) Λ) :
+    points (E := E) (ST := ST) Λ :=
+  ⟨(show Grp E n SG ⊤ from (1, ⟨g, Subgroup.mem_top g⟩)) • x.1, (points (ST := ST) ⊤).smul_mem _ x.2⟩
 
 open Classical in
 /-- **`col` is the theta chain's** at one level and word: `col φ = recast (Θ_m(inp(e φ)) ∘ lift)` for theta data
@@ -287,7 +296,11 @@ row spaces at the twisted levels, the untwisted level the decorated lattices (`l
 element `(a + b√−d)/2` of `T_ω` (up to conjugation), and `𝔞_ω ∣ aBd u ω`. The chain shape and `sd` at `μ0` are
 `SharpData.Shp`. `SG` is half the places over `g₀g₁` (spec-5 §2: all places over `conj(π_{g₀})`, `conj(π_{g₁})`,
 `f` per prime): every place over `g₀g₁` is in `SG` or in `conj SG`, and not both (`SG ∩ conj SG = ∅`); `ST` is the
-set of places over `π_T = conj(tz)` (L2.3). -/
+set of places over `π_T = conj(tz)` (L2.3). The untwisted row space is pinned (L6.2, `RowSpace.IsRowSpace`):
+`V0_{μ0} = e·Amb` for the type group `𝔊 = ∏_{w ∈ SG} GL_r(O_E/w)`, `r = N_m − 1`, its upper unitriangular `P = uniUT`
+with the generic character `ψ`, `j ∘ ψ = lamGen xi0` (`xi0` existential, as in `IsThetaCol`), and `ρ` the action
+`(g·F)(c) = F(g⁻¹·c)` through `be` (`tyPt`). `ρ` is existential, fixed by this on every class; it exists only if `𝔊`
+permutes the `Λ`-classes (so for `Λ = ⊥`, the spec's `U(X′)`). -/
 def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
   ∃ (_ : IsCMField K) (τK : Φ S.A → (S.E →+* K)) (j : K →+* ℂ), (∀ ρ, j.comp (τK ρ) = S.τ ρ) ∧
     ∀ u ∈ A₀ κ, ∃ (T : Type) (G X : T → Type) (_ : ∀ μ, Group (G μ)) (_ : ∀ μ, MulAction (G μ) (X μ))
@@ -302,7 +315,14 @@ def SharpData.RealisedPinned (D : SharpData S κ x ε X K) : Prop :=
         (∀ w ∈ tw.Tw, P.V0 (tw.μw w) ≠ ⊥) ∧
         (∃ (Λ : Subgroup (∀ w : SG, GL (Fin (D.R.N D.R.m - 1)) (𝓞 S.E ⧸ w.1.asIdeal)))
           (eG : G μ0 ≃* Grp S.E (D.R.N D.R.m - 1) SG Λ) (eX : X μ0 ≃ points (E := S.E) (ST := ST) Λ),
-          (∀ g x, eX (g • x) = eG g • eX x) ∧ ∀ x, P.lat μ0 x = (eX x).1.N ∧ P.lsh μ0 x = Lsh (eX x).1) ∧
+          (∀ g x, eX (g • x) = eG g • eX x) ∧ (∀ x, P.lat μ0 x = (eX x).1.N ∧ P.lsh μ0 x = Lsh (eX x).1) ∧
+          ∃ (_ : Fintype (∀ w : SG, GL (Fin (D.R.N D.R.m - 1)) (𝓞 S.E ⧸ w.1.asIdeal)))
+            (_ : Fintype (uniUT SG (D.R.N D.R.m - 1))) (xi0 : S.E) (ψ : uniUT SG (D.R.N D.R.m - 1) →* K)
+            (ρ : Representation K (∀ w : SG, GL (Fin (D.R.N D.R.m - 1)) (𝓞 S.E ⧸ w.1.asIdeal))
+              (Cl (G μ0) (X μ0) →₀ Pol (Φ S.A) (D.R.N D.R.m - 1) K)),
+            (∀ g, j (ψ g) = lamGen xi0 (g : ∀ w : SG, GL (Fin (D.R.N D.R.m - 1)) (𝓞 S.E ⧸ w.1.asIdeal))) ∧
+            (∀ g F x, ρ g F (Quotient.mk'' x) = F (Quotient.mk'' (eX.symm (tyPt g⁻¹ (eX x))))) ∧
+            RowSpace.IsRowSpace ρ (uniUT SG (D.R.N D.R.m - 1)) ψ (P.V0 μ0)) ∧
         (∀ v : HeightOneSpectrum (𝓞 S.E), ((D.g₀ * D.g₁ : ℕ) : 𝓞 S.E) ∈ v.asIdeal → v ∈ SG ∨
           ∃ w ∈ SG, v.asIdeal = w.asIdeal.comap (IsCMField.ringOfIntegersComplexConj S.E : 𝓞 S.E →+* 𝓞 S.E)) ∧
         (∀ v ∈ SG, ((D.g₀ * D.g₁ : ℕ) : 𝓞 S.E) ∈ v.asIdeal) ∧
