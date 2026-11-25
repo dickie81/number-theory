@@ -251,13 +251,13 @@ omit [NumberField E] [IsCMField E] in
 /-- An invertible `h` kills only `0`. -/
 theorem mv_eq_zero {R : Type*} [CommRing R] [Algebra (𝓞 E) R] (h : GL (Fin n) R) {v : Fin n → R} :
     mv (E := E) h v = 0 ↔ v = 0 :=
-  ⟨fun hv => by simpa [mulVec_mulVec] using congrArg (mv (E := E) h⁻¹) hv, fun hv => by simp [hv]⟩
+  ⟨fun hv => by simpa [mv_apply, mulVec_mulVec] using congrArg (mv (E := E) h⁻¹) hv, fun hv => by simp [mv_apply, hv]⟩
 
 omit [NumberField E] [IsCMField E] in
 /-- An invertible `h` is onto. -/
 theorem mv_surj {R : Type*} [CommRing R] [Algebra (𝓞 E) R] (h : GL (Fin n) R) :
     Function.Surjective (mv (E := E) h) :=
-  fun v => ⟨mv (E := E) h⁻¹ v, by simp [mulVec_mulVec]⟩
+  fun v => ⟨mv (E := E) h⁻¹ v, by simp [mv_apply, mulVec_mulVec]⟩
 
 /-- The decorated lattices `D`: the data satisfying `Deco.Good`, a set stable under `𝒢`. -/
 def points : SubMulAction (Grp E n SG Λ) (Deco E n ST SG) where
