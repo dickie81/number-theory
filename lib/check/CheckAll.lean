@@ -467,6 +467,8 @@ import WeylSpan
 import SharpPiecesProved
 import HermFormsLattice
 import FormSlope
+import SlopeIndex
+import SlopeV
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2319,6 +2321,9 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms HermForms.slope_source_ge_full
 #print axioms HermForms.slope_source_ge
 #print axioms HermForms.exists_slope_source_ge
+#print axioms KLattice.slope_withLattice_eq
+#print axioms KLattice.slope_rescale_withLattice_eq
+#print axioms ZetaBalance.SharpObj.slopeFV_of_slopeM
 #print axioms ZetaBalance.sharpBoundTheta_of_pinned
 #print axioms ThetaChain.Data.comp_zero_inp
 #print axioms ThetaNorm.th0_zero

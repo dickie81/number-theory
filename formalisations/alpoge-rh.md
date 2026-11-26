@@ -237,6 +237,11 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     (`GramVolume.vol_le_prod_norm`); the cut is reached by the integral projection `Π_P (N_P − Nm_P)`, not by
     duality. Still open for the piece itself: the further subspace `X_c` of the pins, a bound on the comparison
     constants (reduction theory), explicit bounds on the Fock norms, and the budget check.
+  - The index bookkeeping (V): two `O_K`-lattices with the same metrics, neither inside the other, have slopes
+    differing by `(log [N : N ∩ M] − log [M : N ∩ M])/rk` (`KLattice.slope_withLattice_eq`; doubled in the archive's
+    units, `KLattice.slope_rescale_withLattice_eq`), through `N + M` and the second isomorphism theorem. So the piece
+    `SharpObj.SlopeFV` follows from the slope bound on `M_ω` alone, in the frame's coordinates and the archive's units
+    (`ZetaBalance.SharpObj.slopeFV_of_slopeM`).
 
 ## How the statements differ from the archive's
 

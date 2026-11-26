@@ -23,7 +23,7 @@ lean_lib Zeta23 where
   srcDir := "lib/vendor/zeta23"
   globs := #[.submodules `Zeta23]
 
-/-- lib/core: 515 modules. -/
+/-- lib/core: 516 modules. -/
 lean_lib Core where
   srcDir := "lib/core"
   globs := #[
@@ -126,38 +126,38 @@ lean_lib Core where
     .one `RiemannKernel, .one `Roadmap, .one `RowSpace, .one `Saturation,
     .one `ShellCount, .one `ShellSchur, .one `ShellSixthCore, .one `ShortPrimes,
     .one `ShortWeil, .one `ShortZeros, .one `SiegelFour, .one `SimpleCont,
-    .one `SimpleCover, .one `SimpleStructure, .one `SlopeFrame, .one `SmallPositivity,
-    .one `SmallPositivity2, .one `Split, .one `SquaresCongruences, .one `StrictPositivity,
-    .one `StripConv, .one `StripShift, .one `StructureD, .one `SwapRealize,
-    .one `T1bt, .one `T1ca, .one `TheoremC, .one `ThetaChain,
-    .one `ThetaNorm, .one `ThetaVol, .one `TwinLandau, .one `TwoVariableZeta,
-    .one `TwoVariableZetaEight, .one `TwoVariableZetaPurity, .one `TwoVariableZetaTwo, .one `Unconditional,
-    .one `Uniqueness, .one `UniquenessQ, .one `UpperHalfSpace, .one `V3Asm,
-    .one `V3Bessel, .one `V3CertD, .one `V3Enc, .one `V3FinA,
-    .one `V3FinD, .one `V3FinP, .one `V3FinRe0, .one `V3FinRe1,
-    .one `V3FinRo0, .one `V3FinRo1, .one `V3Gen, .one `V3Log,
-    .one `V3Main, .one `V3Pole, .one `V3Scale, .one `V3Zhu,
-    .one `VinoBad, .one `VinoConst, .one `VinoConst2, .one `VinoFam,
-    .one `VinoHolder, .one `VinoIter, .one `VinoKV, .one `VinoPadic,
-    .one `VinoRec, .one `VinoRec2, .one `VinoSplit, .one `VinoStep,
-    .one `Vinogradov, .one `WeilArch, .one `WeilAssemble, .one `WeilCert,
-    .one `WeilChi, .one `WeilChiB, .one `WeilChiBridge, .one `WeilChiCriterion,
-    .one `WeilChiDensity, .one `WeilChiK1, .one `WeilChiPos, .one `WeilChiZ,
-    .one `WeilChiZB, .one `WeilCoer, .one `WeilConst, .one `WeilCont,
-    .one `WeilConverse, .one `WeilCount, .one `WeilCriterion, .one `WeilDedekind,
-    .one `WeilDischarge, .one `WeilFF, .one `WeilFourier, .one `WeilGen,
-    .one `WeilHead, .one `WeilIndexConverse, .one `WeilIndexInfinite, .one `WeilIndexZeta,
-    .one `WeilLandau, .one `WeilModes, .one `WeilOdd, .one `WeilOddPos,
-    .one `WeilPlanch, .one `WeilRH, .one `WeilRate, .one `WeilTail,
-    .one `WeilTailB, .one `WeilTwinGeneral, .one `WeilZeta, .one `WeilZhuRed,
-    .one `WengRankTwo, .one `WeylFock, .one `WeylSpan, .one `WindowForm,
-    .one `WindowGRH, .one `WindowKernel, .one `WindowNearest, .one `WindowPole,
-    .one `XiBounds, .one `XiLogDeriv, .one `XiReflection, .one `XiReflectionBand,
-    .one `ZeroLocal, .one `ZeroSwap, .one `ZerosDense, .one `ZerosInfinite,
-    .one `Zeta, .one `ZetaBalance, .one `ZetaDiscs, .one `ZetaDiscsR,
-    .one `ZetaFrame, .one `ZetaGap, .one `ZetaInputs]
+    .one `SimpleCover, .one `SimpleStructure, .one `SlopeFrame, .one `SlopeIndex,
+    .one `SmallPositivity, .one `SmallPositivity2, .one `Split, .one `SquaresCongruences,
+    .one `StrictPositivity, .one `StripConv, .one `StripShift, .one `StructureD,
+    .one `SwapRealize, .one `T1bt, .one `T1ca, .one `TheoremC,
+    .one `ThetaChain, .one `ThetaNorm, .one `ThetaVol, .one `TwinLandau,
+    .one `TwoVariableZeta, .one `TwoVariableZetaEight, .one `TwoVariableZetaPurity, .one `TwoVariableZetaTwo,
+    .one `Unconditional, .one `Uniqueness, .one `UniquenessQ, .one `UpperHalfSpace,
+    .one `V3Asm, .one `V3Bessel, .one `V3CertD, .one `V3Enc,
+    .one `V3FinA, .one `V3FinD, .one `V3FinP, .one `V3FinRe0,
+    .one `V3FinRe1, .one `V3FinRo0, .one `V3FinRo1, .one `V3Gen,
+    .one `V3Log, .one `V3Main, .one `V3Pole, .one `V3Scale,
+    .one `V3Zhu, .one `VinoBad, .one `VinoConst, .one `VinoConst2,
+    .one `VinoFam, .one `VinoHolder, .one `VinoIter, .one `VinoKV,
+    .one `VinoPadic, .one `VinoRec, .one `VinoRec2, .one `VinoSplit,
+    .one `VinoStep, .one `Vinogradov, .one `WeilArch, .one `WeilAssemble,
+    .one `WeilCert, .one `WeilChi, .one `WeilChiB, .one `WeilChiBridge,
+    .one `WeilChiCriterion, .one `WeilChiDensity, .one `WeilChiK1, .one `WeilChiPos,
+    .one `WeilChiZ, .one `WeilChiZB, .one `WeilCoer, .one `WeilConst,
+    .one `WeilCont, .one `WeilConverse, .one `WeilCount, .one `WeilCriterion,
+    .one `WeilDedekind, .one `WeilDischarge, .one `WeilFF, .one `WeilFourier,
+    .one `WeilGen, .one `WeilHead, .one `WeilIndexConverse, .one `WeilIndexInfinite,
+    .one `WeilIndexZeta, .one `WeilLandau, .one `WeilModes, .one `WeilOdd,
+    .one `WeilOddPos, .one `WeilPlanch, .one `WeilRH, .one `WeilRate,
+    .one `WeilTail, .one `WeilTailB, .one `WeilTwinGeneral, .one `WeilZeta,
+    .one `WeilZhuRed, .one `WengRankTwo, .one `WeylFock, .one `WeylSpan,
+    .one `WindowForm, .one `WindowGRH, .one `WindowKernel, .one `WindowNearest,
+    .one `WindowPole, .one `XiBounds, .one `XiLogDeriv, .one `XiReflection,
+    .one `XiReflectionBand, .one `ZeroLocal, .one `ZeroSwap, .one `ZerosDense,
+    .one `ZerosInfinite, .one `Zeta, .one `ZetaBalance, .one `ZetaDiscs,
+    .one `ZetaDiscsR, .one `ZetaFrame, .one `ZetaGap, .one `ZetaInputs]
 
-/-- lib/pnt: 653 modules, the 1232 of LinnikCert aside. -/
+/-- lib/pnt: 654 modules, the 1232 of LinnikCert aside. -/
 lean_lib PNT where
   srcDir := "lib/pnt"
   globs := #[
@@ -318,13 +318,13 @@ lean_lib PNT where
     .one `SieveTypeIBPairWide, .one `SieveTypeIBSum, .one `SieveTypeIBSumWide, .one `SieveTypeIBWide,
     .one `SieveTypeII, .one `SieveTypeIIGen, .one `SieveTypeIIR, .one `SieveTypeIIU,
     .one `SieveUnwGen, .one `SieveUnwLo, .one `SieveUnwTwo, .one `SieveWeight,
-    .one `SixTerm, .one `SmallPrimes, .one `SmoothPerron, .one `SquarefreeCount,
-    .one `Subconvexity, .one `SubconvexityCrit, .one `TwinKV, .one `TwistFamily,
-    .one `ZetaAFE, .one `ZetaFourth, .one `ZetaGMBlock, .one `ZetaGMDensity,
-    .one `ZetaGMHux, .one `ZetaGMIngham, .one `ZetaGMLV, .one `ZetaGMProp,
-    .one `ZetaGMS3, .one `ZetaGMTrace, .one `ZetaGMWin, .one `ZetaHuxley,
-    .one `ZetaIngham, .one `ZetaKernel, .one `ZetaPair, .one `ZetaThin,
-    .one `ZetaTwist]
+    .one `SixTerm, .one `SlopeV, .one `SmallPrimes, .one `SmoothPerron,
+    .one `SquarefreeCount, .one `Subconvexity, .one `SubconvexityCrit, .one `TwinKV,
+    .one `TwistFamily, .one `ZetaAFE, .one `ZetaFourth, .one `ZetaGMBlock,
+    .one `ZetaGMDensity, .one `ZetaGMHux, .one `ZetaGMIngham, .one `ZetaGMLV,
+    .one `ZetaGMProp, .one `ZetaGMS3, .one `ZetaGMTrace, .one `ZetaGMWin,
+    .one `ZetaHuxley, .one `ZetaIngham, .one `ZetaKernel, .one `ZetaPair,
+    .one `ZetaThin, .one `ZetaTwist]
 
 /-- lib/dh: 68 modules. -/
 lean_lib DH where
