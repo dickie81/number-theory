@@ -2,7 +2,7 @@
 
 The library on one page: what it proves, what that rests on, how much of number theory it covers, and where the next
 results are. Every result here names the Lean theorem that proves it; a check file prints its axioms, or those of a
-theorem that uses it. [`inventory.md`](inventory.md) lists all 1969 printed theorems, marking *opt-in* the 14 that
+theorem that uses it. [`inventory.md`](inventory.md) lists all 1971 printed theorems, marking *opt-in* the 14 that
 rest on the Linnik paper's certificates, whose build is opt-in (`lib/check/CheckLinnik.lean`), and
 [`formalisations/`](../formalisations/README.md) gives the sources. `scripts/check_account.py`, which CI runs, checks
 that every Lean name and path on this page exists.

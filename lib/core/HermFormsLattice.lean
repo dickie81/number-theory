@@ -1146,6 +1146,36 @@ theorem formsLattice (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ
   exact ⟨finiteDimensional_Forms ST τ χ lam hlam, this, isLattice_Mlat ST τ χ lam hlam,
     fun v => gram_posDef ST τ χ lam v.1.embedding⟩
 
+/-- **The integral forms in any subspace of the cut are a lattice**: for a subspace `X` of the forms and an
+identification `e : V ≃ X ⊓ V_ω`, the `O_L`-span of the `φ` with `e φ` integral is finitely generated (it embeds in
+`Mlat` by the coordinates of `V_ω`, and `O_L` is noetherian) and spans `V` (every form has a nonzero integral integer
+multiple, `exists_int_smul_mem_Mint`). -/
+theorem isLattice_span_Mω [FiniteDimensional L (Vω ST τ χ lam)] (hlam : ∀ ρ, Antitone (lam ρ))
+    {X : Submodule L (Fn ST Λ Φ L)} {V : Type*} [AddCommGroup V] [Module L V] [Module (𝓞 L) V]
+    [IsScalarTower (𝓞 L) L V] (e : V ≃ₗ[L] ↥(X ⊓ Vω ST τ χ lam)) :
+    (Submodule.span (𝓞 L) {φ : V | (e φ : Fn ST Λ Φ L) ∈ Mω ST τ χ lam}).IsLattice L := by
+  let k : V →ₗ[L] (Idx ST τ χ lam → L) :=
+    (coords ST τ χ lam).toLinearMap ∘ₗ Submodule.inclusion inf_le_right ∘ₗ e.toLinearMap
+  have hk : Function.Injective k :=
+    (coords ST τ χ lam).injective.comp ((Submodule.inclusion_injective (inf_le_right : X ⊓ Vω ST τ χ lam ≤ _)).comp
+      e.injective)
+  refine ⟨Submodule.fg_of_fg_map_injective (k.restrictScalars (𝓞 L)) hk
+    (Submodule.FG.of_le (isLattice_Mlat ST τ χ lam hlam).fg ?_), eq_top_iff.2 fun φ _ => ?_⟩
+  · rw [Submodule.map_span_le]
+    exact fun φ hφ => Submodule.subset_span ⟨⟨_, (Submodule.mem_inf.1 (e φ).2).2⟩, hφ, rfl⟩
+  · obtain ⟨z, hz0, hz⟩ := exists_int_smul_mem_Mint ST τ lam χ
+      (Submodule.mem_inf.1 (Submodule.mem_inf.1 (e φ).2).2).1
+    have hzφ : (z : L) • φ ∈ Submodule.span (𝓞 L) {φ : V | (e φ : Fn ST Λ Φ L) ∈ Mω ST τ χ lam} := by
+      refine Submodule.subset_span ⟨?_, ?_⟩
+      · rw [map_smul]
+        exact hz
+      · rw [map_smul]
+        exact ((z : L) • e φ).2.2
+    have : φ = ((z : L))⁻¹ • ((z : L) • φ) := by
+      rw [smul_smul, inv_mul_cancel₀ (Int.cast_ne_zero.2 hz0), one_smul]
+    rw [this]
+    exact Submodule.smul_mem _ _ (Submodule.subset_span hzφ)
+
 end Main
 
 end

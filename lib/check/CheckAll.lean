@@ -2325,6 +2325,8 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms KLattice.slope_withLattice_eq
 #print axioms KLattice.slope_rescale_withLattice_eq
 #print axioms ZetaBalance.SharpObj.slopeFV_of_slopeM
+#print axioms HermForms.isLattice_span_Mω
+#print axioms ZetaBalance.SharpObj.isLattice_map_M
 #print axioms ZetaBalance.exists_prime_norm_window
 #print axioms ZetaBalance.SharpDesign.exists_prime_arithT
 #print axioms ZetaBalance.sharpBoundTheta_of_pinned

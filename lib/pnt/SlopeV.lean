@@ -1,5 +1,6 @@
 import SharpInputs
 import SlopeIndex
+import HermFormsLattice
 
 /-!
 # The index bookkeeping (V): `SlopeFV` from the slope bound on `M_ω`
@@ -17,6 +18,10 @@ to the archive's units, by definition (`KFrame.frame_N`); the source's lattice i
 (`AddSubgroup.relIndex_map_map_of_injective`), and `rk = [K:ℚ]·|n ω| = [K:ℚ]·dim V_ω`, as `c ω : V_ω ≃ K^{n ω}`: the
 difference is `idx_ω`. So, once the image of `M_ω` is a lattice, the frame clause is equivalent to `μ(M_ω) ≥ −c_F`;
 the theorem uses one direction.
+
+**The lattice.** For antitone weights the image of `M_ω` in any coordinates is an `O_K`-lattice
+(`SharpObj.isLattice_map_M`): the integral forms in any subspace `X_c ⊓ V_ω` of the cut are one
+(`HermForms.isLattice_span_Mω`), and a linear equivalence keeps finite generation and spanning.
 -/
 
 namespace ZetaBalance
@@ -57,6 +62,18 @@ theorem slopeFV_of_slopeM (h0 : 0 ≤ b.cF) (h1 : b.cF ≤ x ^ ε * (∑ s ∈ D
   rw [KFrame.frame_N, idx, hrk, ← hi (b.M ω), ← hi (b.N ω), ← hF.2.1 ω]
   exact (add_le_add_left hμ _).trans_eq
     (((F.src ω).withLattice ((b.M ω).map f)).slope_rescale_withLattice_eq (F.src ω).M (archShift C.K)).symm
+
+/-- **`M_ω` is a lattice in any coordinates**: for antitone weights, the image of `M_ω` under a linear
+equivalence `V_ω ≃ K^ι` is an `O_K`-lattice (`HermForms.isLattice_span_Mω`, with `HermForms.formsLattice` for the
+finite dimension of the cut). -/
+theorem isLattice_map_M (ω : b.Ω) (hlam : ∀ ρ, Antitone (b.lam0 ω ρ)) {ι : Type} [Fintype ι]
+    (c : b.Vs ω ≃ₗ[C.K] (ι → C.K)) :
+    ((b.M ω).map ((c : b.Vs ω →ₗ[C.K] (ι → C.K)).restrictScalars (𝓞 C.K))).IsLattice C.K := by
+  obtain ⟨-, _, -⟩ := HermForms.formsLattice S.E b.n0 (b.ST ω) b.SG _ (Φ S.A) C.K C.τK (b.χ0 ω) (b.lam0 ω) hlam
+  have hM := HermForms.isLattice_span_Mω (b.ST ω) C.τK (b.χ0 ω) (b.lam0 ω) hlam (b.e ω)
+  refine ⟨hM.fg.map _, ?_⟩
+  rw [Submodule.map_coe, LinearMap.coe_restrictScalars, Submodule.span_image, M, hM.span_eq_top, Submodule.map_top,
+    LinearEquiv.range]
 
 end SharpObj
 

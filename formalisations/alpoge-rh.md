@@ -241,7 +241,9 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     differing by `(log [N : N ∩ M] − log [M : N ∩ M])/rk` (`KLattice.slope_withLattice_eq`; doubled in the archive's
     units, `KLattice.slope_rescale_withLattice_eq`), through `N + M` and the second isomorphism theorem. So the piece
     `SharpObj.SlopeFV` follows from the slope bound on `M_ω` alone, in the frame's coordinates and the archive's units
-    (`ZetaBalance.SharpObj.slopeFV_of_slopeM`).
+    (`ZetaBalance.SharpObj.slopeFV_of_slopeM`). That `M_ω` is a lattice, in any coordinates and for any subspace
+    `X_c` of the pins, holds for antitone weights (`HermForms.isLattice_span_Mω`,
+    `ZetaBalance.SharpObj.isLattice_map_M`).
   - The core of the auxiliary primes (T), from the input `ShortNorm` at `h = 1`: primes `T = ππ̄`, `π ≡ 1 (mod M)`, in
     every dyadic window `(e^Λ, 2e^Λ]` once `log(4dM²) ≤ c√Λ` (`ZetaBalance.exists_prime_norm_window`), so meeting
     `ArithT` with `log T` within `log 2` of any large target (`ZetaBalance.SharpDesign.exists_prime_arithT`).
