@@ -516,6 +516,9 @@ import ZetaPair
 import SixTerm
 import RHJoinsLinnik
 import RHHarvest
+import BallWindowBridge
+import BallBalance
+import RHJoinsBall
 #print axioms Landau.zeroFree_of_growth
 #print axioms Landau.logDerivBnd_of_growth
 #print axioms Landau.rung3_of_growth
@@ -2281,6 +2284,21 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms LandauWindow.re_le_of_windows
 #print axioms WindowGRH.rhAndGRH_of_windowBound
 #print axioms WindowGRH.riemannHypothesis_of_zetaWindowBound
+#print axioms BallWindow.kappa_eq
+#print axioms BallWindow.kappa_eq_digamma
+#print axioms BallWindow.archH_add_cosh_le
+#print axioms BallWindow.kerHψ_sub_ramp
+#print axioms BallWindow.abs_kerHψ_sub_ramp_le
+#print axioms BallWindow.abs_kerH_sub_ramp_le
+#print axioms BallWindow.norm_kerH_le_of_rh
+#print axioms BallWindow.abs_zetaRamp_le_of_rh
+#print axioms WindowGRH.rh_iff_zetaWindowBound
+#print axioms WindowGRH.riemannHypothesis_of_zetaWindowLowerBound
+#print axioms WindowGRH.rh_iff_zetaWindowLowerBound
+#print axioms ZetaBalance.Setting.g_one_re
+#print axioms ZetaBalance.Setting.balance_const
+#print axioms ZetaBalance.Setting.gram_primePart
+#print axioms ZetaBalance.Setting.ASK_const
 #print axioms ZetaBalance.Setting.balance
 #print axioms ZetaBalance.BalanceData.zeta_le
 #print axioms ZetaBalance.riemannHypothesis_of_zetaBalanceBound
@@ -2555,6 +2573,14 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ZetaBalance.rhAndGRH_of_pairBound
 #print axioms ZetaBalance.rhAndGRH_of_sixTermBound
 #print axioms LinnikGRH.dirichletRH_of_rhAndGRH
+#print axioms HalfPlaneGRH.RHandGRH.posDef_psi
+#print axioms HalfPlaneGRH.RHandGRH.orbitLattice
+#print axioms HalfPlaneGRH.RHandGRH.shortest
+#print axioms HalfPlaneGRH.RHandGRH.balance
+#print axioms HalfPlaneGRH.RHandGRH.weil_bound
+#print axioms HalfPlaneGRH.RHandGRH.zetaWindowBound
+#print axioms HalfPlaneGRH.RHandGRH.zetaRamp_le
+#print axioms HalfPlaneGRH.RHandGRH.ball
 #print axioms HalfPlaneGRH.RHandGRH.LFunction_ne_zero
 #print axioms HalfPlaneGRH.RHandGRH.riemannZeta_ne_zero
 #print axioms HalfPlaneGRH.RHandGRH.weylBound

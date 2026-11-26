@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2135 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2158 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 243 | 937 |
+| `lib/core` | 246 | 960 |
 | `lib/pnt` | 369 | 1085 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -40,6 +40,12 @@ note of `formalisations/` that names it, if one does.
 - `ArakelovRiemannRoch.tendsto_h0_atBot`: Vanishing in negative degree
 - `ArakelovRiemannRoch.tendsto_h0_sub_atTop`: `h⁰` is the degree in large degree
 - `ArakelovRiemannRoch.Z_eq_integral`: Lagarias and Rains's `Z(w, s)` is van der Geer and Schoof's integral over the Arakelov divisors of `ℚ`
+
+#### `BallBalance`: The balance identity at a constant weight, and the ball's Gram entries
+
+- `ZetaBalance.Setting.balance_const`: Lemma B at a constant weight
+- `ZetaBalance.Setting.gram_primePart`: The prime part of the ball's Gram entry
+- `ZetaBalance.Setting.ASK_const`: `ASK` at a constant weight is the ball's prime part, filtered
 
 #### `BallCurve`: The orbit curve: a realization of `K` along the positive reals
 
@@ -224,6 +230,20 @@ note of `formalisations/` that names it, if one does.
 - `BallWeil.weil_bound`: The Weil bound
 - `BallWeil.rh_iff_weil_bound`: The upper Weil bound gives the Riemann hypothesis *paper*
 - `BallWeil.rh_of_pivots`: The orbit-lattice conjecture implies the Riemann hypothesis *paper* ([note](../formalisations/ball-rate.md))
+
+#### `BallWindowBridge`: The ball kernel and the rebuild's ramp error
+
+- `BallWindow.kappa_eq`: The archimedean constant
+- `BallWindow.kappa_eq_digamma`: `κ = ψ(½)`
+- `BallWindow.archH_add_cosh_le`: The archimedean term less its growth is bounded
+- `BallWindow.kerHψ_sub_ramp`: The bridge, exactly
+- `BallWindow.abs_kerHψ_sub_ramp_le`: The ball kernel is the ramp error of `ζ`, up to a bounded term
+- `BallWindow.abs_kerH_sub_ramp_le`: The two names of the kernel agree on `(0, ∞)`, so the bridge holds for `K_H` itself.
+- `BallWindow.norm_kerH_le_of_rh`: Under RH, `‖K_H(x)‖ ≤ ‖K_H(1)‖`
+- `BallWindow.abs_zetaRamp_le_of_rh`: Von Koch's bound for the ramp, under RH
+- `WindowGRH.rh_iff_zetaWindowBound`: RH is the frontier for `ζ` alone
+- `WindowGRH.riemannHypothesis_of_zetaWindowLowerBound`: The Riemann hypothesis from the mirror frontier
+- `WindowGRH.rh_iff_zetaWindowLowerBound`: RH is the mirror frontier for `ζ`
 
 #### `BohrJoins`: The geometric picture joined to the library
 
@@ -1123,6 +1143,17 @@ note of `formalisations/` that names it, if one does.
 
 - `QuadIdeals.trichotomy`: Every prime splits, is inert or ramifies
 
+#### `RHJoinsBall`: The rebuild's Riemann hypothesis, in the words of the ball conjecture
+
+- `HalfPlaneGRH.RHandGRH.posDef_psi`: The kernel from the primes is positive-definite
+- `HalfPlaneGRH.RHandGRH.orbitLattice`: The orbit-lattice conjecture
+- `HalfPlaneGRH.RHandGRH.shortest`: `w_1` is a shortest vector of the orbit lattice
+- `HalfPlaneGRH.RHandGRH.balance`: The balance of the ball
+- `HalfPlaneGRH.RHandGRH.weil_bound`: The Weil bound
+- `HalfPlaneGRH.RHandGRH.zetaWindowBound`: The rebuild's frontier for `ζ`
+- `HalfPlaneGRH.RHandGRH.zetaRamp_le`: Von Koch's bound for the ramp
+- `HalfPlaneGRH.RHandGRH.ball`: The ball conjecture's criteria, from the top
+
 #### `RamanujanCongruences`: Ramanujan's partition congruences, from Jacobi's cube and Euler's pentagonal theorem
 
 - `RamanujanCongruences.P_mul_E`: Euler
@@ -1680,6 +1711,7 @@ note of `formalisations/` that names it, if one does.
 
 #### `ZetaGap`: From the inert-prime gap to the Riemann hypothesis for `ζ` and every Dirichlet `L`-function
 
+- `ZetaBalance.Setting.g_one_re`: `Re g_1(y) = Σ_{n ≤ y} Λ(n)(y/n − 1) − y log y + (1 + γ)y`, the error of `ζ`'s ramp sum.
 - `ZetaBalance.BalanceData.cyclicG_le`: Theorem Z ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.BalanceData.zeta_le`: Theorem Z for `ζ` ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.riemannHypothesis_of_zetaBalanceBound`: The Riemann hypothesis from balance data on windows ([note](../formalisations/alpoge-rh.md))
