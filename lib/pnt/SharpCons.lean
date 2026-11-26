@@ -3,21 +3,19 @@ import CoeffField
 import QuadSub
 
 /-!
-# The construction of the six-term frontier's proof
+# The setting-level data of the construction
 
-The field `SharpPieces.cons` of the proof's architecture (`SharpInputs`): per design, a coefficient field
-(`sharpCoeff`) and per translate an object (`sharpObj`), assembled in `sharpCons`. This is Stage 0 of the
-construction: the choices that the proved pieces read (`SharpCores`: (T) and (F) + (V)) are the archive's, and the
-choices that only the pieces still to build read (the frame, the gain, (G↑), the frame loss) are placeholders, to be
-replaced when those pieces are built: `sharpχ0`, `sharpPer`, `sharpTw` and the fields that `sharpObj`'s docstring
-lists. Each field with content is a definition of its own, so that a later stage replaces one without touching the
-others; the placeholders without content (`0`, `1`, `⊤`) are written in `sharpObj`.
+The data of the construction of the six-term frontier's proof (`SharpInputs`, the field `SharpPieces.cons`) that do
+not depend on the theta chain: the setting's coefficient field (`sharpField`), the elements of norm `p` and their
+places, the auxiliary prime of each translate and its places `ST`, the level places `SG` and the step-0 weights. The
+explicit Stage-U theta chain, the coefficient field it needs and the assembled construction `sharpCons` are in
+`SharpChainU`. The order is forced: the chain's field (`ChainField`) reads `sharpField` (its fallback) and `sharpSG`
+(its local constants), so this module comes first. The pieces proved so far (`SharpCores`: (T) and (F) + (V)) read
+only the data defined here.
 
-**The coefficient field** (`sharpCoeff`) depends on the setting alone: `K ⊆ ℂ` is the normal closure of the images
-`τ_ρ(b_i)` of a `ℚ`-basis of `E` (`CoeffField.coeffClosure`), a number field, normal over `ℚ`, totally complex as it
-receives `E`, with complex conjugation as its star; `τ_K ρ` is `τ_ρ` with its codomain restricted to `K`.
-
-**The words and the levels.** One word (`Ω = Unit`) and one level (`Tμ = Unit`, untwisted).
+**The setting's coefficient field** (`sharpField`) depends on the setting alone: `K ⊆ ℂ` is the normal closure of the
+images `τ_ρ(b_i)` of a `ℚ`-basis of `E` (`CoeffField.coeffClosure`), a number field, normal over `ℚ`. The chain's
+field `ChainField.chainField` contains it, and falls back to it when its generators are not finite-dimensional.
 
 **The auxiliary prime** (`sharpT`, one per translate): the least prime `T` with `ArithT` and
 `Λ_u < log T ≤ Λ_u + log 2`, which `ShortNorm` gives once `x` is large; `2` if there is none. Its element
@@ -26,26 +24,18 @@ those over `conj π_T` (`sharpST`). The places `SG` are those over `conj π_{g�
 `π_g` from the design's split data (A11). One definition serves both elements (`normPi`): `(a + b√−d)/2` of norm `p`
 at a modulus `M`, `1` if there is no such `(a, b)`; and `placesOf z` is the finite set of places over `z`.
 
-**Step 0** (`n0 = k`, `λ_0 = wt_0(hc u)`, `X_c = ⊤`, `V_ω = X_c ⊓ V(ST, τ_K, χ0, λ_0)`, `e = id`): the archive's
-step-0 weights of the base word on the whole cut, with the trivial character `χ0` (placeholder).
-
-**The forced orders** (`Fo`, read by the gain and (G↑) alike, and cancelling between them): the archive's,
-`ForcedOrders.Fo` of the base word's family `hc u` at the split primes `g₀, g₁`, the twist `twA κ` and the cut-off
-`X″ = Setting.cutX x ε`.
-
-**The constants.** `c_F = c_G = x^{4ε}Σ_t a_t/8`, `c↑ = x^{4ε}Σ_t a_t/4`, the frame loss `x^{4ε}Σ_t a_t/4` (each its
-share of the budget) and `c_T = 0` (as `Λ_u < log T`).
+**Step 0** (`n0 = k`, `λ_0 = wt_0(hc u)`): the archive's step-0 weights of the base word (`sharpLam0`).
 -/
 
 namespace ZetaBalance
 
-open NumberField IsDedekindDomain ThetaChain CoeffField
+open NumberField IsDedekindDomain CoeffField
 
 noncomputable section
 
 variable {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ}
 
-/-! ## The coefficient field -/
+/-! ## The setting's coefficient field -/
 
 /-- **The generators of the coefficient field**: the images `τ_ρ(b_i)`, over all `ρ`, of a `ℚ`-basis `b` of `E`. -/
 def sharpGens (S : Setting) : Set ℂ :=
@@ -56,23 +46,12 @@ theorem isIntegral_sharpGens : ∀ z ∈ sharpGens S, IsIntegral ℚ z := by
   rintro _ ⟨p, rfl⟩
   exact (Algebra.IsIntegral.isIntegral (R := ℚ) (Module.finBasis ℚ S.E p.2)).map (S.τ p.1).toRatAlgHom
 
-/-- **The coefficient field** `K ⊆ ℂ`: the normal closure of `ℚ(τ_ρ(E) : ρ)` (`CoeffField.coeffClosure`). -/
+/-- **The setting's coefficient field** `K ⊆ ℂ`: the normal closure of `ℚ(τ_ρ(E) : ρ)` (`coeffClosure`). -/
 def sharpField (S : Setting) : IntermediateField ℚ ℂ := coeffClosure (sharpGens S)
 
 /-- **`τ_ρ` lands in the coefficient field**, as the images of a basis do (`CoeffField.map_mem_of_basis`). -/
 theorem τ_mem_sharpField (ρ : Φ S.A) (z : S.E) : S.τ ρ z ∈ sharpField S :=
   map_mem_of_basis (Module.finBasis ℚ S.E) (S.τ ρ) (fun i => subset_coeffClosure (sharpGens S) ⟨(ρ, i), rfl⟩) z
-
-/-- **The coefficient field of the construction** (`SharpCoeff`): `K = sharpField S`, a number field normal over `ℚ`
-(`CoeffField`), totally complex as `E` embeds in it, with complex conjugation as its star; `τ_K ρ = τ_ρ` with its
-codomain restricted to `K`. -/
-def sharpCoeff (S : Setting) : SharpCoeff S :=
-  haveI : NumberField (sharpField S) := numberField_coeffClosure (Set.finite_range _) isIntegral_sharpGens
-  haveI : Normal ℚ (sharpField S) := normal_coeffClosure isIntegral_sharpGens
-  { K := sharpField S
-    totallyComplex := isTotallyComplex_of_ringHom ((S.τ (1, 1)).codRestrict _ (τ_mem_sharpField (1, 1)))
-    star := instStarRing _
-    τK := fun ρ => (S.τ ρ).codRestrict _ (τ_mem_sharpField ρ) }
 
 /-! ## Elements of norm `p` and their places -/
 
@@ -93,7 +72,7 @@ spares that proof here, and its `else` branch, `∅`, is taken only at `z = 0`. 
 def placesOf (z : 𝓞 S.E) : Finset (HeightOneSpectrum (𝓞 S.E)) :=
   if h : {v : HeightOneSpectrum (𝓞 S.E) | z ∈ v.asIdeal}.Finite then h.toFinset else ∅
 
-/-! ## The object of a translate -/
+/-! ## The places of a translate -/
 
 open Classical in
 /-- **The auxiliary prime of the translate `u`** ((T), one per translate): the least prime `T` with `ArithT` and
@@ -123,77 +102,6 @@ def sharpSG (Dg : SharpDesign S κ x ε X) : Finset (HeightOneSpectrum (𝓞 S.E
 word. -/
 def sharpLam0 (Dg : SharpDesign S κ x ε X) (u : S.A) : Φ S.A → Fin Dg.R.k → ℤ :=
   Dg.R.wt0 (Dg.hc u) (by rw [zero_mul, add_zero])
-
-/-- **The step-0 character** `χ0`: the trivial character of `U_k(SG)`. Stage 0 placeholder, replaced when the
-frame/gain/(G↑) pieces are built. -/
-def sharpχ0 (Dg : SharpDesign S κ x ε X) : uniUT (sharpSG Dg) Dg.R.k →* (sharpCoeff S).K := 1
-
-/-- **The source space of the word**: `V_ω = X_c ⊓ V(ST, τ_K, χ0, λ_0)` with `X_c = ⊤`, the whole cut. -/
-abbrev sharpVs (Dg : SharpDesign S κ x ε X) (u : S.A) : Type :=
-  ↥((⊤ : Submodule (sharpCoeff S).K
-      (HermForms.Fn (sharpST Dg u) (uniUT (sharpSG Dg) Dg.R.k) (Φ S.A) (sharpCoeff S).K)) ⊓
-    HermForms.Vω (sharpST Dg u) (sharpCoeff S).τK (sharpχ0 Dg) (sharpLam0 Dg u))
-
-/-- **The period data of the translate**, with `tz = π_T` (`sharpTz`); the weight `σ`, the branching maps, the
-lattices `Lsh`, the row spaces `V0 = ⊥` and the chains are zero. Stage 0 placeholder, replaced when the
-frame/gain/(G↑) pieces are built. -/
-def sharpPer (Dg : SharpDesign S κ x ε X) (u : S.A) :
-    PeriodTarget.PerData (Φ S.A) (Dg.R.N Dg.R.m - 1) S.E (sharpCoeff S).K (fun _ : Unit => Unit)
-      (fun _ : Unit => Unit) (fun _ : Unit => sharpVs Dg u) where
-  tz _ := sharpTz Dg u
-  σ := 0
-  br _ := 0
-  lsh _ _ := ⊥
-  V0 _ := ⊥
-  col _ _ := 0
-
-/-- **The twist data**: no twisted place (`Tw = ∅`), identity transfers, scalars `1`. Stage 0 placeholder,
-replaced when the frame/gain/(G↑) pieces are built. -/
-def sharpTw (Dg : SharpDesign S κ x ε X) (u : S.A) : PeriodTarget.Twist (sharpPer Dg u) () where
-  Tw := ∅
-  μw _ := ()
-  tr _ := LinearMap.id
-  ze _ _ := 1
-
-/-- **The object of the translate `u`** (`SharpObj`), Stage 0. The words, the levels, their groups and points are
-`Unit`; the auxiliary prime `sharpT`, the places `sharpST`, `sharpSG`, the step-0 data (`n0 = k`, `sharpLam0`,
-`sharpχ0`, `X_c = ⊤`, `V_ω = sharpVs`, `e = id`), the period data `sharpPer` at the level `()` with the twist
-`sharpTw`; the archive's forced orders `Fo = ForcedOrders.Fo` (family `hc u`, twist `twA κ`, cut-off `cutX x ε`); the
-slacks `c_F = c_G = x^{4ε}Σ_t a_t/8`, `c↑ = x^{4ε}Σ_t a_t/4`, `c_T = 0` and the frame loss `x^{4ε}Σ_t a_t/4`, each its
-share of the budget. Stage 0 placeholders, replaced when the frame/gain/(G↑) pieces are built: `𝔞⁺ = 𝔞⁻ = ⊤`, the
-target metric `g = 0` and the heights `0`. -/
-def sharpObj (Dg : SharpDesign S κ x ε X) (u : S.A) : SharpObj Dg (sharpCoeff S) where
-  Ω := Unit
-  T _ := sharpT Dg u
-  Tμ := Unit
-  G _ := Unit
-  Xp _ := Unit
-  Vs _ := sharpVs Dg u
-  tower _ := Submodule.isScalarTower' _
-  ST _ := sharpST Dg u
-  SG := sharpSG Dg
-  P := sharpPer Dg u
-  μ0 := ()
-  tw := sharpTw Dg u
-  𝔞p _ := ⊤
-  𝔞n _ := ⊤
-  n0 := Dg.R.k
-  lam0 _ := sharpLam0 Dg u
-  χ0 _ := sharpχ0 Dg
-  Xc _ := ⊤
-  e _ := LinearEquiv.refl _ _
-  g _ _ _ := 0
-  ht _ _ := 0
-  Fo := Dg.R.Fo (Dg.hc u) (S.twA κ) Dg.g₀ Dg.g₁ (S.cutX x ε)
-  loss := x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4
-  cF := x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 8
-  cG := x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 8
-  cUp := x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4
-  cT := 0
-
-/-- **The construction of a design** (the field `SharpPieces.cons`): the coefficient field `sharpCoeff` of the
-setting and the object `sharpObj` of every translate. -/
-def sharpCons (Dg : SharpDesign S κ x ε X) : SharpCons Dg := ⟨sharpCoeff S, sharpObj Dg⟩
 
 end
 

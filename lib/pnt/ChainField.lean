@@ -40,10 +40,10 @@ the normal closure of `ℚ(G)` in `ℂ` (`CoeffField.coeffClosure`) when `ℚ(G)
 setting's field `sharpField S` otherwise. In the spec's terms `ℚ(G)` is the compositum of `ℚ(τ(E))`, the local
 constants, `F_cD = ℚ(g_p)`, `F_χ = ℚ(chiVals)` and `F_J = ℚ(J)`. Either way `K` is a number field normal over `ℚ`
 containing `τ(E)` (`finiteDimensional_chainField`, `normal_chainField`, `τ_mem_chainField`), so it carries the
-construction's coefficient structure (`chainCoeff`, the shape of `sharpCoeff`). Under `KOk` it contains every
-generator (`subset_chainField`). That `KOk` holds is not proved here; it reduces to the two infinite families
-(`kOk_of`): the other generators are finitely many algebraic numbers, so `KOk` follows once `F_χ` (C3) and `F_J` (C1)
-are finite-dimensional.
+construction's coefficient structure (`chainCoeff`, a `SharpCoeff`; `SharpChainU` takes it as the construction's).
+Under `KOk` it contains every generator (`subset_chainField`). That `KOk` holds is not proved here; it reduces to the
+two infinite families (`kOk_of`): the other generators are finitely many algebraic numbers, so `KOk` follows once
+`F_χ` (C3) and `F_J` (C1) are finite-dimensional.
 
 **The lift characters in `K`** (`muK`). `ThetaChain.Hecke.restrict` reads a `ℂ`-valued character in a subfield `F`
 of `ℂ` when its values lie in `F` (the trivial character otherwise); it keeps the values (`Hecke.coe_restrict`), the
@@ -362,7 +362,7 @@ theorem τ_mem_chainField (ρ : Φ S.A) (z : S.E) : S.τ ρ z ∈ chainField Dg 
   · rw [chainField, ite_eq_right h]
     exact τ_mem_sharpField ρ z
 
-/-- **The coefficient structure of the chain's field** (`SharpCoeff`, the shape of `sharpCoeff`): `K = chainField`,
+/-- **The coefficient structure of the chain's field** (`SharpCoeff`): `K = chainField`,
 totally complex as `E` embeds in it, with complex conjugation as its star; `τ_K ρ = τ_ρ` with its codomain restricted
 to `K`. -/
 def chainCoeff : SharpCoeff S where
