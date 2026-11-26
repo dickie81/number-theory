@@ -332,6 +332,13 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     (`ZetaBalance.KFrame.one_word_le`), by Bost's inequality at the quotient by the kernel sublattice
     (`KLattice.exists_ker_sublattice`). With the range, the frame loss is at most `(dim ker B/rk B)·U`, whatever the
     heights (`ZetaBalance.KFrame.frame_le_of_one_word`).
+  - The frame loss of the construction, reduced to two named statements (`SharpNI`): (NI), the near-injectivity of
+    the period map of the one word, `0 < rk P` and `dim V_ω ≤ 2 rk P` (`ZetaBalance.SharpNI`; not yet proved, the
+    planned route is the whole-word second moment), and (R′), the range `μ_max(N_ω) ≤ μ(N_ω) + U` in every realising
+    frame with `0 ≤ U ≤ x^{4ε}Σ_t a_t/4` (`ZetaBalance.SharpRange`, from the gain's certificate). In a realising frame
+    the map is onto, as the target lattice lies in `W_u = range P`, and has the rank of `P`; so the one-word lemma
+    bounds the loss by `U`, and the piece `frameLoss` holds eventually in the design
+    (`ZetaBalance.frameLoss_of_sharpNI`).
   - The trace bound for (G↑) (`TraceSlope`): in the archive's units, the slope of a hermitian `O_K`-lattice `X` is
     computed through a pseudo-basis (`KLattice.slopeArch_pseudo`), and it is at least `−mean_v log(Σ_i ‖x_i‖²_v/|κ|)`
     for any vectors `x_i` of `X` that span (`KLattice.slopeArch_ge_of_span`; AM–GM, no Cauchy–Binet). With duality,
@@ -447,6 +454,7 @@ The steps were written from the mathematics. Parts were written by helpers given
 
 | Result | Hypothesis | Lean |
 |---|---|---|
+| The piece `frameLoss` of `ZetaBalance.SharpPieces` for the construction `ZetaBalance.sharpCons`: at every admissible design with `ε` small and `x` large, in every frame realising a translate's object, the words have positive total rank and the mean slope exceeds the target's by at most the frame loss `x^{4ε}Σ_t a_t/4` | `ZetaBalance.SharpNI`, (NI), the near-injectivity of the period map of the construction's one word (`0 < rk P`, `dim V_ω ≤ 2 rk P`), not yet proved, with the whole-word second moment its planned route; and `ZetaBalance.SharpRange`, the range `μ_max(N_ω) ≤ μ(N_ω) + U` with `0 ≤ U ≤ x^{4ε}Σ_t a_t/4`, which will come from the gain's certificate | `ZetaBalance.frameLoss_of_sharpNI` |
 | The piece (T) of `ZetaBalance.SharpPieces` for the construction `ZetaBalance.sharpCons`: at every admissible design with `x` large, every translate's auxiliary prime is a prime `T = ππ̄`, `π ≡ 1 (mod M)`, with `log T > Λ_u − x^{2ε}` and slack `c_T = x^{2ε}` within its quarter of the budget | `ZetaBalance.ShortNorm` | `ZetaBalance.sharpPrimes` |
 | Admissible designs exist (the piece `params` of `ZetaBalance.SharpPieces`): for every primitive `χ`, small `ε` and large `Y`, every pair of `ZetaTwist.WinPair` has, at every `x` of its window, a setting with a character lifting `χ` and an admissible design (`ZetaBalance.SharpDesign.Adm`) | `ZetaBalance.ShortNorm`, which gives the design's split primes `g₀ ≠ g₁` | `ZetaBalance.sharpParams` |
 | The core of the auxiliary primes (T): primes `T = ππ̄`, `π = (a + b√−d)/2 ≡ 1 (mod M)`, in every dyadic window `(e^Λ, 2e^Λ]` once `log(4dM²) ≤ c√Λ`, so meeting `ArithT` with `log T` within `log 2` of any large target; a step of the piece `primes` of `ZetaBalance.SharpPieces` | `ZetaBalance.ShortNorm`: Chebotarev in short intervals for `ℚ(√−d)`, an input of `ZetaBalance.SharpInputs` | `ZetaBalance.exists_prime_norm_window`, `ZetaBalance.SharpDesign.exists_prime_arithT` |

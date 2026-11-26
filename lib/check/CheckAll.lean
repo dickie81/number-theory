@@ -502,6 +502,7 @@ import ChainLocal
 import ChainHeis
 import ChainField
 import SharpChainU
+import SharpNI
 import CMFormalInert
 import CMThetaOne
 import WeylSandwich
@@ -2377,6 +2378,7 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ZetaBalance.SharpDesign.exists_prime_arithT
 #print axioms ZetaBalance.sharpPrimes
 #print axioms ZetaBalance.sharpSlopeFV
+#print axioms ZetaBalance.frameLoss_of_sharpNI
 #print axioms ZetaBalance.sharpBoundTheta_of_pinned
 #print axioms ThetaChain.Data.comp_zero_inp
 #print axioms ThetaNorm.th0_zero
