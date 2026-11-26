@@ -1,4 +1,4 @@
-import ThetaVol
+import ChainLocal
 
 /-!
 # The Heisenberg data and the determinant ideles of the chain
@@ -40,22 +40,22 @@ place of `sel` but sits at an odd position.
 component `det fr_P` at `P ∈ SF`, `ϖ_w^{v_w(det N)}` at `w ∈ sel \ SF`, and `1` elsewhere: at the conjugates of `sel`
 and at the self-conjugate places (`detComp`; the archive's `muOff`, the predicate `SharpChain.IsDetIdele`). Here
 `v_w(det N)` is the least `v_w(det f)` over `f ∈ N^a` with `det f ≠ 0` (`detOrd`), and `ϖ_w ∈ E` a uniformiser at `w`
-(`unif`, an `ε`: the lift characters are unramified away from `SG`, so the uniformisers do not matter; `sel` does). An
-idele is built from a nonzero family that is `1` almost everywhere (`IsIdeleFam`) by `ideleOf` (`1` otherwise), whose
-components are the family's (`ideleOf_apply`); the family of `dIU` is one when the frames are invertible and
-`v_w(det N) = 0` at almost every `w ∈ sel` (`isIdeleFam_detComp`). The idele of a class (`dICls`) reads its lattice
+(`unif`, an `ε`: the lift characters are unramified away from `SG`, so the uniformisers do not matter; `sel` does).
+The idele is `ChainLocal.ideleOf` of the family `detComp`, which is a family of components of an idele
+(`ChainLocal.IsIdeleFam`) when the frames are invertible and `v_w(det N) = 0` at almost every `w ∈ sel`
+(`isIdeleFam_detComp`). The idele of a class (`dICls`) reads its lattice
 and its frames (`ThetaChain.DecoF.frAt`) at `SF = SG ∪ Q`.
 
 **Main declarations** (read by the Stage-U chain, C1e): `cAU`, `cBU`, `haU`, `xdU`, `IsSel`, `selU`, `dIU`, `dICls`;
 `EvenPos` (the parity rule, for D0 and D2).
 
-**Sanity theorems:** `isReps_repsOf`, `zero_mem_repsOf`, `card_repsOf`, `xdPin_xdU`, `unif_spec`, `ideleOf_apply`,
+**Sanity theorems:** `isReps_repsOf`, `zero_mem_repsOf`, `card_repsOf`, `xdPin_xdU`, `unif_spec`,
 `isIdeleFam_detComp`, `not_evenPos_comp_conj`, `evenPos_or_comp_conj`.
 -/
 
 namespace ChainHeis
 
-open NumberField IsDedekindDomain ThetaChain HermClasses WeylFock
+open NumberField IsDedekindDomain ThetaChain HermClasses WeylFock ChainLocal
 
 noncomputable section
 
@@ -318,36 +318,6 @@ def detComp (sel : Set (HeightOneSpectrum (𝓞 E))) (SF : Finset (HeightOneSpec
     (N : Submodule (𝓞 E) (Fin a → E)) (fr : HeightOneSpectrum (𝓞 E) → Matrix (Fin a) (Fin a) E)
     (w : HeightOneSpectrum (𝓞 E)) : E :=
   if w ∈ SF then (fr w).det else if w ∈ sel then unif w ^ detOrd w N else 1
-
-/-- **A family of components of an idele**: nonzero everywhere and `1` at almost every place. -/
-def IsIdeleFam (x : HeightOneSpectrum (𝓞 E) → E) : Prop :=
-  (∀ w, x w ≠ 0) ∧ {w | x w ≠ 1}.Finite
-
-/-- **The components are almost everywhere integral**, with their inverses. -/
-theorem IsIdeleFam.eventually {x : HeightOneSpectrum (𝓞 E) → E} (h : IsIdeleFam x) (k : ℤ) :
-    ∀ᶠ w in Filter.cofinite, algebraMap E (w.adicCompletion E) (x w ^ k) ∈ w.adicCompletionIntegers E :=
-  (Filter.eventually_cofinite.2 (by simpa using h.2)).mono fun w (hw : x w = 1) => by simp [hw]
-
-/-- **The adeles with components `x` and `x⁻¹` are inverse.** -/
-theorem IsIdeleFam.mul_inv {x : HeightOneSpectrum (𝓞 E) → E} (h : IsIdeleFam x) :
-    (show FiniteAdeleRing (𝓞 E) E from ⟨fun w => algebraMap E (w.adicCompletion E) (x w ^ (1 : ℤ)), h.eventually 1⟩) *
-      (show FiniteAdeleRing (𝓞 E) E from
-        ⟨fun w => algebraMap E (w.adicCompletion E) (x w ^ (-1 : ℤ)), h.eventually (-1)⟩) = 1 :=
-  FiniteAdeleRing.ext E fun w => by
-    change algebraMap E (w.adicCompletion E) (x w ^ (1 : ℤ)) * algebraMap E (w.adicCompletion E) (x w ^ (-1 : ℤ)) = 1
-    rw [← map_mul, zpow_one, zpow_neg_one, mul_inv_cancel₀ (h.1 w), map_one]
-
-open Classical in
-/-- **The idele with components `x`** (`ideleOf_apply`), `1` if `x` is not a family of components. -/
-def ideleOf (x : HeightOneSpectrum (𝓞 E) → E) : Ideles E :=
-  if h : IsIdeleFam x then Units.mkOfMulEqOne _ _ (IsIdeleFam.mul_inv h) else 1
-
-/-- **The components of `ideleOf x`** are those of `x`. -/
-theorem ideleOf_apply {x : HeightOneSpectrum (𝓞 E) → E} (h : IsIdeleFam x) (w : HeightOneSpectrum (𝓞 E)) :
-    ((ideleOf x : Ideles E) : FiniteAdeleRing (𝓞 E) E) w = algebraMap E (w.adicCompletion E) (x w) := by
-  rw [ideleOf, dite_eq_left h]
-  change algebraMap E (w.adicCompletion E) (x w ^ (1 : ℤ)) = _
-  rw [zpow_one]
 
 /-- **The determinant idele** of a lattice `N` with frames `fr` at the places of `SF` (the archive's `muOff`; the
 `SharpChain.IsDetIdele` of `N`): `ideleOf` of `detComp`. -/

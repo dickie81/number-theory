@@ -9,8 +9,8 @@ generically, as subfields of `ℂ`; the generators are the construction's (`Zeta
 
 **The closure** (`coeffClosure s`): the normal closure in `ℂ` of `ℚ(s)`, the compositum of the images of `ℚ(s)`
 under all its `ℚ`-embeddings into `ℂ`. It contains `s` (`subset_coeffClosure`). For a finite set `s` of algebraic
-numbers it is finite-dimensional (`finiteDimensional_coeffClosure`), so a number field (`numberField_coeffClosure`),
-and it is normal over `ℚ` (`normal_coeffClosure`), as the minimal polynomials split in `ℂ`.
+numbers it is finite-dimensional (`finiteDimensional_coeffClosure`), so a number field, and it is normal over `ℚ`
+(`normal_coeffClosure`), as the minimal polynomials split in `ℂ`.
 
 **Conjugation is automatic.** A subfield `F ⊆ ℂ` normal over `ℚ` is stable under complex conjugation
 (`conj_mem_of_normal`): conjugation restricted to `F` is a `ℚ`-embedding `F → ℂ`, whose image is `F` by normality. So
@@ -86,12 +86,6 @@ theorem finiteDimensional_coeffClosure (hs : s.Finite) (hi : ∀ x ∈ s, IsInte
   haveI := hs.to_subtype
   haveI := finiteDimensional_adjoin hi
   normalClosure.is_finiteDimensional ℚ (adjoin ℚ s) ℂ
-
-/-- **The closure of finitely many algebraic numbers is a number field.** -/
-theorem numberField_coeffClosure (hs : s.Finite) (hi : ∀ x ∈ s, IsIntegral ℚ x) :
-    NumberField (coeffClosure s) :=
-  haveI := finiteDimensional_coeffClosure hs hi
-  ⟨⟩
 
 /-- **The closure of algebraic numbers is normal**: `ℚ(s)` is algebraic and its minimal polynomials split in `ℂ`, so
 its normal closure in `ℂ` is a normal closure (`isNormalClosure_normalClosure`), hence normal. -/

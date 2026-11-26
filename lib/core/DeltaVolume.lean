@@ -444,18 +444,6 @@ theorem mem_deltaLat {N : Submodule (𝓞 E) (Fin n → E)} {x : ZIdx lam → L}
   rw [← Fintype.linearCombination_apply]
   rfl
 
-/-- The coordinates of a combination of the dual basis: `dc_j(Σ_k x_k·zdual_k) = x_j` (`fock_zdualK_zbK`). -/
-theorem dc_sum (x : ZIdx lam → L) (j : ZIdx lam) : dc L lam j (∑ k, x k • zdualK L lam k) = x j := by
-  rw [dc, fock_sum_left]
-  simp only [fock_smul_left, fock_zdualK_zbK, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
-  rw [mul_div_assoc, div_self (by simpa using (kappa_pos lam).ne'), mul_one]
-
-variable {lam} in
-/-- `zdual_k ∈ ∇_L` for antitone `λ`. -/
-theorem zdualK_mem (hlam : ∀ ρ, Antitone (lam ρ)) (k : ZIdx lam) :
-    zdualK L lam k ∈ nabla L fun ρ => natW (lam ρ) :=
-  zdualBasis_apply L hlam k ▸ (zdualBasis L hlam k).2
-
 /-- A diagonal twist on a combination of the dual basis: `zdual_k`, of row weight `zwt k`, is scaled by
 `∏_{ρ,i} a_{ρ,i}^{(zwt k)_{ρ,i} + s_ρ}` (`twist_diagonal_of_isWH`). -/
 theorem twist_diagonal_sum (a : Φ → Fin n → L) (ha : ∀ ρ i, a ρ i ≠ 0) (x : ZIdx lam → L) :

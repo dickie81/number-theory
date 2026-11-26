@@ -22,9 +22,10 @@ determinant).
 `j = 0`, and `levG` with the sharp `JGsym` (`ThetaVol.jS`) at `j ≥ 1`. The level characters at `j ≥ 1` are not
 defined: no factor reads them.
 
-**The single-place idele.** `idAt P : E^× → 𝔸_{E,f}^×` is `a` at `P` and `1` elsewhere (Mathlib's `ofAdicCompletion`
-on the units), `idAtE` its extension to `E` (`1` at `0`), and an idele with these components is unique
-(`isLocAt_unique`), so it is the `x` of every `ThetaVol.IsLocAt P a x` (`eq_idAtE`).
+**Ideles from their components.** An idele is built from a nonzero family that is `1` almost everywhere
+(`IsIdeleFam`) by `ideleOf` (`1` otherwise), whose components are the family's (`ideleOf_apply`). The single-place
+idele `idAtE P a` is `ideleOf` of the family that is `a` at `P` and `1` elsewhere (`1` at `a = 0`); an idele with these
+components is unique (`isLocAt_unique`), so it is the `x` of every `ThetaVol.IsLocAt P a x` (`eq_idAtE`).
 
 **The residue character.** At a place of prime norm `q_P` where `xi0` is integral, `ThetaChain.psi0 xi0` is additive
 (`psi0_add`): the least representatives of `c`, `c′`, `c + c′` differ by a multiple of `q_P`. It is the per-place
@@ -192,29 +193,43 @@ theorem exists_of_isRed {g : GL (Fin n) E} {gb : GL (Fin n) (𝓞 E ⧸ Pl.asIde
 
 end RedMat
 
-/-! ## The single-place idele -/
+/-! ## Ideles from their components; the single-place idele -/
 
 section Idele
 
-variable {E : Type*} [Field E] [NumberField E] (Pl : HeightOneSpectrum (𝓞 E))
+variable {E : Type*} [Field E] [NumberField E]
 
-/-- **The single-place idele** `a ↦ (a at P, 1 elsewhere)`, a homomorphism `E^× → 𝔸_{E,f}^×` (Mathlib's
-`ofAdicCompletion` on the units). -/
-def idAt : Eˣ →* Ideles E :=
-  (Units.map (FiniteAdeleRing.ofAdicCompletion E Pl)).comp
-    (Units.map (algebraMap E (Pl.adicCompletion E)).toMonoidHom)
+/-- **A family of components of an idele**: nonzero everywhere and `1` at almost every place. -/
+def IsIdeleFam (x : HeightOneSpectrum (𝓞 E) → E) : Prop :=
+  (∀ w, x w ≠ 0) ∧ {w | x w ≠ 1}.Finite
 
-/-- **Its component at `P`** is `a`. -/
-theorem idAt_self (a : Eˣ) :
-    ((idAt Pl a : Ideles E) : FiniteAdeleRing (𝓞 E) E) Pl = algebraMap E (Pl.adicCompletion E) a := by
-  classical
-  exact RestrictedProduct.mulSingle_eq_same (fun w : HeightOneSpectrum (𝓞 E) => w.adicCompletionIntegers E) Pl _
+/-- **The components are almost everywhere integral**, with their inverses. -/
+theorem IsIdeleFam.eventually {x : HeightOneSpectrum (𝓞 E) → E} (h : IsIdeleFam x) (k : ℤ) :
+    ∀ᶠ w in Filter.cofinite, algebraMap E (w.adicCompletion E) (x w ^ k) ∈ w.adicCompletionIntegers E :=
+  (Filter.eventually_cofinite.2 (by simpa using h.2)).mono fun w (hw : x w = 1) => by simp [hw]
 
-/-- **Its other components** are `1`. -/
-theorem idAt_of_ne (a : Eˣ) {w : HeightOneSpectrum (𝓞 E)} (hw : w ≠ Pl) :
-    ((idAt Pl a : Ideles E) : FiniteAdeleRing (𝓞 E) E) w = 1 := by
-  classical
-  exact RestrictedProduct.mulSingle_eq_of_ne (fun w : HeightOneSpectrum (𝓞 E) => w.adicCompletionIntegers E) _ hw
+/-- **The adeles with components `x` and `x⁻¹` are inverse.** -/
+theorem IsIdeleFam.mul_inv {x : HeightOneSpectrum (𝓞 E) → E} (h : IsIdeleFam x) :
+    (show FiniteAdeleRing (𝓞 E) E from ⟨fun w => algebraMap E (w.adicCompletion E) (x w ^ (1 : ℤ)), h.eventually 1⟩) *
+      (show FiniteAdeleRing (𝓞 E) E from
+        ⟨fun w => algebraMap E (w.adicCompletion E) (x w ^ (-1 : ℤ)), h.eventually (-1)⟩) = 1 :=
+  FiniteAdeleRing.ext E fun w => by
+    change algebraMap E (w.adicCompletion E) (x w ^ (1 : ℤ)) * algebraMap E (w.adicCompletion E) (x w ^ (-1 : ℤ)) = 1
+    rw [← map_mul, zpow_one, zpow_neg_one, mul_inv_cancel₀ (h.1 w), map_one]
+
+open Classical in
+/-- **The idele with components `x`** (`ideleOf_apply`), `1` if `x` is not a family of components. -/
+def ideleOf (x : HeightOneSpectrum (𝓞 E) → E) : Ideles E :=
+  if h : IsIdeleFam x then Units.mkOfMulEqOne _ _ (IsIdeleFam.mul_inv h) else 1
+
+/-- **The components of `ideleOf x`** are those of `x`. -/
+theorem ideleOf_apply {x : HeightOneSpectrum (𝓞 E) → E} (h : IsIdeleFam x) (w : HeightOneSpectrum (𝓞 E)) :
+    ((ideleOf x : Ideles E) : FiniteAdeleRing (𝓞 E) E) w = algebraMap E (w.adicCompletion E) (x w) := by
+  rw [ideleOf, dite_eq_left h]
+  change algebraMap E (w.adicCompletion E) (x w ^ (1 : ℤ)) = _
+  rw [zpow_one]
+
+variable (Pl : HeightOneSpectrum (𝓞 E))
 
 variable {Pl} in
 /-- **An idele is determined by being single-place at `P` with a given component** (`ThetaVol.IsLocAt`). -/
@@ -226,14 +241,20 @@ theorem isLocAt_unique {a : E} {x y : Ideles E} (hx : IsLocAt Pl a x) (hy : IsLo
   · rw [hx.1 w hw, hy.1 w hw]
 
 open Classical in
-/-- **The single-place idele of `a ∈ E`** at `P` (`idAt`), `1` at `a = 0` (where no idele has component `a`): the
-`x` of `ThetaVol.IsLocAt Pl a x` (`isLocAt_idAtE`, `eq_idAtE`), at which `chiP` and `muP` read a character. -/
-def idAtE (a : E) : Ideles E := if h : a = 0 then 1 else idAt Pl (Units.mk0 a h)
+/-- **The single-place idele of `a ∈ E`** at `P`: the idele with components `a` at `P` and `1` elsewhere (`ideleOf`),
+`1` at `a = 0` (where no idele has component `a`): the `x` of `ThetaVol.IsLocAt Pl a x` (`isLocAt_idAtE`,
+`eq_idAtE`), at which `chiP` and `muP` read a character. -/
+def idAtE (a : E) : Ideles E := ideleOf (Pi.mulSingle Pl a)
 
 /-- **It is single-place at `P` with component `a`.** -/
 theorem isLocAt_idAtE {a : E} (ha : a ≠ 0) : IsLocAt Pl a (idAtE Pl a) := by
-  rw [idAtE, dite_eq_right ha]
-  exact ⟨fun w hw => idAt_of_ne Pl _ hw, idAt_self Pl _⟩
+  classical
+  have h : IsIdeleFam (Pi.mulSingle Pl a) :=
+    ⟨fun w => by by_cases hw : w = Pl <;> simp [hw, ha],
+      (Set.finite_singleton Pl).subset fun w hw =>
+        Classical.byContradiction fun h => hw (Pi.mulSingle_eq_of_ne (M := fun _ => E) h a)⟩
+  exact ⟨fun w hw => by rw [idAtE, ideleOf_apply h, Pi.mulSingle_eq_of_ne hw, map_one],
+    by rw [idAtE, ideleOf_apply h, Pi.mulSingle_eq_same]⟩
 
 variable {Pl} in
 /-- **It is the only such idele.** -/

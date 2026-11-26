@@ -263,7 +263,7 @@ theorem deltaB_eq_span {lam : β → Fin k → ℤ} (hlam : ∀ b, Antitone (lam
     exact Finset.sum_congr rfl fun l _ => by rw [twist_smul, ← ho, algebraMap_smul]
   · rintro ⟨o, rfl⟩
     refine ⟨Submodule.sum_mem _ fun l _ =>
-      Submodule.smul_of_tower_mem _ _ (twist_mem_nabla _ _ (zdualK_mem_nabla hlam l)), ?_⟩
+      Submodule.smul_of_tower_mem _ _ (twist_mem_nabla _ _ (zdualK_mem hlam l)), ?_⟩
     rw [twist_sum]
     refine Finset.sum_induction _ (· ∈ Delta (Oint O Kf) _) (fun a b ha hb => add_mem_Delta ha hb)
       ⟨zero_mem _, fun rows => by simp [fockWith]⟩ fun l _ => ?_

@@ -1282,14 +1282,6 @@ theorem linearIndependent_twist (lam : Φ → Fin k → ℤ) {Cm : Φ → Matrix
 
 variable [CharZero Kf]
 
-/-- **The coordinates of a combination of the dual basis**: `dc_j(Σ_i x_i·zdual_i) = x_j`
-(`fock_zdualK_zbK`). -/
-theorem dc_sum_zdualK (lam : Φ → Fin k → ℤ) (x : ZIdx lam → Kf) (j : ZIdx lam) :
-    dc Kf lam j (∑ i, x i • zdualK Kf lam i) = x j := by
-  rw [dc, fock_sum_left]
-  simp only [fock_smul_left, fock_zdualK_zbK, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
-  rw [mul_div_assoc, div_self (by simpa using (kappa_pos lam).ne'), mul_one]
-
 /-- **A vector of `∇` is the combination of the dual basis with its coordinates.** -/
 theorem eq_sum_dc (hlam : ∀ b, Antitone (lam b)) {G : Pol Φ k Kf} (hG : G ∈ nabla Kf fun b => natW (lam b)) :
     G = ∑ l, dc Kf lam l G • zdualK Kf lam l := by
@@ -1297,21 +1289,16 @@ theorem eq_sum_dc (hlam : ∀ b, Antitone (lam b)) {G : Pol Φ k Kf} (hG : G ∈
     rw [← dcoord_symm_apply Kf hlam, LinearEquiv.symm_apply_apply]
   have h2 : ∀ l, dc Kf lam l G = dcoord Kf hlam ⟨G, hG⟩ l := fun l => by
     conv_lhs => rw [h1]
-    exact dc_sum_zdualK lam _ l
+    exact dc_sum lam _ l
   exact h1.trans (Finset.sum_congr rfl fun l _ => by rw [h2])
-
-/-- **The dual basis lies in `∇_{Kf}`.** -/
-theorem zdualK_mem_nabla (hlam : ∀ b, Antitone (lam b)) (i : ZIdx lam) :
-    zdualK Kf lam i ∈ nabla Kf fun b => natW (lam b) :=
-  zdualBasis_apply Kf hlam i ▸ (zdualBasis Kf hlam i).2
 
 /-- **The dual basis lies in `Δ_A`**: its coordinates are `0` and `1`. -/
 theorem zdualK_mem_Delta (hlam : ∀ b, Antitone (lam b)) (A : Subring Kf) (i : ZIdx lam) :
     zdualK Kf lam i ∈ Delta A fun b => natW (lam b) := by
-  refine (mem_Delta_iff Kf lam A _).2 ⟨zdualK_mem_nabla hlam i, fun l => ?_⟩
+  refine (mem_Delta_iff Kf lam A _).2 ⟨zdualK_mem hlam i, fun l => ?_⟩
   have e : zdualK Kf lam i = ∑ m, (Pi.single i 1 : ZIdx lam → Kf) m • zdualK Kf lam m := by
     simp [Pi.single_apply]
-  rw [e, dc_sum_zdualK]
+  rw [e, dc_sum]
   by_cases h : l = i
   · subst h
     simp [A.one_mem]
@@ -1368,7 +1355,7 @@ theorem forms_free_DeltaT (hU : Unram p n' W Qq O Kf ι σ j ϖ) {lam0 : V → F
     (fun L₀ i => twist (blockWt lam0) (fun b => (Cm L₀ b)⁻¹) (zdualK Kf (blockWt lam0) i)) (fun L₀ i => ?_)
     (fun L₀ F hF => ?_) fun L₀ => linearIndependent_twist _ (fun b => (hCm L₀ b).1) (linearIndependent_zdualK Kf _)
   · rw [mem_DeltaT_iff (hCm L₀), twist_twist_inv _ fun b => (hCm L₀ b).1]
-    exact ⟨twist_mem_nabla _ _ (zdualK_mem_nabla hlam' i), zdualK_mem_Delta hlam' _ i⟩
+    exact ⟨twist_mem_nabla _ _ (zdualK_mem hlam' i), zdualK_mem_Delta hlam' _ i⟩
   · rw [mem_DeltaT_iff (hCm L₀)] at hF
     obtain ⟨hn, hd⟩ := (mem_Delta_iff Kf (blockWt lam0) (Oint O Kf) _).1 hF.2
     choose c hc using fun l => RingHom.mem_range.1 (hd l)

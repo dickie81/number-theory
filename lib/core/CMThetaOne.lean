@@ -1,4 +1,5 @@
 import ChainCanon
+import CMFormalInert
 
 /-!
 # The one-variable CM theta by the Hurwitz route
@@ -30,9 +31,9 @@ divided-power (Hurwitz-series) argument and no explicit polynomials `P_n`, and `
 identity `th0_taylor` is the same recursion for `exp(logTh0)`, from `d(exp ∘ L)/dz = exp(L)·L′`.
 
 **Inputs** (hypotheses, as typechecked in the D1 spec): Legendre's relation `Legendre`, and CM-c `CMjIntegral` and CM-d
-`CMs2` (with `HasCM`) for the canonical lattice. As in `ChainCanon`, `Δ(ℤ + ℤω) ≠ 0` is a hypothesis.
+`CMs2` (with `CMFormalInert.HasCM`) for the canonical lattice. As in `ChainCanon`, `Δ(ℤ + ℤω) ≠ 0` is a hypothesis.
 
-**Main declarations:** `Legendre`, `HasCM`, `CMjIntegral`, `CMs2`, `th0L`, `logTh0`, `zetaW_half`, `th0_taylor`,
+**Main declarations:** `Legendre`, `CMjIntegral`, `CMs2`, `th0L`, `logTh0`, `zetaW_half`, `th0_taylor`,
 `th0_jets_mem`, `th0_jets_mem_closure`, `th0_jets_mem_range`, `th0_jets_isAlgebraic`, `th0_jets_int`,
 `canon_jets_isAlgebraic`, `canon_jets_int`, `canon_jets_mem_range`.
 
@@ -44,12 +45,9 @@ namespace CMThetaOne
 noncomputable section
 
 open PeriodPair ThetaChain ThetaNorm ChainCanon Complex Filter Topology
+open CMFormalInert (HasCM)
 
 /-! ## Inputs (classical, as typechecked in the D1 spec) -/
-
-/-- **`Λ` has CM by `O_F`**, `F = ℚ(√−d)`, `d ≡ 3 (mod 4)`: `(1 + √−d)/2·Λ ⊆ Λ` (local-spec §5.1). -/
-def HasCM (d : ℕ) (Λ : PeriodPair) : Prop :=
-  ∀ z ∈ Λ.lattice, (1 + Complex.I * (Real.sqrt d : ℂ)) / 2 * z ∈ Λ.lattice
 
 /-- **CM-c (Weber, Deuring)**: `j` is an algebraic integer (an input). -/
 def CMjIntegral : Prop :=

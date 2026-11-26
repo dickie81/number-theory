@@ -69,8 +69,6 @@ rationality and C3); that `𝔟`, `g`, the lift characters and `sel` exist (C2c,
 multiplicative (C2b); that the Fock projection exists and `brConst ≠ 0` (`PeriodTarget.exists_isFockProj`,
 `PeriodTarget.brConst_ne_zero`, with the interlacing `SharpDesign.PinnedTo.interlace`); the finiteness of the
 Heisenberg indices (`ChainHeis.xdPin_xdU`) and of the determinant ideles' supports (`ChainHeis.isIdeleFam_detComp`).
-
-**Sanity theorems:** `linOr_apply`, `monoidHomOr_apply`.
 -/
 
 namespace ZetaBalance
@@ -91,22 +89,11 @@ open Classical in
 carries no linearity proof (C2a proves `IsLinearMap`). -/
 def linOr (f : V → W) : V →ₗ[K] W := if h : IsLinearMap K f then IsLinearMap.mk' f h else 0
 
-/-- **`linOr f` is `f`** when `f` is linear. -/
-theorem linOr_apply {f : V → W} (h : IsLinearMap K f) (v : V) : linOr (K := K) f v = f v := by
-  rw [linOr, dite_eq_left h]
-  rfl
-
 open Classical in
 /-- **`f` as a monoid homomorphism** when it is one, `1` otherwise: the construction defines the step-0 character
 this way (C2b proves that `σ₀⁻¹ ∘ lamGen` is multiplicative). -/
 def monoidHomOr {M N : Type*} [MulOneClass M] [MulOneClass N] (f : M → N) : M →* N :=
   if h : f 1 = 1 ∧ ∀ a b, f (a * b) = f a * f b then ⟨⟨f, h.1⟩, h.2⟩ else 1
-
-/-- **`monoidHomOr f` is `f`** when `f` is multiplicative. -/
-theorem monoidHomOr_apply {M N : Type*} [MulOneClass M] [MulOneClass N] {f : M → N}
-    (h : f 1 = 1 ∧ ∀ a b, f (a * b) = f a * f b) (a : M) : monoidHomOr f a = f a := by
-  rw [monoidHomOr, dite_eq_left h]
-  rfl
 
 end OrElse
 

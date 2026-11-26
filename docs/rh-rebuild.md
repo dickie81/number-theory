@@ -563,6 +563,14 @@ construction, measured"). In order:
    sharp data after the audits: the forced orders became a field chosen by the construction (they cancel between
    (G↓) and (G↑)), and the frame condition (S) with the range and the depth (R) gave way to their conclusion, a frame
    loss `L_u ≥ s_u − μ(C_u)`.
+
+   Also on 26 November 2026 the construction's period data became the explicit theta chain at Stage U, all
+   definitions (`SharpChainU`, from `ChainCanon`, `ChainLocal`, `ChainHeis` and `ChainField`), with a nonzero
+   branching constant (`SharpInterlace`, `BranchConst`). First pieces of the proofs followed: the gain's local theory
+   at an inert prime (`InertModel`, `LocalLattice`, `WeylSandwich`, `SelectionLemma`, `LocalRank`, with the tools
+   `FockNorm`, `WeylCount` and `PadicUnits`), the trace bound for (G↑) (`TraceSlope`), the frame loss of one word
+   (`SlopeSingle`), and the integrality of the CM theta's jets (`CMThetaOne`, `CMFormalInert`, `CMFormalGroup`), the
+   last from classical inputs stated as hypotheses (formalisations/alpoge-rh.md, "Conditional results").
 3. **Self-contained components:**
    - the sizes of the auxiliary primes;
    - the frame condition at one complex place (`LinkS`, about 100K archive lines). The step from it to (RS) is done
