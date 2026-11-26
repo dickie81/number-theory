@@ -311,8 +311,9 @@ def Gain (u : S.A) : Prop :=
 /-- **(G↑)** (archive: `closed_linkDIVt_of_closed_bridge_kernel` with the bridge kernel `link_brest_alt`,
 `wire_sel_alt`, `closed_family_admissible_twist_link_alt`, `selection_closed_of_wu_decay_alt`): in every realising
 frame, `μ_g(C_u) + h_g(B_ω) − Fo ≤ MAIN_ω + c↑`, for the object's target metric `g` and forced orders `Fo`;
-`0 ≤ c↑ ≤ x^{4ε} Σ_t a_t/4`. Not decomposed further here: its inputs (Rallis, `hX`, Colmez) bear on the target
-metric, which the library does not define. -/
+`0 ≤ c↑ ≤ x^{4ε} Σ_t a_t/4`. The construction's target metric is the quotient metric, the Petersson metric pushed
+through the period map (`SharpObj.gQuot`), with heights `0`; for it (G↑) reduces to a mean-square bound on the
+period map's singular values, (HS). -/
 def GUp : Prop :=
   0 ≤ b.cUp ∧ b.cUp ≤ x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4 ∧
     ∀ (F : FrameOn C.K b.Ω) c eC, b.RealWith F c eC → ∀ ω,

@@ -3,6 +3,7 @@ import ChainCanon
 import ChainLocal
 import ChainHeis
 import RowSpace
+import SharpTarget
 
 /-!
 # The explicit Stage-U theta chain in the construction
@@ -58,10 +59,11 @@ The step-0 character is `χ0 = σ₀⁻¹ ∘ lamGen(xi0)` on `uniUT(SG, k)` whe
 `monoidHomOr`), and the source space is `V_ω = V(ST, τ_K, χ0, λ_0)` on the whole cut (`sharpVs`).
 
 **The construction** (`sharpObj`, `sharpCons`). The fields that the proved pieces read (`SharpCores`: `T`, `ST`,
-`SG`, `n0 = k`, `λ_0`, `X_c = ⊤`, `e = id` and the slacks) are those of Stage 0, unchanged. **Still placeholders:**
-`𝔞⁺ = 𝔞⁻ = ⊤`, the target metric `g = 0` and the heights `0` (the gain and (G↑) will set them); the twist is empty
-(`sharpTw`, Stage U); the forced orders are the archive's `ForcedOrders.Fo` (the gain's exponent module will define
-the untwisted ones).
+`SG`, `n0 = k`, `λ_0`, `X_c = ⊤`, `e = id` and the slacks) are those of Stage 0, unchanged. The target metric is the
+quotient metric (`SharpTarget`): the Petersson metric of the source pushed through the period map, for which the map
+is a co-isometry onto `W_u`, so the heights are `0` (`quotMetric`, the object's `SharpObj.gQuot`). **Still
+placeholders:** `𝔞⁺ = 𝔞⁻ = ⊤` (the gain will set them); the twist is empty (`sharpTw`, Stage U); the forced orders
+are the archive's `ForcedOrders.Fo` (the gain's exponent module will define the untwisted ones).
 
 **What the consumers prove (C2)**, each a hypothesis of a lemma about these definitions: `KOk` (C2f, from the jets'
 rationality and C3); that `𝔟`, `g`, the lift characters and `sel` exist (C2c, C3, `ChainHeis.IsSel`); `Δ(ℤ + ℤω) ≠ 0`
@@ -408,10 +410,10 @@ def sharpTw (u : S.A) : PeriodTarget.Twist (sharpPer Dg u) () where
 /-- **The object of the translate `u`** (`SharpObj`), Stage U: one word and one level (`Unit`), the row group and
 points, the auxiliary prime `sharpT`, the places `sharpST`, `sharpSG`, the step-0 data (`n0 = k`, `sharpLam0`,
 `sharpχ0`, `X_c = ⊤`, `V_ω = sharpVs`, `e = id`), the period data `sharpPer` of the explicit chain with the twist
-`sharpTw`; the archive's forced orders `Fo = ForcedOrders.Fo` (family `hc u`, twist `twA κ`, cut-off `cutX x ε`); the
-slacks `c_F = c_G = x^{4ε}Σ_t a_t/8`, `c↑ = x^{4ε}Σ_t a_t/4`, `c_T = x^{2ε}` (`sharpCT`) and the frame loss
-`x^{4ε}Σ_t a_t/4`.
-Placeholders, to be set by the gain and (G↑): `𝔞⁺ = 𝔞⁻ = ⊤`, the target metric `g = 0` and the heights `0`. -/
+`sharpTw`; as target metric, the quotient metric of the Petersson form of `V_ω` through the period map
+(`quotMetric`), with heights `0`; the archive's forced orders `Fo = ForcedOrders.Fo` (family `hc u`, twist `twA κ`,
+cut-off `cutX x ε`); the slacks `c_F = c_G = x^{4ε}Σ_t a_t/8`, `c↑ = x^{4ε}Σ_t a_t/4`, `c_T = x^{2ε}` (`sharpCT`) and
+the frame loss `x^{4ε}Σ_t a_t/4`. Placeholders, to be set by the gain: `𝔞⁺ = 𝔞⁻ = ⊤`. -/
 def sharpObj (u : S.A) : SharpObj Dg (sharpCoeff Dg) where
   Ω := Unit
   T _ := sharpT Dg u
@@ -432,7 +434,8 @@ def sharpObj (u : S.A) : SharpObj Dg (sharpCoeff Dg) where
   χ0 _ := sharpχ0 Dg
   Xc _ := ⊤
   e _ := LinearEquiv.refl _ _
-  g _ _ _ := 0
+  g := quotMetric (fun v φ ψ => HermForms.petAt (sharpST Dg u) (sharpLam0 Dg u) v.1.embedding φ.1 ψ.1)
+    ((sharpPer Dg u).P () ())
   ht _ _ := 0
   Fo := Dg.R.Fo (Dg.hc u) (S.twA κ) Dg.g₀ Dg.g₁ (S.cutX x ε)
   loss := x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4
