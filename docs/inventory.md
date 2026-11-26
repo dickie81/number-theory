@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2158 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2157 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 246 | 960 |
+| `lib/core` | 246 | 959 |
 | `lib/pnt` | 369 | 1085 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -1711,7 +1711,6 @@ note of `formalisations/` that names it, if one does.
 
 #### `ZetaGap`: From the inert-prime gap to the Riemann hypothesis for `ζ` and every Dirichlet `L`-function
 
-- `ZetaBalance.Setting.g_one_re`: `Re g_1(y) = Σ_{n ≤ y} Λ(n)(y/n − 1) − y log y + (1 + γ)y`, the error of `ζ`'s ramp sum.
 - `ZetaBalance.BalanceData.cyclicG_le`: Theorem Z ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.BalanceData.zeta_le`: Theorem Z for `ζ` ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.riemannHypothesis_of_zetaBalanceBound`: The Riemann hypothesis from balance data on windows ([note](../formalisations/alpoge-rh.md))

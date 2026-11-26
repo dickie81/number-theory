@@ -13,7 +13,8 @@ and each criterion is an equivalence with Mathlib's `RiemannHypothesis`, so it g
 
 * `posDef_psi`: the kernel `K_H` from the primes is positive-definite on the positive rationals
   (`BallPsi.rh_iff_posDef_psi`);
-* `orbitLattice`: the orbit-lattice conjecture, `Q_k(δ_k − Σ_{n < k}c_nδ_n) ≥ Q_1(δ_1)` (`PivotSharp.orbitLattice_of_rh`);
+* `orbitLattice`: the orbit-lattice conjecture, `Q_k(δ_k − Σ_{n < k}c_nδ_n) ≥ Q_1(δ_1)`
+  (`PivotSharp.orbitLattice_of_rh`);
 * `shortest`: `w_1` is a shortest vector of the orbit lattice (`PivotSharp.rh_iff_shortest`);
 * `balance`: no excess at any level, the balance of `BallRate` (`BallRate.rh_iff_balance`);
 * `weil_bound`: the Weil bound `|D_m·D_n − m − n| ≤ (2 − D_1²)√(mn)` (`BallWeil.weil_bound`);

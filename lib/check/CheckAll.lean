@@ -2295,7 +2295,6 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms WindowGRH.rh_iff_zetaWindowBound
 #print axioms WindowGRH.riemannHypothesis_of_zetaWindowLowerBound
 #print axioms WindowGRH.rh_iff_zetaWindowLowerBound
-#print axioms ZetaBalance.Setting.g_one_re
 #print axioms ZetaBalance.Setting.balance_const
 #print axioms ZetaBalance.Setting.gram_primePart
 #print axioms ZetaBalance.Setting.ASK_const

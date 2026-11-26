@@ -1,5 +1,5 @@
 import Mathlib
-import ZetaBalance
+import ZetaGap
 
 /-!
 # The balance identity at a constant weight, and the ball's Gram entries
@@ -10,7 +10,8 @@ Lemma B of the rebuild (`ZetaBalance.Setting.balance`) at the constant weight `W
   `Σ_{ρ ∈ Φ} conj χ(γ_t(ρ))` leave only `χ = 1` and `χ = (1, 0, 1)` (`ZetaBalance.sum_conj_eval_γ`), and Lemma B is
   `ASK(a, t, w) − MAIN(a, w) = w·(G(a/w) − Re g_{χ_d}(a/w))`, where `G` is the ramp error of `ζ`
   (`WindowGRH.zetaFamily.G`) and `g_{χ_d}` that of the primitive character of `χ_d` (`ZetaBalance.Setting.g` at
-  `(1, 0, 1)`). The ramp error of the trivial character of the setting is `G` (`ZetaBalance.Setting.g_one_re`).
+  `(1, 0, 1)`). The ramp error of the trivial character of the setting is `G` (`ZetaBalance.Setting.g_one_re`,
+  of `ZetaGap`).
 * **The ball's prime part** (`ZetaBalance.Setting.gram_primePart`): the prime part
   `m·Σ_{k ≤ m/n} Λ(k)/k − n·ψ(m/n)` of the ball's Gram entry (`BallPsi.gram_explicit`) is
   `Σ_{k ≤ m/n} Λ(k)(m/k − n)`, and at the constant weight `n` the sum `ASK(m, t, n)` has the same terms, each weighted
@@ -26,18 +27,6 @@ namespace ZetaBalance
 namespace Setting
 
 variable (S : Setting)
-
-/-- **The ramp error of the setting's trivial character is that of `ζ`**: `Re g_1(y) = G(y)`. -/
-theorem g_one_re (y : ℝ) : (S.g (false, false, 1) y).re = WindowGRH.zetaFamily.G y := by
-  have hD : S.D (false, false, 1) = 1 := (S.D_eq_one_iff _).2 rfl
-  have hp : (S.D (false, false, 1)).primitiveCharacter = 1 := (prim_eq_one_iff _).2 hD
-  have hn : ∀ n : ℕ, (S.D (false, false, 1)).primitiveCharacter n = 1 := by
-    intro n; rw [hD]; exact prim_one_apply n
-  rw [WindowGRH.zetaFamily_G, g, WindowGRH.rampErr, ite_eq_left hp, add_re, sub_re, ofReal_re, ofReal_re,
-    RampLaplace.rampSum, re_sum]
-  congr 2
-  refine Finset.sum_congr rfl fun n _ => ?_
-  rw [hn, mul_one, ← ofReal_mul, ofReal_re]
 
 /-- **Lemma B at a constant weight**: for `w > 0`,
 `ASK(a, t, w) − MAIN(a, w) = w·(G(a/w) − Re g_{χ_d}(a/w))`, with `G` the ramp error of `ζ` and `g_{χ_d}` that of
@@ -70,7 +59,8 @@ theorem balance_const (a : ℝ) (t : S.A) {w : ℝ} (hw : 0 < w) :
         · exact absurd rfl h1
         · exact absurd rfl h2
       · exact zero_mul _
-  rw [htwo, mul_left_comm, ← mul_assoc c⁻¹ c, inv_mul_cancel₀ hc0, one_mul, re_ofReal_mul, sub_re, g_one_re]
+  rw [htwo, mul_left_comm, ← mul_assoc c⁻¹ c, inv_mul_cancel₀ hc0, one_mul, re_ofReal_mul, sub_re, S.g_one_re,
+    WindowGRH.zetaFamily_G]
 
 /-- **The prime part of the ball's Gram entry**: for `n > 0`,
 `m·Σ_{k ≤ m/n} Λ(k)/k − n·ψ(m/n) = Σ_{k ≤ m/n} Λ(k)(m/k − n)`, the prime part of `BallPsi.gram_explicit`. -/
@@ -121,7 +111,6 @@ end Setting
 
 end ZetaBalance
 
-#print axioms ZetaBalance.Setting.g_one_re
 #print axioms ZetaBalance.Setting.balance_const
 #print axioms ZetaBalance.Setting.gram_primePart
 #print axioms ZetaBalance.Setting.ASK_const
