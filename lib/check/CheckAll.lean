@@ -469,6 +469,7 @@ import HermFormsLattice
 import FormSlope
 import SlopeIndex
 import SlopeV
+import AuxPrimes
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2324,6 +2325,8 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms KLattice.slope_withLattice_eq
 #print axioms KLattice.slope_rescale_withLattice_eq
 #print axioms ZetaBalance.SharpObj.slopeFV_of_slopeM
+#print axioms ZetaBalance.exists_prime_norm_window
+#print axioms ZetaBalance.SharpDesign.exists_prime_arithT
 #print axioms ZetaBalance.sharpBoundTheta_of_pinned
 #print axioms ThetaChain.Data.comp_zero_inp
 #print axioms ThetaNorm.th0_zero

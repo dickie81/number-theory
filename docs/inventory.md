@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1967 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1969 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -15,7 +15,7 @@ note of `formalisations/` that names it, if one does.
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 227 | 803 |
-| `lib/pnt` | 360 | 1051 |
+| `lib/pnt` | 361 | 1053 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1521,6 +1521,11 @@ note of `formalisations/` that names it, if one does.
 
 - `AlmostAll.almost_all_of_density`: Primes in almost all short intervals, from a density estimate ([note](../formalisations/zeta-density.md))
 - `AlmostAll.almost_all_short_primes`: Primes in almost all short intervals for every `θ > 1/6` ([note](../formalisations/zeta-density.md))
+
+#### `AuxPrimes`: The auxiliary primes (T) from the short-interval input
+
+- `ZetaBalance.exists_prime_norm_window`: Primes of the shape of (T) in a dyadic window ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.SharpDesign.exists_prime_arithT`: The auxiliary primes of a design ([note](../formalisations/alpoge-rh.md))
 
 #### `BallUpperEta`: The alternating vector at the low zeros, and the rate from above
 
