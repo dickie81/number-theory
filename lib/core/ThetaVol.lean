@@ -529,6 +529,7 @@ def XiScale (D : Data τ) (m A k : ℕ) (R : Finset (HeightOneSpectrum (𝓞 E))
   ∀ j, j + 2 < m → ∀ c c', ∃ u : L, (∀ σ : L →+* ℂ, ‖σ u‖ = 1) ∧
     D.Xi j c c' 0 = xiStd D m A k R h JS ψ μ sq Ph j c c' 0 * u
 
+omit [Fintype Φ] [DecidableEq Φ] in
 /-- **Sanity:** the full pin gives the scale pin (`u = 1`). -/
 theorem XiFull.scale {D : Data τ} {m A k : ℕ} {R : Finset (HeightOneSpectrum (𝓞 E))}
     {h : ∀ j, D.β j → HeightOneSpectrum (𝓞 E) → GL (Fin (D.n j + (m - 1 - j))) E}

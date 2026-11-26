@@ -536,6 +536,19 @@ theorem dcoord_symm_apply (hlam : ∀ ρ, Antitone (lam ρ)) (x : ZIdx lam → K
     ((dcoord K hlam).symm x : Pol Φ n K) = ∑ j, x j • zdualK K lam j := by
   simp [dcoord, Module.Basis.equivFun_symm_apply, zdualBasis_apply]
 
+variable {K} (lam) in
+/-- **The coordinates of a combination of the dual basis**: `dc_j(Σ_k x_k·zdual_k) = x_j` (`fock_zdualK_zbK`). -/
+theorem dc_sum (x : ZIdx lam → K) (j : ZIdx lam) : dc K lam j (∑ k, x k • zdualK K lam k) = x j := by
+  rw [dc, fock_sum_left]
+  simp only [fock_smul_left, fock_zdualK_zbK, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
+  rw [mul_div_assoc, div_self (by simpa using (kappa_pos lam).ne'), mul_one]
+
+variable {K} in
+/-- **The dual basis lies in `∇_K`** for antitone `λ`. -/
+theorem zdualK_mem (hlam : ∀ ρ, Antitone (lam ρ)) (k : ZIdx lam) :
+    zdualK K lam k ∈ nabla K fun ρ => natW (lam ρ) :=
+  zdualBasis_apply K hlam k ▸ (zdualBasis K hlam k).2
+
 variable (lam) in
 /-- **W4 (coordinates of `Δ`).** For every subring `A ⊆ K`, `F ∈ Δ_A(ν)` iff `F ∈ ∇_K` and every coordinate
 `dc_j F = ⟨F, zb_j⟩/κ` lies in `A`: the bideterminants and the `zb_j` are `ℤ`-combinations of each other. -/

@@ -4,8 +4,8 @@ import ThetaChain
 /-!
 # The normalisation of the base theta
 
-Pins the free `ℂ^×` scale of `ThetaChain.ThetaStd.θ` for the sharp frontier (spec-3 §2, option (A), the archive's
-exact condition). The library's `θ_std` on `Amb Φ a b` is the archive's `thZero(a, b) = tensPow θ₀`,
+Pins the free `ℂ^×` scale of the base theta `ThetaChain.Data.θ` for the sharp frontier (spec-3 §2, option (A), the
+archive's exact condition). The library's `θ_std` on `Amb Φ a b` is the archive's `thZero(a, b) = tensPow θ₀`,
 `θ_std(z) = ∏_{i<b, j<a} θ₀(z_{·ij})` (`tensPow`), and `θ₀` on `ℂ^Φ` is pinned by a fourth-power identity:
 `θ₀ ∈ Th(Λ_M)` and `θ₀^{⊗4} = κ·(Iop(stdLat, g(Λ_M⁴)) F0) ∘ g` (`IsTheta0`), with
 
@@ -16,8 +16,9 @@ exact condition). The library's `θ_std` on `Amb Φ a b` is the archive's `thZer
 **Choices.** The form of `θ₀` is the library's `Hf s` on each slice (it must be, as `θ_std = tensPow θ₀` lives in
 `Th(Hf s)`), so `g` is an `Hf s`-isometry of `ℂ^{Fin 4 × Φ}`. The normalised sigma `σ*`, the point `t = ω₀/2`, the
 lattices `L` and `Λ_M`, the isometry `g` and the phase `κ` are not transcribed (the archive's `sgStar`, `gC` and
-`KapChoice.kappa` need the CM elliptic curve and the split-prime data): they are the fields of `Pin`, with the stated
-properties `U_t σ*(0) ≠ 0` (so `th0(0) = 1`), `g` an isometry and `|κ| = 1`. `Pin.Canonical` (spec-4) fixes the
+`KapChoice.kappa` need the CM elliptic curve and the split-prime data): they are the fields of `Pin`, which carries
+no proofs; the stated properties `U_t σ*(0) ≠ 0` (so `th0(0) = 1`), `g` an isometry and `|κ| = 1` are the predicate
+`Pin.Ok`, which the frontier asks of its pin. `Pin.Canonical` (spec-4) fixes the
 scale-bearing fields: `Lc = δ·φ₀(cc)` with `Δ(Lc) = 1`, `s = 1/area(Lc)`, `σ = σ*_{Lc} = σ_W·exp(−s₂z²/2)` (Weierstrass
 `σ_W`, `ζ_W` by their product and sum over Mathlib's `PeriodPair.lattice`; `g₂`, `g₃` are Mathlib's) and `Λ = ι(𝔄)`;
 `t` (a 2-torsion point), `g` and `κ` stay quantified, as they move `θ₀` by a phase only. `Pin.Canonical` and
@@ -67,9 +68,11 @@ noncomputable def tensPow {a b : ℕ} (θ₀ : (Φ → ℂ) → ℂ) (z : Amb Φ
   ∏ i : Fin b, ∏ j : Fin a, θ₀ fun p => z (p, i, j)
 
 variable (Φ) in
-/-- The data that pin `θ₀` for the form `Hf s`, not transcribed (spec-3 §2): the one-variable lattice `L`, the
-normalised sigma `σ*`, the point `t = ω₀/2` with `U_t σ*(0) ≠ 0`, the lattice `Λ_M`, an `Hf s`-isometry `g` (the
-archive's `gC`) and the phase `κ` (`KapChoice.kappa`) with `|κ| = 1`. Meant for the frontier, which passes one. -/
+/-- **The data that pin `θ₀`** for the form `Hf s`, not transcribed (spec-3 §2): the one-variable lattice `L`, the
+normalised sigma `σ*`, the point `t = ω₀/2`, the lattice `Λ_M`, the isometry `g` (the archive's `gC`) and the phase
+`κ` (`KapChoice.kappa`). No proof fields: `U_t σ*(0) ≠ 0`, `g` an `Hf s`-isometry and `|κ| = 1` are `Pin.Ok`. The
+index `s` is the form the pin is for, read by `Pin.Ok`, `IsTheta0`, `Pin.Canonical` and `ThetaStd.Normalised`. Meant
+for the frontier, which passes one. -/
 structure Pin (s : ℝ) where
   /-- The one-variable lattice `L`. -/
   Lc : AddSubgroup ℂ
@@ -77,28 +80,29 @@ structure Pin (s : ℝ) where
   σ : ℂ → ℂ
   /-- The 2-torsion point `t = ω₀/2`. -/
   t : ℂ
-  /-- `U_t σ*(0) ≠ 0`, so `th0(0) = 1`. -/
-  ne : opU s (fun _ : Unit => t) (fun w => σ (w ())) 0 ≠ 0
   /-- The lattice `Λ_M` of `θ₀`. -/
   Λ : AddSubgroup (Φ → ℂ)
   /-- The isometry `g : blk4(H₁) → stdH`. -/
   g : (Fin 4 × Φ → ℂ) ≃ₗ[ℂ] (Fin 4 × Φ → ℂ)
-  g_isom : ∀ z w, Hf s (g z) (g w) = Hf s z w
   /-- The phase `κ`. -/
   κ : ℂ
-  norm_κ : ‖κ‖ = 1
+
+/-- **The pin's properties** (spec-3 §2): `U_t σ*(0) ≠ 0` (so `th0(0) = 1`, `th0_zero`), `g` an `Hf s`-isometry and
+`|κ| = 1`. Meant for the frontier, which asks it of the pin it passes (`SharpChain.IsThetaCol`). -/
+def Pin.Ok {s : ℝ} (D : Pin Φ s) : Prop :=
+  opU s (fun _ : Unit => D.t) (fun w => D.σ (w ())) 0 ≠ 0 ∧ (∀ z w, Hf s (D.g z) (D.g w) = Hf s z w) ∧ ‖D.κ‖ = 1
 
 /-- The archive's `IsThM`: `θ₀ ∈ Th(Λ_M)` and `θ₀^{⊗4} = κ·(Iop(stdLat, g(Λ_M⁴)) F0) ∘ g`. -/
 def IsTheta0 {s : ℝ} (sd : ℝ) (D : Pin Φ s) (θ₀ : (Φ → ℂ) → ℂ) : Prop :=
   θ₀ ∈ Th s sd D.Λ ∧
     tens4 θ₀ = D.κ • (Iop s sd (stdLat4 D.Lc) ((pow4 D.Λ).map D.g.toLinearMap.toAddMonoidHom) (F0 s D.σ D.t) ∘ D.g)
 
-/-- `th0(0) = 1`. -/
-theorem th0_zero {s : ℝ} (D : Pin Φ s) : th0 s D.σ D.t 0 = 1 := div_self D.ne
+/-- `th0(0) = 1` for a pin with `Pin.Ok`. -/
+theorem th0_zero {s : ℝ} (D : Pin Φ s) (hD : D.Ok) : th0 s D.σ D.t 0 = 1 := div_self hD.1
 
-/-- `F0(0) = 1` (spec-3 §2, as in the archive's `ProductThetaMem`). -/
-theorem F0_zero {ι : Type*} [Fintype ι] {s : ℝ} (D : Pin Φ s) : F0 s D.σ D.t (0 : ι → ℂ) = 1 :=
-  Finset.prod_eq_one fun _ _ => th0_zero D
+/-- `F0(0) = 1` for a pin with `Pin.Ok` (spec-3 §2, as in the archive's `ProductThetaMem`). -/
+theorem F0_zero {ι : Type*} [Fintype ι] {s : ℝ} (D : Pin Φ s) (hD : D.Ok) : F0 s D.σ D.t (0 : ι → ℂ) = 1 :=
+  Finset.prod_eq_one fun _ _ => th0_zero D hD
 
 end Base
 
@@ -136,7 +140,7 @@ end Sigma
 section Std
 
 variable {E L : Type*} [Field E] [NumberField E] [Field L] [IsCMField E] {Φ : Type*} [Fintype Φ] [DecidableEq Φ]
-  {τ : Φ → (E →+* L)} {P : TP E L Φ} {a b : ℕ}
+  {a b : ℕ}
 
 /-- **The canonical pin** (spec-4): `Lc = δ·φ₀(cc)`, for an additive group `cc ⊆ E` (the ideal `cc` of `O_K`, `K` the
 imaginary quadratic subfield) with `𝔄 = cc·AA0`, `φ₀ = σ₀ ∘ τ_p` on `cc` for every `p` (the CM type is induced from
@@ -168,12 +172,14 @@ def Pin.Canonical [NumberField L] (τ : Φ → (E →+* L)) (P : TP E L Φ) {s :
     D.Λ = AddSubgroup.closure {z | ∃ w ∈ P.A, z = fun p => P.δ * P.σ₀ (τ p w)} ∧
     2 * D.t ∈ D.Lc ∧ (1 / 2 + P.sd * Complex.I) * D.t ∉ D.Lc ∧ (1 / 2 - P.sd * Complex.I) * D.t ∉ D.Lc
 
-/-- The base theta is normalised (spec-3 §2, option (A), the archive's exact condition): `θ_std = tensPow θ₀` for a
-`θ₀` with `θ₀^{⊗4} = κ·(Iop(stdLat, g(Λ_M⁴)) F0) ∘ g` (`IsTheta0`), for the pinning data `D`, whose form is that of
-`T` (`P.s = s`). This kills the `ℂ^×` scale; what remains free is the phase `κ` of `D` (`|κ| = 1`), a unimodular
-phase, which does not change slopes, and a `ζ⁴ = 1` that `tensPow` absorbs for even `a, b`. Meant for the frontier. -/
-def _root_.ThetaChain.ThetaStd.Normalised {s : ℝ} (D : Pin Φ s) (T : ThetaStd τ P a b) : Prop :=
-  P.s = s ∧ ∃ θ₀, IsTheta0 P.sd D θ₀ ∧ T.θ = tensPow θ₀
+/-- **The base theta is normalised** (spec-3 §2, option (A), the archive's exact condition): on a bare function `θ`
+on `Amb Φ a b` (the chain data's `Data.θ j`), `θ = tensPow θ₀` for a `θ₀` with
+`θ₀^{⊗4} = κ·(Iop(stdLat, g(Λ_M⁴)) F0) ∘ g` (`IsTheta0`), for the pinning data `D`, whose form is that of the
+constants `P` (`P.s = s`). This kills the `ℂ^×` scale; what remains free is the phase `κ` of `D` (`|κ| = 1` by
+`Pin.Ok`), a unimodular phase, which does not change slopes, and a `ζ⁴ = 1` that `tensPow` absorbs for even `a, b`.
+Meant for the frontier. -/
+def _root_.ThetaChain.ThetaStd.Normalised (P : TP E L Φ) {s : ℝ} (D : Pin Φ s) (θ : Amb Φ a b → ℂ) : Prop :=
+  P.s = s ∧ ∃ θ₀, IsTheta0 P.sd D θ₀ ∧ θ = tensPow θ₀
 
 end Std
 

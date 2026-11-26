@@ -490,6 +490,26 @@ import SharpParams
 import CoeffField
 import QuadSub
 import SharpCores
+import InertModel
+import SelectionLemma
+import TraceSlope
+import BranchConst
+import SharpInterlace
+import SlopeSingle
+import ChainCanon
+import LocalLattice
+import ChainLocal
+import ChainHeis
+import ChainField
+import SharpChainU
+import CMFormalInert
+import CMThetaOne
+import WeylSandwich
+import CMFormalGroup
+import LocalRank
+import FockNorm
+import WeylCount
+import PadicUnits
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2368,6 +2388,161 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms RowSpace.map_Amb_eq_range
 #print axioms RowSpace.tyPt_mul
 #print axioms RowSpace.tyRep_apply
+#print axioms InertModel.finite_edges
+#print axioms InertModel.hecke_comm
+#print axioms InertModel.exists_basis_edge
+#print axioms InertModel.smul_mem_DeltaT_of_edge
+#print axioms InertModel.smul_mem_NablaT_of_edge
+#print axioms InertModel.hecke_mem_forms_DeltaT
+#print axioms InertModel.hecke_mem_forms_NablaT
+#print axioms InertModel.forms_free_DeltaT
+#print axioms InertModel.forms_free_NablaT
+#print axioms SelectionLemma.length_le
+#print axioms SelectionLemma.selection
+#print axioms KLattice.slopeArch_pseudo
+#print axioms KLattice.slopeArch_ge_of_span
+#print axioms KLattice.slopeArch_dual
+#print axioms KLattice.slopeArch_le_of_dual_span
+#print axioms PeriodTarget.antitone_of_interlace_right
+#print axioms PeriodTarget.brConst_ne_zero
+#print axioms PeriodTarget.exists_isFockProj
+#print axioms ZetaBalance.Setting.Ranks.interlace
+#print axioms ZetaBalance.SharpDesign.PinnedTo.interlace
+#print axioms KLattice.exists_ker_sublattice
+#print axioms ZetaBalance.KFrame.one_word_le
+#print axioms ZetaBalance.KFrame.frame_le_of_one_word
+#print axioms ChainCanon.discr_cmLat
+#print axioms ChainCanon.tC_spec
+#print axioms ChainCanon.sC_pos
+#print axioms ChainCanon.mem_ideA
+#print axioms ChainCanon.isTheta0_canonPin_iff
+#print axioms ChainCanon.slice_slot0
+#print axioms LocalLattice.nab_subset_edgeLat
+#print axioms LocalLattice.bdual_nab_le_edgeDual
+#print axioms LocalLattice.nab_subset_srcLat
+#print axioms LocalLattice.bdual_nab_le_tgtLat
+#print axioms LocalLattice.edgeLat_dualPair
+#print axioms LocalLattice.bdual_edgeDual
+#print axioms LocalLattice.exists_adapted_basis
+#print axioms LocalLattice.exists_basis_NablaT
+#print axioms LocalLattice.bdual_NablaT
+#print axioms LocalLattice.bdual_nablaB_dualLat
+#print axioms LocalLattice.bdual_NablaT_compare
+#print axioms LocalLattice.pairE_mem_of_small
+#print axioms LocalLattice.llpAt_of_llpAt
+#print axioms LocalLattice.kappa_eq
+#print axioms LocalLattice.kappa_nonneg
+#print axioms LocalLattice.kappa_le_one
+#print axioms LocalLattice.kappa_le
+#print axioms LocalLattice.llpAt_of_kappa_lt
+#print axioms ChainLocal.ideleOf_apply
+#print axioms ChainLocal.isLocAt_unique
+#print axioms ChainLocal.eq_idAtE
+#print axioms ChainLocal.psi0_add
+#print axioms ChainLocal.locOk
+#print axioms ChainLocal.levG_spec
+#print axioms ChainLocal.levU_zero
+#print axioms ChainLocal.levU_of_ne_zero
+#print axioms ChainHeis.isReps_repsOf
+#print axioms ChainHeis.zero_mem_repsOf
+#print axioms ChainHeis.card_repsOf
+#print axioms ChainHeis.xdPin_xdU
+#print axioms ChainHeis.unif_spec
+#print axioms ChainHeis.isIdeleFam_detComp
+#print axioms ChainHeis.not_evenPos_comp_conj
+#print axioms ChainHeis.evenPos_or_comp_conj
+#print axioms ZetaBalance.muC_spec
+#print axioms ZetaBalance.muC_of_le
+#print axioms ZetaBalance.genB_spec
+#print axioms ZetaBalance.gτC_pow
+#print axioms ZetaBalance.psi0_mem
+#print axioms ZetaBalance.sqrt_mem
+#print axioms ZetaBalance.subset_chainField
+#print axioms ThetaChain.Hecke.coe_restrict
+#print axioms ZetaBalance.isLift_muK
+#print axioms ZetaBalance.coe_gτK
+#print axioms ThetaChain.Data.jetsRat_iff
+#print axioms ThetaChain.Top.jetsRat_iff
+#print axioms ZetaBalance.kOk_of
+#print axioms CMFormalInert.expLT_eq
+#print axioms CMFormalInert.pow_mul_coeff_expLT
+#print axioms CMFormalInert.coeff_expLT_eq_zero
+#print axioms CMFormalInert.norm_coeff_expLT_le
+#print axioms CMFormalInert.norm_coeff_subst_expLT_le
+#print axioms CMFormalInert.norm_factorial_mul_coeff_subst_expLT_le
+#print axioms CMFormalInert.exists_ltCoord
+#print axioms CMFormalInert.cm_inert_jets
+#print axioms CMFormalInert.Simeq.refl
+#print axioms CMFormalInert.Simeq.symm
+#print axioms CMFormalInert.Simeq.trans
+#print axioms CMFormalInert.Simeq.add
+#print axioms CMFormalInert.Simeq.neg
+#print axioms CMFormalInert.Simeq.subst
+#print axioms CMFormalInert.simeq_iff_sub
+#print axioms CMFormalInert.simeq_smul_ell
+#print axioms CMFormalInert.dwork
+#print axioms CMFormalInert.simeq_zero_of_dwork
+#print axioms CMFormalInert.coeff_serAB_herm
+#print axioms CMFormalInert.expand_serAB_add_smul
+#print axioms CMFormalInert.expLT_subst_logLT
+#print axioms CMThetaOne.th0L_zero
+#print axioms CMThetaOne.hasDerivAt_zetaW
+#print axioms CMThetaOne.hasDerivAt_sigmaW
+#print axioms CMThetaOne.eqOn_deriv_derivWeierstrassP
+#print axioms CMThetaOne.zetaW_half
+#print axioms CMThetaOne.th0_taylor
+#print axioms CMThetaOne.th0_jets_mem
+#print axioms CMThetaOne.th0_jets_mem_closure
+#print axioms CMThetaOne.th0_jets_mem_range
+#print axioms CMThetaOne.th0_jets_isAlgebraic
+#print axioms CMThetaOne.th0_jets_int
+#print axioms CMThetaOne.canon_jets_isAlgebraic
+#print axioms CMThetaOne.canon_jets_int
+#print axioms CMThetaOne.canon_jets_mem_range
+#print axioms WeylSandwich.Delta_subset_nablaInt
+#print axioms WeylSandwich.pow_smul_mem_Delta
+#print axioms WeylSandwich.sandwich
+#print axioms WeylSandwich.DeltaT_subset_NablaT
+#print axioms WeylSandwich.pow_smul_mem_DeltaT
+#print axioms WeylSandwich.forms_DeltaT_subset
+#print axioms WeylSandwich.pow_smul_mem_forms
+#print axioms WeylSandwich.sandExp_le
+#print axioms CMFormalInert.isIntK_expLT_subst
+#print axioms CMFormalInert.isIntK_ltAdd
+#print axioms CMFormalInert.logLT_subst_ltAdd
+#print axioms CMFormalInert.isDivK_of_isIntK_exp
+#print axioms CMFormalInert.simeq_zero_iff_dwork
+#print axioms CMFormalInert.isIntK_of_pow_eq
+#print axioms CMFormalInert.C_mul_X_mul_exp_neg_ph
+#print axioms CMFormalInert.map_be
+#print axioms CMFormalInert.constantCoeff_be
+#print axioms LocalRank.llpAt_of_rankAll
+#print axioms LocalRank.goodSys_of_primitive
+#print axioms LocalRank.goodSys_transport
+#print axioms LocalRank.goodSys_card_le
+#print axioms LocalRank.ncard_outEdges
+#print axioms LocalRank.nEdges_ge
+#print axioms LocalRank.nEdges_one
+#print axioms LocalRank.smith_split
+#print axioms LocalRank.goodRank_eq_smith
+#print axioms FockNorm.capelli
+#print axioms FockNorm.kapN_formula
+#print axioms FockNorm.sandExp_le'
+#print axioms WeylCount.dimW_eq_prod
+#print axioms WeylCount.dimW_dual
+#print axioms WeylCount.dimW_mul_choose
+#print axioms WeylCount.dimW_flatW
+#print axioms WeylCount.sum_har
+#print axioms WeylCount.sum_prod_har
+#print axioms WeylCount.pow_le_card_codim
+#print axioms WeylCount.card_hyperplanes
+#print axioms PadicUnits.legendre_lower
+#print axioms PadicUnits.legendre_upper
+#print axioms PadicUnits.factorial_eq_unit
+#print axioms PadicUnits.norm_fUnit
+#print axioms PadicUnits.exists_binomial_approx
+#print axioms PadicUnits.exists_diagonal_congr
+#print axioms PadicUnits.gram_window
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
 #print axioms ZetaBalance.rhAndGRH_of_latticeBound
 #print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound

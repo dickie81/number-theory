@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1979 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2134 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,8 +14,8 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 227 | 799 |
-| `lib/pnt` | 365 | 1067 |
+| `lib/core` | 243 | 937 |
+| `lib/pnt` | 368 | 1084 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -250,10 +250,52 @@ note of `formalisations/` that names it, if one does.
 - `BohrTorus.agree_not_rigid`: The additive system is not rigid beyond its dimension
 - `BohrTorus.tendsto_mean_moment_rearrangements`: The limiting means of `|Σ_{p∈F} p^{−it}|^{2ℓ}` count the pairs of rearrangements
 
+#### `BranchConst`: The branching constant is nonzero, and the Fock projection exists
+
+- `PeriodTarget.antitone_of_interlace_right`: Interlacing makes `σ` antitone ([note](../formalisations/alpoge-rh.md))
+- `PeriodTarget.brConst_ne_zero`: The branching constant is nonzero under interlacing ([note](../formalisations/alpoge-rh.md))
+- `PeriodTarget.exists_isFockProj`: The Fock projection exists ([note](../formalisations/alpoge-rh.md))
+
 #### `CAClosed`: The closed forms `c₀ = −¼ log(27/4)` and `c₁ = ¾ log(3/4)`
 
 - `CAClosed.cA_zero`: `c₀ = −¼ log(27/4)` ([note](../formalisations/d2-density.md))
 - `CAClosed.cA_one`: `c₁ = ¾ log(3/4)` ([note](../formalisations/d2-density.md))
+
+#### `CMFormalGroup`: The Lubin–Tate formal group at an inert prime: the integral group law, Dwork's converse, the formal Gaussian
+
+- `CMFormalInert.isIntK_expLT_subst`: Hazewinkel's functional-equation lemma ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.logLT_subst_ltAdd`: The logarithm of the group law ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.isIntK_ltAdd`: The Lubin–Tate group law is integral ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.isDivK_of_isIntK_exp`: Dwork's converse ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.simeq_zero_iff_dwork`: Dwork's criterion for `≃`, both directions ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.C_mul_X_mul_exp_neg_ph`: `ph` is minus the logarithm of the formal `Σ*` ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.constantCoeff_be`: `be` has no constant term ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.isIntK_of_pow_eq`: Prime-to-`ℓ` roots of integral series are integral ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.map_be`: The Gaussian pairing is carried to the Gaussian pairing ([note](../formalisations/alpoge-rh.md))
+
+#### `CMFormalInert`: The formal group of a CM curve at an inert prime: the Lubin–Tate exponential and the formal Gaussian
+
+- `CMFormalInert.expLT_subst_logLT`: `e` is a left inverse ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.expLT_eq`: The exponential in terms of its integral model ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.pow_mul_coeff_expLT`: The coefficients of the exponential ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.coeff_expLT_eq_zero`: Support of the exponential ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.norm_coeff_expLT_le`: The Lubin–Tate exponential bound ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.norm_coeff_subst_expLT_le`: The divided-power comparison in `ℂ_ℓ` ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.norm_factorial_mul_coeff_subst_expLT_le`: The jets of a Lubin–Tate-integral series ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.exists_ltCoord`: Lubin–Tate coordinates ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.cm_inert_jets`: The CM curve at an inert prime ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.dwork`: Dwork's lemma ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.Simeq.refl`: `≃` is reflexive ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.Simeq.symm`: `≃` is symmetric ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.Simeq.trans`: `≃` is transitive ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.Simeq.add`: `≃` is additive ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.Simeq.neg`: `≃` is stable under negation ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.simeq_iff_sub`: `f ≃ g` iff `f − g ≃ 0` ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.Simeq.subst`: `≃` is stable under integral substitution ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.simeq_smul_ell`: `ℓ·(integral) ≃ 0` ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.simeq_zero_of_dwork`: Dwork's criterion for `≃` ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.coeff_serAB_herm`: `serAB` is hermitian ([note](../formalisations/alpoge-rh.md))
+- `CMFormalInert.expand_serAB_add_smul`: The Frobenius defect of `serAB` ([note](../formalisations/alpoge-rh.md))
 
 #### `CMHost`: The CM host of a setting
 
@@ -261,10 +303,58 @@ note of `formalisations/` that names it, if one does.
 - `ZetaBalance.Setting.card_gal`: `|Gal(E/ℚ)| = [E  ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.Setting.τ_eq`: `τ` does not depend on the lift ([note](../formalisations/alpoge-rh.md))
 
+#### `CMThetaOne`: The one-variable CM theta by the Hurwitz route
+
+- `CMThetaOne.hasDerivAt_zetaW`: `ζ_W′ = −℘` ([note](../formalisations/alpoge-rh.md))
+- `CMThetaOne.hasDerivAt_sigmaW`: `σ_W′ = σ_W·ζ_W` off the lattice ([note](../formalisations/alpoge-rh.md))
+- `CMThetaOne.eqOn_deriv_derivWeierstrassP`: The second-order equation `℘″ = 6℘² − g₂/2` ([note](../formalisations/alpoge-rh.md))
+- `CMThetaOne.zetaW_half`: Masser's half-period identity ([note](../formalisations/alpoge-rh.md))
+- `CMThetaOne.th0L_zero`: `th0(0) = 1` ([note](../formalisations/alpoge-rh.md))
+- `CMThetaOne.th0_jets_mem`: The jets of `th0` are polynomials over `ℤ` in `g₂/2`, `℘(t)`, `s₂` ([note](../formalisations/alpoge-rh.md))
+- `CMThetaOne.th0_jets_mem_closure`: The jets of `th0` lie in `ℤ[g₂/2, ℘(t), s₂]` ([note](../formalisations/alpoge-rh.md))
+- `CMThetaOne.th0_taylor`: The Hurwitz formula for `th0` ([note](../formalisations/alpoge-rh.md))
+- `CMThetaOne.th0_jets_mem_range`: The jets of `th0` lie in `σ₀(K)` ([note](../formalisations/alpoge-rh.md))
+- `CMThetaOne.th0_jets_isAlgebraic`: The jets of `th0` are algebraic ([note](../formalisations/alpoge-rh.md))
+- `CMThetaOne.th0_jets_int`: The jets of `th0` are `ℓ`-integral ([note](../formalisations/alpoge-rh.md))
+- `CMThetaOne.canon_jets_isAlgebraic`: The canonical jets are algebraic ([note](../formalisations/alpoge-rh.md))
+- `CMThetaOne.canon_jets_int`: The canonical jets are `ℓ`-integral ([note](../formalisations/alpoge-rh.md))
+- `CMThetaOne.canon_jets_mem_range`: The canonical jets lie in `σ₀(K)` ([note](../formalisations/alpoge-rh.md))
+
 #### `CertInstances`: The certificate theorems as instances of the weighted certificate
 
 - `CertInstances.weilQ_ge_of_cert'`: `PoleRelax.weilQ_ge_of_cert`, verbatim statement, as the `(K, N, T) = (2, 6, 3.033953)` instance.
 - `CertInstances.weilQ_ge_of_certP'`: `PrimeRelax.weilQ_ge_of_certP`, verbatim statement, as the `(K, N, T) = (3, 60, 5.098076)` instance.
+
+#### `ChainCanon`: The canonical theta of the chain
+
+- `ChainCanon.discr_cmLat`: `Δ(Lc) = 1` ([note](../formalisations/alpoge-rh.md))
+- `ChainCanon.tC_spec`: `t = δ/2` is a 2-torsion point killed by neither `(1 ± √−d)/2` ([note](../formalisations/alpoge-rh.md))
+- `ChainCanon.sC_pos`: `s > 0` ([note](../formalisations/alpoge-rh.md))
+- `ChainCanon.slice_slot0`: The slices of `(v, 0, 0, 0)` ([note](../formalisations/alpoge-rh.md))
+- `ChainCanon.isTheta0_canonPin_iff`: `bigG` is the `G` of `IsTheta0` ([note](../formalisations/alpoge-rh.md))
+- `ChainCanon.mem_ideA`: `x ∈ 𝔟⁻¹` iff `xy` is integral for every `y ∈ 𝔟` ([note](../formalisations/alpoge-rh.md))
+
+#### `ChainHeis`: The Heisenberg data and the determinant ideles of the chain
+
+- `ChainHeis.isReps_repsOf`: `repsOf` is a set of representatives ([note](../formalisations/alpoge-rh.md))
+- `ChainHeis.zero_mem_repsOf`: `0` is the representative of the zero class ([note](../formalisations/alpoge-rh.md))
+- `ChainHeis.card_repsOf`: There are `[Λ₂ : Λ₁ ∩ Λ₂]` representatives ([note](../formalisations/alpoge-rh.md))
+- `ChainHeis.xdPin_xdU`: The explicit Heisenberg data are the pinned ones ([note](../formalisations/alpoge-rh.md))
+- `ChainHeis.not_evenPos_comp_conj`: Conjugate positions are not both even ([note](../formalisations/alpoge-rh.md))
+- `ChainHeis.evenPos_or_comp_conj`: At a split place one of two conjugate positions is even ([note](../formalisations/alpoge-rh.md))
+- `ChainHeis.unif_spec`: It is a uniformiser ([note](../formalisations/alpoge-rh.md))
+- `ChainHeis.isIdeleFam_detComp`: The components of `dIU` form an idele ([note](../formalisations/alpoge-rh.md))
+
+#### `ChainLocal`: The local data of the Stage-U theta chain at the level places `SG`
+
+- `ChainLocal.ideleOf_apply`: The components of `ideleOf x` ([note](../formalisations/alpoge-rh.md))
+- `ChainLocal.isLocAt_unique`: An idele is determined by being single-place at `P` with a given component ([note](../formalisations/alpoge-rh.md))
+- `ChainLocal.eq_idAtE`: It is the only such idele ([note](../formalisations/alpoge-rh.md))
+- `ChainLocal.psi0_add`: `ψ₀` is additive ([note](../formalisations/alpoge-rh.md))
+- `ChainLocal.locOk`: The local parameters at `SG` realise `ThetaVol.LocOk` ([note](../formalisations/alpoge-rh.md))
+- `ChainLocal.levG_spec`: The level group is `∏_w red_w(prX(R1 ∩ J_w))` ([note](../formalisations/alpoge-rh.md))
+- `ChainLocal.levU_zero`: Step 0 has the upper unitriangular group ([note](../formalisations/alpoge-rh.md))
+- `ChainLocal.levU_of_ne_zero`: The later steps have the sharp group ([note](../formalisations/alpoge-rh.md))
 
 #### `CmAsm`: Quadrature of `∫₀¹ wψ(30s) jₙ(15s) jₘ(15s) ds` against the piecewise model and the Bessel polynomials
 
@@ -478,6 +568,12 @@ note of `formalisations/` that names it, if one does.
 
 - `WeilForm.first_failure`: The first positivity failure ([note](../formalisations/weil-positivity.md))
 
+#### `FockNorm`: The Fock norm of the highest weight vector
+
+- `FockNorm.capelli`: The Capelli identity ([note](../formalisations/alpoge-rh.md))
+- `FockNorm.kapN_formula`: The Fock norm of the highest weight vector ([note](../formalisations/alpoge-rh.md))
+- `FockNorm.sandExp_le'`: The sandwich exponent is logarithmic ([note](../formalisations/alpoge-rh.md))
+
 #### `ForcedOrders`: The forced orders
 
 - `ZetaBalance.Setting.lpF_nonneg_le`: `0 ≤ lpF(ℓ, n, D) ≤ ℓ/(ℓ² − 1)·Σ D` for `ℓ > 1` and `D ≥ 0` (the archive's `FactLpF`). ([note](../formalisations/alpoge-rh.md))
@@ -658,6 +754,18 @@ note of `formalisations/` that names it, if one does.
 - `WeilForm.rh_of_simple_ground_states`: The chain with the zero-swap lemma plugged in ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_simple_ground_states'`: The chain, with `ζ ≠ 0` on `(0, 1)` discharged ([note](../formalisations/weil-positivity.md))
 
+#### `InertModel`: The inert local model: lattice tuples, local Weyl lattices and Hecke operators
+
+- `InertModel.finite_edges`: Finiteness of the edges ([note](../formalisations/alpoge-rh.md))
+- `InertModel.hecke_comm`: Commutation ([note](../formalisations/alpoge-rh.md))
+- `InertModel.exists_basis_edge`: Edge bases ([note](../formalisations/alpoge-rh.md))
+- `InertModel.smul_mem_DeltaT_of_edge`: Integrality, `Δ` ([note](../formalisations/alpoge-rh.md))
+- `InertModel.smul_mem_NablaT_of_edge`: Integrality, `∇` ([note](../formalisations/alpoge-rh.md))
+- `InertModel.hecke_mem_forms_DeltaT`: The Hecke operators keep `M` ([note](../formalisations/alpoge-rh.md))
+- `InertModel.hecke_mem_forms_NablaT`: The Hecke operators keep `M∇` ([note](../formalisations/alpoge-rh.md))
+- `InertModel.forms_free_DeltaT`: `M` is free of rank `d = |R|·dim ∇` ([note](../formalisations/alpoge-rh.md))
+- `InertModel.forms_free_NablaT`: `M∇` is free of rank `d = |R|·dim ∇` ([note](../formalisations/alpoge-rh.md))
+
 #### `JacobiEightSquares`: Jacobi's eight-square theorem
 
 - `JacobiEightSquares.r8_zero`: `r₈(0) = 1`
@@ -741,6 +849,39 @@ note of `formalisations/` that names it, if one does.
 - `WeilForm.rh_of_pairing_and_realRooted`: 1bu(ii) + item 6, assembled ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_D_and_realRooted`: Theorem 1bu(ii) + item 6 in the paper's own terms ([note](../formalisations/weil-positivity.md))
 
+#### `LocalLattice`: The local lattice problem: edge lattices, the pairing and the model facts
+
+- `LocalLattice.bdual_nablaB_dualLat`: Model fact 5 for block lattices ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.exists_basis_NablaT`: Model fact 4 (spanning) ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.bdual_NablaT`: Model fact 5 (duality) ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.bdual_NablaT_compare`: Model fact 5, up to the Gram constants ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.exists_adapted_basis`: Model fact 3 (adapted basis) ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.nab_subset_edgeLat`: Model fact 1, source side ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.bdual_nab_le_edgeDual`: Model fact 1, target side ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.edgeLat_dualPair`: Model fact 2 (perfect pairing) ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.bdual_edgeDual`: Model fact 2, the duals ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.nab_subset_srcLat`: `∇(L″)` lies in its source lattices ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.bdual_nab_le_tgtLat`: `∇(L)^∨` lies in its target lattices ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.pairE_mem_of_small`: What smallness means ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.kappa_nonneg`: `κ ≥ 0` ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.kappa_le_one`: `κ ≤ 1` ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.kappa_le`: `κ` is at most any fraction for which the local lattice problem holds at every lattice ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.llpAt_of_kappa_lt`: Above `κ` the local lattice problem holds ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.llpAt_of_llpAt`: Model fact 6 (one lattice suffices) ([note](../formalisations/alpoge-rh.md))
+- `LocalLattice.kappa_eq`: `κ` at one lattice ([note](../formalisations/alpoge-rh.md))
+
+#### `LocalRank`: Local ranks: good systems at the edges and the assembly of the local lattice problem
+
+- `LocalRank.smith_split`: Smith splitting ([note](../formalisations/alpoge-rh.md))
+- `LocalRank.goodRank_eq_smith`: The good rank by Smith invariants ([note](../formalisations/alpoge-rh.md))
+- `LocalRank.llpAt_of_rankAll`: The assembly ([note](../formalisations/alpoge-rh.md))
+- `LocalRank.goodSys_transport`: Edge transport ([note](../formalisations/alpoge-rh.md))
+- `LocalRank.nEdges_ge`: Edge count ([note](../formalisations/alpoge-rh.md))
+- `LocalRank.nEdges_one`: Edge count, type `1` ([note](../formalisations/alpoge-rh.md))
+- `LocalRank.ncard_outEdges`: As many edges out of a lattice as into one ([note](../formalisations/alpoge-rh.md))
+- `LocalRank.goodSys_card_le`: Per-edge upper bound ([note](../formalisations/alpoge-rh.md))
+- `LocalRank.goodSys_of_primitive`: A good system from primitive tests ([note](../formalisations/alpoge-rh.md))
+
 #### `LocalTeeth`: The teeth, one prime at a time
 
 - `LocalTeeth.card_two_sq`: 2D teeth mod `p`, nonzero shell
@@ -797,6 +938,16 @@ note of `formalisations/` that names it, if one does.
 
 - `Orthogonality.tendsto_mean_sq_norm_primeSum`: The radius is the root mean square of the prime sum
 - `Orthogonality.pythagoras_lpGauge_iff`: Orthogonality forces `p = 2`
+
+#### `PadicUnits`: `p`-adic factorial units, Mahler decay and the Gram-window lemma
+
+- `PadicUnits.legendre_lower`: Legendre, lower bound ([note](../formalisations/alpoge-rh.md))
+- `PadicUnits.legendre_upper`: Legendre, upper bound ([note](../formalisations/alpoge-rh.md))
+- `PadicUnits.factorial_eq_unit`: The factorisation ([note](../formalisations/alpoge-rh.md))
+- `PadicUnits.norm_fUnit`: `u(e)` is a `p`-adic unit ([note](../formalisations/alpoge-rh.md))
+- `PadicUnits.exists_binomial_approx`: Binomial approximation ([note](../formalisations/alpoge-rh.md))
+- `PadicUnits.exists_diagonal_congr`: Jordan splitting, matrix form ([note](../formalisations/alpoge-rh.md))
+- `PadicUnits.gram_window`: The Gram-window lemma ([note](../formalisations/alpoge-rh.md))
 
 #### `ParityCert`: Weil positivity in both parity sectors, as far as the relaxation reaches
 
@@ -1009,6 +1160,11 @@ note of `formalisations/` that names it, if one does.
 - `RowSpace.tyPt_mul`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `RowSpace.tyRep_apply`: Sanity ([note](../formalisations/alpoge-rh.md))
 
+#### `SelectionLemma`: The selection lemma
+
+- `SelectionLemma.length_le`: The selection lemma, sharp form ([note](../formalisations/alpoge-rh.md))
+- `SelectionLemma.selection`: The selection lemma ([note](../formalisations/alpoge-rh.md))
+
 #### `ShellSchur`: Shell–interior coupling: Schur-type positivity and its finite chain
 
 - `ShellSchur.nonneg_of_coupling`: Coupling bound ⇒ nonnegativity
@@ -1079,19 +1235,27 @@ note of `formalisations/` that names it, if one does.
 - `ThetaChain.instMulActionDecoF`: The action on the points is a group action ([note](../formalisations/alpoge-rh.md))
 - `ThetaChain.Chain.comp_zero`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ThetaChain.Chain.lift_add`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `ThetaChain.Data.comp_zero_inp`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ThetaChain.Top.col_of_isEmpty`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ThetaChain.opU_zero`: Sanity ([note](../formalisations/alpoge-rh.md))
 
 #### `ThetaNorm`: The normalisation of the base theta
 
-- `ThetaNorm.th0_zero`: `th0(0) = 1`. ([note](../formalisations/alpoge-rh.md))
-- `ThetaNorm.F0_zero`: `F0(0) = 1` (spec-3 §2, as in the archive's `ProductThetaMem`). ([note](../formalisations/alpoge-rh.md))
+- `ThetaNorm.th0_zero`: `th0(0) = 1` for a pin with `Pin.Ok`. ([note](../formalisations/alpoge-rh.md))
+- `ThetaNorm.F0_zero`: `F0(0) = 1` for a pin with `Pin.Ok` (spec-3 §2, as in the archive's `ProductThetaMem`). ([note](../formalisations/alpoge-rh.md))
 - `ThetaNorm.sgStar_zero`: Sanity ([note](../formalisations/alpoge-rh.md))
 
 #### `ThetaVol`: The local volumes of the theta kernels (spec-3 §1)
 
 - `ThetaVol.volN_pos`: The volume is positive ([note](../formalisations/alpoge-rh.md))
 - `ThetaVol.XiFull.scale`: Sanity ([note](../formalisations/alpoge-rh.md))
+
+#### `TraceSlope`: The trace bound for the slope of a hermitian `O_K`-lattice, and duality
+
+- `KLattice.slopeArch_pseudo`: The archive slope of a pseudo-basis lattice ([note](../formalisations/alpoge-rh.md))
+- `KLattice.slopeArch_ge_of_span`: The trace bound ([note](../formalisations/alpoge-rh.md))
+- `KLattice.slopeArch_dual`: Duality ([note](../formalisations/alpoge-rh.md))
+- `KLattice.slopeArch_le_of_dual_span`: The dual trace bound ([note](../formalisations/alpoge-rh.md))
 
 #### `TwinLandau`: The Landau argument for twin forms, for any zero family
 
@@ -1424,10 +1588,32 @@ note of `formalisations/` that names it, if one does.
 - `WengRankTwo.rh_weng`: The Riemann hypothesis for Weng's rank-2 zeta function of `ℚ` ([note](../formalisations/weil-positivity.md))
 - `WengRankTwo.differenced_real`: The differenced `Ξ`
 
+#### `WeylCount`: Weyl dimensions as Gelfand–Tsetlin counts
+
+- `WeylCount.dimW_eq_prod`: The Weyl dimension formula ([note](../formalisations/alpoge-rh.md))
+- `WeylCount.dimW_dual`: Duality ([note](../formalisations/alpoge-rh.md))
+- `WeylCount.dimW_mul_choose`: Pieri ([note](../formalisations/alpoge-rh.md))
+- `WeylCount.dimW_flatW`: `dim fl(α, β) = Har_m(α, β)` ([note](../formalisations/alpoge-rh.md))
+- `WeylCount.sum_har`: The `Har` sum ([note](../formalisations/alpoge-rh.md))
+- `WeylCount.sum_prod_har`: The `Har` sum over the tops ([note](../formalisations/alpoge-rh.md))
+- `WeylCount.pow_le_card_codim`: `q^{r(k−r)}` subspaces of codimension `r` ([note](../formalisations/alpoge-rh.md))
+- `WeylCount.card_hyperplanes`: The hyperplane count ([note](../formalisations/alpoge-rh.md))
+
 #### `WeylFock`: Weights, dual Weyl modules, the Fock form and the lattices `Δ_N`
 
 - `WeylFock.hw_mem_nabla`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `WeylFock.DeltaOL_subset_DeltaN_std`: Sanity ([note](../formalisations/alpoge-rh.md))
+
+#### `WeylSandwich`: The sandwich `Δ_O ⊆ ∇_O` and `p^e·∇_O ⊆ Δ_O`
+
+- `WeylSandwich.Delta_subset_nablaInt`: `Δ_A ⊆ ∇_A` ([note](../formalisations/alpoge-rh.md))
+- `WeylSandwich.pow_smul_mem_Delta`: `p^e·∇_A ⊆ Δ_A` ([note](../formalisations/alpoge-rh.md))
+- `WeylSandwich.sandExp_le`: The size of the exponent, given the Fock norm of `hw_ν` ([note](../formalisations/alpoge-rh.md))
+- `WeylSandwich.sandwich`: The sandwich ([note](../formalisations/alpoge-rh.md))
+- `WeylSandwich.DeltaT_subset_NablaT`: `Δ_L ⊆ ∇_L` ([note](../formalisations/alpoge-rh.md))
+- `WeylSandwich.pow_smul_mem_DeltaT`: `p^e·∇_L ⊆ Δ_L` ([note](../formalisations/alpoge-rh.md))
+- `WeylSandwich.forms_DeltaT_subset`: The sandwich for the local forms ([note](../formalisations/alpoge-rh.md))
+- `WeylSandwich.pow_smul_mem_forms`: The sandwich for the local forms ([note](../formalisations/alpoge-rh.md))
 
 #### `WeylSpan`: Bideterminants span the dual Weyl module
 
@@ -1532,6 +1718,22 @@ note of `formalisations/` that names it, if one does.
 #### `BohrKV`: The Korobov–Vinogradov region as a shell around the Bohr sphere
 
 - `BohrKV.shell_of_KV`: The Korobov–Vinogradov region is a shell at each height
+
+#### `ChainField`: The coefficient field of the explicit chain
+
+- `ThetaChain.Hecke.coe_restrict`: The restriction keeps the values ([note](../formalisations/alpoge-rh.md))
+- `ThetaChain.Data.jetsRat_iff`: `JetsRat` is rationality of the jets of every first `m` steps ([note](../formalisations/alpoge-rh.md))
+- `ThetaChain.Top.jetsRat_iff`: `Top.JetsRat` is rationality of the top's jets ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.muC_spec`: `μ^ℂ_{0,j}` is a lift character ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.muC_of_le`: From `j = m` on the characters repeat ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.genB_spec`: The generator generates `𝔟^h` ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.gτC_pow`: `g_p^h = τ_p(a)⁻¹` ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.psi0_mem`: The residue character takes values in `F` ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.sqrt_mem`: `√q_P ∈ F` ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.subset_chainField`: Under `KOk` the field contains the generators ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.kOk_of`: `KOk` from the two infinite families ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.isLift_muK`: Under `KOk`, `μ_{0,j}` is a lift character over `K` ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.coe_gτK`: Under `KOk` the coordinate generators in the field are the `g_p` ([note](../formalisations/alpoge-rh.md))
 
 #### `ChiPNT`: `ψ(x, χ) = O(x^{11/12+η})` for every Dirichlet character `χ ≠ 1`
 
@@ -2597,7 +2799,6 @@ note of `formalisations/` that names it, if one does.
 
 #### `SharpChain`: The sharp frontier with the theta chain — CONDITIONAL on the half-plane
 
-- `ThetaChain.Data.comp_zero_inp`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.sharpBoundTheta_of_pinned`: The pinned frontier implies `SharpBoundTheta`. ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.rhAndGRH_of_sharpBoundPinned`: CONDITIONAL. RH and GRH from the pinned frontier ([note](../formalisations/alpoge-rh.md))
 
@@ -2610,6 +2811,11 @@ note of `formalisations/` that names it, if one does.
 
 - `ZetaBalance.sixTermBound_of_inputs`: The six-term frontier from the inputs and the pieces ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.rhAndGRH_of_inputs`: CONDITIONAL. RH and GRH from the inputs and the pieces ([note](../formalisations/alpoge-rh.md))
+
+#### `SharpInterlace`: The design's weights interlace
+
+- `ZetaBalance.Setting.Ranks.interlace`: The branching weight interlaces the column weight ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.SharpDesign.PinnedTo.interlace`: A pinned word family's `λ_m` interlaces the translate's `σ` ([note](../formalisations/alpoge-rh.md))
 
 #### `SharpParams`: The design's parameters
 
@@ -3547,6 +3753,12 @@ note of `formalisations/` that names it, if one does.
 #### `SlopeFExact`: The piece (F) + (V) from the exact slope bound
 
 - `ZetaBalance.SharpObj.slopeFV_exact`: (F) + (V) from the exact slope bound ([note](../formalisations/alpoge-rh.md))
+
+#### `SlopeSingle`: The frame inequality for one word
+
+- `KLattice.exists_ker_sublattice`: The kernel sublattice ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.KFrame.one_word_le`: The frame inequality for one word ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.KFrame.frame_le_of_one_word`: The frame loss of one word ([note](../formalisations/alpoge-rh.md))
 
 #### `SlopeV`: The index bookkeeping (V): `SlopeFV` from the slope bound on `M_ω`
 

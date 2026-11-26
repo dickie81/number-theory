@@ -27,14 +27,15 @@ points `x` of the level (decorated lattices `pX x` of rank `n = N_m − 1`, `ST 
   the lift, so its `f_P = tz·a` is read). Then `col φ x = Θ_m(inp(e φ))(x)`
   (`Top.col`) at every point: no class representative of `[tilQ x]`, no transport, no character `χ_m` (the archive's
   `evRho` law is a consequence, not a datum);
-* (b) the cast `N_m = n + 1` (`polCast`, `latCast`);
+* (b) the cast `N_m = n + 1` (`ThetaChain.polCast`, `ThetaChain.decoCast`);
 * (c) `inp`: forms → the chain's input, `F ↦ (c ↦ F(rep c))` with the lattice frames of `rep c` at `Q` forgotten
   (`Data.inp`, `DecoF.d`; the archive's `startC`, spec-11 §1), after an `L`-isomorphism `e` of the source
   with `X ⊓ V_ω` (`HermForms.Vω` at step 0, with the explicit level `uniUT` and a character over `lamGen`), for a
   cusp subspace `X` stable under the diamond operators (L7 notes, item 3; `X ≤ Forms` adds nothing to `X ⊓ V_ω`).
   `X`, `e` and the step-0 data (`ST`, `SG`, `n0`, `λ_0`, `χ0`) are chosen once per word and passed in, the same at
   every level (audit 7, T1a: the archive twists the lift characters, not the input form); each level's chain
-  agrees with them (`D.ST = ST`, `D.SG = SG`, `D.n 0 = n0`, `D.lam 0 = λ_0`) and reads `e φ` through `fnCast`;
+  agrees with them (`D.ST = ST`, `D.SG = SG`, `D.n 0 = n0`, `D.lam 0 = λ_0`) and reads `e φ` through
+  `ThetaChain.fnCast`;
 * (d) `Data` and its top `Top` existential, with `ChIdx`'s conditions on the fields `Data` has: the classes of every
   level, step 0 included, are classes of the archive's `DecoF` (`ThetaChain.DecoF`: residue frames on `SG`, lattice
   frames `fr_P`, `fr_P(O_(P)^n) = N_(P)`, at `P ∈ Q`; `D.Q = Q`; spec-11 A0, §1, spec-12 F6), `β 0` and `β(m−1)`
@@ -87,15 +88,17 @@ points `x` of the level (decorated lattices `pX x` of rank `n = N_m − 1`, `ST 
   x)`, whose frames cover `SG ∪ Q` (spec-10 F4). When `U` (the untwisted level): `ξ = 1` (spec-2 4a). At every level the
   chain's `ST`, `SG` are the given ones. The Heisenberg data are pinned (`Data.XDPinned`, spec-3 §3, spec-5 §3;
   `Top.XDPinned` at the top step): `HA = halfAO` with `c = cA·cB`, `BC = ι(halfBO)` with `c = cB`, `SA`, `SB`
-  representatives (`IsReps`, `0 ∈ SA`), `vol = volS`. The base theta of every step `j < m` is normalised
-  (`ThetaStd.Normalised`) by a canonical pin (`ThetaNorm.Pin.Canonical`: `Lc = δ·φ₀(cc)` with `Δ(Lc) = 1`, `s =
-  1/area(Lc)`, `σ = σ*_{Lc}`, `Λ = ι(𝔄)`), so its scale is fixed up to a phase. One pin is passed in (`pin`) and
-  shared by every step, every chain of the translate, all words and all levels (`thetaHook`), so the phase `κ` is one
-  per translate (audit 13, T2 (i)): a `κ` chosen per chain, with only `|κ| = 1`, could be `σ₀(γ)`, `γ = x/star x ∈ L`,
-  of any `w`-adic valuation. This is the archive's `Base` exactly: one per column datum, with no level, word or step
-  index (its `κ` = `KapChoice.kappa`, fixed by `γ₀` and the per-prime data; the step enters only through the ranks
-  of `tensPow`, and every field of `Pin` is rank-free; caveats-1, Q2); spec-4's `Lc`, `σ`, `Λ` depend only on the base
-  lattice.
+  representatives (`IsReps`, `0 ∈ SA`), `vol = volS`. The data carry no proofs (`ThetaChain.Data`), so what their
+  proof fields said is conjoined: every base theta is nonzero in `Th(La(std, std′))` (`Data.ThetaOk`), and the jets
+  of the coset thetas every step sums are in `σ₀(L)` (`Data.JetsRat`; `Top.JetsRat` at the top step). The base
+  theta of every step `j < m` is normalised (`ThetaStd.Normalised`) by a canonical pin (`ThetaNorm.Pin.Ok`,
+  `ThetaNorm.Pin.Canonical`: `Lc = δ·φ₀(cc)` with `Δ(Lc) = 1`, `s = 1/area(Lc)`, `σ = σ*_{Lc}`, `Λ = ι(𝔄)`), so its
+  scale is fixed up to a phase. One pin is passed in (`pin`) and shared by every step, every chain of the translate,
+  all words and all levels (`thetaHook`), so the phase `κ` is one per translate (audit 13, T2 (i)): a `κ` chosen per
+  chain, with only `|κ| = 1`, could be `σ₀(γ)`, `γ = x/star x ∈ L`, of any `w`-adic valuation. This is the archive's
+  `Base` exactly: one per column datum, with no level, word or step index (its `κ` = `KapChoice.kappa`, fixed by `γ₀`
+  and the per-prime data; the step enters only through the ranks of `tensPow`, and every field of `Pin` is rank-free;
+  caveats-1, Q2); spec-4's `Lc`, `σ`, `Λ` depend only on the base lattice.
 
 **The pinned frontier** (`SharpBoundPinned`) adds what the hook cannot see: the chain's CM type is `τ_K`, the
 branching maps are `PeriodTarget.br` with `c_Br = brConst ≠ 0` and `IsFockProj` at `λ = λ_m` and
@@ -192,7 +195,7 @@ anyway (it never blocked a larger twisted image, audit 8 S4), and `ψ_w` is an a
 **Unchecked:** whether a choice of `Q_w` (places with `N P ≡ 1 mod ℓ^K`) can put an `ℓ`-adic non-unit into the twisted
 local volumes (the `volN` indices at `Q`, `ThetaVol`).
 
-**Sanity theorem:** `Data.comp_zero_inp`.
+**Sanity theorem:** `KFrame.RealisesPet.realises`.
 -/
 
 namespace ZetaBalance
@@ -204,40 +207,7 @@ noncomputable section
 section Hook
 
 variable {Φ : Type} [Fintype Φ] [DecidableEq Φ] {E L : Type} [Field E] [NumberField E] [IsCMField E] [Field L]
-  [NumberField L] {τ : Φ → (E →+* L)}
-
-/-- (b) The cast `N = N′` of a polynomial (the chain's `N_m` to `n + 1`). -/
-def polCast {N N' : ℕ} (h : N = N') : Pol Φ N L → Pol Φ N' L := by
-  subst h; exact id
-
-/-- (b) The cast `N = N′` of a decorated lattice (the lift's `n + 1` to the chain's `N_m`). -/
-def decoCast {N N' : ℕ} {ST SF : Finset (HeightOneSpectrum (𝓞 E))} (h : N = N') :
-    Deco E N ST SF → Deco E N' ST SF := by
-  subst h; exact id
-
-/-- (c) Forms on the place sets `ST`, `SG` at step-0 rank `n0`, read at equal ones: a word's source data are shared by
-every level, and each level's chain `D` has `D.ST = ST`, `D.SG = SG`, `D.n 0 = n0` (`IsThetaCol`). -/
-def fnCast {ST ST' SG SG' : Finset (HeightOneSpectrum (𝓞 E))} {n0 n0' : ℕ} (h1 : ST = ST') (h2 : SG = SG')
-    (h3 : n0 = n0') : HermForms.Fn ST (uniUT SG n0) Φ L →ₗ[L] HermForms.Fn ST' (uniUT SG' n0') Φ L := by
-  subst h1 h2 h3; exact LinearMap.id
-
-/-- (c) The chain's input from functions on decorated lattices with frames on `SG`: `F ↦ (c ↦ F(rep c))` on the step-0
-classes, after forgetting the lattice frames of `rep c` at `Q` (spec-11 §1, the archive's `startC`: `φ ↦ (p ↦
-φ(p.deco))`). -/
-def _root_.ThetaChain.Data.inp (D : Data τ) (Λ : Subgroup (∀ w : D.SG, GL (Fin (D.n 0)) (𝓞 E ⧸ w.1.asIdeal))) :
-    HermForms.Fn D.ST Λ Φ L →ₗ[L] (D.chain.C 0 → Pol Φ (D.n 0) L) :=
-  LinearMap.funLeft L _ fun c =>
-    ⟨c.2.rep.d, c.2.good.1⟩
-
-omit [NumberField L] in
-/-- **Sanity:** the chain of length `0` reads a form at the representative of each class, its frames at `Q`
-forgotten. -/
-theorem _root_.ThetaChain.Data.comp_zero_inp (D : Data τ)
-    (Λ : Subgroup (∀ w : D.SG, GL (Fin (D.n 0)) (𝓞 E ⧸ w.1.asIdeal))) (F : HermForms.Fn D.ST Λ Φ L)
-    (c : D.chain.C 0) :
-    D.chain.comp 0 (D.inp Λ F) c =
-      F ⟨c.2.rep.d, c.2.good.1⟩ :=
-  rfl
+  [NumberField L]
 
 /-- The archive's `IsDelta p` (spec-7 §1c, spec-2 4a): `δ` is of finite order, tame, unramified away from the
 places over the auxiliary prime `p`, and of order exactly `15` on the local units at each of them. The twist
@@ -301,12 +271,13 @@ character `ḡ ↦ ∏_w ψ_w(n1Arg r_w)⁻¹·lamGS_w(entB(r_w))` for every fam
 same at every level (audit 7, T1a: the archive twists the characters, not the input form): the place sets `ST`, `SG`,
 the step-0 rank `n0`, weight `lam0` and character `χ0`, a cusp subspace `X` stable under the diamond operators, and
 an isomorphism `e` of the source with `X ⊓ V_ω`. The chain has `D.ST = ST`, `D.SG = SG`, `D.n 0 = n0`,
-`D.lam 0 = lam0`, and reads `e φ` through `fnCast`. **The pin** of the base thetas is passed in too, one for every
-step (`pin`, of form `s`; `ThetaNorm.Pin.Canonical`, `ThetaStd.Normalised`; the archive's `Base` has no step index),
-so the caller can share it across the words and levels of a translate (audit 13: the phase `κ` is not free per
-chain). `Shp D m Q ξ` is a further condition
-on the data, length, `Q`
-and twist `ξ`, set by the caller (the pinned frontier: the chain shape, `sd`, through `SharpData.RealisedPinned`).
+`D.lam 0 = lam0`, and reads `e φ` through `fnCast`. **The base thetas** are nonzero in `Th(La(std, std′))`
+(`Data.ThetaOk`) with rational jets (`Data.JetsRat`, `Top.JetsRat`): conjuncts here, as the data carry no proofs.
+**The pin** of the base thetas is passed in too, one for every step (`pin`, of form `s`; `ThetaNorm.Pin.Ok`,
+`ThetaNorm.Pin.Canonical`, `ThetaStd.Normalised`; the archive's `Base` has no step index), so the caller can share it
+across the words and levels of a translate (audit 13: the phase `κ` is not free per chain). `Shp D m Q ξ` is a
+further condition on the data, length, `Q` and twist `ξ`, set by the caller (the pinned frontier: the chain shape,
+`sd`, through `SharpData.RealisedPinned`).
 **The star** of the coefficient field `L` is complex conjugation at the chain's embedding:
 `σ₀ ∘ star = conj ∘ σ₀`, `σ₀ = D.P.σ₀` (the archive's `Fields.Ok`). `L` need not be CM: the archive's coefficient
 field contains `j(cc)`, of odd degree `h(−d) ≥ 3` with a non-real embedding, so lies in no CM field. -/
@@ -387,7 +358,8 @@ def IsThetaCol [StarRing L] (τ : Φ → (E →+* L)) (eF : ℕ → Φ → ℤ) 
       tz ∉ P.asIdeal ∧ IsCMField.ringOfIntegersComplexConj E tz ∉ P.asIdeal ∧ P ∉ SG ∧
       ∀ w ∈ SG, P.asIdeal ≠ w.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E)) ∧
     Shp D (m2 + 2) Q ξ ∧
-    (∀ j < m2 + 2, ThetaNorm.Pin.Canonical τ D.P pin ∧ (D.θ j).Normalised pin) ∧
+    (D.ThetaOk ∧ D.JetsRat ∧ Tp.JetsRat) ∧
+    (pin.Ok ∧ ∀ j < m2 + 2, ThetaNorm.Pin.Canonical τ D.P pin ∧ ThetaStd.Normalised D.P pin (D.θ j)) ∧
     (∃ sel : Set (HeightOneSpectrum (𝓞 E)), ↑(D.SG ∪ Q) ⊆ sel ∧ (∀ v v' : HeightOneSpectrum (𝓞 E),
         v'.asIdeal = v.asIdeal.comap (IsCMField.ringOfIntegersComplexConj E : 𝓞 E →+* 𝓞 E) →
           (v ∈ sel ↔ v = v' ∨ v' ∉ sel)) ∧
