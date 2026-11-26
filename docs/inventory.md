@@ -2591,8 +2591,8 @@ note of `formalisations/` that names it, if one does.
 
 #### `SharpBound`: The sharp frontier `SharpBound` and its bridge to `SixTermData` — CONDITIONAL on the half-plane
 
+- `ZetaBalance.KFrame.frame_le_of_frameCond`: The frame loss from the frame condition ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.SharpData.nonempty_sixTermData`: Sanity ([note](../formalisations/alpoge-rh.md))
-- `ZetaBalance.SharpData.toSixTermData_Fo`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.rhAndGRH_of_sharpBound`: CONDITIONAL. The Riemann hypothesis for `ζ` and every Dirichlet `L`-function from the sharp frontier ([note](../formalisations/alpoge-rh.md))
 
 #### `SharpChain`: The sharp frontier with the theta chain — CONDITIONAL on the half-plane

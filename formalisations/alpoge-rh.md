@@ -109,6 +109,12 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   inert-prime sum (G6). A key identity (`ZetaBalance.Setting.key_identity`) sums them, word by word, to the gain (G) of
   the lattice data. This is the algebra of the archive's `ch_top`. Like the frontiers above it, `SixTermBound` holds
   with frames of rank one whenever the averaged gap bound does.
+- **The frame inequality enters through its conclusion.** Lattice data, six-term data and sharp data ask, at each
+  translate, for a frame loss `L_u` with `s_u − μ(C_u) ≤ L_u`, not for the hypotheses of the frame inequality: the
+  reductions read nothing else. A frame that meets those hypotheses gives the loss `αH + βU·log(1 + H/U)`
+  (`SlopeFrame.Frame.Spread.frame_le`); for hermitian frames, the archive's route, from the frame condition at one
+  complex place with the range and the depth, is `ZetaBalance.KFrame.frame_le_of_frameCond`. A construction may bound
+  the loss more cheaply, for a frame of one word with no frame condition and no depth.
 - **Linnik's exponent from the frontier.** `LinnikGRH.dirichletRH_of_rhAndGRH`: the rebuild's conclusion,
   `HalfPlaneGRH.RHandGRH`, which covers every character, gives GRH in the archive's words (`LinnikGRH.DirichletRH`). So
   `ZetaBalance.PairBound` gives `LinnikGRH.linnik_two` and `LinnikAlmostAll.almostAll_one`, conditionally on the
@@ -192,7 +198,7 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     (`HermForms.conj_pet`, `HermForms.dOp_mem`, `HermForms.gram_isHermitian`, `HermForms.source_G`). The metric at
     each place is the complex Petersson form, which agrees with `σ` of the `K`-valued form wherever the star is
     conjugation (`HermForms.petAt_eq_map`).
-  - Forced orders: the explicit function `Fo` of the parameters that the frontier pins, with its linear program
+  - Forced orders: the archive's, an explicit function `Fo` of the parameters, with its linear program
     (`ZetaBalance.Setting.lpF_nonneg_le`, `ZetaBalance.Setting.Ranks.FTypeG_nonpos`,
     `ZetaBalance.Setting.Ranks.FInert_nonneg`).
   - Periods and target: the interlacing weight, the branching map, the period, the integral rows, the twisted
@@ -203,21 +209,21 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     are a parameter with their invariance (`ThetaChain.opU_zero`, `ThetaChain.Chain.comp_zero`,
     `ThetaChain.Chain.lift_add`, `ThetaChain.detShift_wt_succ`); its top step maps straight to the row points,
     with the archive's coupled and top factors (`ThetaChain.Top.col_of_isEmpty`).
-  - The frontier: `ZetaBalance.rhAndGRH_of_sharpBound` gives RH with GRH from `ZetaBalance.SharpBound`, through a
-    proved bridge to the six-term interface (`ZetaBalance.SharpData.nonempty_sixTermData`,
-    `ZetaBalance.SharpData.toSixTermData_Fo`): defined sources, target and periods, the forced orders fixed, and
-    nonnegative slacks. `ZetaBalance.rhAndGRH_of_sharpBoundPinned` pins every object to the archive's construction
-    (through `ZetaBalance.sharpBoundTheta_of_pinned`): the theta chain, its top step straight to the row points
-    (`ThetaChain.Data.comp_zero_inp`, `ThetaChain.Top.col_of_isEmpty`, `ThetaChain.instMulActionDecoF`); the local
-    factors read through the frames, with the level-T indicator, the archive's level groups at `SG` and `Q`, and
-    representatives in its normal form at `Q` (`ThetaVol.volN_pos`, `ThetaVol.XiFull.scale`); the base theta by
-    the archive's fourth-power identity, with the Weierstrass `σ` of a lattice of discriminant 1
-    (`ThetaNorm.th0_zero`, `ThetaNorm.F0_zero`, `ThetaNorm.sgStar_zero`); and the row space as the image of a
-    character idempotent on Weyl-module-valued forms equivariant under the archive's row level groups
-    (`RowSpace.idemOf_empty`, `RowSpace.map_Amb_eq_range`, `RowSpace.tyPt_mul`, `RowSpace.tyRep_apply`). The last
-    of twelve adversarial audits finds it true, up to inferred steps, and with no trivial witness. Existential:
-    the archive's own freedom (the cusp subspace, the twist characters within their shape, the transfers, the
-    target metric, unit phases).
+  - The frontier: `ZetaBalance.rhAndGRH_of_sharpBound` gives RH with GRH from `ZetaBalance.SharpBound`, through a proved
+    bridge to the six-term interface (`ZetaBalance.SharpData.nonempty_sixTermData`): defined sources, target and
+    periods, forced orders chosen with the data (they cancel between (G↓) and (G↑); the archive's are `Fo` above), a
+    frame loss and nonnegative slacks. `ZetaBalance.rhAndGRH_of_sharpBoundPinned` pins every object to the archive's
+    construction (through `ZetaBalance.sharpBoundTheta_of_pinned`): the theta chain, its top step straight to the row
+    points (`ThetaChain.Data.comp_zero_inp`, `ThetaChain.Top.col_of_isEmpty`, `ThetaChain.instMulActionDecoF`); the
+    local factors read through the frames, with the level-T indicator, the archive's level groups at `SG` and `Q`, and
+    representatives in its normal form at `Q` (`ThetaVol.volN_pos`, `ThetaVol.XiFull.scale`); the base theta by the
+    archive's fourth-power identity, with the Weierstrass `σ` of a lattice of discriminant 1 (`ThetaNorm.th0_zero`,
+    `ThetaNorm.F0_zero`, `ThetaNorm.sgStar_zero`); and the row space as the image of a character idempotent on
+    Weyl-module-valued forms equivariant under the archive's row level groups (`RowSpace.idemOf_empty`,
+    `RowSpace.map_Amb_eq_range`, `RowSpace.tyPt_mul`, `RowSpace.tyRep_apply`). The last of twelve adversarial audits
+    finds it true, up to inferred steps, and with no trivial witness; it read the earlier form, with the forced orders
+    fixed and the frame condition and the range and depth in place of the frame loss. Existential: the archive's own
+    freedom (the cusp subspace, the twist characters within their shape, the transfers, the target metric, unit phases).
   - The architecture of the proof: `ZetaBalance.sixTermBound_of_inputs` gives the six-term frontier from the deep
     inputs, stated as hypotheses (`ZetaBalance.SharpInputs`), and the pieces to prove (`ZetaBalance.SharpPieces`), each
     discharging named clauses of sharp data; the reduction is logical packaging. It targets the six-term frontier, not
@@ -273,8 +279,9 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     and one level per translate; the auxiliary prime `T` the least prime of `ArithT` in the window `(e^{Λ_u},
     2e^{Λ_u}]`; the level-`T` places those of `conj((a + b√−d)/2)` and the places `SG` those of `conj π_{g₀}`,
     `conj π_{g₁}`, with the canonical `√−d` of `E`, a quadratic Gauss sum (`ZetaBalance.Setting.gaussE`); the step-0
-    weights the design's, and the sources the whole cut. The period data, the target metric, `𝔞⁺`, `𝔞⁻`, the step-0
-    character and the heights are placeholders, for the pieces still to prove; no proof reads them. For it, the pieces
+    weights the design's, and the sources the whole cut; the forced orders the archive's, and the frame loss its
+    quarter of the budget. The period data, the target metric, `𝔞⁺`, `𝔞⁻`, the step-0 character and the heights are
+    placeholders, for the pieces still to prove; no proof reads them. For it, the pieces
     (T) (`ZetaBalance.sharpPrimes`, from `ShortNorm`) and (F) + (V) (`ZetaBalance.sharpSlopeFV`, from the exact slope
     bound, whose constant is at most `41·Σ_t a_t·log x`) hold eventually in the design.
 

@@ -14,25 +14,30 @@ frontier discards it (`sixTermBound_of_sharpBound`). So the target here is the s
 archive's objects enter only as the construction (`cons`), with the properties the pieces' proofs use.
 
 **The construction is data.** Several pieces must hold for the *same* choices (the coefficient field, the words, the
-auxiliary primes, the period data, `𝔞⁺`, `𝔞⁻`, the target metric, the heights and the constants). So the choices are
-one field of `SharpPieces`, `cons`: per design, a coefficient field (`SharpCoeff`) and per translate an object
-(`SharpObj`) holding every choice; with `adm`, the conditions the construction asks of the parameters, these are the
-two data fields. Every other field is a statement about `cons`, proved by unfolding the construction. Only the frame
-(coordinates and lattices) stays existential (`frame`), and every piece about frames holds for every frame realising
-the object (`SharpObj.RealWith`), as all such frames are isometric.
+auxiliary primes, the period data, `𝔞⁺`, `𝔞⁻`, the target metric, the heights, the forced orders and the constants).
+So the choices are one field of `SharpPieces`, `cons`: per design, a coefficient field (`SharpCoeff`) and per
+translate an object (`SharpObj`) holding every choice; with `adm`, the conditions the construction asks of the
+parameters, these are the two data fields. Every other field is a statement about `cons`, proved by unfolding the
+construction. Only the frame (coordinates and lattices) stays existential (`frame`), and every piece about frames holds
+for every frame realising the object (`SharpObj.RealWith`), as all such frames are isometric.
+
+**The forced orders are a choice.** The gain asks the index to be at least `… + Fo`, (G↑) the target's slope to be
+at most `… + Fo`, and the two cancel in the bridge (`SixTermData.gap_le_word`). So `Fo` is a field of the object
+(`SharpObj.Fo`), and any one value that both pieces meet will do; the construction takes the archive's
+(`ForcedOrders.Fo`).
 
 **Pieces** (one per item of the proof plan, §3–§4): finite classes and stabilisers (`finiteClasses`), forms
 finite-dimensional and integral forms a lattice (`formsLattice`), admissible parameters and windows (`params`), the
 frame's existence (`frame`), the auxiliary primes (`primes`, (T)), the slope bound (F) with the index (V)
-(`slopeFV`), the gain in (G↓) (`gain`), (G↑) (`gUp`), (S) and (R) (`frameSR`). `SharpObj.exists_sharpTr` assembles
-one translate from them. (Z) is not a piece: each piece bounds its own slack by a share of the budget
-`x^{4ε} Σ_t a_t` (a quarter each for `c↓ = c_F + c_G`, `c↑`, `(Σ_t a_t)·c_T` and the frame loss), and the reduction
-adds them up.
+(`slopeFV`), the gain in (G↓) (`gain`), (G↑) (`gUp`), the frame loss (`frameLoss`, the frame inequality's conclusion,
+in place of the archive's (S) and (R)). `SharpObj.exists_sharpTr` assembles one translate from them. (Z) is not a
+piece: each piece bounds its own slack by a share of the budget `x^{4ε} Σ_t a_t` (a quarter each for
+`c↓ = c_F + c_G`, `c↑`, `(Σ_t a_t)·c_T` and the frame loss), and the reduction adds them up.
 
 **Eventually in the design.** `adm` is data, chosen before the inputs, but some pieces hold only for `ε` small and
 `x` large in terms of an input's existential constants: `primes` needs `log(4dM²) ≤ c√Λ_u` for `ShortNorm`'s `c`,
 true only past some `x₀(c)`. Such thresholds cannot be conditions of `adm`. So the pieces about designs (`frame`,
-`primes`, `slopeFV`, `gain`, `gUp`, `frameSR`) have the archive's quantifier form, `EventuallyAdm`: some `ε₁ > 0` such
+`primes`, `slopeFV`, `gain`, `gUp`, `frameLoss`) have the archive's quantifier form, `EventuallyAdm`: some `ε₁ > 0` such
 that at every `ε ≤ ε₁` some `x₀` has the piece at every admissible design at `x ≥ x₀`. The reduction combines them
 (`SharpPieces.eventually_holdAt`, below the least `ε₁`, past the greatest `x₀`), calls `params` below `min ε₀ ε₁`, and
 starts its windows past `x₀`. `params` takes `ShortNorm`, with which the archive chooses the split primes `g₀, g₁` of
@@ -42,7 +47,7 @@ the design.
 
 **Inputs** (`SharpInputs`; proof plan §5): Siegel–Weil (with Rallis), good twists, the unitary mass formula,
 Chowla–Selberg/Colmez, `ShortNorm`. Where the library cannot state the classical theorem, the field is a consequence,
-and its docstring says so. The pieces still to prove (`frame`, `gain`, `gUp`, `frameSR`) take the whole bundle; the
+and its docstring says so. The pieces still to prove (`frame`, `gain`, `gUp`, `frameLoss`) take the whole bundle; the
 inputs they need about the construction (the local Weil representation, the covolume bound) are to be stated with
 them.
 
@@ -157,9 +162,9 @@ abbrev FrameOn.toKFrame {K : Type} [Field K] [NumberField K] [IsTotallyComplex K
 /-- **The object of a translate**: the choices at `u` that the pieces read, from the archive's construction. The words
 `Ω` and their auxiliary primes `T`; levels `Tμ` with groups `G` acting on points `Xp`, sources `Vs`, place sets,
 period data `P` with untwisted level `μ0` and twist `tw`, `𝔞⁺ = 𝔞p`, `𝔞⁻ = 𝔞n`, step-0 data, cusp subspaces `Xc` and
-isomorphisms `e`; the target metric `g` on `V0_{μ0} → K` at each complex place, the heights `ht`; and the constants:
-the place `pl` and scalars `cω` of (S), `e = eS`, `η`, the range `U`, the depth `H`, and the slacks `c_F` of (F),
-`c_G` of the gain (`c↓ = c_F + c_G`), `c↑` and `c_T`. -/
+isomorphisms `e`; the target metric `g` on `V0_{μ0} → K` at each complex place, the heights `ht`; the forced orders
+`Fo`, read by the gain and (G↑) alike; and the constants: the frame loss `loss`, and the slacks `c_F` of (F), `c_G` of
+the gain (`c↓ = c_F + c_G`), `c↑` and `c_T`. -/
 structure SharpObj {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ} (Dg : SharpDesign S κ x ε X) (C : SharpCoeff S) where
   /-- The words. -/
   Ω : Type
@@ -208,18 +213,10 @@ structure SharpObj {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ} (Dg : Shar
   g : Pl C.K → (P.V0 μ0 → C.K) → (P.V0 μ0 → C.K) → ℂ
   /-- The heights of the maps. -/
   ht : Ω → Pl C.K → ℝ
-  /-- The place of the frame condition. -/
-  pl : Pl C.K
-  /-- The scalars of the frame condition. -/
-  cω : Ω → ℝ
-  /-- The constant `e` of the frame condition. -/
-  eS : ℝ
-  /-- The constant `η` of the frame condition. -/
-  η : ℝ
-  /-- The range `U`. -/
-  U : ℝ
-  /-- The depth `H`. -/
-  H : ℝ
+  /-- The forced orders `Fo`, read by the gain and (G↑). -/
+  Fo : ℝ
+  /-- The frame loss. -/
+  loss : ℝ
   /-- The slack `c_F` of (F). -/
   cF : ℝ
   /-- The slack `c_G` of the gain. -/
@@ -303,39 +300,35 @@ def SlopeFV : Prop :=
       -b.cF + b.idx ω ≤ (F.toKFrame.frame.N ω).deg ⊤ / (F.toKFrame.frame.N ω).rk ⊤
 
 /-- **The gain in (G↓)** (archive: `closed_linkG_of_duty` with `duty_of_std`, `linkMu_of_full`): the index term is
-at least `Σ_t Σ_j ASK(a_t, t, w_{u,j}) − m(Σ_t a_t)·lg + Fo(𝒫_u) − c_G`, a statement about indices alone (local
-divisibility of the theta kernels at the inert places, the forced orders); `0 ≤ c_G ≤ x^{4ε} Σ_t a_t/8`. -/
+at least `Σ_t Σ_j ASK(a_t, t, w_{u,j}) − m(Σ_t a_t)·lg + Fo − c_G`, with the object's forced orders `Fo`, a statement
+about indices alone (local divisibility of the theta kernels at the inert places, the forced orders);
+`0 ≤ c_G ≤ x^{4ε} Σ_t a_t/8`. -/
 def Gain (u : S.A) : Prop :=
   0 ≤ b.cG ∧ b.cG ≤ x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 8 ∧
     ∀ ω, ∑ s ∈ Dg.TT, ∑ j, S.ASK (Dg.a s) s (Dg.w u j) - Dg.m * (∑ s ∈ Dg.TT, Dg.a s) * Real.log (Dg.g₀ * Dg.g₁) +
-      Dg.R.Fo (Dg.hc u) (S.twA κ) Dg.g₀ Dg.g₁ (S.cutX x ε) - b.cG ≤ b.idx ω
+      b.Fo - b.cG ≤ b.idx ω
 
 /-- **(G↑)** (archive: `closed_linkDIVt_of_closed_bridge_kernel` with the bridge kernel `link_brest_alt`,
 `wire_sel_alt`, `closed_family_admissible_twist_link_alt`, `selection_closed_of_wu_decay_alt`): in every realising
-frame, `μ_g(C_u) + h_g(B_ω) − Fo(𝒫_u) ≤ MAIN_ω + c↑`, for the object's target metric `g`; `0 ≤ c↑ ≤ x^{4ε} Σ_t a_t/4`.
-Not decomposed further here: its inputs (Rallis, `hX`, Colmez) bear on the target metric, which the library does
-not define. -/
-def GUp (u : S.A) : Prop :=
+frame, `μ_g(C_u) + h_g(B_ω) − Fo ≤ MAIN_ω + c↑`, for the object's target metric `g` and forced orders `Fo`;
+`0 ≤ c↑ ≤ x^{4ε} Σ_t a_t/4`. Not decomposed further here: its inputs (Rallis, `hX`, Colmez) bear on the target
+metric, which the library does not define. -/
+def GUp : Prop :=
   0 ≤ b.cUp ∧ b.cUp ≤ x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4 ∧
     ∀ (F : FrameOn C.K b.Ω) c eC, b.RealWith F c eC → ∀ ω,
-      F.toKFrame.frame.C.deg ⊤ / F.toKFrame.frame.C.rk ⊤ + F.toKFrame.frame.h ω -
-        Dg.R.Fo (Dg.hc u) (S.twA κ) Dg.g₀ Dg.g₁ (S.cutX x ε) ≤ S.mainW Dg.TT Dg.m Dg.a S.vE (b.T ω) + b.cUp
+      F.toKFrame.frame.C.deg ⊤ / F.toKFrame.frame.C.rk ⊤ + F.toKFrame.frame.h ω - b.Fo ≤
+        S.mainW Dg.TT Dg.m Dg.a S.vE (b.T ω) + b.cUp
 
-/-- **(S) and (R)** (archive: `link_alt_alt_bis` with `rowMainEqP_of_siegelWeil`, `rowNGP_of_siegelWeil`,
-`rowsPos_typeP`, `wuDecayOfGap`, `rowsFinDim_link`; `slope_inequality_family_four`): in every realising frame, the
-frame condition at `pl` for the `c_ω·B_ω` with constants `e`, `η`, positive total rank, the range
-`μ_max(N_ω) − h_ω ≤ s_u + U` and the depth `μ_min(C_u) ≥ s_u − H`; the constants are signed and the frame loss
-`αH + βU log(1 + H/U)` is within a quarter of the budget. One piece: the range and the depth are read at the same
-mean `s_u` and their constants share one budget with `e`, `η`. -/
-def FrameSR : Prop :=
-  (∀ ω, 0 < b.cω ω) ∧ 0 ≤ b.eS ∧ 0 < b.U ∧ 0 ≤ b.H ∧
-    (b.η + 2 * √b.eS / (1 - √b.eS)) * b.H + 2 / (1 - √b.eS) * b.U * Real.log (1 + b.H / b.U) ≤
-      x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4 ∧
+/-- **The frame loss** (in place of the archive's (S) and (R): `link_alt_alt_bis`, `slope_inequality_family_four`):
+in every realising frame, the words have positive total rank and `s_u − μ(C_u) ≤ loss` at the rank-weighted mean
+`s_u` of `μ(N_ω) − h_ω`; `0 ≤ loss ≤ x^{4ε} Σ_t a_t/4`. Only the frame inequality's conclusion is asked. The archive's
+route to it, the frame condition at one place with the range and the depth, is `KFrame.frame_le_of_frameCond`; a frame
+of one word can bound the loss with no frame condition and no depth. -/
+def FrameLoss : Prop :=
+  0 ≤ b.loss ∧ b.loss ≤ x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4 ∧
     ∀ (F : FrameOn C.K b.Ω) c eC, b.RealWith F c eC →
-      FrameAtPlace.FrameCond (fun ω : F.toKFrame.ι => b.cω ω • F.toKFrame.comp ω b.pl) b.eS b.η ∧
       0 < ∑ ω, ((F.toKFrame.frame.N ω).rk ⊤ : ℝ) ∧
-      (∀ ω, (F.toKFrame.frame.N ω).SlopeLe (F.toKFrame.frame.mean + b.U + F.toKFrame.frame.h ω)) ∧
-      F.toKFrame.frame.C.SlopeGe ⊤ (F.toKFrame.frame.mean - b.H)
+      F.toKFrame.frame.mean - F.toKFrame.frame.C.deg ⊤ / F.toKFrame.frame.C.rk ⊤ ≤ b.loss
 
 end SharpObj
 
@@ -485,7 +478,7 @@ def Params (adm : ∀ {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ}, SharpD
 uses them. Two fields are choices, not statements: `adm`, the conditions the construction asks of the parameters,
 and `cons`, the construction itself (the archive's objects, the target metric, the constants), which the frontier
 leaves existential and several pieces share. Every other field is a statement about them, provable on its own.
-The pieces about designs (`frame`, `primes`, `slopeFV`, `gain`, `gUp`, `frameSR`) hold eventually in the
+The pieces about designs (`frame`, `primes`, `slopeFV`, `gain`, `gUp`, `frameLoss`) hold eventually in the
 design (`EventuallyAdm`): for `ε` small and `x` large in terms of the constants of the inputs they take. `adm` is
 chosen before the inputs, so such thresholds cannot be conditions of `adm`; `params` gives designs at an `ε` below
 any `ε₀` and at every `x` of windows starting arbitrarily far out, which meets them. -/
@@ -520,31 +513,24 @@ structure SharpPieces where
     ∀ u ∈ A₀ κ, ((cons Dg).obj u).Gain u
   /-- **(G↑)** (`SharpObj.GUp`), eventually in the design. -/
   gUp : SharpInputs → EventuallyAdm adm
-    fun {S κ x ε X} (Dg : SharpDesign S κ x ε X) => ∀ u ∈ A₀ κ, ((cons Dg).obj u).GUp u
-  /-- **(S) and (R)** (`SharpObj.FrameSR`), eventually in the design. -/
-  frameSR : SharpInputs → EventuallyAdm adm
-    fun {S κ x ε X} (Dg : SharpDesign S κ x ε X) => ∀ u ∈ A₀ κ, ((cons Dg).obj u).FrameSR
+    fun {S κ x ε X} (Dg : SharpDesign S κ x ε X) => ∀ u ∈ A₀ κ, ((cons Dg).obj u).GUp
+  /-- **The frame loss** (`SharpObj.FrameLoss`), eventually in the design. -/
+  frameLoss : SharpInputs → EventuallyAdm adm
+    fun {S κ x ε X} (Dg : SharpDesign S κ x ε X) => ∀ u ∈ A₀ κ, ((cons Dg).obj u).FrameLoss
 
 /-! ## The reduction -/
 
-/-- **The data of sharp data at one translate**: a frame, auxiliary primes on its words, and the constants. -/
+/-- **The data of sharp data at one translate**: a frame, auxiliary primes on its words, the forced orders, the frame
+loss and the slacks. -/
 structure SharpTr (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] where
   /-- The frame. -/
   F : KFrame K
   /-- The auxiliary primes. -/
   T : F.ι → ℕ
-  /-- The place of the frame condition. -/
-  pl : Pl K
-  /-- The scalars of the frame condition. -/
-  cω : F.ι → ℝ
-  /-- `e`. -/
-  e : ℝ
-  /-- `η`. -/
-  η : ℝ
-  /-- The range. -/
-  U : ℝ
-  /-- The depth. -/
-  H : ℝ
+  /-- The forced orders. -/
+  Fo : ℝ
+  /-- The frame loss. -/
+  loss : ℝ
   /-- `c↓`. -/
   cDn : ℝ
   /-- `c↑`. -/
@@ -561,10 +547,8 @@ structure SharpTr.Basic {K : Type} [Field K] [NumberField K] [IsTotallyComplex K
   T_prime : ∀ ω, (t.T ω).Prime
   /-- `Arith` for the auxiliary primes. -/
   arith : ∀ ω, Dg.ArithT (t.T ω)
-  /-- `c_ω > 0`. -/
-  cω_pos : ∀ ω, 0 < t.cω ω
-  /-- `0 ≤ e`. -/
-  e_nonneg : 0 ≤ t.e
+  /-- The frame loss is nonnegative. -/
+  loss_nonneg : 0 ≤ t.loss
   /-- `c↓ ≥ 0`. -/
   cDn_nonneg : 0 ≤ t.cDn
   /-- `c↑ ≥ 0`. -/
@@ -580,43 +564,33 @@ structure SharpTr.Sharp (Dg : SharpDesign S κ x ε X) (u : S.A) {K : Type} [Fie
   /-- (G↓). -/
   hGdn : ∀ ω, ∑ s ∈ Dg.TT, ∑ j, S.ASK (Dg.a s) s (Dg.w u j) -
       Dg.m * (∑ s ∈ Dg.TT, Dg.a s) * Real.log (Dg.g₀ * Dg.g₁) +
-      Dg.R.Fo (Dg.hc u) (S.twA κ) Dg.g₀ Dg.g₁ (S.cutX x ε) - t.cDn ≤ (t.F.frame.N ω).deg ⊤ / (t.F.frame.N ω).rk ⊤
+      t.Fo - t.cDn ≤ (t.F.frame.N ω).deg ⊤ / (t.F.frame.N ω).rk ⊤
   /-- (G↑). -/
-  hGup : ∀ ω, t.F.frame.C.deg ⊤ / t.F.frame.C.rk ⊤ + t.F.frame.h ω -
-      Dg.R.Fo (Dg.hc u) (S.twA κ) Dg.g₀ Dg.g₁ (S.cutX x ε) ≤ S.mainW Dg.TT Dg.m Dg.a S.vE (t.T ω) + t.cUp
-  /-- (S). -/
-  hS : FrameAtPlace.FrameCond (fun ω => t.cω ω • t.F.comp ω t.pl) t.e t.η
-  /-- (R): positive total rank. -/
+  hGup : ∀ ω, t.F.frame.C.deg ⊤ / t.F.frame.C.rk ⊤ + t.F.frame.h ω - t.Fo ≤
+    S.mainW Dg.TT Dg.m Dg.a S.vE (t.T ω) + t.cUp
+  /-- Positive total rank. -/
   rk_pos : 0 < ∑ ω, ((t.F.frame.N ω).rk ⊤ : ℝ)
-  /-- (R): the range. -/
-  range : ∀ ω, (t.F.frame.N ω).SlopeLe (t.F.frame.mean + t.U + t.F.frame.h ω)
-  /-- (R): the depth. -/
-  depth : t.F.frame.C.SlopeGe ⊤ (t.F.frame.mean - t.H)
-  /-- `U > 0`. -/
-  U_pos : 0 < t.U
-  /-- `H ≥ 0`. -/
-  H_nonneg : 0 ≤ t.H
+  /-- The frame loss: `s − μ(C) ≤ loss` at the rank-weighted mean `s`. -/
+  frame_le : t.F.frame.mean - t.F.frame.C.deg ⊤ / t.F.frame.C.rk ⊤ ≤ t.loss
   /-- (Z) at this translate. -/
-  budget : t.cDn + t.cUp + (∑ s ∈ Dg.TT, Dg.a s) * t.cT +
-      ((t.η + 2 * √t.e / (1 - √t.e)) * t.H + 2 / (1 - √t.e) * t.U * Real.log (1 + t.H / t.U)) ≤
-    x ^ (4 * ε) * ∑ s ∈ Dg.TT, Dg.a s
+  budget : t.cDn + t.cUp + (∑ s ∈ Dg.TT, Dg.a s) * t.cT + t.loss ≤ x ^ (4 * ε) * ∑ s ∈ Dg.TT, Dg.a s
 
-/-- **One translate from its pieces**: an object with a realising frame, whose primes, slopes, gain, (G↑), (S) and
-(R) hold, gives the clauses of sharp data at `u`. (G↓) is (F) + (V) (`SlopeFV`) with the gain (`Gain`),
-`c↓ = c_F + c_G`; (Z) at `u` adds the four quarter-budgets. -/
+/-- **One translate from its pieces**: an object with a realising frame, whose primes, slopes, gain, (G↑) and frame
+loss hold, gives the clauses of sharp data at `u`, with the object's forced orders. (G↓) is (F) + (V) (`SlopeFV`) with
+the gain (`Gain`), `c↓ = c_F + c_G`; (Z) at `u` adds the four quarter-budgets. -/
 theorem SharpObj.exists_sharpTr {Dg : SharpDesign S κ x ε X} {C : SharpCoeff S} (b : SharpObj Dg C) (u : S.A)
-    (hfr : b.FrameExists) (hT : b.Primes u) (hFV : b.SlopeFV) (hgain : b.Gain u) (hup : b.GUp u)
-    (hSR : b.FrameSR) : ∃ t : SharpTr C.K, t.Basic Dg ∧ t.Sharp Dg u := by
+    (hfr : b.FrameExists) (hT : b.Primes u) (hFV : b.SlopeFV) (hgain : b.Gain u) (hup : b.GUp)
+    (hL : b.FrameLoss) : ∃ t : SharpTr C.K, t.Basic Dg ∧ t.Sharp Dg u := by
   obtain ⟨F, c, eC, hR⟩ := hfr
   obtain ⟨hcT0, hcT, hT⟩ := hT
   obtain ⟨hcF0, hcF, hFV⟩ := hFV
   obtain ⟨hcG0, hcG, hgain⟩ := hgain
   obtain ⟨hcU0, hcU, hup⟩ := hup
-  obtain ⟨hcω, he0, hU0, hH0, hloss, hSR⟩ := hSR
-  obtain ⟨hS, hrk, hrange, hdepth⟩ := hSR F c eC hR
-  refine ⟨⟨F.toKFrame, b.T, b.pl, b.cω, b.eS, b.η, b.U, b.H, b.cF + b.cG, b.cUp, b.cT⟩,
-    ⟨fun ω => (hT ω).1, fun ω => (hT ω).2.1, hcω, he0, add_nonneg hcF0 hcG0, hcU0, hcT0⟩,
-    ⟨fun ω => (hT ω).2.2, fun ω => ?_, hup F c eC hR, hS, hrk, hrange, hdepth, hU0, hH0, ?_⟩⟩
+  obtain ⟨hL0, hL, hLF⟩ := hL
+  obtain ⟨hrk, hle⟩ := hLF F c eC hR
+  refine ⟨⟨F.toKFrame, b.T, b.Fo, b.loss, b.cF + b.cG, b.cUp, b.cT⟩,
+    ⟨fun ω => (hT ω).1, fun ω => (hT ω).2.1, hL0, add_nonneg hcF0 hcG0, hcU0, hcT0⟩,
+    ⟨fun ω => (hT ω).2.2, fun ω => ?_, hup F c eC hR, hrk, hle, ?_⟩⟩
   · have h1 := hFV F c eC hR ω
     have h2 := hgain ω
     dsimp only
@@ -625,29 +599,29 @@ theorem SharpObj.exists_sharpTr {Dg : SharpDesign S κ x ε X} {C : SharpCoeff S
     linarith
 
 /-- **The pieces about a design hold at it**: the conclusions of `frame`, `primes`, `slopeFV`, `gain`, `gUp` and
-`frameSR` at `Dg`, translate by translate. -/
+`frameLoss` at `Dg`, translate by translate. -/
 def SharpPieces.HoldAt (P : SharpPieces) (Dg : SharpDesign S κ x ε X) : Prop :=
   ∀ u ∈ A₀ κ, ((P.cons Dg).obj u).FrameExists ∧ ((P.cons Dg).obj u).Primes u ∧
-      ((P.cons Dg).obj u).SlopeFV ∧ ((P.cons Dg).obj u).Gain u ∧ ((P.cons Dg).obj u).GUp u ∧
-      ((P.cons Dg).obj u).FrameSR
+      ((P.cons Dg).obj u).SlopeFV ∧ ((P.cons Dg).obj u).Gain u ∧ ((P.cons Dg).obj u).GUp ∧
+      ((P.cons Dg).obj u).FrameLoss
 
 /-- **The pieces about designs hold together eventually in the design**, with the inputs they use: the six pieces
 combined by `EventuallyAdm.and`, below the least of their `ε₁` and, at each `ε`, past the greatest of their `x₀`. -/
 theorem SharpPieces.eventually_holdAt (I : SharpInputs) (P : SharpPieces) : EventuallyAdm P.adm P.HoldAt := by
   obtain ⟨ε₁, hε₁, h⟩ := (((((P.frame I).and (P.primes I.shortNorm)).and P.slopeFV).and (P.gain I)).and
-    (P.gUp I)).and (P.frameSR I)
+    (P.gUp I)).and (P.frameLoss I)
   refine ⟨ε₁, hε₁, fun ε hε hle => ?_⟩
   obtain ⟨x₀, hx₀⟩ := h ε hε hle
   refine ⟨x₀, fun Dg hx hDg => ?_⟩
-  obtain ⟨⟨⟨⟨⟨hfr, hT⟩, hFV⟩, hgain⟩, hup⟩, hSR⟩ := hx₀ Dg hx hDg
-  exact fun u hu => ⟨hfr u hu, hT u hu, hFV u hu, hgain u hu, hup u hu, hSR u hu⟩
+  obtain ⟨⟨⟨⟨⟨hfr, hT⟩, hFV⟩, hgain⟩, hup⟩, hL⟩ := hx₀ Dg hx hDg
+  exact fun u hu => ⟨hfr u hu, hT u hu, hFV u hu, hgain u hu, hup u hu, hL u hu⟩
 
 /-- **One translate from the pieces**: at `u ∈ A₀`, the pieces about the construction's object, at a design where
 they hold. -/
 theorem exists_sharpTr (P : SharpPieces) (Dg : SharpDesign S κ x ε X) (h : P.HoldAt Dg) (u : S.A)
     (hu : u ∈ A₀ κ) : ∃ t : SharpTr (P.cons Dg).C.K, t.Basic Dg ∧ t.Sharp Dg u := by
-  obtain ⟨hfr, hT, hFV, hgain, hup, hSR⟩ := h u hu
-  exact ((P.cons Dg).obj u).exists_sharpTr u hfr hT hFV hgain hup hSR
+  obtain ⟨hfr, hT, hFV, hgain, hup, hL⟩ := h u hu
+  exact ((P.cons Dg).obj u).exists_sharpTr u hfr hT hFV hgain hup hL
 
 /-- **Sharp data from the pieces**, at a design where the pieces about designs hold: the translates of `A₀` from
 `exists_sharpTr`, the others from the translate `1` (`SharpData` asks primes and signs at every translate); (Z) is
@@ -677,29 +651,20 @@ theorem exists_sharpData (P : SharpPieces) (Dg : SharpDesign S κ x ε X) (h : P
       fr := fun u => (tr u).F
       T := fun u => (tr u).T
       T_prime := fun u => (htr u).1.T_prime
-      pl := fun u => (tr u).pl
-      cω := fun u => (tr u).cω
-      e := fun u => (tr u).e
-      η := fun u => (tr u).η
-      U := fun u => (tr u).U
-      H := fun u => (tr u).H
+      Fo := fun u => (tr u).Fo
+      loss := fun u => (tr u).loss
       cDn := fun u => (tr u).cDn
       cUp := fun u => (tr u).cUp
       cT := fun u => (tr u).cT
-      cω_pos := fun u => (htr u).1.cω_pos
-      e_nonneg := fun u => (htr u).1.e_nonneg
-      U_pos := fun u hu => ((htr u).2 hu).U_pos
-      H_nonneg := fun u hu => ((htr u).2 hu).H_nonneg
+      loss_nonneg := fun u => (htr u).1.loss_nonneg
       cDn_nonneg := fun u => (htr u).1.cDn_nonneg
       cUp_nonneg := fun u => (htr u).1.cUp_nonneg
       cT_nonneg := fun u => (htr u).1.cT_nonneg
       hT := fun u hu => ((htr u).2 hu).hT
       hGdn := fun u hu => ((htr u).2 hu).hGdn
       hGup := fun u hu => ((htr u).2 hu).hGup
-      hS := fun u hu => ((htr u).2 hu).hS
       rk_pos := fun u hu => ((htr u).2 hu).rk_pos
-      range := fun u hu => ((htr u).2 hu).range
-      depth := fun u hu => ((htr u).2 hu).depth
+      frame_le := fun u hu => ((htr u).2 hu).frame_le
       sizes := (Finset.sum_le_card_nsmul _ _ _ fun u hu => ((htr u).2 hu).budget).trans_eq
         (by rw [nsmul_eq_mul, mul_assoc]) }
   exact ⟨D⟩

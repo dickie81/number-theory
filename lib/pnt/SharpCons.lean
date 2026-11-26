@@ -8,7 +8,7 @@ import QuadSub
 The field `SharpPieces.cons` of the proof's architecture (`SharpInputs`): per design, a coefficient field
 (`sharpCoeff`) and per translate an object (`sharpObj`), assembled in `sharpCons`. This is Stage 0 of the
 construction: the choices that the proved pieces read (`SharpCores`: (T) and (F) + (V)) are the archive's, and the
-choices that only the pieces still to build read (the frame, the gain, (G↑), (S) and (R)) are placeholders, to be
+choices that only the pieces still to build read (the frame, the gain, (G↑), the frame loss) are placeholders, to be
 replaced when those pieces are built: `sharpχ0`, `sharpPer`, `sharpTw` and the fields that `sharpObj`'s docstring
 lists. Each field with content is a definition of its own, so that a later stage replaces one without touching the
 others; the placeholders without content (`0`, `1`, `⊤`) are written in `sharpObj`.
@@ -29,8 +29,12 @@ at a modulus `M`, `1` if there is no such `(a, b)`; and `placesOf z` is the fini
 **Step 0** (`n0 = k`, `λ_0 = wt_0(hc u)`, `X_c = ⊤`, `V_ω = X_c ⊓ V(ST, τ_K, χ0, λ_0)`, `e = id`): the archive's
 step-0 weights of the base word on the whole cut, with the trivial character `χ0` (placeholder).
 
-**The constants.** `c_F = c_G = x^{4ε}Σ_t a_t/8`, `c↑ = x^{4ε}Σ_t a_t/4` (each slack its share of the budget) and
-`c_T = 0` (as `Λ_u < log T`).
+**The forced orders** (`Fo`, read by the gain and (G↑) alike, and cancelling between them): the archive's,
+`ForcedOrders.Fo` of the base word's family `hc u` at the split primes `g₀, g₁`, the twist `twA κ` and the cut-off
+`X″ = Setting.cutX x ε`.
+
+**The constants.** `c_F = c_G = x^{4ε}Σ_t a_t/8`, `c↑ = x^{4ε}Σ_t a_t/4`, the frame loss `x^{4ε}Σ_t a_t/4` (each its
+share of the budget) and `c_T = 0` (as `Λ_u < log T`).
 -/
 
 namespace ZetaBalance
@@ -154,9 +158,10 @@ def sharpTw (Dg : SharpDesign S κ x ε X) (u : S.A) : PeriodTarget.Twist (sharp
 /-- **The object of the translate `u`** (`SharpObj`), Stage 0. The words, the levels, their groups and points are
 `Unit`; the auxiliary prime `sharpT`, the places `sharpST`, `sharpSG`, the step-0 data (`n0 = k`, `sharpLam0`,
 `sharpχ0`, `X_c = ⊤`, `V_ω = sharpVs`, `e = id`), the period data `sharpPer` at the level `()` with the twist
-`sharpTw`; the slacks `c_F = c_G = x^{4ε}Σ_t a_t/8`, `c↑ = x^{4ε}Σ_t a_t/4`, `c_T = 0`. Stage 0 placeholders,
-replaced when the frame/gain/(G↑) pieces are built: `𝔞⁺ = 𝔞⁻ = ⊤`, the target metric `g = 0`, the heights `0`, any
-place `pl`, and the constants of (S) and (R) `c_ω = 1`, `e = 0`, `η = 0`, `U = 1`, `H = 0`. -/
+`sharpTw`; the archive's forced orders `Fo = ForcedOrders.Fo` (family `hc u`, twist `twA κ`, cut-off `cutX x ε`); the
+slacks `c_F = c_G = x^{4ε}Σ_t a_t/8`, `c↑ = x^{4ε}Σ_t a_t/4`, `c_T = 0` and the frame loss `x^{4ε}Σ_t a_t/4`, each its
+share of the budget. Stage 0 placeholders, replaced when the frame/gain/(G↑) pieces are built: `𝔞⁺ = 𝔞⁻ = ⊤`, the
+target metric `g = 0` and the heights `0`. -/
 def sharpObj (Dg : SharpDesign S κ x ε X) (u : S.A) : SharpObj Dg (sharpCoeff S) where
   Ω := Unit
   T _ := sharpT Dg u
@@ -179,12 +184,8 @@ def sharpObj (Dg : SharpDesign S κ x ε X) (u : S.A) : SharpObj Dg (sharpCoeff 
   e _ := LinearEquiv.refl _ _
   g _ _ _ := 0
   ht _ _ := 0
-  pl := ⟨Classical.arbitrary _, IsTotallyComplex.isComplex _⟩
-  cω _ := 1
-  eS := 0
-  η := 0
-  U := 1
-  H := 0
+  Fo := Dg.R.Fo (Dg.hc u) (S.twA κ) Dg.g₀ Dg.g₁ (S.cutX x ε)
+  loss := x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4
   cF := x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 8
   cG := x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 8
   cUp := x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4
