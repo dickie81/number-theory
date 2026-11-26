@@ -202,11 +202,11 @@ structure SharpData (S : Setting) (κ : S.A →* ℂˣ) (x ε X : ℝ) (K : Type
   range : ∀ u ∈ A₀ κ, ∀ ω, ((fr u).frame.N ω).SlopeLe ((fr u).frame.mean + U u + (fr u).frame.h ω)
   /-- **(R)**: `μ_min(C_u) ≥ s_u − H`. -/
   depth : ∀ u ∈ A₀ κ, (fr u).frame.C.SlopeGe ⊤ ((fr u).frame.mean - H u)
-  /-- **(Z)**: `Σ_u [c↓ + c↑ + (Σ_t a_t)c_T + αH + βU log(1 + H/U)] ≤ |A₀|·x^ε·Σ_t a_t`, with
+  /-- **(Z)**: `Σ_u [c↓ + c↑ + (Σ_t a_t)c_T + αH + βU log(1 + H/U)] ≤ |A₀|·x^{4ε}·Σ_t a_t`, with
   `α = η + 2√e/(1 − √e)` and `β = 2/(1 − √e)`. -/
   sizes : ∑ u ∈ A₀ κ, (cDn u + cUp u + (∑ t ∈ TT, a t) * cT u +
     ((η u + 2 * √(e u) / (1 - √(e u))) * H u + 2 / (1 - √(e u)) * U u * Real.log (1 + H u / U u))) ≤
-      (A₀ κ).card * x ^ ε * ∑ t ∈ TT, a t
+      (A₀ κ).card * x ^ (4 * ε) * ∑ t ∈ TT, a t
 
 namespace SharpData
 
