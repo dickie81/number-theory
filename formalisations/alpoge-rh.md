@@ -277,7 +277,9 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     `(log 4dM²)³ ≤ Λ_u` (`ZetaBalance.SharpDesign.Adm.logM_cube_le`) and `16x^ε ≤ log(g₀g₁) ≤ 17x^ε`
     (`ZetaBalance.SharpDesign.Adm.log_g_mem`). Two random choices the gain will need are not yet part of it.
   - The construction (`ZetaBalance.sharpCons`, `SharpChainU`): one word and one level per translate; the auxiliary
-    prime `T` the least prime of `ArithT` in the window `(e^{Λ_u}, 2e^{Λ_u}]`; the level-`T` places those of
+    prime `T` the least prime of `ArithT` in the window `(e^{Λ_u − x^{2ε}}, 2e^{Λ_u − x^{2ε}}]`, so `c_T = x^{2ε}`
+    (`ZetaBalance.sharpCT`; the second-moment route to the period map's rank needs `T` below a threshold `T*` about
+    `e^{x^{7ε/8}}` under `e^{Λ_u}`, and the shift costs `x^{2ε}Σ_t a_t` of the budget); the level-`T` places those of
     `conj((a + b√−d)/2)` and the places `SG` those of `conj π_{g₀}`, `conj π_{g₁}`, with the canonical `√−d` of `E`, a
     quadratic Gauss sum (`ZetaBalance.Setting.gaussE`); the step-0 weights the design's, and the sources the whole cut;
     the forced orders the archive's, and the frame loss its quarter of the budget. The period data are the explicit
@@ -445,7 +447,7 @@ The steps were written from the mathematics. Parts were written by helpers given
 
 | Result | Hypothesis | Lean |
 |---|---|---|
-| The piece (T) of `ZetaBalance.SharpPieces` for the construction `ZetaBalance.sharpCons`: at every admissible design with `x` large, every translate's auxiliary prime is a prime `T = ππ̄`, `π ≡ 1 (mod M)`, with `log T > Λ_u` | `ZetaBalance.ShortNorm` | `ZetaBalance.sharpPrimes` |
+| The piece (T) of `ZetaBalance.SharpPieces` for the construction `ZetaBalance.sharpCons`: at every admissible design with `x` large, every translate's auxiliary prime is a prime `T = ππ̄`, `π ≡ 1 (mod M)`, with `log T > Λ_u − x^{2ε}` and slack `c_T = x^{2ε}` within its quarter of the budget | `ZetaBalance.ShortNorm` | `ZetaBalance.sharpPrimes` |
 | Admissible designs exist (the piece `params` of `ZetaBalance.SharpPieces`): for every primitive `χ`, small `ε` and large `Y`, every pair of `ZetaTwist.WinPair` has, at every `x` of its window, a setting with a character lifting `χ` and an admissible design (`ZetaBalance.SharpDesign.Adm`) | `ZetaBalance.ShortNorm`, which gives the design's split primes `g₀ ≠ g₁` | `ZetaBalance.sharpParams` |
 | The core of the auxiliary primes (T): primes `T = ππ̄`, `π = (a + b√−d)/2 ≡ 1 (mod M)`, in every dyadic window `(e^Λ, 2e^Λ]` once `log(4dM²) ≤ c√Λ`, so meeting `ArithT` with `log T` within `log 2` of any large target; a step of the piece `primes` of `ZetaBalance.SharpPieces` | `ZetaBalance.ShortNorm`: Chebotarev in short intervals for `ℚ(√−d)`, an input of `ZetaBalance.SharpInputs` | `ZetaBalance.exists_prime_norm_window`, `ZetaBalance.SharpDesign.exists_prime_arithT` |
 | The jets of the one-variable normalised theta `th0` at a half-period `t` (`CMThetaOne`): Masser's half-period identity and Hurwitz's formula, so every jet is a polynomial over `ℤ` in `g₂/2`, `℘(t)` and `s₂`, and lies in `σ₀(K)`, is algebraic and is `ℓ`-integral for `ℓ ≠ 2` wherever these do or are; at the construction's lattice `Lc` and point `t = δ/2`, the jets lie in `σ₀(K)` when `g₂`, `℘(t)` and `s₂` do | `CMThetaOne.Legendre`: Legendre's relation `η₁ω₂ − η₂ω₁ = 2πi` for the library's `ζ_W`, classical, an input of the D1 plan (its proof needs a contour integral of `ζ_W`) | `CMThetaOne.zetaW_half`, `CMThetaOne.th0_taylor`, `CMThetaOne.th0_jets_mem`, `CMThetaOne.th0_jets_mem_closure`, `CMThetaOne.th0_jets_mem_range`, `CMThetaOne.th0_jets_isAlgebraic`, `CMThetaOne.th0_jets_int`, `CMThetaOne.canon_jets_mem_range` |

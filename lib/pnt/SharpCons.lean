@@ -18,7 +18,10 @@ images `τ_ρ(b_i)` of a `ℚ`-basis of `E` (`CoeffField.coeffClosure`), a numbe
 field `ChainField.chainField` contains it, and falls back to it when its generators are not finite-dimensional.
 
 **The auxiliary prime** (`sharpT`, one per translate): the least prime `T` with `ArithT` and
-`Λ_u < log T ≤ Λ_u + log 2`, which `ShortNorm` gives once `x` is large; `2` if there is none. Its element
+`Λ_u − x^{2ε} < log T ≤ Λ_u − x^{2ε} + log 2`, which `ShortNorm` gives once `x` is large; `2` if there is none. The
+window sits `x^{2ε}` below `Λ_u` (`sharpCT`, the slack `c_T` of (T)): the second-moment route to the rank of the
+period map needs `T` below a threshold `T*` with `Λ_u − log T* ≈ x^{7ε/8}`, and the shift puts it there with room,
+at a cost of `x^{2ε}Σ_t a_t` in the budget. Its element
 `π_T = (a + b√−d)/2` (`sharpTz`) is the `halfO` of `QuadSub` at the `(a, b)` of `ArithT`, and the places `ST` are
 those over `conj π_T` (`sharpST`). The places `SG` are those over `conj π_{g₀}` and `conj π_{g₁}` (`sharpSG`), with
 `π_g` from the design's split data (A11). One definition serves both elements (`normPi`): `(a + b√−d)/2` of norm `p`
@@ -74,13 +77,18 @@ def placesOf (z : 𝓞 S.E) : Finset (HeightOneSpectrum (𝓞 S.E)) :=
 
 /-! ## The places of a translate -/
 
+/-- **The slack of (T)**: `c_T = x^{2ε}`, the depth of the auxiliary prime's window below `Λ_u`. -/
+def sharpCT (x ε : ℝ) : ℝ := x ^ (2 * ε)
+
 open Classical in
 /-- **The auxiliary prime of the translate `u`** ((T), one per translate): the least prime `T` with `ArithT` and
-`Λ_u < log T ≤ Λ_u + log 2`, `Λ_u = S.lam w_u v_E log(g₀g₁)`, which `ShortNorm` gives once `x` is large
-(`SharpDesign.exists_prime_arithT`); `2` if there is none. -/
+`Λ_u − c_T < log T ≤ Λ_u − c_T + log 2`, `Λ_u = S.lam w_u v_E log(g₀g₁)`, `c_T = x^{2ε}` (`sharpCT`), which
+`ShortNorm` gives once `x` is large (`SharpDesign.exists_prime_arithT`); `2` if there is none. -/
 def sharpT (Dg : SharpDesign S κ x ε X) (u : S.A) : ℕ :=
-  if h : ∃ T : ℕ, T.Prime ∧ Dg.ArithT T ∧ S.lam (Dg.w u) S.vE (Real.log (Dg.g₀ * Dg.g₁)) < Real.log T ∧
-      Real.log T ≤ S.lam (Dg.w u) S.vE (Real.log (Dg.g₀ * Dg.g₁)) + Real.log 2 then Nat.find h else 2
+  if h : ∃ T : ℕ, T.Prime ∧ Dg.ArithT T ∧
+      S.lam (Dg.w u) S.vE (Real.log (Dg.g₀ * Dg.g₁)) - sharpCT x ε < Real.log T ∧
+      Real.log T ≤ S.lam (Dg.w u) S.vE (Real.log (Dg.g₀ * Dg.g₁)) - sharpCT x ε + Real.log 2 then Nat.find h
+  else 2
 
 /-- **`π_T = (a + b√−d)/2`** for the `(a, b)` of `ArithT T`, `T` the translate's auxiliary prime (`normPi` at the
 modulus `QS·q·d·(g₀g₁)²`); `1` if there is none. -/

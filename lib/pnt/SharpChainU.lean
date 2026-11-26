@@ -409,7 +409,8 @@ def sharpTw (u : S.A) : PeriodTarget.Twist (sharpPer Dg u) () where
 points, the auxiliary prime `sharpT`, the places `sharpST`, `sharpSG`, the step-0 data (`n0 = k`, `sharpLam0`,
 `sharpχ0`, `X_c = ⊤`, `V_ω = sharpVs`, `e = id`), the period data `sharpPer` of the explicit chain with the twist
 `sharpTw`; the archive's forced orders `Fo = ForcedOrders.Fo` (family `hc u`, twist `twA κ`, cut-off `cutX x ε`); the
-slacks `c_F = c_G = x^{4ε}Σ_t a_t/8`, `c↑ = x^{4ε}Σ_t a_t/4`, `c_T = 0` and the frame loss `x^{4ε}Σ_t a_t/4`.
+slacks `c_F = c_G = x^{4ε}Σ_t a_t/8`, `c↑ = x^{4ε}Σ_t a_t/4`, `c_T = x^{2ε}` (`sharpCT`) and the frame loss
+`x^{4ε}Σ_t a_t/4`.
 Placeholders, to be set by the gain and (G↑): `𝔞⁺ = 𝔞⁻ = ⊤`, the target metric `g = 0` and the heights `0`. -/
 def sharpObj (u : S.A) : SharpObj Dg (sharpCoeff Dg) where
   Ω := Unit
@@ -438,7 +439,7 @@ def sharpObj (u : S.A) : SharpObj Dg (sharpCoeff Dg) where
   cF := x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 8
   cG := x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 8
   cUp := x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4
-  cT := 0
+  cT := sharpCT x ε
 
 /-- **The construction of a design** (the field `SharpPieces.cons`): the coefficient field `sharpCoeff` of the
 chain and the object `sharpObj` of every translate. -/

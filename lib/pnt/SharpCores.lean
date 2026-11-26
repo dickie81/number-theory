@@ -9,10 +9,12 @@ The pieces `SharpPieces.primes` and `SharpPieces.slopeFV` of the proof's archite
 construction `sharpCons` with `adm := fun Dg => Dg.Adm` (`SharpAdm`): `sharpPrimes` and `sharpSlopeFV`.
 
 **(T)** (`sharpPrimes`). `ShortNorm` gives a constant `c > 0` with a prime `T` of the shape `ArithT` and
-`Λ_u < log T ≤ Λ_u + log 2` once `log(4dM²) ≤ c√Λ_u` (`SharpDesign.exists_prime_arithT`). At an admissible design
-`(log 4dM²)³ ≤ Λ_u` (`Adm.logM_cube_le`) and `Λ_u ≥ 16mx^ε ≥ √x` (`Adm.lam_ge`, `Adm.m_mul_rpow`), so the condition
-holds once `c⁶Λ_u ≥ 1`, at every `x ≥ c^{−12}`: then `Y² ≤ c²Λ_u` for `Y = log 4dM²`, as else
-`c⁶Λ_u³ < Y⁶ ≤ Λ_u²`. The auxiliary prime `sharpT` is then the least such prime, and `c_T = 0`.
+`Λ < log T ≤ Λ + log 2` once `log(4dM²) ≤ c√Λ` (`SharpDesign.exists_prime_arithT`); it is applied at
+`Λ = Λ_u − x^{2ε}`, the window of `sharpT`. At an admissible design `16mx^ε ≤ Λ_u` (`Adm.lam_ge`),
+`√x ≤ mx^ε` (`Adm.m_mul_rpow`) and `x^{2ε} ≤ √x` (`ε < 1/52`), so `Λ ≥ Λ_u/2 ≥ 8√x`; and `(log 4dM²)³ ≤ Λ_u ≤ 2Λ`
+(`Adm.logM_cube_le`). So the condition holds once `c⁶Λ ≥ 4`, at every `x ≥ c^{−12}`: then `Y² ≤ c²Λ` for
+`Y = log 4dM²`, as else `c⁶Λ³ < Y⁶ ≤ 4Λ²`. The auxiliary prime `sharpT` is then the least such prime, with
+`Λ_u − c_T < log T` for `c_T = x^{2ε}`, and `(Σ_t a_t)·x^{2ε} ≤ x^{4ε}Σ_t a_t/4` as `x^{2ε} ≥ 4096`.
 
 **(F) + (V)** (`sharpSlopeFV`), at every admissible design, from the exact slope bound `SharpObj.slopeFV_exact`.
 * `SG` has a place over each split prime (`exists_sharpSG`): `π_g·conj π_g = g` (`normPi_mul_conj`), and `conj π_g`
@@ -114,41 +116,51 @@ theorem exists_sharpSG {Dg : SharpDesign S κ x ε X} (hA : Dg.Adm) :
 /-! ## (T) -/
 
 /-- **(T) for the construction** (`SharpPieces.primes` at `adm := Adm`, `cons := sharpCons`): from `ShortNorm`'s
-constant `c`, at every `ε` and every admissible design at `x ≥ c^{−12}`, the window of `sharpT` holds a prime of the
-shape `ArithT` (`SharpDesign.exists_prime_arithT`, as `log 4dM² ≤ c√Λ_u`), so `sharpT` is one, with
-`Λ_u < log T` and `c_T = 0`. -/
+constant `c`, at every `ε` and every admissible design at `x ≥ c^{−12}`, the window of `sharpT`, `x^{2ε}` below `Λ_u`,
+holds a prime of the shape `ArithT` (`SharpDesign.exists_prime_arithT`, as `log 4dM² ≤ c√(Λ_u − x^{2ε})`), so
+`sharpT` is one, with `Λ_u − c_T < log T` and `c_T = x^{2ε}` within a quarter of the budget. -/
 theorem sharpPrimes (hS : ShortNorm) : EventuallyAdm (fun Dg => Dg.Adm)
     fun {S κ x ε X} (Dg : SharpDesign S κ x ε X) => ∀ u ∈ A₀ κ, ((sharpCons Dg).obj u).Primes u := by
   classical
   obtain ⟨c, hc, H⟩ := SharpDesign.exists_prime_arithT hS
   refine ⟨1, one_pos, fun ε _ _ => ⟨((c ^ 6)⁻¹) ^ 2, fun {S κ x X} Dg hx hA u _ => ?_⟩⟩
-  set Λ := S.lam (Dg.w u) S.vE (Real.log (Dg.g₀ * Dg.g₁))
+  set Λu := S.lam (Dg.w u) S.vE (Real.log (Dg.g₀ * Dg.g₁))
   set Y := Real.log (4 * S.d * ((S.QS * S.q * S.d * (Dg.g₀ * Dg.g₁) ^ 2 : ℕ) : ℝ) ^ 2)
+  set Λ := Λu - sharpCT x ε with hΛdef
   have hc6 : 0 < c ^ 6 := by positivity
-  -- `Λ_u ≥ 16mx^ε ≥ √x ≥ c^{−6}`
-  have h1 : 1 ≤ c ^ 6 * Λ := by
+  have hx0 := hA.big.pos
+  -- `x^{2ε} ≤ √x ≤ mx^ε ≤ Λ_u/16`, so `Λ ≥ Λ_u/2 ≥ 8√x`
+  have hsq : √x ≤ Dg.m * x ^ ε := by
     have hm := hA.m_mul_rpow.1
-    rw [← Real.sqrt_eq_rpow] at hm
-    have hl := hA.lam_ge u
-    have hmx : 0 ≤ (Dg.m : ℝ) * x ^ ε := mul_nonneg (Nat.cast_nonneg _) (Real.rpow_nonneg hA.big.pos.le _)
-    have hsx : (c ^ 6)⁻¹ ≤ √x := (Real.le_sqrt (by positivity) hA.big.pos.le).2 hx
-    calc 1 = c ^ 6 * (c ^ 6)⁻¹ := (mul_inv_cancel₀ hc6.ne').symm
-      _ ≤ c ^ 6 * Λ := by gcongr; linarith
-  have hΛ0 : 0 < Λ := pos_of_mul_pos_right (one_pos.trans_le h1) hc6.le
-  -- `log 4dM² ≤ c√Λ_u`: else `c⁶Λ³ < Y⁶ ≤ Λ²`
+    rwa [← Real.sqrt_eq_rpow] at hm
+  have hl : 16 * ((Dg.m : ℝ) * x ^ ε) ≤ Λu := by rw [← mul_assoc]; exact hA.lam_ge u
+  have hT2 : sharpCT x ε ≤ √x := by
+    rw [sharpCT, Real.sqrt_eq_rpow]
+    exact Real.rpow_le_rpow_of_exponent_le (by linarith [hA.big.x_ge]) (by linarith [hA.big.ε_lt])
+  have hΛu : Λu ≤ 2 * Λ := by rw [hΛdef]; linarith [Real.sqrt_nonneg x]
+  have h8 : 8 * √x ≤ Λ := by rw [hΛdef]; linarith [Real.sqrt_nonneg x]
+  -- `c⁶Λ ≥ 4`, from `√x ≥ c^{−6}`
+  have hsx : (c ^ 6)⁻¹ ≤ √x := (Real.le_sqrt (by positivity) hx0.le).2 hx
+  have h4 : 4 ≤ c ^ 6 * Λ := by
+    calc (4 : ℝ) ≤ 8 * (c ^ 6 * (c ^ 6)⁻¹) := by rw [mul_inv_cancel₀ hc6.ne']; norm_num
+      _ ≤ 8 * (c ^ 6 * √x) := by gcongr
+      _ = c ^ 6 * (8 * √x) := by ring
+      _ ≤ c ^ 6 * Λ := by gcongr
+  have hΛ0 : 0 < Λ := pos_of_mul_pos_right (by linarith) hc6.le
+  -- `log 4dM² ≤ c√Λ`: else `c⁶Λ³ < Y⁶ ≤ 4Λ²`
   have hYc : Y ≤ c * √Λ := by
     rcases le_or_gt Y 0 with hY0 | hY0
     · exact hY0.trans (by positivity)
-    have hY3 : Y ^ 3 ≤ Λ := hA.logM_cube_le u
+    have hY3 : Y ^ 3 ≤ 2 * Λ := (hA.logM_cube_le u).trans hΛu
     have key : Y ^ 2 ≤ c ^ 2 * Λ := by
       by_contra hlt
       push Not at hlt
       have e1 : (c ^ 2 * Λ) ^ 3 < (Y ^ 2) ^ 3 := pow_lt_pow_left₀ hlt (by positivity) (by norm_num)
-      have e2 : (Y ^ 2) ^ 3 ≤ Λ ^ 2 := by
+      have e2 : (Y ^ 2) ^ 3 ≤ (2 * Λ) ^ 2 := by
         calc (Y ^ 2) ^ 3 = (Y ^ 3) ^ 2 := by ring
-          _ ≤ Λ ^ 2 := pow_le_pow_left₀ (by positivity) hY3 2
-      have e3 : Λ ^ 2 ≤ (c ^ 2 * Λ) ^ 3 := by
-        calc Λ ^ 2 = 1 * Λ ^ 2 := (one_mul _).symm
+          _ ≤ (2 * Λ) ^ 2 := pow_le_pow_left₀ (by positivity) hY3 2
+      have e3 : (2 * Λ) ^ 2 ≤ (c ^ 2 * Λ) ^ 3 := by
+        calc (2 * Λ) ^ 2 = 4 * Λ ^ 2 := by ring
           _ ≤ (c ^ 6 * Λ) * Λ ^ 2 := by gcongr
           _ = (c ^ 2 * Λ) ^ 3 := by ring
       linarith
@@ -158,12 +170,20 @@ theorem sharpPrimes (hS : ShortNorm) : EventuallyAdm (fun Dg => Dg.Adm)
   obtain ⟨T, hT⟩ := H Dg (by have := hA.d_mod; omega) hA.hundred_le_d Λ hΛ0 hYc
   have hex : ∃ T : ℕ, T.Prime ∧ Dg.ArithT T ∧ Λ < Real.log T ∧ Real.log T ≤ Λ + Real.log 2 := ⟨T, hT⟩
   have hA0 : 0 ≤ ∑ s ∈ Dg.TT, Dg.a s := Finset.sum_nonneg fun t ht => (Dg.a_pos t ht).le
-  refine ⟨le_rfl, ?_, fun _ => ?_⟩
-  · show (∑ s ∈ Dg.TT, Dg.a s) * 0 ≤ _
-    rw [mul_zero]
-    exact div_nonneg (mul_nonneg (Real.rpow_nonneg hA.big.pos.le _) hA0) (by norm_num)
-  · show (sharpT Dg u).Prime ∧ Dg.ArithT (sharpT Dg u) ∧ Λ - 0 ≤ Real.log (sharpT Dg u)
-    rw [sharpT, dite_eq_left hex, sub_zero]
+  -- the budget: `x^{2ε} ≥ 4096 ≥ 4`
+  have hx4 : 4 ≤ sharpCT x ε :=
+    (by norm_num : (4 : ℝ) ≤ 4096).trans (hA.big.le_rpow (by linarith [hA.big.ε_pos]))
+  refine ⟨Real.rpow_nonneg hx0.le _, ?_, fun _ => ?_⟩
+  · show (∑ s ∈ Dg.TT, Dg.a s) * sharpCT x ε ≤ x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4
+    have h4e : x ^ (4 * ε) = sharpCT x ε * sharpCT x ε := by
+      rw [sharpCT, ← Real.rpow_add hx0]
+      ring_nf
+    have hc0 : 0 ≤ sharpCT x ε := (by norm_num : (0 : ℝ) ≤ 4).trans hx4
+    have hmul := mul_le_mul_of_nonneg_left hx4 (mul_nonneg hA0 hc0)
+    rw [h4e]
+    nlinarith [hmul]
+  · show (sharpT Dg u).Prime ∧ Dg.ArithT (sharpT Dg u) ∧ Λu - sharpCT x ε ≤ Real.log (sharpT Dg u)
+    rw [sharpT, dite_eq_left hex]
     exact ⟨(Nat.find_spec hex).1, (Nat.find_spec hex).2.1, (Nat.find_spec hex).2.2.1.le⟩
 
 /-! ## (F) + (V) -/
@@ -206,12 +226,14 @@ theorem sharpT_prime (Dg : SharpDesign S κ x ε X) (u : S.A) : (sharpT Dg u).Pr
   · exact (Nat.find_spec h).1
   · exact Nat.prime_two
 
-/-- **`log T ≤ x`** for the auxiliary prime: `log T ≤ Λ_u + log 2 ≤ x` (`Adm.lam_add_log_two_le`), or `T = 2`. -/
+/-- **`log T ≤ x`** for the auxiliary prime: `log T ≤ Λ_u − x^{2ε} + log 2 ≤ Λ_u + log 2 ≤ x`
+(`Adm.lam_add_log_two_le`), or `T = 2`. -/
 theorem log_sharpT_le {Dg : SharpDesign S κ x ε X} (hA : Dg.Adm) (u : S.A) : Real.log (sharpT Dg u) ≤ x := by
   classical
   unfold sharpT
   split_ifs with h
-  · exact (Nat.find_spec h).2.2.2.trans (hA.lam_add_log_two_le u)
+  · have h0 : 0 ≤ sharpCT x ε := Real.rpow_nonneg hA.big.pos.le _
+    linarith [(Nat.find_spec h).2.2.2, hA.lam_add_log_two_le u]
   · rw [Nat.cast_ofNat]
     linarith [Real.log_two_lt_d9, hA.big.x_ge]
 
