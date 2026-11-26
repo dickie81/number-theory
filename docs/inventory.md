@@ -14,8 +14,8 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 227 | 799 |
-| `lib/pnt` | 365 | 1067 |
+| `lib/core` | 227 | 800 |
+| `lib/pnt` | 365 | 1066 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -1079,13 +1079,14 @@ note of `formalisations/` that names it, if one does.
 - `ThetaChain.instMulActionDecoF`: The action on the points is a group action ([note](../formalisations/alpoge-rh.md))
 - `ThetaChain.Chain.comp_zero`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ThetaChain.Chain.lift_add`: Sanity ([note](../formalisations/alpoge-rh.md))
+- `ThetaChain.Data.comp_zero_inp`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ThetaChain.Top.col_of_isEmpty`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ThetaChain.opU_zero`: Sanity ([note](../formalisations/alpoge-rh.md))
 
 #### `ThetaNorm`: The normalisation of the base theta
 
-- `ThetaNorm.th0_zero`: `th0(0) = 1`. ([note](../formalisations/alpoge-rh.md))
-- `ThetaNorm.F0_zero`: `F0(0) = 1` (spec-3 §2, as in the archive's `ProductThetaMem`). ([note](../formalisations/alpoge-rh.md))
+- `ThetaNorm.th0_zero`: `th0(0) = 1` for a pin with `Pin.Ok`. ([note](../formalisations/alpoge-rh.md))
+- `ThetaNorm.F0_zero`: `F0(0) = 1` for a pin with `Pin.Ok` (spec-3 §2, as in the archive's `ProductThetaMem`). ([note](../formalisations/alpoge-rh.md))
 - `ThetaNorm.sgStar_zero`: Sanity ([note](../formalisations/alpoge-rh.md))
 
 #### `ThetaVol`: The local volumes of the theta kernels (spec-3 §1)
@@ -2597,7 +2598,6 @@ note of `formalisations/` that names it, if one does.
 
 #### `SharpChain`: The sharp frontier with the theta chain — CONDITIONAL on the half-plane
 
-- `ThetaChain.Data.comp_zero_inp`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.sharpBoundTheta_of_pinned`: The pinned frontier implies `SharpBoundTheta`. ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.rhAndGRH_of_sharpBoundPinned`: CONDITIONAL. RH and GRH from the pinned frontier ([note](../formalisations/alpoge-rh.md))
 

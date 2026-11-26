@@ -204,11 +204,13 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   - Periods and target: the interlacing weight, the branching map, the period, the integral rows, the twisted
     target lattice `C_u` and the sources `N_ω` (`PeriodTarget.coeff_coefLast`, `PeriodTarget.per_eq_classSum`,
     `PeriodTarget.mem_Ctgt`, `PeriodTarget.Nsrc_le`).
-  - The theta chain: Hecke and splitting characters, theta functions by the archive's recipe from an existential
-    standard theta, jets, the kernels `κ_j`, the lifts and the chain; the local factors at the auxiliary places
-    are a parameter with their invariance (`ThetaChain.opU_zero`, `ThetaChain.Chain.comp_zero`,
-    `ThetaChain.Chain.lift_add`, `ThetaChain.detShift_wt_succ`); its top step maps straight to the row points,
-    with the archive's coupled and top factors (`ThetaChain.Top.col_of_isEmpty`).
+  - The theta chain: Hecke and splitting characters, theta functions by the archive's recipe from a standard theta,
+    jets, the kernels `κ_j`, the lifts and the chain; the local factors at the auxiliary places are a parameter with
+    their invariance (`ThetaChain.opU_zero`, `ThetaChain.Chain.comp_zero`, `ThetaChain.Chain.lift_add`,
+    `ThetaChain.detShift_wt_succ`); its top step maps straight to the row points, with the archive's coupled and top
+    factors (`ThetaChain.Top.col_of_isEmpty`). The chain data carry no proofs, so a construction can define them: the
+    standard theta is a bare function, and that it is a nonzero theta with rational jets is a predicate, which the
+    pinned frontier asks.
   - The frontier: `ZetaBalance.rhAndGRH_of_sharpBound` gives RH with GRH from `ZetaBalance.SharpBound`, through a proved
     bridge to the six-term interface (`ZetaBalance.SharpData.nonempty_sixTermData`): defined sources, target and
     periods, forced orders chosen with the data (they cancel between (G↓) and (G↑); the archive's are `Fo` above), a

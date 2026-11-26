@@ -31,9 +31,11 @@ operators `U_x G(z) = G(z + x)·exp(−πH(z, x) − πH(x, x)/2)` (`opU`), the 
 `Iop(Λ₁, Λ₂)G = [Λ₂ : Λ₁ ∩ Λ₂]^{−1/2}·Σ_{q ∈ Λ₂/(Λ₁ ∩ Λ₂)} α(q)·U_q G` (`Iop`). The theta of a pair of lattices is the
 archive's moved theta `θ_{N,N′} = Iop(La(N, std′), La(N, N′)) (Iop(La(std, std′), La(N, std′)) θ_std)` (`thMoved`):
 **no `χ`, no `chiFac`** (they cancel in the jets, spec-2 1b). The constants `s, sd, δ, 𝔄, cD` and the embedding
-`σ₀ : L → ℂ` are pinned by the setting and passed in `TP`. The base theta `θ_std` is **existential** (`ThetaStd`):
-nonzero, in `Th(La(std, std′))`; the rationality of the jets of the coset thetas that `κ_j` sums is a condition on
-the chain data (`Data.θ_rat`), on the archive's range only.
+`σ₀ : L → ℂ` are pinned by the setting and passed in `TP`. The base theta `θ_std` is **a bare function** of the chain
+data (`Data.θ`). That it is nonzero and in `Th(La(std, std′))` is the predicate `ThetaStd` (`Data.ThetaOk` at every
+step), and the rationality of the jets of the coset thetas that `κ_j` sums, on the archive's range only, is
+`Data.JetsRat` (`Top.JetsRat` at the top step). **The data carry no proofs**, so a construction can define them; the
+frontier conjoins the predicates (`SharpChain.IsThetaCol`).
 
 **Finite places** (spec-2, 1b, 1e). The coset theta `θ_{N,N′,x} = vol^{−1/2}·α(s)·U_{−s}(xiS(1_{BC}) θ_{N,N′})`,
 `s = ι(liftW x)` with `liftW x` a lift of the coset into the half-lattice `HA` (`Data.HA`, the archive's `halfAO`, a
@@ -64,7 +66,10 @@ points `DecoF` and the step kernels `Data.kap`. **The top** (spec-10 F0, F4–F5
 of length `m = m2 + 2` runs `Data.chain` up to level `m2`; level `m2 + 1` carries the coset `Y` (pairs `(c, y)` with the
 class's mass), step `m2` reads `y` in its factor (`XiCpl1`), and the top step maps `(c, y)` straight to each row point
 `x`, through its decorated lift `tilQ x` and its determinant idele, with the factor `XiCpl2` (`Top`, `Top.col`, the
-archive's `colCpl`). The factors of the two top steps are pinned in L7 (`ThetaVol.xiCpl`, `ThetaVol.xiTop`).
+archive's `colCpl`). The factors of the two top steps are pinned in L7 (`ThetaVol.xiCpl`, `ThetaVol.xiTop`). **The
+input and the casts** (L7): the chain reads a function `F` on decorated lattices as `c ↦ F(rep c)` on the step-0
+classes (`Data.inp`, the archive's `startC`), and the casts `polCast`, `decoCast`, `fnCast` move polynomials, decorated
+lattices and form spaces along equal ranks and place sets.
 
 **Level data** (spec-2 Item 2, spec-11 §1–2, spec-12 F6). The points of every level, step 0 included, are the
 archive's `DecoF` (`DecoF`): a decorated lattice with residue frames on `SG` and lattice frames `fr_P ∈ GL_n(E)`,
@@ -84,7 +89,7 @@ coset (`IdxProd`) and the enumeration of every live double coset at `Q` (`ThetaV
 `z = e_last` is `HermClasses.eLast`.
 
 **Sanity theorems:** `opU_zero`, `Chain.comp_zero`, `Chain.lift_add`, `detShift_wt_succ`, `Top.col_of_isEmpty`,
-`instMulActionDecoF`.
+`Data.comp_zero_inp`, `instMulActionDecoF`.
 -/
 
 namespace ThetaChain
@@ -392,14 +397,13 @@ noncomputable def kappa (hab : a ≤ b) (n : Φ → ℕ) (θ : Amb Φ a b → �
 
 variable [IsCMField E]
 
-/-- The base theta `θ_std` for the sizes `(a, b)` (spec-2 1e, item 2): existential, a nonzero element of
-`Th(La(std, std′))`. Its rationality (`JetsRat`) holds only on the archive's range (self-dual lattices, points of
-`cA⁻¹H_S`, the pinned coset datum), so it is a condition on the chain data (`Data.θ_rat`), not stated here. -/
-structure ThetaStd (a b : ℕ) where
-  /-- The base theta. -/
-  θ : Amb Φ a b → ℂ
-  ne_zero : θ ≠ 0
-  mem : θ ∈ Th P.s P.sd (La τ P (stdLat (E := E) (n := a)) (stdLat (E := E) (n := b)))
+/-- **`θ` is a base theta** `θ_std` for the sizes `(a, b)` (spec-2 1e, item 2): a nonzero element of
+`Th(La(std, std′))`. A predicate on a bare function: the chain data carry `θ_std` as a function (`Data.θ`), and the
+frontier asks this of it at every step (`Data.ThetaOk`). Its rationality (`JetsRat`) holds only on the archive's range
+(self-dual lattices, points of `cA⁻¹H_S`, the pinned coset datum), so it is a condition on the chain data
+(`Data.JetsRat`), not stated here. -/
+def ThetaStd (θ : Amb Φ a b → ℂ) : Prop :=
+  θ ≠ 0 ∧ θ ∈ Th P.s P.sd (La τ P (stdLat (E := E) (n := a)) (stdLat (E := E) (n := b)))
 
 /-- The localisation `M_(P) = {z : s·z ∈ M for some s ∉ P}` (an additive group: the closure adds nothing). -/
 def locSub (Pl : HeightOneSpectrum (𝓞 E)) (M : Submodule (𝓞 E) (Matrix (Fin b) (Fin a) E)) :
@@ -688,12 +692,13 @@ abbrev Cls (n : ℕ → ℕ) (ST SG Q : Finset (HeightOneSpectrum (𝓞 E))) (β
 
 variable (τ : Φ → (E →+* L))
 
-/-- The data of a theta chain: ranks `N_j`, the theta constants, the place sets, the level data (spec-11 §1–2,
+/-- **The data of a theta chain**: ranks `N_j`, the theta constants, the place sets, the level data (spec-11 §1–2,
 spec-12 F6: every level, step 0 included, carries residue frames at `SG` and lattice frames at `Q`), the weights `λ_j`
-and `e_j`, the
-characters `μ_{0,j}ξ`, the determinant ideles, the base thetas, the coset parameters and the local factors `Ξ`. L7
-builds it from a setting and a `ChIdx`. -/
-structure Data where
+and `e_j`, the characters `μ_{0,j}ξ`, the determinant ideles, the base thetas, the coset parameters and the local
+factors `Ξ`. **No proof fields**: the base thetas are bare functions, and what the frontier asks of them is a
+predicate (`Data.ThetaOk`, `Data.JetsRat`), so a construction can define the data. The embeddings `τ` are an index,
+read by no field: the kernels (`Data.kap`) and the predicates read them. L7 builds it from a setting and a `ChIdx`. -/
+structure Data (τ : Φ → (E →+* L)) where
   /-- The ranks `N_j`. -/
   n : ℕ → ℕ
   mono : ∀ j, n j ≤ n (j + 1)
@@ -719,8 +724,8 @@ structure Data where
   mu : ℕ → Hecke E L
   /-- The determinant ideles `d(N_c)` (L5.2). -/
   dI : ∀ j, Cls n ST SG Q β Λ j → Ideles E
-  /-- The base thetas. -/
-  θ : ∀ j, ThetaStd τ P (n j) (n (j + 1))
+  /-- The base thetas, as bare functions (`ThetaStd` at every step is `Data.ThetaOk`). -/
+  θ : ∀ j, Amb Φ (n j) (n (j + 1)) → ℂ
   /-- The integers `cA`, `cB` of the coset sums. -/
   cA : ℕ → ℕ
   /-- See `cA`. -/
@@ -732,12 +737,6 @@ structure Data where
   /-- The local factors `Ξ_j(c, c′)` of the steps between classes (the generic `XiStd` at `j < m − 2`; the two top
   steps read the coset `Y` and use `Top`'s factors). -/
   Xi : ∀ j, Cls n ST SG Q β Λ j → Cls n ST SG Q β Λ (j + 1) → Matrix (Fin (n (j + 1))) (Fin (n j)) E → L
-  /-- `JetsRat` on the archive's range: the jets of every coset theta that `kappa` sums (the class lattices, the
-  lifted coset points `liftW x` of `cA⁻¹H_S`, the data's own `XD`) lie in `σ₀(L)`. -/
-  θ_rat : ∀ j (c : Cls n ST SG Q β Λ j) (c' : Cls n ST SG Q β Λ (j + 1))
-    (x : Cosets S (cA j) (cB j) c.2.N c'.2.N) (m : Φ × Fin (n (j + 1)) × Fin (n j) →₀ ℕ),
-    jetVal P (thInd P.s P.sd (XD j c c') (thMoved τ P (θ j).θ c.2.N c'.2.N)
-      (iota τ P (liftW S (cA j) (cB j) c.2.N c'.2.N (HA j c c') x))) m ∈ Set.range P.σ₀
 
 variable {τ} in
 /-- The step kernel of `D` at step `j` from the class `c` to a lattice `N′` of rank `N_{j+1}` with determinant idele
@@ -747,7 +746,7 @@ noncomputable def Data.kap (D : Data τ) (j : ℕ) (c : Cls D.n D.ST D.SG D.Q D.
     (N' : Submodule (𝓞 E) (Fin (D.n (j + 1)) → E)) (d' : Ideles E)
     (XD : XiData (Φ × Fin (D.n (j + 1)) × Fin (D.n j))) (HA : Set (Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E))
     (Xi : Matrix (Fin (D.n (j + 1))) (Fin (D.n j)) E → L) : Pol Φ (D.n j) L →ₗ[L] Pol Φ (D.n (j + 1)) L :=
-  kappa τ D.P (D.mono j) (nIn (D.e j) (D.n (j + 1)) (D.lam j)) (D.θ j).θ D.S (D.cA j) (D.cB j) XD HA Xi
+  kappa τ D.P (D.mono j) (nIn (D.e j) (D.n (j + 1)) (D.lam j)) (D.θ j) D.S (D.cA j) (D.cB j) XD HA Xi
     (rhoIn (D.mu j) (D.dI j c) * rhoOut (D.mu j) d') c.2.N N'
 
 /-- The theta chain of the data on the classes: `κ_j(c, c′)` (`Data.kap`) with `r = ρ_j(c)ρ′_j(c′)`. A chain of length
@@ -763,14 +762,63 @@ and `cB j`, the latter the modulus of `liftW`'s congruence; `HA` at `cA j·cB j`
 def Data.XDPinned (D : Data τ) : Prop :=
   ∀ j c c', XDPin τ D.P D.S (D.cA j) (D.cB j) c.2.N c'.2.N (D.XD j c c') (D.HA j c c')
 
+/-- **The base thetas are base thetas**: at every step `θ_j ≠ 0` and `θ_j ∈ Th(La(std, std′))` (`ThetaStd`). Meant
+for L7 (`IsThetaCol`). -/
+def Data.ThetaOk (D : Data τ) : Prop :=
+  ∀ j, ThetaStd τ D.P (D.θ j)
+
+/-- **`JetsRat` on the archive's range**: at every step, the jets of every coset theta that `kappa` sums (the class
+lattices, the lifted coset points `liftW x` of `cA⁻¹H_S`, the data's own `XD`) lie in `σ₀(L)`. Meant for L7
+(`IsThetaCol`). -/
+def Data.JetsRat (D : Data τ) : Prop :=
+  ∀ j (c : Cls D.n D.ST D.SG D.Q D.β D.Λ j) (c' : Cls D.n D.ST D.SG D.Q D.β D.Λ (j + 1))
+    (x : Cosets D.S (D.cA j) (D.cB j) c.2.N c'.2.N) (m : Φ × Fin (D.n (j + 1)) × Fin (D.n j) →₀ ℕ),
+    jetVal D.P (thInd D.P.s D.P.sd (D.XD j c c') (thMoved τ D.P (D.θ j) c.2.N c'.2.N)
+      (iota τ D.P (liftW D.S (D.cA j) (D.cB j) c.2.N c'.2.N (D.HA j c c') x))) m ∈ Set.range D.P.σ₀
+
+/-- **The cast `N = N′` of a polynomial** (L7: the chain's `N_m` to `n + 1`, `SharpChain.IsThetaCol`). -/
+def polCast {N N' : ℕ} (h : N = N') : Pol Φ N L → Pol Φ N' L := by
+  subst h; exact id
+
+/-- **The cast `N = N′` of a decorated lattice** (L7: the lift's `n + 1` to the chain's `N_m`). -/
+def decoCast {N N' : ℕ} {ST SF : Finset (HeightOneSpectrum (𝓞 E))} (h : N = N') :
+    Deco E N ST SF → Deco E N' ST SF := by
+  subst h; exact id
+
+/-- **The cast of the form spaces**: functions on the decorated lattices (`HermForms.Fn`) on the place sets `ST`, `SG`
+at step-0 rank `n0`, read at equal ones. In L7 a word's source data are shared by every level, and each level's chain
+`D` has `D.ST = ST`, `D.SG = SG`, `D.n 0 = n0` (`SharpChain.IsThetaCol`). -/
+noncomputable def fnCast {ST ST' SG SG' : Finset (HeightOneSpectrum (𝓞 E))} {n0 n0' : ℕ} (h1 : ST = ST') (h2 : SG = SG')
+    (h3 : n0 = n0') :
+    (↥(points (E := E) (n := n0) (ST := ST) (uniUT SG n0)) → Pol Φ n0 L) →ₗ[L]
+      (↥(points (E := E) (n := n0') (ST := ST') (uniUT SG' n0')) → Pol Φ n0' L) := by
+  subst h1 h2 h3; exact LinearMap.id
+
+variable {τ} in
+/-- **The chain's input** from functions on decorated lattices with frames on `SG` (`HermForms.Fn`):
+`F ↦ (c ↦ F(rep c))` on the step-0 classes, after forgetting the lattice frames of `rep c` at `Q` (spec-11 §1, the
+archive's `startC`: `φ ↦ (p ↦ φ(p.deco))`). -/
+noncomputable def Data.inp (D : Data τ) (Λ : Subgroup (∀ w : D.SG, GL (Fin (D.n 0)) (𝓞 E ⧸ w.1.asIdeal))) :
+    (↥(points (E := E) (n := D.n 0) (ST := D.ST) Λ) → Pol Φ (D.n 0) L) →ₗ[L] (D.chain.C 0 → Pol Φ (D.n 0) L) :=
+  LinearMap.funLeft L _ fun c => ⟨c.2.rep.d, c.2.good.1⟩
+
+variable {τ} in
+/-- **Sanity:** the chain of length `0` reads a form at the representative of each class, its frames at `Q`
+forgotten. -/
+theorem Data.comp_zero_inp (D : Data τ) (Λ : Subgroup (∀ w : D.SG, GL (Fin (D.n 0)) (𝓞 E ⧸ w.1.asIdeal)))
+    (F : ↥(points (E := E) (n := D.n 0) (ST := D.ST) Λ) → Pol Φ (D.n 0) L) (c : D.chain.C 0) :
+    D.chain.comp 0 (D.inp Λ F) c = F ⟨c.2.rep.d, c.2.good.1⟩ :=
+  rfl
+
 variable {τ} in
 /-- **The top of a chain** of length `m2 + 2` (spec-10 F0, F4–F5; the archive's coupled steps `cp1`, `cp2`): level
 `m2 + 1` carries an auxiliary coordinate `y ∈ Yb` (the coset `Y`, or its collapsed form `ȳ`), with the class's mass,
 and the top step lands on points `x ∈ X` (the row points), through a decorated lattice `pt x` of rank `N_{m2+2}` with
 frames on `SF` (the decorated lift `tilQ x`, whose `f` and frames the top factor reads) and its determinant idele
 `dI x`: there are no classes at level `m2 + 2`. Step `m2` keeps `D`'s
-data but its factor `Xi1` reads `y` (`XiCpl1`); the top step has its own Heisenberg data, the factor `Xi2` (`XiCpl2`),
-and `JetsRat` on its range (`θ_rat`, as `Data.θ_rat`). L7 pins the factors (`ThetaVol.xiCpl`, `ThetaVol.xiTop`). -/
+data but its factor `Xi1` reads `y` (`XiCpl1`); the top step has its own Heisenberg data and the factor `Xi2`
+(`XiCpl2`). No proof fields: `JetsRat` on its range is the predicate `Top.JetsRat`. L7 pins the factors
+(`ThetaVol.xiCpl`, `ThetaVol.xiTop`). -/
 structure Top (D : Data τ) (m2 : ℕ) (SF : Finset (HeightOneSpectrum (𝓞 E))) (Yb X : Type*) where
   /-- The decorated lattice of rank `N_{m2+2}` read at a point, with frames on `SF` (L7: the lift `tilQ x`). -/
   pt : X → Deco E (D.n (m2 + 2)) D.ST SF
@@ -785,11 +833,6 @@ structure Top (D : Data τ) (m2 : ℕ) (SF : Finset (HeightOneSpectrum (𝓞 E))
     Matrix (Fin (D.n (m2 + 1))) (Fin (D.n m2)) E → L
   /-- The top factor (`XiCpl2`). -/
   Xi2 : Cls D.n D.ST D.SG D.Q D.β D.Λ (m2 + 1) → Yb → X → Matrix (Fin (D.n (m2 + 2))) (Fin (D.n (m2 + 1))) E → L
-  /-- `JetsRat` on the top step's range, as `Data.θ_rat`. -/
-  θ_rat : ∀ c x (z : Cosets D.S (D.cA (m2 + 1)) (D.cB (m2 + 1)) c.2.N (pt x).N)
-    (mm : Φ × Fin (D.n (m2 + 2)) × Fin (D.n (m2 + 1)) →₀ ℕ),
-    jetVal D.P (thInd D.P.s D.P.sd (XD c x) (thMoved τ D.P (D.θ (m2 + 1)).θ c.2.N (pt x).N)
-      (iota τ D.P (liftW D.S (D.cA (m2 + 1)) (D.cB (m2 + 1)) c.2.N (pt x).N (HA c x) z))) mm ∈ Set.range D.P.σ₀
 
 variable {τ} {D : Data τ} {m2 : ℕ} {SF : Finset (HeightOneSpectrum (𝓞 E))} {Yb X : Type*}
 
@@ -808,6 +851,14 @@ noncomputable def Top.col (T : Top D m2 SF Yb X) (Θ : Cls D.n D.ST D.SG D.Q D.�
 step `m2 + 1`, as `Data.XDPinned`. Meant for L7 (`IsThetaCol`). -/
 def Top.XDPinned (T : Top D m2 SF Yb X) : Prop :=
   ∀ c x, XDPin τ D.P D.S (D.cA (m2 + 1)) (D.cB (m2 + 1)) c.2.N (T.pt x).N (T.XD c x) (T.HA c x)
+
+/-- **`JetsRat` on the top step's range**, as `Data.JetsRat`: the jets of every coset theta of the top step, from the
+class `c` to the lattice of `pt x`, with the top's own `XD` and `HA`, lie in `σ₀(L)`. Meant for L7 (`IsThetaCol`). -/
+def Top.JetsRat (T : Top D m2 SF Yb X) : Prop :=
+  ∀ c x (z : Cosets D.S (D.cA (m2 + 1)) (D.cB (m2 + 1)) c.2.N (T.pt x).N)
+    (mm : Φ × Fin (D.n (m2 + 2)) × Fin (D.n (m2 + 1)) →₀ ℕ),
+    jetVal D.P (thInd D.P.s D.P.sd (T.XD c x) (thMoved τ D.P (D.θ (m2 + 1)) c.2.N (T.pt x).N)
+      (iota τ D.P (liftW D.S (D.cA (m2 + 1)) (D.cB (m2 + 1)) c.2.N (T.pt x).N (T.HA c x) z))) mm ∈ Set.range D.P.σ₀
 
 /-- **Sanity:** with no classes at level `m2 + 1`, the column vanishes. -/
 theorem Top.col_of_isEmpty (T : Top D m2 SF Yb X) [IsEmpty (Cls D.n D.ST D.SG D.Q D.β D.Λ (m2 + 1))]
