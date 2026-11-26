@@ -698,6 +698,16 @@ theorem EventuallyAdm.and {adm p q : ∀ {S : Setting} {κ : S.A →* ℂˣ} {x 
   exact ⟨max x₁ x₂, fun Dg hx hDg =>
     ⟨hx₁ Dg ((le_max_left _ _).trans hx) hDg, hx₂ Dg ((le_max_right _ _).trans hx) hDg⟩⟩
 
+/-- **Admissible parameters and windows** for `adm` (the frontier's outer shape): for every primitive `χ` and every
+`ε₀ > 0`, some `ε ∈ (0, ε₀)` and `A ≥ 1` such that, for `Y` large, every pair of `WinPair ε Y` has a sub-window
+`[Y′, Y′²]`, `Y ≤ Y′ ≤ Y^{A/2}`, at every `x` of which a setting of the pair, with `κ` lifting `χ`, carries a design
+admissible for `adm`. -/
+def Params (adm : ∀ {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ}, SharpDesign S κ x ε X → Prop) : Prop :=
+  ∀ (f : ℕ) [NeZero f] (χ : DirichletCharacter ℂ f), χ.IsPrimitive → ∀ ε₀ > 0,
+    ∃ ε, 0 < ε ∧ ε < ε₀ ∧ ∃ A ≥ (1 : ℝ), ∀ᶠ Y in Filter.atTop, ∀ q d, ZetaTwist.WinPair ε Y q d →
+      ∃ Y' ∈ Set.Icc Y (Y ^ (A / 2)), ∀ x ∈ Set.Icc Y' (Y' ^ 2), ∃ (S : Setting) (κ : S.A →* ℂˣ), S.q = q ∧
+        S.d = d ∧ S.d % 4 = 3 ∧ S.Lifts κ χ ∧ ∃ Dg : SharpDesign S κ x ε (((S.N : ℝ) * x) ^ Real.log x), adm Dg
+
 /-- **The statements to prove in the library** (proof plan §3–§4), with the inputs as hypotheses where a piece
 uses them. Two fields are choices, not statements: `adm`, the conditions the construction asks of the parameters,
 and `cons`, the construction itself (the archive's objects, the target metric, the constants), which the frontier
@@ -720,10 +730,7 @@ structure SharpPieces where
   sub-window. It takes `ShortNorm`, with which the archive chooses the design's split primes `g₀, g₁`. Serves the
   outer quantifiers, `S.q = q`, `S.d = d`, `d ≡ 3 (mod 4)`, `κ` lifting `χ`, the weights and the parameters of
   `SharpData`, and `Arith`'s Legendre symbols. -/
-  params : ShortNorm → ∀ (f : ℕ) [NeZero f] (χ : DirichletCharacter ℂ f), χ.IsPrimitive → ∀ ε₀ > 0,
-    ∃ ε, 0 < ε ∧ ε < ε₀ ∧ ∃ A ≥ (1 : ℝ), ∀ᶠ Y in Filter.atTop, ∀ q d, ZetaTwist.WinPair ε Y q d →
-      ∃ Y' ∈ Set.Icc Y (Y ^ (A / 2)), ∀ x ∈ Set.Icc Y' (Y' ^ 2), ∃ (S : Setting) (κ : S.A →* ℂˣ), S.q = q ∧
-        S.d = d ∧ S.d % 4 = 3 ∧ S.Lifts κ χ ∧ ∃ Dg : SharpDesign S κ x ε (((S.N : ℝ) * x) ^ Real.log x), adm Dg
+  params : ShortNorm → Params adm
   /-- **The pins are satisfiable** (archive: the definite-side objects of
   `nonempty_hyps_definite_side_of_closed_bound`), eventually in the design: `j ∘ τ_K = Setting.τ`, and every
   translate's object is pinned (`SharpObj.Pinned`). Serves `RealisedPinned` but for the frame. -/

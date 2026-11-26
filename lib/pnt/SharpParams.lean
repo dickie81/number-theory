@@ -795,11 +795,8 @@ and a pair of `WinPair ε Y`, `Y′ = Y`; at every `x ∈ [Y, Y²]`, the setting
 (`exists_design`). The thresholds: the growth package, `ord χ, f ≤ x^{ε/100}`, `8f ≤ x`, `log x ≥ 4`,
 `M log x ≤ x^ε` for Littlewood's `M`, Behrend's comparison, `ShortNorm`'s `x₀` (`exists_split_primes`), all at
 `x ≥ Y`, and `f ≤ Y^{ε/5}/2` for `PairArith`. -/
-theorem sharpParams (hS : ShortNorm) (f : ℕ) [NeZero f] (χ : DirichletCharacter ℂ f) (_hχ : χ.IsPrimitive)
-    (ε₀ : ℝ) (hε₀ : 0 < ε₀) : ∃ ε, 0 < ε ∧ ε < ε₀ ∧ ∃ A ≥ (1 : ℝ), ∀ᶠ Y in Filter.atTop, ∀ q d,
-      ZetaTwist.WinPair ε Y q d → ∃ Y' ∈ Set.Icc Y (Y ^ (A / 2)), ∀ x ∈ Set.Icc Y' (Y' ^ 2),
-        ∃ (S : Setting) (κ : S.A →* ℂˣ), S.q = q ∧ S.d = d ∧ S.d % 4 = 3 ∧ S.Lifts κ χ ∧
-          ∃ Dg : SharpDesign S κ x ε (((S.N : ℝ) * x) ^ Real.log x), Dg.Adm := by
+theorem sharpParams (hS : ShortNorm) : Params fun Dg => Dg.Adm := by
+  intro f _ χ _ ε₀ hε₀
   set ε := min ε₀ (1 / 52) / 2 with hεdef
   have hε : 0 < ε := by positivity
   have hεε₀ : ε < ε₀ := by have := min_le_left ε₀ (1 / 52); linarith
