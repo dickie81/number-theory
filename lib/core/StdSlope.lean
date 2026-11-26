@@ -5,7 +5,7 @@ import GramVolume
 # The slope of the standard lattice `Δ_std`: a lower bound for `det Gzb`
 
 Part VI of the exact slope bound (F) (S1–S4), for an antitone weight `λ` of shape `ν = natW λ`, with
-`|ν| = Σ_{ρ,b} ν_{ρ,b}`, `r = |ZIdx| = dim ∇(ν)` (`card_ZIdx`) and `n` the rank. Write `d! = ∏_p d_p!` (`fact`) for a
+`|ν| = Σ_{ρ,b} ν_{ρ,b}`, `r = |ZIdx| = dim ∇(ν)` and `n` the rank. Write `d! = ∏_p d_p!` (`fact`) for a
 monomial `d`, `κ = ⟨hw_ν, hw_ν⟩` (`HermForms.kappa`), `Gzb = (⟨zb_i, zb_j⟩/κ)` for the Gram matrix of the `ℤ`-basis
 `zb` of `∇_ℤ`, and `Γ = Gzb⁻¹` (`WeylZForm`). The coordinates of `Δ_std` are the dual basis, of Gram matrix `Γ`, so
 `μ_arch(Δ_std) = −log det Γ/r`; we show `log det Γ ≤ 3·r·|ν|·log n`, that is `μ_arch(Δ_std) ≥ −3|ν| log n`

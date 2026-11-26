@@ -14,9 +14,9 @@ multiplication by `∏ a^μ` (`lsub_diagonal_of_isWH`, `twist_diagonal_of_isWH`)
 **The `ℤ`-form** (W2). `∇_ℤ ⊆ Pol_ℚ` is the `ℤ`-span of the bideterminants (`nablaZ`); its weight parts `∇_ℤ(μ)`
 (`nablaZw`, spanned by the bideterminants of row weight `μ`) are finitely generated and torsion-free, hence free.
 Concatenating bases gives `zb`, indexed by `ZIdx`, with `zb j` of row weight `zwt j` (`zb_isWH`): a `ℤ`-basis of `∇_ℤ`
-(`zbasis`; independent since the weight-`μ` component of a relation is a relation in `∇_ℤ(μ)`), with integer
+(independent since the weight-`μ` component of a relation is a relation in `∇_ℤ(μ)`), with integer
 coefficients (`coeff_zb_mem`). Over any field `K` of characteristic `0` its image spans `∇_K` (`span_zbK`, from
-`span_bidet`) and is independent (`linearIndependent_zbK`), so `|ZIdx| = dim ∇_K` (`card_ZIdx`).
+`span_bidet`) and is independent (`linearIndependent_zbK`), so `|ZIdx| = dim ∇_K`.
 
 **The dual basis** (W3). `Gzb = (⟨zb_i, zb_j⟩/κ)` is invertible (the Fock form is definite over `ℚ`), `Γ = Gzb⁻¹`
 (`Γ_mul_Gzb`), and `zdual_i = Σ_k Γ_{ik} zb_k` has `⟨zdual_i, zb_j⟩ = κ·δ_{ij}` (`fock_zdual_zb`) and
@@ -25,15 +25,13 @@ coefficients (`coeff_zb_mem`). Over any field `K` of characteristic `0` its imag
 weights), and `zdual_i` has row weight `zwt i` (`zdual_isWH`). `Γ` is positive definite over `ℝ` (`posDef_Γ`).
 
 **Coordinates of `Δ`** (W4). Over `K`, the `zdual` are a basis of `∇_K` (`zdualBasis`, by the duality); `dcoord` is its
-coordinate map, `dcoord F j = dc_j F = ⟨F, zb_j⟩/κ` (`dcoord_apply`). For every subring `A ⊆ K`, `F ∈ Δ_A(ν)` iff
+coordinate map, `dcoord F j = dc_j F = ⟨F, zb_j⟩/κ`. For every subring `A ⊆ K`, `F ∈ Δ_A(ν)` iff
 `F ∈ ∇_K` and every `dc_j F ∈ A` (`mem_Delta_iff`): the bideterminants and the `zb_j` are `ℤ`-combinations of each
 other.
 
 **Integral substitutions** (W5–W7). `β(U·x) = Σ_{rows'} (∏ U_{rows, rows'})·β_{rows'}` by multilinearity of the
 determinant in the rows (`lsub_bidet`), so with adjointness (`fock_lsub`) a substitution over `A` keeps `Δ_A`
-(`lsub_mem_Delta`), and a twist by `U ∈ GL_n(A)` preserves and reflects it (`twist_mem_Delta_iff`). Two local bases
-differ by `GL_n(O_{L,w})`, so for a lattice between `a·O_E^n` and `b⁻¹O_E^n` the repo's `DeltaN` (some local basis) is
-`DeltaA` (every local basis) (`HermForms.DeltaN_eq_DeltaA`).
+(`lsub_mem_Delta`), and a twist by `U ∈ GL_n(A)` preserves and reflects it (`twist_mem_Delta_iff`).
 
 **Multiplicities** (W8). `wtMult ρ a = Σ_j (zwt j)_{ρ,a}` does not depend on `a` (`wtMult_eq`): renaming the rows by a
 permutation `π` maps `∇_ℤ(μ)` injectively into `∇_ℤ(μ ∘ π⁻¹)`, so the ranks are permutation invariant (`finrank_perm`),
@@ -230,15 +228,6 @@ theorem linearIndependent_zb : LinearIndependent ℤ (zb lam) := by
   have h3 : ∑ i', c ⟨μ, i'⟩ • Module.Free.chooseBasis ℤ (nablaZw lam μ) i' = 0 :=
     Subtype.ext (by simpa [zb] using h1)
   exact Fintype.linearIndependent_iff.1 (Module.Free.chooseBasis ℤ _).linearIndependent _ h3 i
-
-/-- **W2.** The row-homogeneous `ℤ`-basis of `∇_ℤ`: `zbasis j = zb j` (`zbasis_apply`), of row weight `zwt j`
-(`zb_isWH`). -/
-def zbasis : Module.Basis (ZIdx lam) ℤ (nablaZ lam) :=
-  (Module.Basis.span (linearIndependent_zb lam)).map (LinearEquiv.ofEq _ _ (span_zb lam))
-
-/-- **W2.** The basis `zbasis` is the family `zb`. -/
-theorem zbasis_apply (j : ZIdx lam) : (zbasis lam j : Pol Φ n ℚ) = zb lam j := by
-  simp [zbasis, Module.Basis.span_apply]
 
 /-- **W2.** The `zb` have integer coefficients, as the bideterminants do (`coeff_bidet_mem`). -/
 theorem coeff_zb_mem (j : ZIdx lam) (d : Φ × Fin n × Fin n →₀ ℕ) :
@@ -534,17 +523,11 @@ theorem zdualBasis_apply (hlam : ∀ ρ, Antitone (lam ρ)) (i : ZIdx lam) :
     (zdualBasis K hlam i : Pol Φ n K) = zdualK K lam i := by
   simp [zdualBasis, Module.Basis.span_apply]
 
-/-- **W2.** `|ZIdx| = r = dim_K ∇_K`. -/
-theorem card_ZIdx (hlam : ∀ ρ, Antitone (lam ρ)) :
-    Fintype.card (ZIdx lam) = Module.finrank K (nabla K fun ρ => natW (lam ρ)) :=
-  (Module.finrank_eq_card_basis (zdualBasis K hlam)).symm
-
 variable (lam) in
-/-- `dc_j(F) = ⟨F, zb_j⟩/κ`, the `j`-th coordinate of `F` in the dual basis (`dcoord_apply`). -/
+/-- `dc_j(F) = ⟨F, zb_j⟩/κ`, the `j`-th coordinate of `F` in the dual basis. -/
 def dc (j : ZIdx lam) (F : Pol Φ n K) : K := fockWith (RingHom.id K) F (zbK K lam j) / algebraMap ℚ K (kappa lam)
 
-/-- **W4.** The coordinates in the dual basis: `dcoord F = (dc_j F)_j` (`dcoord_apply`) and
-`F = Σ_j dc_j(F)·zdual_j` (`dcoord_symm_apply`). -/
+/-- **W4.** The coordinates in the dual basis: `F = Σ_j dc_j(F)·zdual_j` (`dcoord_symm_apply`). -/
 def dcoord (hlam : ∀ ρ, Antitone (lam ρ)) : (nabla K fun ρ => natW (lam ρ)) ≃ₗ[K] (ZIdx lam → K) :=
   (zdualBasis K hlam).equivFun
 
@@ -552,15 +535,6 @@ def dcoord (hlam : ∀ ρ, Antitone (lam ρ)) : (nabla K fun ρ => natW (lam ρ)
 theorem dcoord_symm_apply (hlam : ∀ ρ, Antitone (lam ρ)) (x : ZIdx lam → K) :
     ((dcoord K hlam).symm x : Pol Φ n K) = ∑ j, x j • zdualK K lam j := by
   simp [dcoord, Module.Basis.equivFun_symm_apply, zdualBasis_apply]
-
-/-- **W4.** `dcoord F j = ⟨F, zb_j⟩/κ`: pair `F = Σ_i x_i zdual_i` with `zb_j`. -/
-theorem dcoord_apply (hlam : ∀ ρ, Antitone (lam ρ)) (F : nabla K fun ρ => natW (lam ρ)) (j : ZIdx lam) :
-    dcoord K hlam F j = dc K lam j F := by
-  have h := dcoord_symm_apply K hlam (dcoord K hlam F)
-  rw [LinearEquiv.symm_apply_apply] at h
-  rw [dc, h, fock_sum_left]
-  simp only [fock_smul_left, fock_zdualK_zbK, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
-  rw [mul_div_assoc, div_self (by simpa using (kappa_pos lam).ne'), mul_one]
 
 variable (lam) in
 /-- **W4 (coordinates of `Δ`).** For every subring `A ⊆ K`, `F ∈ Δ_A(ν)` iff `F ∈ ∇_K` and every coordinate
@@ -888,30 +862,5 @@ theorem exists_mul_eq_of_span_le {A : Subring L} {C C' : Matrix (Fin n) (Fin n) 
   exact Finset.sum_congr rfl fun k _ => mul_comm _ _
 
 variable [NumberField L]
-
-/-- **W7 (some = every).** For `N` between `a·O_E^n` and `b⁻¹O_E^n` (so with local bases at every `w`), the
-repo's `Δ_N` (some tuple of local bases, `DeltaN`) is `Δ_N` in every tuple of local bases (`DeltaA`). Two local
-bases of `O_{L,w}·τ(N)` differ by `C' = C·U` with `U ∈ GL_n(O_{L,w})`, and `twist_{C·U} = twist_U ∘ twist_C`
-(`twist_twist`), so W6 applies. -/
-theorem DeltaN_eq_DeltaA {τ : Φ → (E →+* L)} {lam : Φ → Fin n → ℤ} {N : Submodule (𝓞 E) (Fin n → E)} {a b : ℤ}
-    (h : Sand N a b) : DeltaN τ lam N = DeltaA τ lam N := by
-  refine Set.Subset.antisymm (fun F hF => ⟨hF.1, fun w C' hC' => ?_⟩) (DeltaA_subset h)
-  obtain ⟨C, hC, hCF⟩ := hF.2 w
-  have key : ∀ σ, ∃ U V : Matrix (Fin n) (Fin n) L, (∀ i j, U i j ∈ Ow w) ∧ (∀ i j, V i j ∈ Ow w) ∧
-      U * V = 1 ∧ C' σ = C σ * U := by
-    intro σ
-    obtain ⟨U, hU, hCU⟩ := exists_mul_eq_of_span_le (le_of_eq ((hC' σ).2.symm.trans (hC σ).2))
-    obtain ⟨V, hV, hCV⟩ := exists_mul_eq_of_span_le (le_of_eq ((hC σ).2.symm.trans (hC' σ).2))
-    refine ⟨U, V, hU, hV, ?_, hCU⟩
-    have hinv : (C σ)⁻¹ * C σ = 1 := Matrix.nonsing_inv_mul _ (isUnit_iff_ne_zero.2 (hC σ).1)
-    calc U * V = (C σ)⁻¹ * C σ * (U * V) := by rw [hinv, Matrix.one_mul]
-      _ = (C σ)⁻¹ * C σ := by rw [Matrix.mul_assoc, ← Matrix.mul_assoc (C σ), ← hCU, ← hCV]
-      _ = 1 := hinv
-  choose U V hU hV hUV hCU using key
-  have e : twist lam C' F = twist lam U (twist lam C F) := by
-    rw [twist_twist]
-    exact congrArg (fun D => twist lam D F) (funext hCU)
-  rw [e]
-  exact (twist_mem_Delta_iff lam hU hV hUV).2 hCF
 
 end HermForms

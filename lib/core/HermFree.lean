@@ -23,9 +23,9 @@ has places over the distinct primes `g₀` and `g₁`.
 * F3, two primes (`fst_eq_one_of_smul_eq_dia`): if `g·d = dia_a d` for a good point `d` and `g = (γ, h)`, then
   `γ = 1`.
 * F4, the free action (`eq_one_of_smul_eq_dia`): then also `h = 1` and `a = 1`. Hence `Stab(c) = 1` (`stab_eq_bot`)
-  and `mass c = 1` (`mass_eq_one`) for every class `c`. The diamond group `D = Π_{P ∈ ST} (O_E/P)^×` acts on the
+  for every class `c`. The diamond group `D = Π_{P ∈ ST} (O_E/P)^×` acts on the
   classes (`instMulActionDCl`: `diaCl a c = [dia_a d]` for any point `d` of `c`, `diaCl_mk`), and freely
-  (`diaCl_free`, `diaCl_inj`).
+  (`diaCl_free`).
 
 **The route.**
 * F1. Put `X = δ − 1`. If `XN ⊆ w^k N` for some `k ≥ 1`, then `δ^j − 1 − jX` maps `N` into `w^{2k} N` for every `j`,
@@ -388,20 +388,10 @@ theorem stab_eq_bot (c : DCl E n ST Λ) : stab c = ⊥ :=
   (Subgroup.eq_bot_iff_forall _).2 fun _ hg => (eq_one_of_smul_eq_dia w₀ w₁ hp₀ hp₁ hp h₀ h₁ hu₀ hu₁ c.out.2
     ((congrArg Subtype.val (MulAction.mem_stabilizer_iff.1 hg)).trans (dia_one _).symm)).1
 
-/-- **Mass one**: `mass c = 1/|Stab(c)| = 1` for every class. -/
-theorem mass_eq_one (c : DCl E n ST Λ) : mass c = 1 := by
-  rw [mass, stab_eq_bot w₀ w₁ hp₀ hp₁ hp h₀ h₁ hu₀ hu₁, Subgroup.card_bot, Nat.cast_one, inv_one]
-
 /-- **The diamond action on classes is free**: `dia_a c = c` forces `a = 1` (F4). -/
 theorem diaCl_free {c : DCl E n ST Λ} (h : diaCl a c = c) : a = 1 := by
   obtain ⟨g, hg⟩ := MulAction.mem_orbit_iff.1 (Quotient.exact (h.trans (Quotient.out_eq c).symm))
   exact (eq_one_of_smul_eq_dia w₀ w₁ hp₀ hp₁ hp h₀ h₁ hu₀ hu₁ c.out.2 (congrArg Subtype.val hg)).2
-
-/-- **Distinct diamonds give distinct classes**: `dia_a c = dia_b c` forces `a = b`. -/
-theorem diaCl_inj {b : ∀ P : ST, (𝓞 E ⧸ P.1.asIdeal)ˣ} {c : DCl E n ST Λ} (h : diaCl a c = diaCl b c) :
-    a = b := by
-  refine inv_mul_eq_one.1 (diaCl_free w₀ w₁ hp₀ hp₁ hp h₀ h₁ hu₀ hu₁ (c := c) ?_)
-  rw [← diaCl_diaCl, ← h, diaCl_diaCl, inv_mul_cancel, diaCl_one]
 
 end Two
 

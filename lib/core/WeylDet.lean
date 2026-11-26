@@ -29,7 +29,7 @@ The sign agrees with the spec: `rho` acts through `γ⁻¹` on the variables and
 and the diagonal case gives the exponent `−cExp ρ`.
 
 **The matrix of `ρ_λ(γ)` in the coordinates of `Δ`** (`rhoMat`, for Part V). `R_γ = dcoord ∘ ρ_λ(γ) ∘ dcoord⁻¹`
-is an automorphism of `L^{ZIdx}` (`rhoMat_dcoord`), and `det R_γ = det ρ_λ(γ)` (`det_rhoMat`), the form in which
+is an automorphism of `L^{ZIdx}`, and `det R_γ = det ρ_λ(γ)` (`det_rhoMat`), the form in which
 K1 (`KLattice.degK_map`) takes it.
 -/
 
@@ -180,7 +180,7 @@ theorem det_rhoVV [CharZero E] [CharZero L] (hlam : ∀ ρ, Antitone (lam ρ)) (
 variable {lam}
 
 /-- **The matrix `R_γ` of `ρ_λ(γ)`** in the coordinates `dcoord` (the dual basis `zdual`):
-`R_γ = dcoord ∘ ρ_λ(γ) ∘ dcoord⁻¹` (`rhoMat_dcoord`), an automorphism of `L^{ZIdx}` with inverse `R_{γ⁻¹}`. Meant
+`R_γ = dcoord ∘ ρ_λ(γ) ∘ dcoord⁻¹`, an automorphism of `L^{ZIdx}` with inverse `R_{γ⁻¹}`. Meant
 for V4/V5, with K1 (`KLattice.degK_map`). -/
 def rhoMat [CharZero L] (hlam : ∀ ρ, Antitone (lam ρ)) (γ : GL (Fin n) E) : (ZIdx lam → L) ≃ₗ[L] (ZIdx lam → L) :=
   (dcoord L hlam).symm ≪≫ₗ
@@ -188,11 +188,6 @@ def rhoMat [CharZero L] (hlam : ∀ ρ, Antitone (lam ρ)) (γ : GL (Fin n) E) :
       (by rw [← Module.End.mul_eq_comp, ← map_mul, mul_inv_cancel, map_one, Module.End.one_eq_id])
       (by rw [← Module.End.mul_eq_comp, ← map_mul, inv_mul_cancel, map_one, Module.End.one_eq_id]) ≪≫ₗ
     dcoord L hlam
-
-/-- `R_γ` in coordinates: `R_γ(dcoord F) = dcoord(ρ_λ(γ) F)`. -/
-theorem rhoMat_dcoord [CharZero L] (hlam : ∀ ρ, Antitone (lam ρ)) (γ : GL (Fin n) E)
-    (F : nabla L fun ρ => natW (lam ρ)) : rhoMat τ hlam γ (dcoord L hlam F) = dcoord L hlam (rhoVV τ lam γ F) := by
-  simp [rhoMat]
 
 /-- **D2 in coordinates.** `det R_γ = ∏_ρ τ_ρ(det γ)^{−cExp ρ}`: conjugating by `dcoord` keeps the determinant. -/
 theorem det_rhoMat [CharZero E] [CharZero L] (hlam : ∀ ρ, Antitone (lam ρ)) (γ : GL (Fin n) E) :

@@ -43,7 +43,7 @@ basis, by `rho_mem_DeltaA` for `γ` and `γ⁻¹`.
 denominator of `𝔞`) and `Σ_j ((zwt j)_{ρ,i} + s_ρ) = cExp ρ` for every row `i` (`cExp_eq_sum`, W8). P2
 (`degE_pseudo`) assembles the two parts.
 
-**V6** (`degK_deltaK_of_unimodular`, `degK_deltaK_Lsh`, `muK_deltaK_Lsh`): for unimodular `N`,
+**V6** (`degK_deltaK_Lsh`, `muK_deltaK_Lsh`): for unimodular `N`,
 `deg Δ_N = deg Δ_{O_E^n}` (P5); for a good `d`, `deg Δ_{Lsh d} = deg Δ_{O_E^n} − [L:E]·C_λ·Σ_{P∈ST} log N(P)` (P7),
 and with `rk = [L:ℚ]·r` and `n·C_λ = r·ΣΛ`, `μ(Δ_{Lsh d}) = μ(Δ_{O_E^n}) − (ΣΛ/(n·[E:ℚ]))·Σ_{P∈ST} log N(P)`,
 `ΣΛ = Σ_{ρ,i} λ_{ρ,i}`: independent of `d`.
@@ -527,8 +527,7 @@ theorem isLocalBasis_diagonal {w : HeightOneSpectrum (𝓞 L)} {σ : E →+* L} 
       · simp [Pi.single_eq_of_ne h]
 
 /-- `Δ_N` in some local basis lies in `Δ_N` in every local basis, with no hypothesis on `N`: two local bases
-differ by `GL_n(O_{L,w})` (`exists_mul_eq_of_span_le`), and W6 applies (the argument of `DeltaN_eq_DeltaA`,
-which needs `Sand` only for the converse). -/
+differ by `GL_n(O_{L,w})` (`exists_mul_eq_of_span_le`), and W6 applies. -/
 theorem DeltaN_subset_DeltaA {N : Submodule (𝓞 E) (Fin n → E)} :
     DeltaN τ lam N ⊆ DeltaA τ lam N := by
   intro F hF
@@ -688,11 +687,6 @@ def deltaK (hlam : ∀ ρ, Antitone (lam ρ)) (N : Submodule (𝓞 E) (Fin n →
     fun _ => posDef_map_ofReal (posDef_Γ lam)⟩
 
 variable {lam} in
-/-- The lattice of `deltaK N` is `deltaLat N`. -/
-@[simp] theorem deltaK_M (hlam : ∀ ρ, Antitone (lam ρ)) (N : Submodule (𝓞 E) (Fin n → E)) [N.IsLattice E] :
-    (deltaK τ hlam N).M = deltaLat τ lam N := rfl
-
-variable {lam} in
 /-- The metric of `deltaK N` is `Γ` at every place. -/
 @[simp] theorem deltaK_G (hlam : ∀ ρ, Antitone (lam ρ)) (N : Submodule (𝓞 E) (Fin n → E)) [N.IsLattice E]
     (v : HermitianLattice.Pl L) :
@@ -850,13 +844,6 @@ theorem degK_deltaK [IsCMField E] [IsTotallyComplex L] (hlam : ∀ ρ, Antitone 
   ring
 
 /-! ## V6: unimodular lattices and the attached lattices -/
-
-variable {lam} in
-/-- **V6, unimodular lattices**: `deg Δ_N = deg Δ_{O_E^n}` (V5 with P5, `degE_of_unimodular`). -/
-theorem degK_deltaK_of_unimodular [IsCMField E] [IsTotallyComplex L] (hlam : ∀ ρ, Antitone (lam ρ))
-    {N : Submodule (𝓞 E) (Fin n → E)} [N.IsLattice E] (hN : IsUnimodular N) :
-    KLattice.degK (deltaK τ hlam N) = KLattice.degK (deltaK τ hlam (intVec E n)) := by
-  rw [degK_deltaK τ hlam N, degE_of_unimodular hN, sub_self, mul_zero, add_zero]
 
 variable {lam} in
 /-- **V6, the attached lattices**: for a good `d`, `deg Δ_{Lsh d} = deg Δ_{O_E^n} − [L:E]·C_λ·Σ_{P∈ST} log N(P)`

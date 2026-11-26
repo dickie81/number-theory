@@ -247,6 +247,19 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   - The core of the auxiliary primes (T), from the input `ShortNorm` at `h = 1`: primes `T = ππ̄`, `π ≡ 1 (mod M)`, in
     every dyadic window `(e^Λ, 2e^Λ]` once `log(4dM²) ≤ c√Λ` (`ZetaBalance.exists_prime_norm_window`), so meeting
     `ArithT` with `log T` within `log 2` of any large target (`ZetaBalance.SharpDesign.exists_prime_arithT`).
+  - The exact slope bound (F), which replaces the bound above for the frontier (that one cannot fit the budget: its
+    comparison constants carry the level-`T` denominators, and `log κ` alone is of the budget's size). For the
+    integral forms of the whole cut in any coordinates with the Petersson metrics, in the archive's units,
+    `μ ≥ −(3|ν| log n + 2(Σλ)⁺·Σ_{P∈ST} log N(P)/(n[E:ℚ]) + |ST|·log 2)` (`HermForms.muArch_source_ge`), with no
+    stabiliser orders, class representatives, `κ` or constants of the coefficient field (whose discriminant cancels).
+    The degree of the lattice of integral polynomials of every `O_E`-lattice is exact, through a pseudo-basis, the
+    determinant of `ρ_λ` and fractional ideals, so unimodular lattices all have the standard degree and the level-`T`
+    ones differ by an explicit term; the standard one is bounded by integrality (a positive definite integer Gram
+    determinant, no hook formula); stabilisers are trivial and the diamond action on classes free when the level
+    group is unipotent at places over two primes (step 0); and the cut is a sum of `2^{|ST|}`-scaled copies of the
+    class lattices, so Fischer's inequality applies. The piece `SharpObj.SlopeFV` follows for an object whose sources
+    are the whole cut, with antitone weights and `c_F` at least the exact constant within the budget
+    (`ZetaBalance.SharpObj.slopeFV_exact`).
 
 ## How the statements differ from the archive's
 

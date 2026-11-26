@@ -671,7 +671,7 @@ theorem muK_source_ge [IsTotallyComplex L] (hlam : ∀ ρ, Antitone (lam ρ)) (h
     rw [gram_toMatrix' τ χ lam c X hG, hΘ, hΘ, petAt_thetaV τ χ lam hst hfr, mul_div_assoc,
       show ∀ P Q : Pol Φ n ℂ, fockWith (starRingEnd ℂ) P Q / (kappa lam : ℂ) = fock (fun ρ => natW (lam ρ)) P Q from
         fun P Q => by rw [fock, fockWith_hw_C], hd, hd, fock_map_sum_zdualK]
-    simp [Y, Pi.single_apply, Complex.real_smul]
+    simp [Y, deltaK_G, Pi.single_apply, Complex.real_smul]
   -- K4, and the blocks: `deg Δ_{Lsh(c_o)}` and `rk Δ_{Lsh(c_o)}` do not depend on the block (V6)
   have hK4 := degK_ge_sum X Y Θ (fun _ => (2 : ℝ) ^ ST.card) (fun _ => by positivity) h1 h2 h3
   set S := ∑ P ∈ ST, Real.log (Ideal.absNorm P.asIdeal : ℝ) with hS
