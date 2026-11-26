@@ -1,13 +1,19 @@
 import HermFree
+import DeltaVolume
+import StdSlope
+import KLatticeVolume
+import FrameRescale
 
 /-!
-# The exact cut: the source of the forms as a sum of scaled class blocks
+# The exact cut and the slope bound (F) for the source of the forms
 
-Part VIII of the exact slope bound (F) for the source of the sharp frontier, first stage: the statements C1–C3 about
-forms and polynomials that the final bound C4 needs. C4 feeds them to Fischer's inequality over blocks
-(`KLattice.degK_ge_sum`, K4, in `KLatticeVolume`) once Part V (`DeltaVolume`: the lattices `Δ_N` in the dual-basis
-coordinates `dcoord`, with the constant metric `Γ`) is available. The source is the whole cut `V_ω`, that is the
-frontier's `X_c = ⊤`.
+Part VIII of the exact slope bound (F) for the source of the sharp frontier: the source `M_ω` (the whole cut `V_ω`,
+that is the frontier's `X_c = ⊤`) is, up to Fischer's inequality, an orthogonal sum of `2^{|ST|}`-scaled copies of
+the class lattices `Δ_{Lsh(c)}` (C1–C3), whence `μ_arch(M_ω) ≥ −c_F` (C4, `muArch_source_ge`) with
+`c_F = 3|ν|·log n + 2(ΣΛ)⁺·Σ_{P∈ST} log N(P)/(n[E:ℚ]) + |ST|·log 2` (`cFx`). The class lattices come from Part V
+(`DeltaVolume`: `Δ_N` in the dual-basis coordinates `dcoord`, with the constant metric `Γ`), their slope from V6, V7
+and Part VI (`StdSlope`), and the comparison from Fischer's inequality over blocks (`KLattice.degK_ge_sum`, K4, in
+`KLatticeVolume`).
 
 **Hypotheses.** Every class has a trivial stabiliser (`hst`), and the diamond group `D = Π_{P∈ST}(O_E/P)^×` acts
 freely on the classes (`hfr`). Both hold when the level group is unipotent at two places of distinct residue
@@ -23,11 +29,14 @@ group algebra `L[D]`, which acts on the functions by them (`dAlg`): `θ_g = Π_P
 
 **Main results.**
 * **C1** (`thetaV_mem_Mω`): for `Q ∈ Δ_{Lsh(c_o)}` (`DeltaA`), `Θ_{g,o}Q` is an integral cut form, in `M_ω`.
-* **C2** (`petAt_thetaV`): `H_σ(Θ_{g,o}Q, Θ_{g,o}Q') = 2^{|ST|}·fock(σQ, σQ')/κ` at every embedding `σ`. In the
-  coordinates `dcoord` this is (h3) of K4, with `s = 2^{|ST|}` and the block `Δ_{Lsh(c_o)}`.
+* **C2** (`petAt_thetaV`): `H_σ(Θ_{g,o}Q, Θ_{g,o}Q') = 2^{|ST|}·fock(σQ, σQ')/κ` at every embedding `σ`.
 * **C3** (`bijective_sum_thetaV`): `(y_{g,o}) ↦ Σ_{(g,o)} Θ_{g,o}(y_{g,o})` is a bijection from `B × Orb → VV(λ)`
-  onto `V_ω`, which is (h2) of K4.
-Distinct blocks are also orthogonal, but K4 needs only the diagonal (h3), so this is not stated.
+  onto `V_ω`.
+* **C4** (`muArch_source_ge`): for any coordinates `c : V_ω ≃ L^ι`, the source `X` (the `O_L`-span of the image of
+  `M_ω`, with the metric at `v` the Gram matrix of `H_{σ_v}`) has `μ_arch(X) ≥ −c_F`, stated for the rescaled slope
+  lattice (`deg ↦ 2·deg + archShift(L)·rk`), as `SharpObj.slopeFV_of_slopeM` reads it. For nonempty `ι` this is
+  `2μ(X) + archShift(L) ≥ −c_F` (`muK_source_ge`); for `V_ω = 0` it is `c_F ≥ 0` (`cFx_nonneg`).
+Distinct blocks are also orthogonal, but K4 needs only the diagonal blocks, so this is not stated.
 
 **The route.**
 * C1. `ext(c_o, Q)` is integral in every local basis (`MintA`): its value is `Q` at `c_o` and `0` at the other
@@ -44,17 +53,21 @@ Distinct blocks are also orthogonal, but K4 needs only the diagonal (h3), so thi
 * C3, injective (`sumF_injective`). At the class `g'^{-1}c_{o'}` only the block `(g', o')` and its term `S = ST`
   survive: `g_S·g'^{-1}c_{o'} = c_o` forces `o = o'` (orbits) and `g_S = g'` (freeness), hence `S = ST` and `g = g'`
   (`eq_of_gS_smul`). That term is `actP_h y_{g',o'}`, and `actP_h` is invertible.
-* C3, onto (`mem_range_sumF`). Put `X = Π_P Σ_u (⟨u⟩_P − 1) ∈ L[D]`. On `V_ω`, `Σ_u(⟨u⟩_P − 1) = Nm_P − N_P = −N_P`,
-  so `X` acts as the nonzero scalar `Π_P(−N_P)` (`dAlg_prod_eP`). Every form is `Σ_c ext(c, F(c))` (`eq_sum_ext`),
+* C3, onto (`mem_range_sumF`). Put `Z = Π_P Σ_u (⟨u⟩_P − 1) ∈ L[D]`. On `V_ω`, `Σ_u(⟨u⟩_P − 1) = Nm_P − N_P = −N_P`,
+  so `Z` acts as the nonzero scalar `Π_P(−N_P)` (`dAlg_prod_eP`). Every form is `Σ_c ext(c, F(c))` (`eq_sum_ext`),
   and `ext(c, P) = ⟨b⟩ext(c_o, Q)` for the orbit `o` of `c` and some `b`, `Q` (`exists_ext_eq_dOp`: both are forms,
   with the same values at the representatives). In `L[D]`, `⟨b⟩Σ_u(⟨u⟩_P − 1) = Σ_u(⟨u⟩_P − 1) − N_P(⟨b_P⟩_P − 1)` at
   each place, so by distributivity (`Finset.prod_univ_sum`)
-  `X·⟨b⟩ = Π_P Σ_u (1 − N_P[u = b_P])(⟨u⟩_P − 1) = Σ_{x∈D} (Π_P(1 − N_P[x_P = b_P]))·θ_x` (`prod_sum_eP_mul_of`).
+  `Z·⟨b⟩ = Π_P Σ_u (1 − N_P[u = b_P])(⟨u⟩_P − 1) = Σ_{x∈D} (Π_P(1 − N_P[x_P = b_P]))·θ_x` (`prod_sum_eP_mul_of`).
   Here `θ_x = 0` unless `x ∈ B` (`thetaA_eq_zero`), and `θ_x·ext(c_o, Q) = Θ_{x,o}Q` for `x ∈ B`.
-
-**What remains** (C4). Apply K4 with the blocks `Y_{g,o} = Δ_{Lsh(c_o)}` in `dcoord` coordinates, the maps
-`Θ_{g,o}` composed with `dcoord⁻¹` and the coordinates of `V_ω`, and `s = 2^{|ST|}`: (h1) is C1, (h2) is C3, and (h3)
-is C2 with `fock(σQ, σQ')/κ = Γ` on the `dcoord` basis (Part V). Then V6 and V7 give `μ(source) ≥ −c_F`.
+* C4. Apply K4 to the blocks `Y_{g,o} = Δ_{Lsh(c_o)}` (`deltaK`) with the maps `c ∘ Θ_{g,o} ∘ dcoord⁻¹` and
+  `s = 2^{|ST|}`. (h1) is C1, as `Δ_{Lsh(c_o)}` is `DeltaA` in `dcoord` (`mem_deltaLat`, `dcoord_symm_apply`). (h2)
+  is C3 composed with the coordinates. (h3) is C2 in coordinates (`gram_toMatrix'`, sesquilinearity) with
+  `fock(σQ_k, σQ_l) = Γ_{kl}` on the `dcoord` basis (`fock_map_sum_zdualK`). All blocks have the degree and rank of
+  `Δ_{Lsh(d)}` for a good `d` (V6, `degK_deltaK_Lsh`), and `|ι| = |B × Orb|·r` by C3, so
+  `μ(X) ≥ μ(Δ_{Lsh}) − |ST|·log 2/2`. Then V6 in slopes (`muK_deltaK_Lsh`), V7 (`muArch_deltaK_intVec`:
+  `μ_arch(Δ_std) = −log det Γ/r`, the field constant cancels) and Part VI (`log_det_Γ_le`: `log det Γ ≤ 3r|ν| log n`)
+  give `μ_arch(X) ≥ −3|ν| log n − 2(ΣΛ/(n[E:ℚ]))·Σ_P log N(P) − |ST|·log 2 ≥ −c_F`, as `Σ_P log N(P) ≥ 0`.
 -/
 
 namespace HermForms
@@ -487,7 +500,7 @@ theorem dAlg_sum_eP [NumberField L] (P : ST) {F : Fn ST Λ Φ L} (hF : Nm P F = 
     Nat.card_eq_fintype_card, neg_smul, Nat.cast_smul_eq_nsmul]
 
 omit [Fintype Φ] [DecidableEq Φ] in
-/-- On the cut, `X = Π_P Σ_u (⟨u⟩_P − 1)` acts as the scalar `Π_P (−N_P)`. -/
+/-- On the cut, `Z = Π_P Σ_u (⟨u⟩_P − 1)` acts as the scalar `Π_P (−N_P)`. -/
 theorem dAlg_prod_eP [NumberField L] {F : Fn ST Λ Φ L} (hF : ∀ P, Nm P F = 0) (s : Finset ST) :
     dAlg Λ Φ L (∏ P ∈ s, ∑ u, eP L P u) F = (∏ P ∈ s, -(NP P : L)) • F := by
   induction s using Finset.induction_on with
@@ -507,7 +520,7 @@ theorem sum_eP_mul_of (P : ST) (b : (𝓞 E ⧸ P.1.asIdeal)ˣ) :
   abel
 
 omit [NumberField E] [IsCMField E] in
-/-- **`X·⟨b⟩` is a combination of the `θ_x`**: `X·⟨b⟩ = Σ_{x∈D} (Π_P (1 − N_P[x_P = b_P]))·θ_x`, place by place
+/-- **`Z·⟨b⟩` is a combination of the `θ_x`**: `Z·⟨b⟩ = Σ_{x∈D} (Π_P (1 − N_P[x_P = b_P]))·θ_x`, place by place
 (`sum_eP_mul_of`) and by distributivity (`Finset.prod_univ_sum`). -/
 theorem prod_sum_eP_mul_of (b : Dia ST) :
     (∏ P, ∑ u, eP L P u) * MonoidAlgebra.of L _ b =
@@ -521,9 +534,9 @@ theorem prod_sum_eP_mul_of (b : Dia ST) :
 
 end Units
 
-/-- **C3, onto**: every cut form is a sum of blocks. `X` acts on the cut as the nonzero scalar `Π_P (−N_P)`
+/-- **C3, onto**: every cut form is a sum of blocks. `Z` acts on the cut as the nonzero scalar `Π_P (−N_P)`
 (`dAlg_prod_eP`); a form is a sum of diamond translates `⟨b⟩ext(c_o, Q)` (`eq_sum_ext`, `exists_ext_eq_dOp`); and
-`X·⟨b⟩` is a combination of the `θ_x` (`prod_sum_eP_mul_of`), which send `ext(c_o, Q)` into the range
+`Z·⟨b⟩` is a combination of the `θ_x` (`prod_sum_eP_mul_of`), which send `ext(c_o, Q)` into the range
 (`dAlg_thetaA_mem_range`). -/
 theorem mem_range_sumF [NumberField L] (hst : ∀ c : DCl E n ST Λ, stab c = ⊥) {F : Fn ST Λ Φ L}
     (hF : F ∈ Vω ST τ χ lam) : F ∈ LinearMap.range (sumF (ST := ST) τ χ lam) := by
@@ -561,6 +574,198 @@ theorem bijective_sum_thetaV [NumberField L] (hst : ∀ c : DCl E n ST Λ, stab 
     exact ⟨y, Subtype.ext ((hco y).trans hy)⟩
 
 end Cut
+
+/-! ## C4: the slope of the source -/
+
+section Slope
+
+open Module KLattice
+
+open scoped Matrix
+
+attribute [local instance] InnerProductSpace.complexToReal
+
+/-- **The constant** `c_F = 3|ν|·log n + 2(ΣΛ)⁺·Σ_{P∈ST} log N(P)/(n[E:ℚ]) + |ST|·log 2`, with `|ν| = Σ_{ρ,i} ν_{ρ,i}`
+(`ν = natW λ`) and `ΣΛ = Σ_{ρ,i} λ_{ρ,i}`. -/
+def cFx (n : ℕ) (lam : Φ → Fin n → ℤ) (ST : Finset (HeightOneSpectrum (𝓞 E))) : ℝ :=
+  3 * ((∑ ρ, ∑ i, natW (lam ρ) i : ℕ) : ℝ) * Real.log n +
+    2 * max 0 (∑ ρ, ∑ i, (lam ρ i : ℝ)) * (∑ P ∈ ST, Real.log (Ideal.absNorm P.asIdeal : ℝ)) /
+      (n * finrank ℚ E) + ST.card * Real.log 2
+
+omit [IsCMField E] [DecidableEq Φ] in
+/-- `c_F ≥ 0`. -/
+theorem cFx_nonneg (lam : Φ → Fin n → ℤ) : 0 ≤ cFx n lam ST := by
+  have hS : 0 ≤ ∑ P ∈ ST, Real.log (Ideal.absNorm P.asIdeal : ℝ) :=
+    Finset.sum_nonneg fun P _ => Real.log_natCast_nonneg _
+  unfold cFx
+  have := Real.log_natCast_nonneg n
+  have := Real.log_nonneg (one_le_two (α := ℝ))
+  have := le_max_left 0 (∑ ρ, ∑ i, (lam ρ i : ℝ))
+  positivity
+
+variable [NumberField L] (τ : Φ → (E →+* L)) (χ : Λ →* L) (lam : Φ → Fin n → ℤ)
+
+omit [NumberField L] in
+/-- **The Gram matrix in coordinates**: if the metric of `X` at `v` is the Gram matrix of `H_{σ_v}` in the
+coordinates `c` of `V_ω`, then for a linear map `T` into the coordinates, `(σT)ᴴ G_v (σT)` is the Gram matrix of
+`H_{σ_v}` on the images of the basis vectors (`petAt_sum_smul`). -/
+theorem gram_toMatrix' {ι : Type} [Fintype ι] [DecidableEq ι] (c : Vω ST τ χ lam ≃ₗ[L] (ι → L)) (X : KLattice L ι)
+    (hG : ∀ v i j, X.G v i j = petAt ST lam v.1.embedding (c.symm (Pi.single i 1) : Fn ST Λ Φ L)
+      (c.symm (Pi.single j 1) : Fn ST Λ Φ L))
+    {κ : Type} [Fintype κ] [DecidableEq κ] (T : (κ → L) →ₗ[L] (ι → L)) (v : HermitianLattice.Pl L) (k l : κ) :
+    (((LinearMap.toMatrix' T).map v.1.embedding)ᴴ * X.G v * (LinearMap.toMatrix' T).map v.1.embedding) k l =
+      petAt ST lam v.1.embedding (c.symm (T (Pi.single k 1)) : Fn ST Λ Φ L) (c.symm (T (Pi.single l 1))) := by
+  have hT (x : ι → L) : ((c.symm x : Vω ST τ χ lam) : Fn ST Λ Φ L) =
+      ∑ a, x a • ((c.symm (Pi.single a 1) : Vω ST τ χ lam) : Fn ST Λ Φ L) := by
+    have hx : x = ∑ a, x a • (Pi.single a 1 : ι → L) := by
+      funext j
+      simp [Finset.sum_apply, Pi.single_apply]
+    conv_lhs => rw [hx]
+    simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul]
+  rw [hT, hT, petAt_sum_smul]
+  simp only [Matrix.mul_apply, Matrix.conjTranspose_apply, Matrix.map_apply, LinearMap.toMatrix'_apply, hG,
+    RCLike.star_def, Finset.sum_mul]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
+  ring
+
+/-- **C4 in slopes**: for nonempty coordinates, `μ_arch(X) = 2μ(X) + archShift(L) ≥ −c_F`. K4 over the blocks
+`Δ_{Lsh(c_o)}` (C1–C3, `gram_toMatrix'`, `fock_map_sum_zdualK`) gives `μ(X) ≥ μ(Δ_{Lsh}) − |ST|·log 2/2`, and V6,
+V7 and Part VI bound `μ(Δ_{Lsh})`. -/
+theorem muK_source_ge [IsTotallyComplex L] (hlam : ∀ ρ, Antitone (lam ρ)) (hst : ∀ c : DCl E n ST Λ, stab c = ⊥)
+    (hfr : ∀ (a : Dia ST) (c : DCl E n ST Λ), a • c = c → a = 1) {ι : Type} [Fintype ι] [DecidableEq ι] [Nonempty ι]
+    (c : Vω ST τ χ lam ≃ₗ[L] (ι → L)) (X : KLattice L ι)
+    (hM : X.M = Submodule.span (𝓞 L) (c '' {F | (F : Fn ST Λ Φ L) ∈ Mω ST τ χ lam}))
+    (hG : ∀ v i j, X.G v i j = petAt ST lam v.1.embedding (c.symm (Pi.single i 1) : Fn ST Λ Φ L)
+      (c.symm (Pi.single j 1) : Fn ST Λ Φ L)) :
+    -cFx n lam ST ≤ 2 * muK X - Real.log 2 + Real.log |(discr L : ℝ)| / finrank ℚ L := by
+  unfold cFx
+  have hgood (i : Bset ST × Orb E n ST Λ) : i.2.out.rep.Good := i.2.out.out.2
+  have hLat (i : Bset ST × Orb E n ST Λ) : (Lsh i.2.out.rep).IsLattice E := isLattice_Lsh (hgood i).unimod
+  let Y : Bset ST × Orb E n ST Λ → KLattice L (ZIdx lam) := fun i =>
+    haveI := hLat i
+    deltaK τ hlam (Lsh i.2.out.rep)
+  let dV : VV (L := L) lam ≃ₗ[L] (ZIdx lam → L) := dcoord L hlam
+  have hd (x : ZIdx lam → L) : ((dV.symm x : VV (L := L) lam) : Pol Φ n L) = ∑ j, x j • zdualK L lam j :=
+    dcoord_symm_apply L hlam x
+  let Θ : Bset ST × Orb E n ST Λ → (ZIdx lam → L) →ₗ[L] (ι → L) := fun i =>
+    (c : Vω ST τ χ lam →ₗ[L] (ι → L)) ∘ₗ thetaV τ χ lam hst i ∘ₗ dV.symm.toLinearMap
+  have h1 : ∀ i, ∀ x ∈ (Y i).M, Θ i x ∈ X.M := fun i x hx => by
+    have hQ : ((dV.symm x : VV (L := L) lam) : Pol Φ n L) ∈ DeltaA τ lam (Lsh i.2.out.rep) := by
+      rw [hd]
+      exact mem_deltaLat.1 hx
+    rw [hM]
+    exact Submodule.subset_span ⟨_, thetaV_mem_Mω τ χ lam hst i hQ, rfl⟩
+  have h2 : Function.Bijective fun y : (∀ _ : Bset ST × Orb E n ST Λ, ZIdx lam → L) => ∑ i, Θ i (y i) := by
+    have he : Function.Bijective fun (y : ∀ _ : Bset ST × Orb E n ST Λ, ZIdx lam → L) i => dV.symm (y i) :=
+      (Equiv.piCongrRight fun _ => dV.symm.toEquiv).bijective
+    convert c.bijective.comp ((bijective_sum_thetaV τ χ lam hst hfr).comp he) using 1
+    funext y
+    show ∑ i, Θ i (y i) = c (∑ i, thetaV τ χ lam hst i (dV.symm (y i)))
+    rw [map_sum]
+    rfl
+  have h3 : ∀ i v, ((LinearMap.toMatrix' (Θ i)).map v.1.embedding)ᴴ * X.G v *
+      (LinearMap.toMatrix' (Θ i)).map v.1.embedding = (2 ^ ST.card : ℝ) • (Y i).G v := fun i v => by
+    ext k l
+    have hΘ (x : ZIdx lam → L) : c.symm (Θ i x) = thetaV τ χ lam hst i (dV.symm x) := c.symm_apply_apply _
+    rw [gram_toMatrix' τ χ lam c X hG, hΘ, hΘ, petAt_thetaV τ χ lam hst hfr, mul_div_assoc,
+      show ∀ P Q : Pol Φ n ℂ, fockWith (starRingEnd ℂ) P Q / (kappa lam : ℂ) = fock (fun ρ => natW (lam ρ)) P Q from
+        fun P Q => by rw [fock, fockWith_hw_C], hd, hd, fock_map_sum_zdualK]
+    simp [Y, Pi.single_apply, Complex.real_smul]
+  -- K4, and the blocks: `deg Δ_{Lsh(c_o)}` and `rk Δ_{Lsh(c_o)}` do not depend on the block (V6)
+  have hK4 := degK_ge_sum X Y Θ (fun _ => (2 : ℝ) ^ ST.card) (fun _ => by positivity) h1 h2 h3
+  set S := ∑ P ∈ ST, Real.log (Ideal.absNorm P.asIdeal : ℝ) with hS
+  set D := degK (deltaK τ hlam (intVec E n)) - (finrank ℚ L / finrank ℚ E : ℝ) * cLam lam * S
+  set R : ℝ := finrank ℚ L * Fintype.card (ZIdx lam)
+  have hD (i : Bset ST × Orb E n ST Λ) : degK (Y i) = D := by
+    have := hLat i
+    exact degK_deltaK_Lsh τ hlam (hgood i)
+  have hR (i : Bset ST × Orb E n ST Λ) : (rkK (Y i) : ℝ) = R := by
+    simp only [rkK, rk_top, Nat.cast_mul, R]
+  simp only [hD, hR, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, Real.log_pow] at hK4
+  -- the ranks: `|ι| = |B × Orb|·r` (C3)
+  have hcard : Fintype.card ι = Fintype.card (Bset ST × Orb E n ST Λ) * Fintype.card (ZIdx lam) := by
+    let T : (∀ _ : Bset ST × Orb E n ST Λ, ZIdx lam → L) →ₗ[L] (ι → L) := ∑ i, (Θ i).comp (LinearMap.proj i)
+    have hT : Function.Bijective T := by
+      convert h2 using 1
+      funext z
+      simp [T]
+    have := (LinearEquiv.ofBijective T hT).finrank_eq
+    rw [Module.finrank_fintype_fun_eq_card, Module.finrank_pi_fintype] at this
+    simpa only [Module.finrank_fintype_fun_eq_card, Finset.sum_const, Finset.card_univ, smul_eq_mul] using this.symm
+  have := nonempty_ZIdx hlam
+  have hI : 0 < Fintype.card (Bset ST × Orb E n ST Λ) := by
+    rcases Nat.eq_zero_or_pos (Fintype.card (Bset ST × Orb E n ST Λ)) with h | h
+    · rw [h, zero_mul] at hcard
+      exact absurd hcard Fintype.card_ne_zero
+    · exact h
+  obtain ⟨i₀⟩ := Fintype.card_pos_iff.1 hI
+  have hRpos : 0 < R := mul_pos (Nat.cast_pos.2 Module.finrank_pos) (Nat.cast_pos.2 Fintype.card_pos)
+  have hIpos : (0 : ℝ) < Fintype.card (Bset ST × Orb E n ST Λ) := Nat.cast_pos.2 hI
+  have hrX : (rkK X : ℝ) = Fintype.card (Bset ST × Orb E n ST Λ) * R := by
+    simp only [rkK, rk_top, hcard, Nat.cast_mul, R]
+    ring
+  -- `μ(source) ≥ μ(Δ_{Lsh}) − |ST|·log 2/2`
+  have hμX : D / R - ST.card * Real.log 2 / 2 ≤ muK X := by
+    show _ ≤ degK X / (rkK X : ℝ)
+    rw [hrX, le_div_iff₀ (mul_pos hIpos hRpos)]
+    calc (D / R - ST.card * Real.log 2 / 2) * (Fintype.card (Bset ST × Orb E n ST Λ) * R)
+        = Fintype.card (Bset ST × Orb E n ST Λ) * (D / R * R - R / 2 * (ST.card * Real.log 2)) := by ring
+      _ = Fintype.card (Bset ST × Orb E n ST Λ) * (D - R / 2 * (ST.card * Real.log 2)) := by
+        rw [div_mul_cancel₀ D hRpos.ne']
+      _ ≤ degK X := hK4
+  -- V6 in slopes, V7 and Part VI
+  have hμ : D / R = muK (deltaK τ hlam (intVec E n)) - (∑ ρ, ∑ i, (lam ρ i : ℝ)) / (n * finrank ℚ E) * S := by
+    have := hLat i₀
+    rw [← hD i₀, ← hR i₀]
+    exact muK_deltaK_Lsh τ hlam (hgood i₀)
+  have hV7 := muArch_deltaK_intVec τ hlam
+  have hr : (0 : ℝ) < Fintype.card (ZIdx lam) := Nat.cast_pos.2 Fintype.card_pos
+  have hVI : -(3 * ((∑ ρ, ∑ i, natW (lam ρ) i : ℕ) : ℝ) * Real.log n) ≤
+      -Real.log ((Γ lam).det : ℝ) / Fintype.card (ZIdx lam) := by
+    have h := WeylFock.log_det_Γ_le lam hlam
+    rw [det_Γ_real] at h
+    rw [neg_div, neg_le_neg_iff, div_le_iff₀ hr]
+    linarith
+  have hT : 2 * ((∑ ρ, ∑ i, (lam ρ i : ℝ)) / (n * finrank ℚ E) * S) ≤
+      2 * max 0 (∑ ρ, ∑ i, (lam ρ i : ℝ)) * S / (n * finrank ℚ E) := by
+    calc 2 * ((∑ ρ, ∑ i, (lam ρ i : ℝ)) / (n * finrank ℚ E) * S)
+        = 2 * ((∑ ρ, ∑ i, (lam ρ i : ℝ)) * (S / (n * finrank ℚ E))) := by ring
+      _ ≤ 2 * (max 0 (∑ ρ, ∑ i, (lam ρ i : ℝ)) * (S / (n * finrank ℚ E))) := by
+        gcongr
+        exact le_max_right _ _
+      _ = _ := by ring
+  linarith
+
+/-- **C4, the slope bound for the source** (spec §9): if the level group is unipotent at two places of distinct
+residue characteristics, then for any coordinates `c` of the cut `V_ω`, the source `X` (the `O_L`-span of `M_ω` in
+these coordinates, with the Petersson metrics) has `μ_arch(X) ≥ −c_F`, in the archive's units: the slope of the
+rescaled slope lattice (`deg ↦ 2·deg + archShift(L)·rk`, `archShift(L) = −log 2 + log|d_L|/[L:ℚ]`). For `V_ω = 0`
+both ranks vanish and the bound is `c_F ≥ 0` (`cFx_nonneg`); otherwise it is `muK_source_ge`. -/
+theorem muArch_source_ge [IsTotallyComplex L] (hlam : ∀ ρ, Antitone (lam ρ)) (w₀ w₁ : SG) {p₀ p₁ : ℕ}
+    (hp₀ : p₀.Prime) (hp₁ : p₁.Prime) (hp : p₀ ≠ p₁) (h₀ : (p₀ : 𝓞 E) ∈ w₀.1.asIdeal)
+    (h₁ : (p₁ : 𝓞 E) ∈ w₁.1.asIdeal) (hu₀ : UniAt Λ w₀) (hu₁ : UniAt Λ w₁) {ι : Type} [Fintype ι]
+    [DecidableEq ι] (c : Vω ST τ χ lam ≃ₗ[L] (ι → L)) (X : KLattice L ι)
+    (hM : X.M = Submodule.span (𝓞 L) (c '' {F | (F : Fn ST Λ Φ L) ∈ Mω ST τ χ lam}))
+    (hG : ∀ v i j, X.G v i j = petAt ST lam v.1.embedding (c.symm (Pi.single i 1) : Fn ST Λ Φ L)
+      (c.symm (Pi.single j 1) : Fn ST Λ Φ L)) :
+    -cFx n lam ST ≤
+      (X.toPlaceLattice.slopeLattice.rescale (-Real.log 2 + Real.log |(discr L : ℝ)| / finrank ℚ L)).deg ⊤ /
+        (X.toPlaceLattice.slopeLattice.rescale (-Real.log 2 + Real.log |(discr L : ℝ)| / finrank ℚ L)).rk ⊤ := by
+  obtain ⟨hst, hfr⟩ := free_of_uniAt (ST := ST) w₀ w₁ hp₀ hp₁ hp h₀ h₁ hu₀ hu₁
+  show _ ≤ (2 * degK X + (-Real.log 2 + Real.log |(discr L : ℝ)| / finrank ℚ L) * (rkK X : ℝ)) / (rkK X : ℝ)
+  rcases isEmpty_or_nonempty ι with hι | hι
+  · have h0 : (rkK X : ℝ) = 0 := by simp [rkK, rk_top]
+    rw [h0, div_zero, neg_nonpos]
+    exact cFx_nonneg lam
+  · have hpos : (0 : ℝ) < rkK X := by
+      simp only [rkK, rk_top, Nat.cast_mul]
+      exact mul_pos (Nat.cast_pos.2 Module.finrank_pos) (Nat.cast_pos.2 Fintype.card_pos)
+    have h := muK_source_ge τ χ lam hlam hst hfr c X hM hG
+    rw [add_div, mul_div_cancel_right₀ _ hpos.ne', mul_div_assoc]
+    linarith
+
+end Slope
 
 end
 
