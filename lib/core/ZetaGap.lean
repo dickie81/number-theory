@@ -27,9 +27,9 @@ The weights are split by the thick classes `Θ(u) = {(−1, s·u) : s ∈ T2}`, 
 * **Theorem Z** (`BalanceData.cyclicG_le`): take weights (`Weights`) with `m ≥ x^{1/2−ε}` words,
   `|T2| ≥ x^{−ε}|A₀|`, and translates whose shares give the kept characters the weights of the cyclic family:
   `|Σ_t a_t κ(t)^k − Σ_t a_t/(3o + 1)| ≤ x^{ε−1} Σ_t a_t` for `0 < k < o`. If their gap averaged over `A₀` is at most
-  `x^ε Σ_t a_t` (`BalanceData`), in a setting thin at `X` with small twists, and the kept errors `g_{(0,0,κ^k)}(x)`
-  are at most `x^{3/2+ε}`, then `Re g_{(0,0,1)}(x) + (3o + 1)⁻¹ Σ_{0<k<o} Re g_{(0,0,κ^k)}(x) ≤ (9o − 2)x^{1/2+3ε}`.
-* **For `ζ`**, `κ = 1` and `o = 1`: no shares, no kept errors, and `Gz(x) ≤ 7x^{1/2+3ε}` (`BalanceData.zeta_le`).
+  `x^{4ε} Σ_t a_t` (`BalanceData`), in a setting thin at `X` with small twists, and the kept errors `g_{(0,0,κ^k)}(x)`
+  are at most `x^{3/2+ε}`, then `Re g_{(0,0,1)}(x) + (3o + 1)⁻¹ Σ_{0<k<o} Re g_{(0,0,κ^k)}(x) ≤ (9o − 2)x^{1/2+6ε}`.
+* **For `ζ`**, `κ = 1` and `o = 1`: no shares, no kept errors, and `Gz(x) ≤ 7x^{1/2+6ε}` (`BalanceData.zeta_le`).
   **Theorem E** (`zetaWindowBound_of_zetaBalanceBound`): such data on windows give `WindowGRH.ZetaWindowBound`, hence
   the Riemann hypothesis (`riemannHypothesis_of_zetaBalanceBound`).
 * **For every primitive `χ`**: when `κ` lifts `χ`, the weighted error is `(WindowGRH.cyclic χ).G`
@@ -355,10 +355,10 @@ structure Weights (S : Setting) (κ : S.A →* ℂˣ) (x ε X : ℝ) where
   /-- There is a translate. -/
   TT_nonempty : TT.Nonempty
 
-/-- **The balance data at `x`**: weights whose gap, averaged over `u ∈ A₀`, is at most `x^ε Σ_t a_t`. -/
+/-- **The balance data at `x`**: weights whose gap, averaged over `u ∈ A₀`, is at most `x^{4ε} Σ_t a_t`. -/
 structure BalanceData (S : Setting) (κ : S.A →* ℂˣ) (x ε X : ℝ) extends Weights S κ x ε X where
-  /-- The gap, averaged over `u ∈ A₀`, is at most `x^ε Σ_t a_t`. -/
-  gap_le : ∑ u ∈ A₀ κ, S.gap TT m a w u ≤ (A₀ κ).card * x ^ ε * ∑ t ∈ TT, a t
+  /-- The gap, averaged over `u ∈ A₀`, is at most `x^{4ε} Σ_t a_t`. -/
+  gap_le : ∑ u ∈ A₀ κ, S.gap TT m a w u ≤ (A₀ κ).card * x ^ (4 * ε) * ∑ t ∈ TT, a t
 
 namespace Setting
 
@@ -378,12 +378,12 @@ theorem cyclicG_one (x : ℝ) : S.cyclicG 1 x = (S.g (false, false, 1) x).re := 
 end Setting
 
 /-- **Theorem Z**: balance data at `x`, in a setting thin at `X` with small twists and kept errors at most
-`x^{3/2+ε}`, bound the weighted error of the characters `κ^k` by `(9o − 2)x^{1/2+3ε}`, `o` the order of `κ`. -/
+`x^{3/2+ε}`, bound the weighted error of the characters `κ^k` by `(9o − 2)x^{1/2+6ε}`, `o` the order of `κ`. -/
 theorem BalanceData.cyclicG_le {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ} (D : BalanceData S κ x ε X)
     (hthin : S.Thin x X) (htw : S.Twists κ x ε)
     (hkept : ∀ k, 0 < k → k < orderOf κ → ‖S.g (false, false, κ ^ k) x‖ ≤ x ^ (3 / 2 + ε))
     (hx : 1 ≤ x) (hε : 0 ≤ ε) :
-    S.cyclicG κ x ≤ (9 * orderOf κ - 2) * x ^ (1 / 2 + 3 * ε) := by
+    S.cyclicG κ x ≤ (9 * orderOf κ - 2) * x ^ (1 / 2 + 6 * ε) := by
   obtain ⟨⟨m, TT, T2, a, w, δ, w_pos, a_pos, thick_near, thick_small, thin_far, words, thick_sub, thick_card, shares,
     TT_nonempty⟩, gap_le⟩ := D
   have ho : 0 < orderOf κ := orderOf_pos κ
@@ -394,7 +394,7 @@ theorem BalanceData.cyclicG_le {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ
   obtain ⟨o, ho_def⟩ : ∃ o, orderOf κ = o := ⟨_, rfl⟩
   rw [ho_def] at htw hkept shares ho hinj ⊢
   set P := ∑ t ∈ TT, a t with hP_def
-  set Y := x ^ (1 / 2 + 3 * ε)
+  set Y := x ^ (1 / 2 + 6 * ε)
   set s : ℕ → ℂ := fun k => ∑ t ∈ TT, (a t : ℂ) * (κ t : ℂ) ^ k with hs_def
   set R := (∑ k ∈ Finset.range o, s k * S.gsum (κ ^ k) x).re with hR_def
   have hx0 : 0 < x := by linarith
@@ -437,15 +437,15 @@ theorem BalanceData.cyclicG_le {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ
     congr 1
     refine Finset.sum_congr rfl fun t _ => ?_
     ring
-  -- the arithmetic: `R ≤ 4oPx^{1/2+3ε}`, from `m ≥ x^{1/2−ε}` and `|T2| ≥ x^{−ε}|A₀|`
+  -- the arithmetic: `R ≤ 4oPx^{1/2+6ε}`, from `m ≥ x^{1/2−ε}` and `|T2| ≥ x^{−ε}|A₀|`
   have hm : (0 : ℝ) < m := (Real.rpow_pos_of_pos hx0 _).trans_le words
   have hA0 : (0 : ℝ) < (A₀ κ).card := Nat.cast_pos.2 (Finset.card_pos.2 ⟨1, mem_A₀.2 (map_one κ)⟩)
   have hT : (0 : ℝ) < T2.card := (mul_pos (Real.rpow_pos_of_pos hx0 _) hA0).trans_le thick_card
-  have hA1 : (A₀ κ).card * x ^ ε * x ≤ m * T2.card * Y := by
-    have e : x ^ (1 / 2 - ε) * x ^ (-ε) * x ^ (1 / 2 + 3 * ε) = x ^ ε * x := by
+  have hA1 : (A₀ κ).card * x ^ (4 * ε) * x ≤ m * T2.card * Y := by
+    have e : x ^ (1 / 2 - ε) * x ^ (-ε) * x ^ (1 / 2 + 6 * ε) = x ^ (4 * ε) * x := by
       rw [← Real.rpow_add hx0, ← Real.rpow_add hx0, ← Real.rpow_add_one hx0.ne']
       ring_nf
-    calc _ = x ^ (1 / 2 - ε) * (x ^ (-ε) * (A₀ κ).card) * x ^ (1 / 2 + 3 * ε) := by
+    calc _ = x ^ (1 / 2 - ε) * (x ^ (-ε) * (A₀ κ).card) * x ^ (1 / 2 + 6 * ε) := by
           linear_combination (-((A₀ κ).card : ℝ)) * e
       _ ≤ _ := by gcongr
   have hA2 : ((A₀ κ).card : ℝ) ≤ T2.card * Y := by
@@ -457,12 +457,12 @@ theorem BalanceData.cyclicG_le {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ
       _ = _ := mul_comm _ _
   have hR : R ≤ 4 * o * Y * P := by
     refine le_of_mul_le_mul_left ?_ (div_pos (mul_pos hm hT) (by positivity : (0 : ℝ) < 2 * o * x))
-    calc m * T2.card / (2 * o * x) * R ≤ (A₀ κ).card * x ^ ε * P + (A₀ κ).card * (m * P / x ^ 2) := by
+    calc m * T2.card / (2 * o * x) * R ≤ (A₀ κ).card * x ^ (4 * ε) * P + (A₀ κ).card * (m * P / x ^ 2) := by
           rw [← hL]
           refine key.trans ?_
           rw [hRhs]
           linarith
-      _ = P * ((A₀ κ).card * x ^ ε * x + m * ((A₀ κ).card / x)) / x := by
+      _ = P * ((A₀ κ).card * x ^ (4 * ε) * x + m * ((A₀ κ).card / x)) / x := by
           field_simp
       _ ≤ P * (m * T2.card * Y + m * (T2.card * Y)) / x := by
           gcongr
@@ -538,11 +538,11 @@ theorem BalanceData.cyclicG_le {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ
 /-! ## `ζ` -/
 
 /-- **Theorem Z for `ζ`** (`κ = 1`): balance data at `x`, in a setting thin at `X` with small twists, bound the error
-of `ζ`'s ramp sum by `7x^{1/2+3ε}`. -/
+of `ζ`'s ramp sum by `7x^{1/2+6ε}`. -/
 theorem BalanceData.zeta_le {S : Setting} {x ε X : ℝ} (D : BalanceData S 1 x ε X) (hthin : S.Thin x X)
     (htw : S.Twists 1 x ε) (hx : 1 ≤ x) (hε : 0 ≤ ε) :
     ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, Λ n * (x / n - 1) - x * Real.log x + (1 + Real.eulerMascheroniConstant) * x ≤
-      7 * x ^ (1 / 2 + 3 * ε) := by
+      7 * x ^ (1 / 2 + 6 * ε) := by
   have h := D.cyclicG_le hthin htw (fun k hk hk' => absurd hk' (by rw [orderOf_one]; omega)) hx hε
   rwa [S.cyclicG_one, S.g_one_re, orderOf_one, Nat.cast_one, show (9 : ℝ) * 1 - 2 = 7 by norm_num] at h
 
@@ -555,13 +555,13 @@ def ZetaBalanceBound : Prop :=
 /-- **Theorem E**: the frontier after step 3 gives the windowed bound for `ζ`. -/
 theorem zetaWindowBound_of_zetaBalanceBound (h : ZetaBalanceBound) : WindowGRH.ZetaWindowBound := by
   intro θ hθ
-  obtain ⟨lam, hlam, hY⟩ := h ((θ - 1 / 2) / 3) (by linarith)
+  obtain ⟨lam, hlam, hY⟩ := h ((θ - 1 / 2) / 6) (by linarith)
   refine ⟨lam, by exact_mod_cast hlam, 7, fun Y₀ => ?_⟩
   obtain ⟨Y, hY₀, hYx⟩ := hY (max Y₀ 1)
   refine ⟨Y, (le_max_left _ _).trans hY₀, fun x hx => ?_⟩
   obtain ⟨S, X, hthin, htw, ⟨D⟩⟩ := hYx x (by simpa using hx)
   have := D.zeta_le hthin htw ((le_max_right _ _).trans (hY₀.trans hx.1)) (by linarith)
-  rwa [show 1 / 2 + 3 * ((θ - 1 / 2) / 3) = θ by ring] at this
+  rwa [show 1 / 2 + 6 * ((θ - 1 / 2) / 6) = θ by ring] at this
 
 /-- **The Riemann hypothesis from balance data on windows.** -/
 theorem riemannHypothesis_of_zetaBalanceBound (h : ZetaBalanceBound) : RiemannHypothesis :=
@@ -711,7 +711,7 @@ def BalanceBound : Prop :=
 /-- **Theorem E for every primitive character**: the frontier gives `WindowGRH.WindowBound`, with `C = 9o − 2`. -/
 theorem windowBound_of_balanceBound (h : BalanceBound) : WindowGRH.WindowBound := by
   intro f _ χ hχ θ hθ
-  have hε : 0 < (θ - 1 / 2) / 3 := by linarith
+  have hε : 0 < (θ - 1 / 2) / 6 := by linarith
   obtain ⟨lam, hlam, hY⟩ := h f χ hχ _ hε
   -- the kept errors are eventually at most `x^{3/2+ε}`
   obtain ⟨x₀, hx₀⟩ := Filter.eventually_atTop.1 (Filter.eventually_all.2 fun k : Fin (orderOf χ) =>
@@ -725,7 +725,7 @@ theorem windowBound_of_balanceBound (h : BalanceBound) : WindowGRH.WindowBound :
       rw [hL.g_pow]
       exact hx₀ x ((le_max_left _ _).trans hYx') ⟨k, hL.orderOf_eq ▸ hk⟩)
     ((le_max_right _ _).trans hYx') hε.le
-  rwa [hL.cyclicG_eq, hL.orderOf_eq, show 1 / 2 + 3 * ((θ - 1 / 2) / 3) = θ by ring] at this
+  rwa [hL.cyclicG_eq, hL.orderOf_eq, show 1 / 2 + 6 * ((θ - 1 / 2) / 6) = θ by ring] at this
 
 /-- **The Riemann hypothesis for `ζ` and every Dirichlet `L`-function from balance data on windows**, for every
 primitive character. -/

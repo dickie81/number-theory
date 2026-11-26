@@ -11,9 +11,9 @@ character `κ` of `A`, a frame of lattices (`SlopeFrame.Frame`) that meets the h
 
 * **(G)**: `Σ_{u ∈ A₀} gap(u) ≤ Σ_{u ∈ A₀} (s_u − μ(C_u)) + E`, the gain of the lattices over their targets covers the
   gap;
-* **(Z)**: `E + Σ_{u ∈ A₀} (α_u H_u + β_u U_u log(1 + H_u/U_u)) ≤ |A₀|·x^ε·Σ_t a_t`, the losses are small.
+* **(Z)**: `E + Σ_{u ∈ A₀} (α_u H_u + β_u U_u log(1 + H_u/U_u)) ≤ |A₀|·x^{4ε}·Σ_t a_t`, the losses are small.
 
-Then the gap averaged over `A₀` is at most `x^ε Σ_t a_t`, which gives balance data (`LatticeData.toBalanceData`).
+Then the gap averaged over `A₀` is at most `x^{4ε} Σ_t a_t`, which gives balance data (`LatticeData.toBalanceData`).
 Frames are needed only at `u ∈ A₀`. With the analytic inputs (`Setting.Thin`, `Setting.Twists`) it gives the Riemann
 hypothesis from data for `κ = 1` (`riemannHypothesis_of_zetaLatticeBound`), and the Riemann hypothesis for `ζ` and
 every Dirichlet `L`-function from data for a `κ` lifting each primitive `χ` (`rhAndGRH_of_latticeBound`).
@@ -53,7 +53,7 @@ structure LatticeData (S : Setting) (κ : S.A →* ℂˣ) (x ε X : ℝ) extends
   gain : ∑ u ∈ A₀ κ, S.gap TT m a w u ≤ ∑ u ∈ A₀ κ, (s u - (frame u).C.deg ⊤ / (frame u).C.rk ⊤) + E
   /-- **(Z)**: the losses are small. -/
   sizes : E + ∑ u ∈ A₀ κ, (α u * H u + β u * U u * Real.log (1 + H u / U u)) ≤
-    (A₀ κ).card * x ^ ε * ∑ t ∈ TT, a t
+    (A₀ κ).card * x ^ (4 * ε) * ∑ t ∈ TT, a t
 
 /-- **The frame inequality at each translate gives the averaged gap bound.** -/
 def LatticeData.toBalanceData {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ} (D : LatticeData S κ x ε X) :

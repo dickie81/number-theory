@@ -253,8 +253,8 @@ Specifications read from the archive on 23 November 2026, and simplified.
   - no bound on `L′/L(1, χ)`;
   - the twists bounded only at the point `x`.
 - It needs no `b`, `k`, `X′`, `b′` or `Bracket`.
-- All losses are powers `x^ε`. The frontier asks only the averaged gap bound, `Σ_u gap(u) ≤ |A|·x^ε·Σ_t a_t`, and
-  Theorem Z gives `Gz(x) ≤ 7x^{1/2+3ε}`.
+- All losses are powers `x^ε`. The frontier asks only the averaged gap bound, `Σ_u gap(u) ≤ |A|·x^{4ε}·Σ_t a_t`, and
+  Theorem Z gives `Gz(x) ≤ 7x^{1/2+6ε}`.
 - The archive's data meet these conditions for large `x`. The spread of its `a_t` is far below what the thick weights
   allow.
 
@@ -318,7 +318,7 @@ numeric hypotheses. The frame inequality has already been applied, once per tran
 (RS). Put `s_u` for the rank-weighted mean of `μ(N_{u,ω}) − h_{u,ω}`, and let `U_u > 0` and `H_u ≥ 0` bound the range:
 `μ_max(N_{u,ω}) − h_{u,ω} ≤ s_u + U_u`, and `μ_min(C_u) ≥ s_u − H_u`. Then:
 - **(G)** `Σ_u gap(u) ≤ Σ_u (s_u − μ(C_u)) + E`;
-- **(Z)** `E + Σ_u (α H_u + β U_u log(1 + H_u/U_u)) ≤ |A|·x^ε·Σ_t a_t`.
+- **(Z)** `E + Σ_u (α H_u + β U_u log(1 + H_u/U_u)) ≤ |A|·x^{4ε}·Σ_t a_t`.
 
 The frame inequality at each `u` gives the averaged gap bound of `ZetaBalance.BalanceData`. Against the archive:
 - (G) is needed only on average over translates, not at each;
@@ -442,7 +442,7 @@ the namespace `ZetaBalance`. `ζ` is the case `χ = 1`.
   `|Σ_t a_t κ(t)^k − Σ_t a_t/(3o + 1)| ≤ x^{ε−1} Σ_t a_t` for `0 < k < o`. Assume the gap averaged over `A₀` is
   bounded as for `ζ`, the setting is thin, the `3o` twists are at most `x^{1/2+ε}` at `x` (`Setting.Twists`), and the
   kept errors `g_{(0,0,κ^k)}(x)` are at most `x^{3/2+ε}`. Then
-  `Re g_1(x) + (3o + 1)⁻¹ Σ_{0<k<o} Re g_{κ^k}(x) ≤ (9o − 2)x^{1/2+3ε}`. For `ζ` this is `7x^{1/2+3ε}`, as before.
+  `Re g_1(x) + (3o + 1)⁻¹ Σ_{0<k<o} Re g_{κ^k}(x) ≤ (9o − 2)x^{1/2+6ε}`. For `ζ` this is `7x^{1/2+6ε}`, as before.
   The kept errors bound the share errors; a crude bound gives them for large `x` (`eventually_norm_rampErr_le`, from
   `Λ(n) ≤ log x` and `Σ_{n≤x} 1/n ≤ 1 + log x`).
 - **The cyclic family** (`Setting.Lifts.cyclicG_eq`). Say `κ` lifts `χ` (`Setting.Lifts`) when `f ∣ QS` and `κ̃ = χ` at

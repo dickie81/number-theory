@@ -34,7 +34,7 @@ The terms in `log(π/v)` cancel.
 `μ(N_ω) − h_ω − μ(C_u) ≥ gap(u) − c_u` (`SixTermData.gap_le_word`), with `c_u = c₁ + c₂ + c₃ + (Σ_t a_t)·c₄ + c₅ + c₆`
 (`SixTermData.slack`). The rank-weighted mean over the words gives `s_u − μ(C_u) ≥ gap(u) − c_u`
 (`SixTermData.gap_le_mean`), which is (G) of `LatticeData` with `E = Σ_{u ∈ A₀} c_u`. One budget,
-`Σ_{u ∈ A₀} (c_u + α_u H_u + β_u U_u log(1 + H_u/U_u)) ≤ |A₀|·x^ε·Σ_t a_t`, is (Z). So six-term data are lattice data
+`Σ_{u ∈ A₀} (c_u + α_u H_u + β_u U_u log(1 + H_u/U_u)) ≤ |A₀|·x^{4ε}·Σ_t a_t`, is (Z). So six-term data are lattice data
 (`SixTermData.toLatticeData`), and the frontier `SixTermBound`, `PairBound` with six-term data, gives the Riemann
 hypothesis for `ζ` and every Dirichlet `L`-function (`rhAndGRH_of_sixTermBound`).
 
@@ -187,7 +187,7 @@ structure SixTermData (S : Setting) (κ : S.A →* ℂˣ) (x ε X : ℝ) extends
   G6 : ∀ u ∈ A₀ κ, ∑ t ∈ TT, ∑ j, S.ASK (a t) t (w u j) - Ga u ≤ c₆ u
   /-- **(Z′)**: the slacks and the losses of the frame inequality are small. -/
   sizes : ∑ u ∈ A₀ κ, (c₁ u + c₂ u + c₃ u + (∑ t ∈ TT, a t) * c₄ u + c₅ u + c₆ u +
-    (α u * H u + β u * U u * Real.log (1 + H u / U u))) ≤ (A₀ κ).card * x ^ ε * ∑ t ∈ TT, a t
+    (α u * H u + β u * U u * Real.log (1 + H u / U u))) ≤ (A₀ κ).card * x ^ (4 * ε) * ∑ t ∈ TT, a t
 
 namespace SixTermData
 
