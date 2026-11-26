@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1956 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1971 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,8 +14,8 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 224 | 794 |
-| `lib/pnt` | 359 | 1049 |
+| `lib/core` | 227 | 804 |
+| `lib/pnt` | 361 | 1054 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -484,6 +484,15 @@ note of `formalisations/` that names it, if one does.
 - `ZetaBalance.Setting.Ranks.FTypeG_nonpos`: The forced order at `g₀, g₁` is at most `0`. ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.Setting.Ranks.FInert_nonneg`: The forced order at an inert or signal prime is nonnegative when the weights are. ([note](../formalisations/alpoge-rh.md))
 
+#### `FormSlope`: The slope lower bound (F)
+
+- `GramVolume.vol_le_prod_norm`: Hadamard's inequality ([note](../formalisations/alpoge-rh.md))
+- `KLattice.slope_ge_of_span`: The slope from a spanning family ([note](../formalisations/alpoge-rh.md))
+- `HermForms.slope_source_ge_of_span`: The slope of the source from a spanning family of integral forms ([note](../formalisations/alpoge-rh.md))
+- `HermForms.slope_source_ge_full`: (F) for the full lattice ([note](../formalisations/alpoge-rh.md))
+- `HermForms.slope_source_ge`: (F), the slope lower bound for the source ([note](../formalisations/alpoge-rh.md))
+- `HermForms.exists_slope_source_ge`: (F) for the source, unconditionally ([note](../formalisations/alpoge-rh.md))
+
 #### `FourSquareResidue`: `ζ(2) = π²/6` from the points of `ℤ⁴` in a ball
 
 - `FourSquareResidue.latticeCount_four_sqrt`: Lattice count = shell sum
@@ -629,6 +638,11 @@ note of `formalisations/` that names it, if one does.
 - `HermForms.dOp_mem`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `HermForms.gram_isHermitian`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `HermForms.source_G`: Sanity ([note](../formalisations/alpoge-rh.md))
+
+#### `HermFormsLattice`: The forms are finite-dimensional, the integral forms a lattice, the Petersson form positive
+
+- `HermForms.formsLattice`: The piece `FormsLattice` ([note](../formalisations/alpoge-rh.md))
+- `HermForms.isLattice_span_Mω`: The integral forms in any subspace of the cut are a lattice ([note](../formalisations/alpoge-rh.md))
 
 #### `HermitianLattice`: Hermitian lattices over a totally complex field
 
@@ -1023,6 +1037,11 @@ note of `formalisations/` that names it, if one does.
 #### `SlopeFrame`: The frame inequality for slopes
 
 - `SlopeFrame.frame_inequality`: The frame inequality ([note](../formalisations/alpoge-rh.md))
+
+#### `SlopeIndex`: The slope of a hermitian `O_K`-lattice moves by an index
+
+- `KLattice.slope_withLattice_eq`: The slope and the index ([note](../formalisations/alpoge-rh.md))
+- `KLattice.slope_rescale_withLattice_eq`: The slope and the index in the archive's units ([note](../formalisations/alpoge-rh.md))
 
 #### `SquaresCongruences`: Congruences for sums of squares and the binary forms of class number one
 
@@ -1503,6 +1522,11 @@ note of `formalisations/` that names it, if one does.
 
 - `AlmostAll.almost_all_of_density`: Primes in almost all short intervals, from a density estimate ([note](../formalisations/zeta-density.md))
 - `AlmostAll.almost_all_short_primes`: Primes in almost all short intervals for every `θ > 1/6` ([note](../formalisations/zeta-density.md))
+
+#### `AuxPrimes`: The auxiliary primes (T) from the short-interval input
+
+- `ZetaBalance.exists_prime_norm_window`: Primes of the shape of (T) in a dyadic window ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.SharpDesign.exists_prime_arithT`: The auxiliary primes of a design ([note](../formalisations/alpoge-rh.md))
 
 #### `BallUpperEta`: The alternating vector at the low zeros, and the rate from above
 
@@ -2578,6 +2602,7 @@ note of `formalisations/` that names it, if one does.
 #### `SharpPiecesProved`: The pieces of the sharp frontier that are proved
 
 - `ZetaBalance.finiteClasses_proved`: The piece `FiniteClasses`, proved ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.formsLattice_proved`: The piece `FormsLattice`, proved ([note](../formalisations/alpoge-rh.md))
 
 #### `ShortCharSums`: Short character sums
 
@@ -3502,6 +3527,11 @@ note of `formalisations/` that names it, if one does.
 #### `SixTerm`: The six-term interface below the frame inequality — CONDITIONAL on the half-plane
 
 - `ZetaBalance.rhAndGRH_of_sixTermBound`: CONDITIONAL. The Riemann hypothesis for `ζ` and every Dirichlet `L`-function from the six-term frontier ([note](../formalisations/alpoge-rh.md))
+
+#### `SlopeV`: The index bookkeeping (V): `SlopeFV` from the slope bound on `M_ω`
+
+- `ZetaBalance.SharpObj.slopeFV_of_slopeM`: (V): `SlopeFV` from the slope bound on `M_ω` ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.SharpObj.isLattice_map_M`: `M_ω` is a lattice in any coordinates ([note](../formalisations/alpoge-rh.md))
 
 #### `SmallPrimes`: The small primes generate the units mod `q`
 

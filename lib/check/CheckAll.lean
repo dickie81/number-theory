@@ -465,6 +465,11 @@ import SharpInputs
 import HermFinite
 import WeylSpan
 import SharpPiecesProved
+import HermFormsLattice
+import FormSlope
+import SlopeIndex
+import SlopeV
+import AuxPrimes
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2309,6 +2314,21 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms WeylFock.bidet_mem_nabla
 #print axioms WeylFock.span_bidet
 #print axioms ZetaBalance.finiteClasses_proved
+#print axioms HermForms.formsLattice
+#print axioms ZetaBalance.formsLattice_proved
+#print axioms GramVolume.vol_le_prod_norm
+#print axioms KLattice.slope_ge_of_span
+#print axioms HermForms.slope_source_ge_of_span
+#print axioms HermForms.slope_source_ge_full
+#print axioms HermForms.slope_source_ge
+#print axioms HermForms.exists_slope_source_ge
+#print axioms KLattice.slope_withLattice_eq
+#print axioms KLattice.slope_rescale_withLattice_eq
+#print axioms ZetaBalance.SharpObj.slopeFV_of_slopeM
+#print axioms HermForms.isLattice_span_Mω
+#print axioms ZetaBalance.SharpObj.isLattice_map_M
+#print axioms ZetaBalance.exists_prime_norm_window
+#print axioms ZetaBalance.SharpDesign.exists_prime_arithT
 #print axioms ZetaBalance.sharpBoundTheta_of_pinned
 #print axioms ThetaChain.Data.comp_zero_inp
 #print axioms ThetaNorm.th0_zero
