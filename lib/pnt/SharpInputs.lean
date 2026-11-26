@@ -23,7 +23,7 @@ finite-dimensional and integral forms a lattice (`formsLattice`), admissible par
 pins' satisfiability (`pins`), the frame's existence (`frame`), the auxiliary primes (`primes`, (T)), the slope bound
 (F) with the index (V) (`slopeFV`), the gain in (G↓) (`gain`), (G↑) (`gUp`), (S) and (R) (`frameSR`).
 `SharpObj.exists_sharpTr` assembles one translate from them. (Z) is not a piece: each piece bounds its own slack by a
-share of the budget `x^ε Σ_t a_t` (a quarter each for `c↓ = c_F + c_G`, `c↑`, `(Σ_t a_t)·c_T` and the frame loss),
+share of the budget `x^{4ε} Σ_t a_t` (a quarter each for `c↓ = c_F + c_G`, `c↑`, `(Σ_t a_t)·c_T` and the frame loss),
 and the reduction adds them up.
 
 **Sanity theorem:** `SharpObj.exists_sharpTr` (the per-translate reduction).
@@ -468,9 +468,9 @@ theorem realisesPet {F : FrameOn C.K b.Ω} {c : ∀ ω, b.Vs ω ≃ₗ[C.K] (F.n
 
 /-- **(T), the auxiliary primes** (archive: `levelPrime_unconditional`, `exists_levCh`): every word's `T_ω` is a
 prime `ππ̄`, `π ≡ 1 (mod M)` (`ArithT`), with `log T_ω ≥ Λ_u − c_T`, and `(Σ_t a_t)·c_T` is within a quarter of the
-budget `x^ε Σ_t a_t`. -/
+budget `x^{4ε} Σ_t a_t`. -/
 def Primes (u : S.A) : Prop :=
-  0 ≤ b.cT ∧ (∑ s ∈ Dg.TT, Dg.a s) * b.cT ≤ x ^ ε * (∑ s ∈ Dg.TT, Dg.a s) / 4 ∧
+  0 ≤ b.cT ∧ (∑ s ∈ Dg.TT, Dg.a s) * b.cT ≤ x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4 ∧
     ∀ ω, (b.T ω).Prime ∧ Dg.ArithT (b.T ω) ∧
       S.lam (Dg.w u) S.vE (Real.log (Dg.g₀ * Dg.g₁)) - b.cT ≤ Real.log (b.T ω)
 
@@ -483,28 +483,28 @@ def FrameExists : Prop :=
 
 /-- **(F) and (V)** (archive: `lower_slope_inequality_family`, from `standard_slope_lower`, `hook_length_bound`,
 `column_exact_slope_family`): in every realising frame, `μ(N_ω) ≥ −c_F + idx_ω`, i.e. `μ(M_ω) ≥ −c_F` (F) and
-`μ(N_ω) − μ(M_ω) = idx_ω` (V, the index bookkeeping on `covol_eq_relIndex_mul`); `0 ≤ c_F ≤ x^ε Σ_t a_t/8`.
+`μ(N_ω) − μ(M_ω) = idx_ω` (V, the index bookkeeping on `covol_eq_relIndex_mul`); `0 ≤ c_F ≤ x^{4ε} Σ_t a_t/8`.
 Serves (G↓). -/
 def SlopeFV : Prop :=
-  0 ≤ b.cF ∧ b.cF ≤ x ^ ε * (∑ s ∈ Dg.TT, Dg.a s) / 8 ∧
+  0 ≤ b.cF ∧ b.cF ≤ x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 8 ∧
     ∀ (F : FrameOn C.K b.Ω) c eC, b.RealWith F c eC → ∀ ω : F.toKFrame.frame.ι,
       -b.cF + b.idx ω ≤ (F.toKFrame.frame.N ω).deg ⊤ / (F.toKFrame.frame.N ω).rk ⊤
 
 /-- **The gain in (G↓)** (archive: `closed_linkG_of_duty` with `duty_of_std`, `linkMu_of_full`): the index term is
 at least `Σ_t Σ_j ASK(a_t, t, w_{u,j}) − m(Σ_t a_t)·lg + Fo(𝒫_u) − c_G`, a statement about indices alone (local
-divisibility of the theta kernels at the inert places, the forced orders); `0 ≤ c_G ≤ x^ε Σ_t a_t/8`. -/
+divisibility of the theta kernels at the inert places, the forced orders); `0 ≤ c_G ≤ x^{4ε} Σ_t a_t/8`. -/
 def Gain (u : S.A) : Prop :=
-  0 ≤ b.cG ∧ b.cG ≤ x ^ ε * (∑ s ∈ Dg.TT, Dg.a s) / 8 ∧
+  0 ≤ b.cG ∧ b.cG ≤ x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 8 ∧
     ∀ ω, ∑ s ∈ Dg.TT, ∑ j, S.ASK (Dg.a s) s (Dg.w u j) - Dg.m * (∑ s ∈ Dg.TT, Dg.a s) * Real.log (Dg.g₀ * Dg.g₁) +
       Dg.R.Fo (Dg.hc u) (S.twA κ) Dg.g₀ Dg.g₁ (S.cutX x ε) - b.cG ≤ b.idx ω
 
 /-- **(G↑)** (archive: `closed_linkDIVt_of_closed_bridge_kernel` with the bridge kernel `link_brest_alt`,
 `wire_sel_alt`, `closed_family_admissible_twist_link_alt`, `selection_closed_of_wu_decay_alt`): in every realising
-frame, `μ_g(C_u) + h_g(B_ω) − Fo(𝒫_u) ≤ MAIN_ω + c↑`, for the object's target metric `g`; `0 ≤ c↑ ≤ x^ε Σ_t a_t/4`.
+frame, `μ_g(C_u) + h_g(B_ω) − Fo(𝒫_u) ≤ MAIN_ω + c↑`, for the object's target metric `g`; `0 ≤ c↑ ≤ x^{4ε} Σ_t a_t/4`.
 Not decomposed further here: its inputs (Rallis, `hX`, Colmez) bear on the target metric, which the library does
 not define. -/
 def GUp (u : S.A) : Prop :=
-  0 ≤ b.cUp ∧ b.cUp ≤ x ^ ε * (∑ s ∈ Dg.TT, Dg.a s) / 4 ∧
+  0 ≤ b.cUp ∧ b.cUp ≤ x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4 ∧
     ∀ (F : FrameOn C.K b.Ω) c eC, b.RealWith F c eC → ∀ ω,
       F.toKFrame.frame.C.deg ⊤ / F.toKFrame.frame.C.rk ⊤ + F.toKFrame.frame.h ω -
         Dg.R.Fo (Dg.hc u) (S.twA κ) Dg.g₀ Dg.g₁ (S.cutX x ε) ≤ S.mainW Dg.TT Dg.m Dg.a S.vE (b.T ω) + b.cUp
@@ -518,7 +518,7 @@ mean `s_u` and their constants share one budget with `e`, `η`. -/
 def FrameSR : Prop :=
   (∀ ω, 0 < b.cω ω) ∧ 0 ≤ b.eS ∧ 0 < b.U ∧ 0 ≤ b.H ∧
     (b.η + 2 * √b.eS / (1 - √b.eS)) * b.H + 2 / (1 - √b.eS) * b.U * Real.log (1 + b.H / b.U) ≤
-      x ^ ε * (∑ s ∈ Dg.TT, Dg.a s) / 4 ∧
+      x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4 ∧
     ∀ (F : FrameOn C.K b.Ω) c eC, b.RealWith F c eC →
       FrameAtPlace.FrameCond (fun ω : F.toKFrame.ι => b.cω ω • F.toKFrame.comp ω b.pl) b.eS b.η ∧
       0 < ∑ ω, ((F.toKFrame.frame.N ω).rk ⊤ : ℝ) ∧
@@ -789,7 +789,7 @@ structure SharpTr.Sharp (Dg : SharpDesign S κ x ε X) (C : SharpCoeff S) (u : S
   /-- (Z) at this translate. -/
   budget : t.cDn + t.cUp + (∑ s ∈ Dg.TT, Dg.a s) * t.cT +
       ((t.η + 2 * √t.e / (1 - √t.e)) * t.H + 2 / (1 - √t.e) * t.U * Real.log (1 + t.H / t.U)) ≤
-    x ^ ε * ∑ s ∈ Dg.TT, Dg.a s
+    x ^ (4 * ε) * ∑ s ∈ Dg.TT, Dg.a s
   /-- The pinned realisation at this translate. -/
   pins : Dg.PinsAt C u t.F t.T
 
