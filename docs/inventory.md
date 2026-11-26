@@ -2601,16 +2601,16 @@ note of `formalisations/` that names it, if one does.
 - `ZetaBalance.sharpBoundTheta_of_pinned`: The pinned frontier implies `SharpBoundTheta`. ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.rhAndGRH_of_sharpBoundPinned`: CONDITIONAL. RH and GRH from the pinned frontier ([note](../formalisations/alpoge-rh.md))
 
-#### `SharpInputs`: The sharp frontier from its inputs and its pieces — CONDITIONAL on the half-plane
+#### `SharpInputs`: The six-term frontier from its inputs and its pieces — CONDITIONAL on the half-plane
 
-- `ZetaBalance.sharpBoundPinned_of_inputs`: The sharp frontier from the inputs and the pieces ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.sixTermBound_of_inputs`: The six-term frontier from the inputs and the pieces ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.rhAndGRH_of_inputs`: CONDITIONAL. RH and GRH from the inputs and the pieces ([note](../formalisations/alpoge-rh.md))
 
 #### `SharpParams`: The design's parameters
 
 - `ZetaBalance.sharpParams`: `SharpPieces.params` ([note](../formalisations/alpoge-rh.md))
 
-#### `SharpPiecesProved`: The pieces of the sharp frontier that are proved
+#### `SharpPiecesProved`: The pieces of the frontier's proof that are proved
 
 - `ZetaBalance.finiteClasses_proved`: The piece `FiniteClasses`, proved ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.formsLattice_proved`: The piece `FormsLattice`, proved ([note](../formalisations/alpoge-rh.md))

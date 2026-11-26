@@ -2324,7 +2324,7 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ZetaBalance.SharpData.nonempty_sixTermData
 #print axioms ZetaBalance.SharpData.toSixTermData_Fo
 #print axioms ZetaBalance.rhAndGRH_of_sharpBoundPinned
-#print axioms ZetaBalance.sharpBoundPinned_of_inputs
+#print axioms ZetaBalance.sixTermBound_of_inputs
 #print axioms ZetaBalance.rhAndGRH_of_inputs
 #print axioms HermClasses.finite_DCl
 #print axioms HermClasses.finite_stab
