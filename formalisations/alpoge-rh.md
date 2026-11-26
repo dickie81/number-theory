@@ -228,15 +228,6 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     Fock form and Cauchy–Binet. From them the piece `ZetaBalance.FormsLattice` (`HermForms.formsLattice`,
     `ZetaBalance.formsLattice_proved`): the forms finite-dimensional, the integral forms a lattice, and the Petersson
     form positive definite at every complex place.
-  - The core of the slope piece (F), for the source lattice of the cut (`HermForms.slope_source_ge`, with the
-    comparison constants supplied in `HermForms.exists_slope_source_ge`; the full lattice of integral forms in
-    `HermForms.slope_source_ge_full`): an explicit lower bound `μ ≥ −c_L − ½ log B`, with `B` the level-`T`
-    denominator times the stabiliser orders, the Fock norms of the bideterminants and the comparison constants of the
-    representatives. The engine is a slope bound for any hermitian lattice from a spanning family of bounded vectors
-    (`KLattice.slope_ge_of_span`, `HermForms.slope_source_ge_of_span`), by Hadamard's inequality
-    (`GramVolume.vol_le_prod_norm`); the cut is reached by the integral projection `Π_P (N_P − Nm_P)`, not by
-    duality. Still open for the piece itself: the further subspace `X_c` of the pins, a bound on the comparison
-    constants (reduction theory), explicit bounds on the Fock norms, and the budget check.
   - The index bookkeeping (V): two `O_K`-lattices with the same metrics, neither inside the other, have slopes
     differing by `(log [N : N ∩ M] − log [M : N ∩ M])/rk` (`KLattice.slope_withLattice_eq`; doubled in the archive's
     units, `KLattice.slope_rescale_withLattice_eq`), through `N + M` and the second isomorphism theorem. So the piece
@@ -247,19 +238,19 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   - The core of the auxiliary primes (T), from the input `ShortNorm` at `h = 1`: primes `T = ππ̄`, `π ≡ 1 (mod M)`, in
     every dyadic window `(e^Λ, 2e^Λ]` once `log(4dM²) ≤ c√Λ` (`ZetaBalance.exists_prime_norm_window`), so meeting
     `ArithT` with `log T` within `log 2` of any large target (`ZetaBalance.SharpDesign.exists_prime_arithT`).
-  - The exact slope bound (F), which replaces the bound above for the frontier (that one cannot fit the budget: its
-    comparison constants carry the level-`T` denominators, and `log κ` alone is of the budget's size). For the
-    integral forms of the whole cut in any coordinates with the Petersson metrics, in the archive's units,
-    `μ ≥ −(3|ν| log n + 2(Σλ)⁺·Σ_{P∈ST} log N(P)/(n[E:ℚ]) + |ST|·log 2)` (`HermForms.muArch_source_ge`), with no
-    stabiliser orders, class representatives, `κ` or constants of the coefficient field (whose discriminant cancels).
-    The degree of the lattice of integral polynomials of every `O_E`-lattice is exact, through a pseudo-basis, the
-    determinant of `ρ_λ` and fractional ideals, so unimodular lattices all have the standard degree and the level-`T`
-    ones differ by an explicit term; the standard one is bounded by integrality (a positive definite integer Gram
-    determinant, no hook formula); stabilisers are trivial and the diamond action on classes free when the level
-    group is unipotent at places over two primes (step 0); and the cut is a sum of `2^{|ST|}`-scaled copies of the
-    class lattices, so Fischer's inequality applies. The piece `SharpObj.SlopeFV` follows for an object whose sources
-    are the whole cut, with antitone weights and `c_F` at least the exact constant within the budget
-    (`ZetaBalance.SharpObj.slopeFV_exact`).
+  - The slope bound (F), exact. (A first bound, from a spanning family of short integral forms and Hadamard's
+    inequality, cannot fit the budget: the comparison constants of the representatives carry the level-`T` denominators,
+    and `log κ` alone is of the budget's size; it is removed.) For the integral forms of the whole cut in any
+    coordinates with the Petersson metrics, in the archive's units, `μ ≥ −(3|ν| log n + 2(Σλ)⁺·Σ_{P∈ST} log
+    N(P)/(n[E:ℚ]) + |ST|·log 2)` (`HermForms.muArch_source_ge`), with no stabiliser orders, class representatives, `κ`
+    or constants of the coefficient field (whose discriminant cancels). The degree of the lattice of integral
+    polynomials of every `O_E`-lattice is exact, through a pseudo-basis, the determinant of `ρ_λ` and fractional ideals,
+    so unimodular lattices all have the standard degree and the level-`T` ones differ by an explicit term; the standard
+    one is bounded by integrality (a positive definite integer Gram determinant, no hook formula); stabilisers are
+    trivial and the diamond action on classes free when the level group is unipotent at places over two primes (step 0);
+    and the cut is a sum of `2^{|ST|}`-scaled copies of the class lattices, so Fischer's inequality applies. The piece
+    `SharpObj.SlopeFV` follows for an object whose sources are the whole cut, with antitone weights and `c_F` at least
+    the exact constant within the budget (`ZetaBalance.SharpObj.slopeFV_exact`).
 
 ## How the statements differ from the archive's
 

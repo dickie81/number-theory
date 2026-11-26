@@ -2325,12 +2325,6 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ZetaBalance.finiteClasses_proved
 #print axioms HermForms.formsLattice
 #print axioms ZetaBalance.formsLattice_proved
-#print axioms GramVolume.vol_le_prod_norm
-#print axioms KLattice.slope_ge_of_span
-#print axioms HermForms.slope_source_ge_of_span
-#print axioms HermForms.slope_source_ge_full
-#print axioms HermForms.slope_source_ge
-#print axioms HermForms.exists_slope_source_ge
 #print axioms KLattice.slope_withLattice_eq
 #print axioms KLattice.slope_rescale_withLattice_eq
 #print axioms ZetaBalance.SharpObj.slopeFV_of_slopeM
