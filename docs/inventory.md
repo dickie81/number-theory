@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2135 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2149 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 243 | 937 |
+| `lib/core` | 244 | 951 |
 | `lib/pnt` | 369 | 1085 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -198,6 +198,23 @@ note of `formalisations/` that names it, if one does.
 - `BallSlice.rh_iff_posDefOn_pair`: The Riemann hypothesis is positive-definiteness on the slice of two primes
 - `BallSlice.rh_iff_weil_bound_pair`: The Riemann hypothesis is the upper Weil bound for the divisors of the slice
 - `BallSlice.rh_iff_castelnuovo_severi_pair`: The Riemann hypothesis is Castelnuovo–Severi for the divisors of the slice
+
+#### `BallSlopeLattice`: The orbit lattice as an Arakelov lattice: its slopes, and multiplication by `k`
+
+- `BallSlope.form_pos`: Under RH the orbit form is positive definite
+- `BallSlope.OrbitSpace.covol_ge`: The covolume bound
+- `BallSlope.OrbitSpace.covol_sq_ge`: Hadamard for the orbit lattice
+- `BallSlope.OrbitSpace.covol_top`: `covol Λ_N = √det G_N`.
+- `BallSlope.OrbitSpace.deg_top`: The Arakelov degree of `Λ_N`
+- `BallSlope.OrbitSpace.det_ge`: The Gram determinant
+- `BallSlope.OrbitSpace.inner_mulMap`: Multiplication by `k` is a similitude of ratio `√k`
+- `BallSlope.OrbitSpace.norm_mulMap`: `‖kx‖ = √k·‖x‖`.
+- `BallSlope.OrbitSpace.norm_mulMapL_le`: Multiplication by `k` has height `½·log k`
+- `BallSlope.OrbitSpace.bost_mul`: Bost's inequality for multiplication by `k`
+- `BallSlope.OrbitSpace.rk_img_mul`: Multiplication by `k` keeps ranks
+- `BallSlope.OrbitSpace.deg_img_mul`: The degree shift
+- `BallSlope.OrbitSpace.mul_frame`: The frame inequality for the multiplications
+- `BallSlope.OrbitSpace.maxSlope`: The maximal slope of the orbit lattice
 
 #### `BallTower`: The ball tower from integers and primes (formalised)
 
