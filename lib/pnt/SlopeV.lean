@@ -44,7 +44,7 @@ variable {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ} {Dg : SharpDesign S 
 /-- **(V): `SlopeFV` from the slope bound on `M_ω`.** If in every realising frame the image of `M_ω` in the
 coordinates `c ω` is an `O_K`-lattice whose slope with the source's metrics, in the archive's units, is at least
 `−c_F` (the (F) half), then `μ(N_ω) ≥ −c_F + idx_ω` (the index bookkeeping), and `SlopeFV` holds. -/
-theorem slopeFV_of_slopeM (h0 : 0 ≤ b.cF) (h1 : b.cF ≤ x ^ ε * (∑ s ∈ Dg.TT, Dg.a s) / 8)
+theorem slopeFV_of_slopeM (h0 : 0 ≤ b.cF) (h1 : b.cF ≤ x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 8)
     (hM : ∀ (F : FrameOn C.K b.Ω) c eC, b.RealWith F c eC → ∀ ω,
       let M := (b.M ω).map ((c ω : b.Vs ω →ₗ[C.K] (F.n ω → C.K)).restrictScalars (𝓞 C.K))
       ∃ _ : M.IsLattice C.K, -b.cF ≤ (((F.src ω).withLattice M).toPlaceLattice.slopeLattice.rescale

@@ -26,9 +26,9 @@ and must be cited as conditional on it.
   setting with that pair; for `PairBound`, with a character `κ` of `A` lifting `χ`. Such settings exist once `Y` is
   large: a pair of `ZetaTwist.WinPair` has `d ≡ 7 (mod 16)` and `d ≡ −1` modulo every odd prime `p ≤ Y^{ε/5}`, so
   `(p/d) = 1` for every prime `p ≤ Y^{ε/5}`, and a modulus `QS` built from `f` and a power of `2` meets `Setting.split`.
-* **The theorems.** Given `θ > 1/2`, take `ε < (θ − 1/2)/3`. A large `Y` has a pair whose twists are small on
+* **The theorems.** Given `θ > 1/2`, take `ε < (θ − 1/2)/6`. A large `Y` has a pair whose twists are small on
   `[Y, Y^A]`, and the frontier gives `Y′`. On `[Y′, Y′²] ⊆ [Y, Y^A]` the setting is thin and its twists are small, so
-  Theorem Z bounds the weighted error of the cyclic family of `χ` by `(9o − 2)x^{1/2+3ε} ≤ (9o − 2)x^θ`, the kept errors
+  Theorem Z bounds the weighted error of the cyclic family of `χ` by `(9o − 2)x^{1/2+6ε} ≤ (9o − 2)x^θ`, the kept errors
   by the crude bound `eventually_norm_rampErr_le`. That is `WindowGRH.WindowBound` with `λ = 2`
   (`rhAndGRH_of_pairBound`); for `ζ` it is `WindowGRH.ZetaWindowBound` with `λ = 2` and `C = 7`
   (`riemannHypothesis_of_zetaPairBound`).
@@ -85,7 +85,7 @@ def PairBound : Prop :=
 theorem rhAndGRH_of_pairBound (h : PairBound) : HalfPlaneGRH.RHandGRH := by
   obtain ⟨x₀, hx₀⟩ := thin_of_large
   refine WindowGRH.rhAndGRH_of_windowBound fun f _ χ hχ θ hθ => ?_
-  obtain ⟨ε, hε, hεθ, A, hA, hfr⟩ := h f χ hχ (min ((θ - 1 / 2) / 3) (1 / 2)) (lt_min (by linarith) (by norm_num))
+  obtain ⟨ε, hε, hεθ, A, hA, hfr⟩ := h f χ hχ (min ((θ - 1 / 2) / 6) (1 / 2)) (lt_min (by linarith) (by norm_num))
   obtain ⟨hεθ, hε2⟩ := lt_min_iff.1 hεθ
   -- the kept errors are eventually at most `x^{3/2+ε}`
   obtain ⟨x₁, hx₁⟩ := Filter.eventually_atTop.1 (Filter.eventually_all.2 fun k : Fin (orderOf χ) =>
@@ -130,7 +130,7 @@ def ZetaPairBound : Prop :=
 theorem riemannHypothesis_of_zetaPairBound (h : ZetaPairBound) : RiemannHypothesis := by
   obtain ⟨x₀, hx₀⟩ := thin_of_large
   refine WindowGRH.riemannHypothesis_of_zetaWindowBound fun θ hθ => ?_
-  obtain ⟨ε, hε, hεθ, A, hA, hfr⟩ := h (min ((θ - 1 / 2) / 3) (1 / 2)) (lt_min (by linarith) (by norm_num))
+  obtain ⟨ε, hε, hεθ, A, hA, hfr⟩ := h (min ((θ - 1 / 2) / 6) (1 / 2)) (lt_min (by linarith) (by norm_num))
   obtain ⟨hεθ, hε2⟩ := lt_min_iff.1 hεθ
   refine ⟨2, one_lt_two, 7, fun Y₀ => ?_⟩
   -- a large `Y`, a pair whose twists are small on `[Y, Y^A]`, and the sub-window `[Y′, Y′²]` of that pair
@@ -148,7 +148,7 @@ theorem riemannHypothesis_of_zetaPairBound (h : ZetaPairBound) : RiemannHypothes
     calc x ≤ Y' ^ 2 := hx'.2
       _ ≤ (Y ^ (A / 2)) ^ 2 := pow_le_pow_left₀ (by linarith) hY' 2
       _ = Y ^ A := by rw [← Real.rpow_natCast, ← Real.rpow_mul (by linarith)]; norm_num
-  calc _ ≤ 7 * x ^ (1 / 2 + 3 * ε) := L.toBalanceData.zeta_le (hx₀ x (hx₀Y.trans hYx) S)
+  calc _ ≤ 7 * x ^ (1 / 2 + 6 * ε) := L.toBalanceData.zeta_le (hx₀ x (hx₀Y.trans hYx) S)
         (S.lifts_one.twists_of_le (htw x ⟨hYx, hxA⟩)) (hY1.trans hYx) hε.le
     _ ≤ 7 * x ^ θ := mul_le_mul_of_nonneg_left
         (Real.rpow_le_rpow_of_exponent_le (hY1.trans hYx) (by linarith)) (by norm_num)

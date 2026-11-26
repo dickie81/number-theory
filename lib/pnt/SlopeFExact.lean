@@ -11,7 +11,7 @@ bound gives it (`HermForms.muArch_source_ge`): the frame's source metric is the 
 (`SharpObj.RealWith`), the lattice is the span of the integral forms of the cut in the frame's coordinates, and the
 level group `uniUT` is unipotent at the places of `SG` over the design's split primes `g₀ ≠ g₁`, which the pins
 supply (`SharpObj.exists_SG_over`). What is left of the piece is the construction's: `X_c = ⊤`, the weights, and
-the budget `c_F ≤ x^ε Σ_t a_t/8`, where the exact constant `3|ν| log n + 2(Σλ)⁺ Σ_P log N(P)/(n[E:ℚ]) + |ST| log 2`
+the budget `c_F ≤ x^{4ε} Σ_t a_t/8`, where the exact constant `3|ν| log n + 2(Σλ)⁺ Σ_P log N(P)/(n[E:ℚ]) + |ST| log 2`
 is of size `Σ_t a_t·log x` at the archive's sizes.
 -/
 
@@ -56,11 +56,11 @@ theorem exists_SG_over {u : S.A} (hP : b.Pinned u) {g : ℕ} (hg : g.Prime) (hgd
 
 open Classical in
 /-- **(F) + (V) from the exact slope bound**: for an object pinned at `u` whose sources are the whole cut
-(`X_c = ⊤`), with antitone step-0 weights and `0 ≤ c_F ≤ x^ε Σ_t a_t/8` at least the exact constant
+(`X_c = ⊤`), with antitone step-0 weights and `0 ≤ c_F ≤ x^{4ε} Σ_t a_t/8` at least the exact constant
 `HermForms.cFx` of every word, the piece `SlopeFV` holds. -/
 theorem slopeFV_exact {u : S.A} (hP : b.Pinned u) (hXc : ∀ ω, b.Xc ω = ⊤) (hlam : ∀ ω ρ, Antitone (b.lam0 ω ρ))
     (h0 : 0 ≤ b.cF) (hcF : ∀ ω, cFx b.n0 (b.lam0 ω) (b.ST ω) ≤ b.cF)
-    (h1 : b.cF ≤ x ^ ε * (∑ s ∈ Dg.TT, Dg.a s) / 8) : b.SlopeFV := by
+    (h1 : b.cF ≤ x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 8) : b.SlopeFV := by
   obtain ⟨w₀, h₀⟩ := b.exists_SG_over hP Dg.g₀_prime (dvd_mul_right _ _)
   obtain ⟨w₁, h₁⟩ := b.exists_SG_over hP Dg.g₁_prime (dvd_mul_left _ _)
   refine b.slopeFV_of_slopeM h0 h1 fun F c eC hF ω => ⟨b.isLattice_map_M ω (hlam ω) (c ω), ?_⟩
