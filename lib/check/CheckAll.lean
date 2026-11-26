@@ -466,6 +466,7 @@ import HermFinite
 import WeylSpan
 import SharpPiecesProved
 import HermFormsLattice
+import FormSlope
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2312,6 +2313,12 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ZetaBalance.finiteClasses_proved
 #print axioms HermForms.formsLattice
 #print axioms ZetaBalance.formsLattice_proved
+#print axioms GramVolume.vol_le_prod_norm
+#print axioms KLattice.slope_ge_of_span
+#print axioms HermForms.slope_source_ge_of_span
+#print axioms HermForms.slope_source_ge_full
+#print axioms HermForms.slope_source_ge
+#print axioms HermForms.exists_slope_source_ge
 #print axioms ZetaBalance.sharpBoundTheta_of_pinned
 #print axioms ThetaChain.Data.comp_zero_inp
 #print axioms ThetaNorm.th0_zero

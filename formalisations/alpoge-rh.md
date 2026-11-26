@@ -228,6 +228,15 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     Fock form and Cauchy–Binet. From them the piece `ZetaBalance.FormsLattice` (`HermForms.formsLattice`,
     `ZetaBalance.formsLattice_proved`): the forms finite-dimensional, the integral forms a lattice, and the Petersson
     form positive definite at every complex place.
+  - The core of the slope piece (F), for the source lattice of the cut (`HermForms.slope_source_ge`, with the
+    comparison constants supplied in `HermForms.exists_slope_source_ge`; the full lattice of integral forms in
+    `HermForms.slope_source_ge_full`): an explicit lower bound `μ ≥ −c_L − ½ log B`, with `B` the level-`T`
+    denominator times the stabiliser orders, the Fock norms of the bideterminants and the comparison constants of the
+    representatives. The engine is a slope bound for any hermitian lattice from a spanning family of bounded vectors
+    (`KLattice.slope_ge_of_span`, `HermForms.slope_source_ge_of_span`), by Hadamard's inequality
+    (`GramVolume.vol_le_prod_norm`); the cut is reached by the integral projection `Π_P (N_P − Nm_P)`, not by
+    duality. Still open for the piece itself: the further subspace `X_c` of the pins, a bound on the comparison
+    constants (reduction theory), explicit bounds on the Fock norms, and the budget check.
 
 ## How the statements differ from the archive's
 

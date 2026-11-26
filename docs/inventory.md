@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1958 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1964 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 225 | 795 |
+| `lib/core` | 226 | 801 |
 | `lib/pnt` | 359 | 1050 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -483,6 +483,15 @@ note of `formalisations/` that names it, if one does.
 - `ZetaBalance.Setting.lpF_nonneg_le`: `0 ≤ lpF(ℓ, n, D) ≤ ℓ/(ℓ² − 1)·Σ D` for `ℓ > 1` and `D ≥ 0` (the archive's `FactLpF`). ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.Setting.Ranks.FTypeG_nonpos`: The forced order at `g₀, g₁` is at most `0`. ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.Setting.Ranks.FInert_nonneg`: The forced order at an inert or signal prime is nonnegative when the weights are. ([note](../formalisations/alpoge-rh.md))
+
+#### `FormSlope`: The slope lower bound (F)
+
+- `GramVolume.vol_le_prod_norm`: Hadamard's inequality ([note](../formalisations/alpoge-rh.md))
+- `KLattice.slope_ge_of_span`: The slope from a spanning family ([note](../formalisations/alpoge-rh.md))
+- `HermForms.slope_source_ge_of_span`: The slope of the source from a spanning family of integral forms ([note](../formalisations/alpoge-rh.md))
+- `HermForms.slope_source_ge_full`: (F) for the full lattice ([note](../formalisations/alpoge-rh.md))
+- `HermForms.slope_source_ge`: (F), the slope lower bound for the source ([note](../formalisations/alpoge-rh.md))
+- `HermForms.exists_slope_source_ge`: (F) for the source, unconditionally ([note](../formalisations/alpoge-rh.md))
 
 #### `FourSquareResidue`: `ζ(2) = π²/6` from the points of `ℤ⁴` in a ball
 
