@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1967 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1977 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -15,7 +15,7 @@ note of `formalisations/` that names it, if one does.
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 227 | 799 |
-| `lib/pnt` | 362 | 1055 |
+| `lib/pnt` | 364 | 1065 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2577,6 +2577,18 @@ note of `formalisations/` that names it, if one does.
 - `RandModel.integrable_exp_abs_ν` ([note](../formalisations/d2-density.md))
 - `RandModel.integrable_pow_ν`: Every moment of `ν` is finite. ([note](../formalisations/d2-density.md))
 
+#### `SharpAdm`: Admissible designs
+
+- `ZetaBalance.Setting.Ranks.wt0_antitone`: The step-0 weights are antitone ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.SharpDesign.Adm.log_k_le`: `log k ≤ 6 log x`. ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.SharpDesign.Adm.card_E_le`: `[E:ℚ] ≤ Σ_t a_t/x` ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.SharpDesign.Adm.log_g_mem`: `16x^ε ≤ log(g₀g₁) ≤ 17x^ε`, from `g_i ∈ [(kb)^8, 2(kb)^8]`. ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.SharpDesign.Adm.lam_bounds`: The size of `Λ_u` ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.SharpDesign.Adm.lam_add_log_two_le`: `Λ_u + log 2 ≤ x` ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.SharpDesign.Adm.logM_cube_le`: `(log 4dM²)³ ≤ Λ_u` ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.SharpDesign.Adm.sum_natW_le`: (F): `|ν| = Σ_{ρ,i} ν_{ρ,i} ≤ 2Σ_t a_t` ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.SharpDesign.Adm.sum_wt0_le`: (F): `(ΣΛ)⁺ = max(0, Σ_{ρ,i} λ_{ρ,i}) ≤ 2Σ_t a_t` ([note](../formalisations/alpoge-rh.md))
+
 #### `SharpBound`: The sharp frontier `SharpBound` and its bridge to `SixTermData` — CONDITIONAL on the half-plane
 
 - `ZetaBalance.SharpData.nonempty_sixTermData`: Sanity ([note](../formalisations/alpoge-rh.md))
@@ -2593,6 +2605,10 @@ note of `formalisations/` that names it, if one does.
 
 - `ZetaBalance.sharpBoundPinned_of_inputs`: The sharp frontier from the inputs and the pieces ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.rhAndGRH_of_inputs`: CONDITIONAL. RH and GRH from the inputs and the pieces ([note](../formalisations/alpoge-rh.md))
+
+#### `SharpParams`: The design's parameters
+
+- `ZetaBalance.sharpParams`: `SharpPieces.params` ([note](../formalisations/alpoge-rh.md))
 
 #### `SharpPiecesProved`: The pieces of the sharp frontier that are proved
 

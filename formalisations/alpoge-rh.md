@@ -251,6 +251,21 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     and the cut is a sum of `2^{|ST|}`-scaled copies of the class lattices, so Fischer's inequality applies. The piece
     `SharpObj.SlopeFV` follows for an object whose sources are the whole cut, with antitone weights and `c_F` at least
     the exact constant within the budget (`ZetaBalance.SharpObj.slopeFV_exact`).
+  - The design, at the frontier's own scale: for every primitive `χ`, small `ε` and large `Y`, every pair of
+    `ZetaTwist.WinPair` has, at every `x` of its window, a setting with a character lifting `χ` and an admissible design
+    (`ZetaBalance.sharpParams`, from the input `ShortNorm`, which gives the split primes `g₀ ≠ g₁`). The design is the
+    archive's: ranks `k ≈ x^{9/2+10ε}`, `m ≈ x^{1/2−ε/16}`, `t ≤ x^{401}`; one top place per translate, with translates
+    in exact numbers on each coset of the kernel of `κ` (so the shares hold); a thick set of Behrend type, free of
+    small-coefficient three-point relations; Harish-Chandra families by kind of place, with a shift making every root of
+    unity act trivially; and the setting of the pair, whose discriminant is bounded through the cyclotomic field.
+    Admissibility (`ZetaBalance.SharpDesign.Adm`) records what the pieces use, and gives the slope budget its sizes: the
+    step-0 weights of every family pinned to a translate are antitone (`ZetaBalance.Setting.Ranks.wt0_antitone`) with
+    `|ν|, (Σλ)⁺ ≤ 2Σ_t a_t` (`ZetaBalance.SharpDesign.Adm.sum_natW_le`, `ZetaBalance.SharpDesign.Adm.sum_wt0_le`), `log
+    k ≤ 6 log x` (`ZetaBalance.SharpDesign.Adm.log_k_le`) and `[E:ℚ] ≤ Σ_t a_t/x`
+    (`ZetaBalance.SharpDesign.Adm.card_E_le`); and the auxiliary primes their window: `mx^ε/2 ≤ Λ_u ≤ 24mx^ε`
+    (`ZetaBalance.SharpDesign.Adm.lam_bounds`), `Λ_u + log 2 ≤ x` (`ZetaBalance.SharpDesign.Adm.lam_add_log_two_le`),
+    `(log 4dM²)³ ≤ Λ_u` (`ZetaBalance.SharpDesign.Adm.logM_cube_le`) and `16x^ε ≤ log(g₀g₁) ≤ 17x^ε`
+    (`ZetaBalance.SharpDesign.Adm.log_g_mem`). Two random choices the gain will need are not yet part of it.
 
 ## How the statements differ from the archive's
 
@@ -287,6 +302,7 @@ The steps were written from the mathematics. Parts were written by helpers given
 
 | Result | Hypothesis | Lean |
 |---|---|---|
+| Admissible designs exist (the piece `params` of `ZetaBalance.SharpPieces`): for every primitive `χ`, small `ε` and large `Y`, every pair of `ZetaTwist.WinPair` has, at every `x` of its window, a setting with a character lifting `χ` and an admissible design (`ZetaBalance.SharpDesign.Adm`) | `ZetaBalance.ShortNorm`, which gives the design's split primes `g₀ ≠ g₁` | `ZetaBalance.sharpParams` |
 | The core of the auxiliary primes (T): primes `T = ππ̄`, `π = (a + b√−d)/2 ≡ 1 (mod M)`, in every dyadic window `(e^Λ, 2e^Λ]` once `log(4dM²) ≤ c√Λ`, so meeting `ArithT` with `log T` within `log 2` of any large target; a step of the piece `primes` of `ZetaBalance.SharpPieces` | `ZetaBalance.ShortNorm`: Chebotarev in short intervals for `ℚ(√−d)`, an input of `ZetaBalance.SharpInputs` | `ZetaBalance.exists_prime_norm_window`, `ZetaBalance.SharpDesign.exists_prime_arithT` |
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function | `WindowGRH.WindowBound`: for every primitive `χ` and `θ > 1/2`, the weighted error of the ramp sums of the cyclic family of `χ` is at most `C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large | `WindowGRH.rhAndGRH_of_windowBound` |
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function, also resting on the half-plane `Re s > 11/12` for `ζ` and every Dirichlet `L`-function, a result formalised in the library that no referee has read ([openai-half-plane.md](openai-half-plane.md)) | `ZetaBalance.PairBound`, the construction alone: for every primitive `χ` and every `ε₀ > 0` there are `ε ∈ (0, ε₀)` and `A ≥ 1` such that, for every large `Y`, every pair of primes `(q, d)` meeting `ZetaTwist.WinPair ε Y` has a sub-window `[Y′, Y′²]`, with `Y ≤ Y′ ≤ Y^{A/2}`, at every `x` of which a setting `S` with `S.q = q` and `S.d = d` and a character `κ` of `A` lifting `χ` (`ZetaBalance.Setting.Lifts`) has lattice data (`ZetaBalance.LatticeData S κ x ε X`) whose thin classes lie beyond `X = (Nx)^{log x}` | `ZetaBalance.rhAndGRH_of_pairBound` |
