@@ -290,10 +290,10 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     constants, the values of the lift characters and the chain's jets, when these generate a finite-dimensional field,
     and the setting's field otherwise. Everything is a definition: each takes its intended value when a fact holds (a
     choice exists, a map is linear or multiplicative, the field contains what it should), and the facts are left to
-    the lemmas that use them. The target metric, `𝔞⁺`, `𝔞⁻` and the heights are still placeholders, for the gain and
-    (G↑); no proof reads them. For it, the pieces (T) (`ZetaBalance.sharpPrimes`, from `ShortNorm`) and (F) + (V)
-    (`ZetaBalance.sharpSlopeFV`, from the exact slope bound, whose constant is at most `41·Σ_t a_t·log x`) hold
-    eventually in the design.
+    the lemmas that use them. `𝔞⁺` and `𝔞⁻` are still placeholders, for the gain, and no proof reads them; the target
+    metric is the quotient metric, with heights `0` (`SharpTarget`, below). For it, the pieces (T)
+    (`ZetaBalance.sharpPrimes`, from `ShortNorm`) and (F) + (V) (`ZetaBalance.sharpSlopeFV`, from the exact slope bound,
+    whose constant is at most `41·Σ_t a_t·log x`) hold eventually in the design.
   - The theta chain at Stage U, as closed definitions:
     - The canonical theta (`ChainCanon`): the CM lattice `Lc = δ(ℤ + ℤω)`, `ω = (1 + √−d)/2`, with `δ` the principal
       12th root of `Δ(ℤ + ℤω)`, so that `Δ(Lc) = 1` (`ChainCanon.discr_cmLat`); the form `s = 1/area(Lc) > 0`
@@ -335,10 +335,65 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   - The frame loss of the construction, reduced to two named statements (`SharpNI`): (NI), the near-injectivity of
     the period map of the one word, `0 < rk P` and `dim V_ω ≤ 2 rk P` (`ZetaBalance.SharpNI`; not yet proved, the
     planned route is the whole-word second moment), and (R′), the range `μ_max(N_ω) ≤ μ(N_ω) + U` in every realising
-    frame with `0 ≤ U ≤ x^{4ε}Σ_t a_t/4` (`ZetaBalance.SharpRange`, from the gain's certificate). In a realising frame
-    the map is onto, as the target lattice lies in `W_u = range P`, and has the rank of `P`; so the one-word lemma
-    bounds the loss by `U`, and the piece `frameLoss` holds eventually in the design
-    (`ZetaBalance.frameLoss_of_sharpNI`).
+    frame with `0 ≤ U ≤ x^{4ε}Σ_t a_t/4` (`ZetaBalance.SharpRange`, reduced below to a bound on `μ_max(M_ω)` and gain
+    certificates of small colength). In a realising frame the map is onto, as the target lattice lies in `W_u = range
+    P`, and has the rank of `P`; so the one-word lemma bounds the loss by `U`, and the piece `frameLoss` holds
+    eventually in the design (`ZetaBalance.frameLoss_of_sharpNI`).
+  - The target metric (`SharpTarget`). The quotient metric of a linear map `P` and a form on its source, with Gram
+    matrix `(σ_v(β)·P_v⁻¹·σ_v(β)ᴴ)⁻¹` on `range P`, is positive definite and makes `P` a co-isometry
+    (`ZetaBalance.quotGram_spec`); the map of a co-isometry is a contraction (`KLattice.norm_hom_le_of_coisometry`), so
+    a realising frame has heights `0`. A frame bounds `μ_g(C_u) + h̄_g` below by the quotient slope for any target
+    metric `g`, so this one makes (G↑) as weak as it can be, and the construction takes it: the Petersson metric of the
+    source pushed through the period map.
+  - The integral rows (`RowsLattice`). `Δ_N ⊆ ∇_N` and `κ·∇_N ⊆ Δ_N` for the integer `κ = ⟨hw, hw⟩`
+    (`HermForms.DeltaN_subset_nablaN`, `HermForms.kapN_smul_mem_DeltaN`), so every vector of `VV(σ)` has a nonzero
+    integer multiple in `∇_N`, and `∇_N` has bounded denominators (`HermForms.exists_int_smul_mem_nablaN`,
+    `HermForms.exists_coeff_twist_mem_nablaN`). Hence the integral rows span the row space and lie in a finitely
+    generated `O_L`-module (`HermForms.rows_span`, `HermForms.rows_fg`).
+  - The frame (`SharpFrame`). An object of one word whose period map has positive rank, with nonzero `𝔞^±`, no twist,
+    the quotient metric, heights `0` and integral rows that span and lie in a finitely generated module, has a realising
+    frame (`ZetaBalance.SharpObj.frameExists_of`): its sources and target are `O_K`-lattices with positive definite Gram
+    matrices. So the piece `frame` holds for the construction given (NI) (`ZetaBalance.frame_of_sharpNI`, below,
+    "Conditional results"), which it uses only for `0 < rk P`.
+  - The gain's certificate (`GenIndex`, `GainCert`). The generalised index `logIdx X Y = log [X : X ∩ Y] − log [Y : X ∩
+    Y]` satisfies the cocycle rule and is monotone (`AddSubgroup.logIdx_add`, `AddSubgroup.logIdx_mono`); scaling an
+    `O_K`-lattice of dimension `d` by `γ` changes it by `−d·log|N(γ)|` (`Submodule.logIdx_smul`, with `[L : γL] =
+    |N(γ)|^d` for integral `γ`, `Submodule.relIndex_smul`); finitely many local conditions cut out a sublattice of
+    colength at most the sum of theirs (`Submodule.relIndex_inf_iInf_le`); and normalised norms do not depend on the
+    field (`NumberField.log_abs_norm_map_div`). The gain's index term is `2·logIdx(N_ω, M_ω)/rk`
+    (`ZetaBalance.SharpObj.idx_eq_logIdx`), and for principal `𝔞⁺ = (α)`, `𝔞⁻ = (β)` the source is `(β/α)M_ω ∩
+    B_ω⁻¹(C_u)` (`ZetaBalance.SharpObj.N_eq_of_principal`). A certificate, `α`, `β` and a sublattice `L ⊆ M_ω` of finite
+    index with `B_ω((β/α)L) ⊆ C_u`, sandwiches the source, `(β/α)L ⊆ N_ω ⊆ (β/α)M_ω`
+    (`ZetaBalance.SharpObj.GainCert.le_N`, `ZetaBalance.SharpObj.GainCert.N_le`), with colength at most `[M_ω : L]`
+    (`ZetaBalance.SharpObj.GainCert.colength_le`), and bounds the index term below by `(2/[K:ℚ])·log|N(α/β)| −
+    (2/rk)·log[M_ω : L]` when `V_ω ≠ 0` (`ZetaBalance.SharpObj.GainCert.idx_ge`). So a certificate per word gives the
+    gain (`ZetaBalance.SharpObj.gain_of_cert`).
+  - The range (R′) (`SharpRangeCert`, `FormMuMax`, `SourceMuMax`). Scaling by `c ∈ K×` raises the degree of a sublattice
+    by at most `h̄(c)` per rank (`KLattice.exists_smul_sublattice`), so for `N ≤ γM` of finite index `μ_max(N) − μ(N) ≤
+    μ_max(M) − μ(M) + 2·log[γM : N]/rk` (`KLattice.slopeLe_rescale_of_le_smul`): no norm of `γ` enters. So a bound on
+    `μ_max(M_ω)`, with (F) + (V), bounds the range of `M_ω` (`ZetaBalance.SharpObj.sourceRangeLe_of_muMaxLe`), and
+    certificates carry it to `N_ω` (`ZetaBalance.SharpObj.rangeLe_of_cert`). For the construction,
+    `ZetaBalance.SharpRange` follows from two named statements, the bound `ZetaBalance.SharpMuMax` on `μ_max(M_ω)` and
+    certificates of small colength, `ZetaBalance.SharpCertSmall` (`ZetaBalance.sharpRange_of_cert`, below). Integral
+    coordinates `T` on a lattice, injective and dominated by the metric, `w·|σ_v(T)y|² ≤ yᴴG_v y`, give `μ_max ≤ −log w`
+    (`KLattice.slopeLe_of_coord`); so for an object `μ_max(M_ω) ≤ −log w` from integral coordinates on the forms
+    (`ZetaBalance.SharpObj.muMaxLe_of_coordCert`), and `SharpMuMax` follows from `ZetaBalance.SharpCoordCert`, such
+    coordinates within the budget (`ZetaBalance.sharpMuMax_of_coordCert`, below).
+  - The design's orbits (`GainConsts`, `DesignOrbits`): the gain's absolute constants, in one package. At an admissible
+    design the non-split primes exceed `x^{ε/10}` (`ZetaBalance.Setting.DesignAdm.lt_of_cls_ne_split`) and have `2L₁(p)
+    ≤ L₂` (`ZetaBalance.Setting.DesignAdm.two_mul_scL1_le`). The prime step's orbits on the translates have base points
+    constant on them and positions (`ZetaBalance.basePoint_mul_pow`, `ZetaBalance.orbitPos_mem_topPositions`), V-type
+    tops (`ZetaBalance.IsVType`), and collisions, described at inert primes and absent at signal primes
+    (`ZetaBalance.Setting.collides_iff_of_inert`, `ZetaBalance.Setting.not_collides_of_signal`). The tile condition puts
+    fewer than `r`, and at most `N₁`, tops in nearby windows and spaces the V-tops
+    (`ZetaBalance.TilePar.IsGood.winCard_le_K`, `ZetaBalance.TilePar.IsGood.winCard_le_N₁`,
+    `ZetaBalance.TilePar.IsGood.prevV_spec`), with the design's tile parameters meeting the side conditions
+    (`ZetaBalance.tilePar_ok`). The scales lie in the window `W_a` (`ZetaBalance.SharpDesign.FamAt.aZ_mem_scWa`), and
+    the window `W_b` of the top shifts is an explicit interval (`ZetaBalance.mem_scWb`); the candidates and the bad tops
+    are defined (`ZetaBalance.Setting.cand`, `ZetaBalance.SharpDesign.badTops`). The non-split primes of small or odd
+    order are sparse, `Σ log p/p ≤ y·log²X′·x^{−(2+7ε)}`, by the 2-adic structure of the pairs' settings
+    (`ZetaBalance.pairSetting_twoAdic`, `ZetaBalance.Setting.TwoAdic.sum_log_div_le`,
+    `ZetaBalance.Setting.DesignAdm.sum_log_div_smallOrder_le`).
   - The trace bound for (G↑) (`TraceSlope`): in the archive's units, the slope of a hermitian `O_K`-lattice `X` is
     computed through a pseudo-basis (`KLattice.slopeArch_pseudo`), and it is at least `−mean_v log(Σ_i ‖x_i‖²_v/|κ|)`
     for any vectors `x_i` of `X` that span (`KLattice.slopeArch_ge_of_span`; AM–GM, no Cauchy–Binet). With duality,
@@ -389,16 +444,114 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
       (`PadicUnits.factorial_eq_unit`, `PadicUnits.norm_fUnit`) with their Mahler decay and the binomial
       approximation (`PadicUnits.exists_binomial_approx`), Jordan splitting over a discrete valuation ring with `2` a
       unit (`PadicUnits.exists_diagonal_congr`), and the Gram-window lemma (`PadicUnits.gram_window`).
-  - The CM theta, one variable (`CMThetaOne`). Mathlib has `℘` but not `σ` or `ζ`: `ζ_W′ = −℘`, `σ_W′ = σ_W·ζ_W` and
-    `℘″ = 6℘² − g₂/2` are proved here (`CMThetaOne.hasDerivAt_zetaW`, `CMThetaOne.hasDerivAt_sigmaW`,
-    `CMThetaOne.eqOn_deriv_derivWeierstrassP`), with the normalisation `th0(0) = 1` (`CMThetaOne.th0L_zero`). Given
-    Legendre's relation (below, "Conditional results"), Masser's half-period identity (`CMThetaOne.zetaW_half`) and
-    Hurwitz's formula (`CMThetaOne.th0_taylor`) hold, and every jet of `th0` at a half-period `t` is a polynomial over
-    `ℤ` in `g₂/2`, `℘(t)` and `s₂` (`CMThetaOne.th0_jets_mem`, `CMThetaOne.th0_jets_mem_closure`), so it lies in
-    `σ₀(K)`, is algebraic and is `ℓ`-integral for `ℓ ≠ 2` wherever these are (`CMThetaOne.th0_jets_mem_range`,
-    `CMThetaOne.th0_jets_isAlgebraic`, `CMThetaOne.th0_jets_int`). At the construction's lattice `Lc` and point
-    `t = δ/2`, with the CM inputs, the jets are algebraic and integral at every `ℓ ≥ 5`, `ℓ ∤ d`
-    (`CMThetaOne.canon_jets_isAlgebraic`, `CMThetaOne.canon_jets_int`, `CMThetaOne.canon_jets_mem_range`).
+    - The letter/Fock toolkit of the two local theorems (`LetterFock`), with their conventions fixed. The Frobenius
+      congruence `σ^s(x) ≡ x^{p^s} (mod p)` (`LetterFock.frob_pow`); the lift substitution maps integral polynomials
+      into the `ϖ`-graded integral subalgebra (`LetterFock.liftSub_mem_gInt`); the plane of a matrix, which gives the
+      edge adapted to it (`LetterFock.planeOf`); the letter Fock form on monomials, its contravariance, and the
+      uniqueness of contravariant forms (`LetterFock.lfock_monomial`, `LetterFock.lfock_letE`,
+      `LetterFock.bilin_eq_lfock`). The flat model `θ°` (vector letters at even positions, signed cofactors at odd ones)
+      maps onto `∇`, injectively and nondegenerately (`LetterFock.theta0_mem_nabla`, `LetterFock.theta0_injOn`,
+      `LetterFock.theta0_surj`, `LetterFock.theta0_nondeg`), meets the shape condition (`LetterFock.theta_shape`),
+      intertwines the letters with the row operators (`LetterFock.rowOp_theta0`) and compares the Fock forms, `nf(θ°P,
+      θ°Q) = ⟨P, Q⟩/∏_s d_s!` (`LetterFock.nf_theta0`). `θ°P ∈ ∇_A` exactly when `P` has coefficients in `A`
+      (`LetterFock.theta0_mem_nablaInt_iff`, `LetterFock.thetaB_mem_nab_iff`), and membership in the edge lattices is
+      the order of the lift (`LetterFock.thetaB_mem_edgeLat_iff`).
+    - Representations of `gl_n` in characteristic `0` (`GlRep`, `IsoProjectors`). The rank-one and rank-two lemmas
+      (`GlRep.E_pfac`, `GlRep.E_pfac_pfac`) make the extremal projector killed by the consecutive raising operators,
+      hence by all (`GlRep.kill_of_chain`); it fixes highest weight vectors, kills the lowering images, and on a
+      dominant weight space projects onto the highest weight vectors (`GlRep.xproj_of_hw`, `GlRep.xproj_lowSp`,
+      `GlRep.isHw_xproj`). The Casimir is central, acts on a highest weight module by `casVal λ`, and `casVal` is
+      strictly monotone on dominant weights (`GlRep.cas_comm`, `GlRep.cas_gen`, `GlRep.casVal_lt`). So highest weight
+      vectors generate a finite-dimensional stable subspace (`GlRep.le_hwSum`, `GlRep.hwSum_eq`), a highest weight
+      vector in the lowering images is `0` (`GlRep.hw_eq_zero_of_mem_lowSp`), and the isotypic parts are independent and
+      exhaust it (`GlRep.isoPart_indep`, `GlRep.iSup_isoPart`). Type projectors are equivariant and commute with the
+      weight projections, with equivariant operators and with the type projectors of a commuting action
+      (`GlRep.typeProj_E`, `GlRep.typeProj_comp`, `GlRep.typeProj_comm`, `GlRep.typeProj_comm_typeProj`); on a dominant
+      weight space the extremal projector is the isotypic one (`GlRep.xproj_eq_typeProj`); invariant forms vanishing on
+      highest weight pairs vanish (`GlRep.invForm_zero`); and the isotypic projector is an integer multiple of an
+      average over `End W` (`GlRep.isoAvg_spec`). Over `ℚ_p`, on a lattice closed under divided powers, the highest
+      weight projector loses at most `p^{projExp}` and the isotypic and type projectors `p^{2·projExp}`, `projExp = C(n,
+      2)·⌊log_p(l + n − 1)⌋` (`GlRep.hwProj_int`, `GlRep.isoProj_int`, `GlRep.typeProj_int`), with Kostant integrality
+      for isotypic vectors (`GlRep.kostant_int`).
+    - Frobenius-twisted column states at an inert prime (`TwistedDegree`, T9f). They are integral and weighted
+      homogeneous (`TwistedDegree.twCol_int`, `TwistedDegree.twCol_deg`); for every `g` over `W` with unit determinant
+      the lift has order at least the column's cost, under the column conditions alone (`TwistedDegree.twCol_ord`),
+      which joined paths meet (`TwistedDegree.JoinCond.colCond`); and at `g = 1`, for joined paths with strict
+      positions, it is `ϖ^{cost}` times the Frobenius twist of the plane-tangent state modulo `ϖ^{cost+1}`
+      (`TwistedDegree.twCol_cong`), the plane state being one monomial, or constant without a plane box
+      (`TwistedDegree.colK_plane`, `TwistedDegree.colK_plane_const`).
+    - Pieri paths and the path family (`PathBasis`, T2's objects and count). The column states are multilinear
+      (`PathBasis.colK_isWH`); each letter of a Pieri path changes exactly `B_t` column heights, by at most one
+      (`PathBasis.PieriPath.card_change`, `PathBasis.PieriPath.colH_step`), so the path polynomial has multidegree `B`
+      and its columns `c ≥ 1` meet T9f's column conditions (`PathBasis.PieriPath.pathPoly_isWH`,
+      `PathBasis.PieriPath.colCond`); it is the product over any window, and is defined over `ℤ`
+      (`PathBasis.pathPoly_eq_prod`, `PathBasis.pathPoly_map`); the canonical filling is standard
+      (`PathBasis.isStdFilling_canFill`). The standard fillings of `λ` number `dimW λ` (`PathBasis.card_stdFilling`),
+      and with Pieri's count over the paths (`PathBasis.sum_dimW_paths`) the path family (`PathBasis.pathFam`) has `∏_t
+      C(B_t + m, m)` members (`PathBasis.card_pathIdx`), the number of monomials of multidegree `B`. That it is a basis
+      is not proved: no monomial order gives distinct leading terms, and a straightening law for mixed column states is
+      needed.
+    - The shared vocabulary of the two local theorems (`LocalOrbit`, `SymbolData`, `ChainData`). Orbits: the previous
+      V-top is attained (`LocalOrbit.prevVDist_spec`), parity is well defined on positions
+      (`LocalOrbit.even_posOf_iff`), and L5's segment condition and the tile condition are defined (`LocalOrbit.SegOK`,
+      `LocalOrbit.IsGoodSet`). Frames: the rows of a late letter are `r` increasing even letters of its segment before
+      it, all of those from the anchor on (`LocalOrbit.FrameSys.rows_mem`, `LocalOrbit.FrameSys.rows_strictMono`,
+      `LocalOrbit.FrameSys.Proper.le_card_evBefore`, `LocalOrbit.FrameSys.card_evBefore_ge_anchor`); the anchor is a
+      letter of the segment and not a row (`LocalOrbit.FrameSys.Proper.anchor_mem_seg`,
+      `LocalOrbit.FrameSys.Proper.anchor_lt_f`); the first letter of a segment has the largest push, and the anchor is
+      pushed more than `L₁` further than its letter (`LocalOrbit.FrameSys.push_le_push_first`,
+      `LocalOrbit.FrameSys.Proper.push_add_lt_push_anchor`); a top between the first and the last row of a frame is a
+      row, so the late letters of a segment are its loose letters and its frame's rows, `nL j + r` of them, and the
+      segment is these and the previous frame's rows (`LocalOrbit.FrameSys.Proper.exists_row_of_top`,
+      `LocalOrbit.FrameSys.Proper.late_eq`, `LocalOrbit.FrameSys.Proper.card_late`,
+      `LocalOrbit.FrameSys.Proper.seg_eq`), enumerated in increasing order
+      (`LocalOrbit.FrameSys.Proper.lateAt_strictMono`, `LocalOrbit.FrameSys.Proper.lateAt_mem_late`); segments, late and
+      loose letters and pushes are periodic (`LocalOrbit.FrameSys.Proper.seg_add_J`,
+      `LocalOrbit.FrameSys.Proper.late_add_J`, `LocalOrbit.FrameSys.Proper.loose_add_J`,
+      `LocalOrbit.FrameSys.Proper.nL_add_J`, `LocalOrbit.FrameSys.Proper.push_add_J`); the late letters of one period
+      read every top once (`LocalOrbit.FrameSys.Proper.sum_late`, `LocalOrbit.FrameSys.Proper.sum_card_late`); and there
+      are at least four frames (`LocalOrbit.FrameSys.Proper.lt_J_mul`, `LocalOrbit.FrameSys.Proper.three_lt_J`).
+      Symbols: the twisted degrees of `0` (`SymbolData.valS_zero`, `SymbolData.topS_zero`), the `ϖ`-degrees, which sum
+      to `nd` (`SymbolData.sum_piDeg`), N8's source margin and realisation gap (`LocalOrbit.FrameSys.cPrime`,
+      `LocalOrbit.FrameSys.mStar`), the starred threshold, at least `B/2` (`LocalOrbit.FrameSys.half_B_le_thrStar`), the
+      Frobenius push of a segment (`LocalOrbit.FrameSys.segPush_X`), the symbol generators
+      (`LocalOrbit.FrameSys.symGen`), and the one-sided elements, `0` among them
+      (`LocalOrbit.FrameSys.isOneSided_zero`). Chains: the letters' `gl_n` action, with its commutation relations and
+      weights, as a representation stable on the finite-dimensional multidegree components (`ChainData.letES_X`,
+      `ChainData.letES_comm`, `ChainData.isWH_derivation`, `ChainData.letES_X_isWH`, `ChainData.letES_X_isWH_row`,
+      `ChainData.letES_diag_X`, `ChainData.letES_diag_of_isWH`, `ChainData.letterRep`,
+      `ChainData.finiteDimensional_LHom`, `ChainData.letterRep_stable`); the model map, the conditions `𝒴` and `H`, and
+      the constants `D_m`, `D_l`, `κ_p`, `n₀` (`ChainData.modelMap`, `ChainData.IsY`, `ChainData.HCond`, `ChainData.Dm`,
+      `ChainData.Dl`, `ChainData.κp`, `ChainData.n₀`); and the single membership condition of the local theorems
+      (`LocalOrbit.FrameSys.Mem`).
+  - The CM theta, one variable (`CMThetaOne`, `CMThetaJets`). Mathlib has `℘` but not `σ` or `ζ`: `ζ_W′ = −℘`, `σ_W′ =
+    σ_W·ζ_W` and `℘″ = 6℘² − g₂/2` are proved here (`CMThetaOne.hasDerivAt_zetaW`, `CMThetaOne.hasDerivAt_sigmaW`,
+    `CMThetaOne.eqOn_deriv_derivWeierstrassP`), with the normalisation `th0(0) = 1` (`CMThetaOne.th0L_zero`).
+    `CMThetaOne` derives the rest from Legendre's relation, stated as `CMThetaOne.Legendre`; `EllipticLegendre.legendre`
+    proves it (below), and `CMThetaJets` states the results without it. Masser's half-period identity
+    (`CMThetaOne.zetaW_half'`) and Hurwitz's formula (`CMThetaOne.th0_taylor'`) hold, and every jet of `th0` at a
+    half-period `t` is a polynomial over `ℤ` in `g₂/2`, `℘(t)` and `s₂` (`CMThetaOne.th0_jets_mem'`,
+    `CMThetaOne.th0_jets_mem_closure'`), so it lies in `σ₀(K)`, is algebraic and is `ℓ`-integral for `ℓ ≠ 2` wherever
+    these do or are (`CMThetaOne.th0_jets_mem_range'`, `CMThetaOne.th0_jets_isAlgebraic'`, `CMThetaOne.th0_jets_int'`).
+    At the construction's lattice `Lc` and point `t = δ/2` the jets lie in `σ₀(K)` when `g₂`, `℘(t)` and `s₂` do
+    (`CMThetaOne.canon_jets_mem_range'`), and with the CM inputs they are algebraic and integral at every `ℓ ≥ 5`, `ℓ ∤
+    d` (`CMThetaOne.canon_jets_isAlgebraic'`, `CMThetaOne.canon_jets_int'`, below).
+  - The Weierstrass addition theory (`EllipticAdd`, `EllipticLegendre`, `EllipticDivisor`, `EllipticSigma`). The `σ`
+    addition formula `σ(z + w)σ(z − w) = σ(z)²σ(w)²(℘(w) − ℘(z))`, by Liouville's theorem for elliptic functions
+    (`EllipticAdd.sigmaW_add_mul_sub`), so `℘(z) = ℘(w)` exactly when `z ≡ ±w` (`EllipticAdd.weierstrassP_eq_iff`); the
+    addition theorems of `ζ` and `℘`, and the duplication `σ(2z) = −℘′(z)σ(z)⁴` (`EllipticAdd.zetaW_add`,
+    `EllipticAdd.weierstrassP_add`, `EllipticAdd.sigmaW_two_mul`); and the Laurent coefficients of `℘` at `0`, the
+    formal recursion `wpC`, equal to `(2k − 1)G_{2k}` (`EllipticAdd.wpC_eq_lc`, `EllipticAdd.wpC_eq_G`,
+    `EllipticAdd.hasSum_weierstrassP`). Legendre's relation `η₁ω₂ − η₂ω₁ = 2πi` (`EllipticLegendre.legendre`), by
+    Cauchy's theorem on the fundamental parallelogram, which comes from Mathlib's divergence theorem on the square; so
+    `η₁ω₂ − η₂ω₁ ≠ 0` in either orientation (`EllipticDivisor.legendre_ne_zero`). An elliptic function with poles only
+    at the periods is `P(℘) + ℘′·Q(℘)` (`EllipticDivisor.EllPole.exists_poly`). For a torsion point `q ∉ Λ`, `Nq ∈ Λ`,
+    the translate `G_q(z) = e^{−η(q)z}σ(z + q)/(σ(z)σ(q))` has `G_qᴺ` of that form (`EllipticDivisor.Gq_pow_eq_poly`), a
+    simple pole of residue `1` at the periods and simple zeros exactly at `−q + Λ` (`EllipticDivisor.tendsto_mul_Gq`,
+    `EllipticDivisor.Gq_eq_zero_iff`, `EllipticDivisor.hasDerivAt_Gq_neg`), with logarithmic derivative `ζ(q) − η(q) +
+    ½(℘′(z) − ℘′(q))/(℘(z) − ℘(q))` (`EllipticDivisor.hasDerivAt_Gq`, `EllipticDivisor.logDeriv_Gq`). The Taylor series
+    of `σ* = σ_W·e^{−s₂z²/2}` at `0` is the formal `σ*` of `CMFormalGroup` (`EllipticSigma.sgStar_taylor`,
+    `EllipticSigma.sigE_taylor`), so identities of `σ*` near `0` are identities of the formal series.
   - The formal group at an inert prime (`CMFormalInert`, `CMFormalGroup`). The height-2 Lubin–Tate exponential has
     `π^{N−1}·e_N ∈ ℤ` for `π^{ℓ²−1} = ℓ` (`CMFormalInert.expLT_eq`, `CMFormalInert.pow_mul_coeff_expLT`,
     `CMFormalInert.norm_coeff_expLT_le`, `CMFormalInert.expLT_subst_logLT`), and `e_N = 0` unless
@@ -416,8 +569,19 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     `serAB` is hermitian, with a product of logarithms as its Frobenius defect (`CMFormalInert.coeff_serAB_herm`,
     `CMFormalInert.expand_serAB_add_smul`), and the formal `σ*`, the exponent `ph` and the pairing `be` are defined
     over any field that holds their coefficients (`CMFormalInert.C_mul_X_mul_exp_neg_ph`, `CMFormalInert.map_be`,
-    `CMFormalInert.constantCoeff_be`). The classification `be ≃ c·serAB` remains; it needs Weierstrass's addition
-    formula for `σ`.
+    `CMFormalInert.constantCoeff_be`). With the Weierstrass addition theory, `be` is biadditive and classified (below).
+  - Biadditivity and the classification (`CMFormalBiadd`). The `σ` addition law and the Weierstrass differential
+    equation become formal identities of `σ*` and `℘`, for every lattice and its image under a ring map
+    (`CMFormalBiadd.addLaw_lattice`, `CMFormalBiadd.weierODE_lattice`, `CMFormalBiadd.addLaw_weierODE_map`), and `℘` in
+    Lubin–Tate coordinates is integral (`CMFormalBiadd.isInt_rhoLT`). The parallelogram law for `ph`
+    (`CMFormalBiadd.parallelogram`) makes `be` symmetric and biadditive up to `≃` (`CMFormalBiadd.be_symm`,
+    `CMFormalBiadd.be_biadd`), for the CM curve at an inert prime with the CM inputs (`CMFormalBiadd.be_biadd_cm`,
+    below). The translate `U = εT·G_q(z(T))` is an integral unit given the integrality of the coefficients of `G_qᴺ` as
+    a polynomial in `℘`, `℘′` (`CMFormalBiadd.isInt_translate`), and `th0 = exp(−ph)·U_t` in Lubin–Tate coordinates
+    (`CMFormalBiadd.th0_eq_exp_neg_ph_mul`). For `φ(c) = −c` and `‖c‖ ≤ 1`, `c·serAB` is biadditive and hermitian
+    (`CMFormalBiadd.serAB_biadd`, `CMFormalBiadd.isHerm_C_mul_serAB`); and given the uniqueness statement
+    `CMFormalBiadd.GaussClass` and the hermitian property of `be`, `be ≃ c·serAB` (`CMFormalBiadd.be_classification`),
+    for the CM curve with the CM inputs (`CMFormalBiadd.be_classification_cm`, below).
 
 ## How the statements differ from the archive's
 
@@ -454,13 +618,17 @@ The steps were written from the mathematics. Parts were written by helpers given
 
 | Result | Hypothesis | Lean |
 |---|---|---|
-| The piece `frameLoss` of `ZetaBalance.SharpPieces` for the construction `ZetaBalance.sharpCons`: at every admissible design with `ε` small and `x` large, in every frame realising a translate's object, the words have positive total rank and the mean slope exceeds the target's by at most the frame loss `x^{4ε}Σ_t a_t/4` | `ZetaBalance.SharpNI`, (NI), the near-injectivity of the period map of the construction's one word (`0 < rk P`, `dim V_ω ≤ 2 rk P`), not yet proved, with the whole-word second moment its planned route; and `ZetaBalance.SharpRange`, the range `μ_max(N_ω) ≤ μ(N_ω) + U` with `0 ≤ U ≤ x^{4ε}Σ_t a_t/4`, which will come from the gain's certificate | `ZetaBalance.frameLoss_of_sharpNI` |
+| The piece `frameLoss` of `ZetaBalance.SharpPieces` for the construction `ZetaBalance.sharpCons`: at every admissible design with `ε` small and `x` large, in every frame realising a translate's object, the words have positive total rank and the mean slope exceeds the target's by at most the frame loss `x^{4ε}Σ_t a_t/4` | `ZetaBalance.SharpNI`, (NI), the near-injectivity of the period map of the construction's one word (`0 < rk P`, `dim V_ω ≤ 2 rk P`), not yet proved, with the whole-word second moment its planned route; and `ZetaBalance.SharpRange`, the range `μ_max(N_ω) ≤ μ(N_ω) + U` with `0 ≤ U ≤ x^{4ε}Σ_t a_t/4`, which follows from the named statements `ZetaBalance.SharpMuMax` and `ZetaBalance.SharpCertSmall` (`ZetaBalance.sharpRange_of_cert`, below) | `ZetaBalance.frameLoss_of_sharpNI` |
+| The piece `frame` of `ZetaBalance.SharpPieces` for the construction `ZetaBalance.sharpCons`: at every admissible design with `ε` small and `x` large, at every translate `u ∈ A₀`, some frame realises the translate's object, with the quotient target metric and heights `0` | `ZetaBalance.SharpNI`, (NI), the near-injectivity of the period map of the construction's one word (`0 < rk P`, `dim V_ω ≤ 2 rk P`), of which the proof uses only `0 < rk P` | `ZetaBalance.frame_of_sharpNI` |
+| The range (R′) of the frame loss, `ZetaBalance.SharpRange`: at every admissible design with `ε` small and `x` large, in every frame realising a translate's object, `μ_max(N_ω) ≤ μ(N_ω) + U` with `0 ≤ U ≤ x^{4ε}Σ_t a_t/4` | `ZetaBalance.SharpMuMax`, a bound `μ_max(M_ω) ≤ B` in every realising frame for the construction's lattice of integral forms, with `B + c_F ≤ x^{4ε}Σ_t a_t/8` for the exact constant `c_F` of (F); and `ZetaBalance.SharpCertSmall`, a gain certificate (`ZetaBalance.SharpObj.GainCert`) at every word with `2·log[M_ω : L]/rk ≤ x^{4ε}Σ_t a_t/8` | `ZetaBalance.sharpRange_of_cert` |
+| The bound `ZetaBalance.SharpMuMax` on the maximal slope of the construction's lattice of integral forms `M_ω` | `ZetaBalance.SharpCoordCert`: at every admissible design with `ε` small and `x` large, at every translate, integral coordinates (`ZetaBalance.SharpObj.CoordCert`) of some weight `w > 0` with `−log w + c_F ≤ x^{4ε}Σ_t a_t/8` on the source of every word: injective, integral on the integral forms, and with `w·\|σ_v ∘ T\|²` below the Petersson form at every complex place | `ZetaBalance.sharpMuMax_of_coordCert` |
 | The piece (T) of `ZetaBalance.SharpPieces` for the construction `ZetaBalance.sharpCons`: at every admissible design with `x` large, every translate's auxiliary prime is a prime `T = ππ̄`, `π ≡ 1 (mod M)`, with `log T > Λ_u − x^{2ε}` and slack `c_T = x^{2ε}` within its quarter of the budget | `ZetaBalance.ShortNorm` | `ZetaBalance.sharpPrimes` |
 | Admissible designs exist (the piece `params` of `ZetaBalance.SharpPieces`): for every primitive `χ`, small `ε` and large `Y`, every pair of `ZetaTwist.WinPair` has, at every `x` of its window, a setting with a character lifting `χ` and an admissible design (`ZetaBalance.SharpDesign.Adm`) | `ZetaBalance.ShortNorm`, which gives the design's split primes `g₀ ≠ g₁` | `ZetaBalance.sharpParams` |
 | The core of the auxiliary primes (T): primes `T = ππ̄`, `π = (a + b√−d)/2 ≡ 1 (mod M)`, in every dyadic window `(e^Λ, 2e^Λ]` once `log(4dM²) ≤ c√Λ`, so meeting `ArithT` with `log T` within `log 2` of any large target; a step of the piece `primes` of `ZetaBalance.SharpPieces` | `ZetaBalance.ShortNorm`: Chebotarev in short intervals for `ℚ(√−d)`, an input of `ZetaBalance.SharpInputs` | `ZetaBalance.exists_prime_norm_window`, `ZetaBalance.SharpDesign.exists_prime_arithT` |
-| The jets of the one-variable normalised theta `th0` at a half-period `t` (`CMThetaOne`): Masser's half-period identity and Hurwitz's formula, so every jet is a polynomial over `ℤ` in `g₂/2`, `℘(t)` and `s₂`, and lies in `σ₀(K)`, is algebraic and is `ℓ`-integral for `ℓ ≠ 2` wherever these do or are; at the construction's lattice `Lc` and point `t = δ/2`, the jets lie in `σ₀(K)` when `g₂`, `℘(t)` and `s₂` do | `CMThetaOne.Legendre`: Legendre's relation `η₁ω₂ − η₂ω₁ = 2πi` for the library's `ζ_W`, classical, an input of the D1 plan (its proof needs a contour integral of `ζ_W`) | `CMThetaOne.zetaW_half`, `CMThetaOne.th0_taylor`, `CMThetaOne.th0_jets_mem`, `CMThetaOne.th0_jets_mem_closure`, `CMThetaOne.th0_jets_mem_range`, `CMThetaOne.th0_jets_isAlgebraic`, `CMThetaOne.th0_jets_int`, `CMThetaOne.canon_jets_mem_range` |
-| The jets of `th0` at the construction's lattice `Lc = δ(ℤ + ℤω)`, of discriminant `1`, and point `t = δ/2` are algebraic, and integral at every prime `ℓ ≥ 5` with `ℓ ∤ d` | `CMThetaOne.Legendre`, and the CM inputs `CMThetaOne.CMjIntegral` (CM-c, Weber and Deuring: `j` is an algebraic integer) and `CMThetaOne.CMs2` (CM-d, Masser and Katz: `s₂` of the CM lattice of discriminant `1` is algebraic and integral at every `ℓ ≥ 5` with `ℓ ∤ d`) | `CMThetaOne.canon_jets_isAlgebraic`, `CMThetaOne.canon_jets_int` |
+| The jets of `th0` at the construction's lattice `Lc = δ(ℤ + ℤω)`, of discriminant `1`, and point `t = δ/2` are algebraic, and integral at every prime `ℓ ≥ 5` with `ℓ ∤ d` | The CM inputs `CMThetaOne.CMjIntegral` (CM-c, Weber and Deuring: `j` is an algebraic integer) and `CMThetaOne.CMs2` (CM-d, Masser and Katz: `s₂` of the CM lattice of discriminant `1` is algebraic and integral at every `ℓ ≥ 5` with `ℓ ∤ d`) | `CMThetaOne.canon_jets_isAlgebraic'`, `CMThetaOne.canon_jets_int'` |
 | The jets of the CM curve at an inert prime `ℓ ≥ 5` (`CMFormalInert`): for the model of discriminant `1` of a CM lattice, every series integral in the formal parameter has `z`-expansion with `v([z^N]) ≥ −(N − 1)/(ℓ² − 1)` and `v(N!·[z^N]) ≥ Nℓ/(ℓ² − 1) − s_ℓ(N)/(ℓ − 1) + 1/(ℓ² − 1)` | `CMFormalInert.CMInertLubinTate` (CM-b, Deuring, Lubin–Tate and Honda): at an inert `ℓ ≥ 5` a unit `ε` of the maximal unramified extension makes `t(ε·log_LT(T))` integral | `CMFormalInert.cm_inert_jets` |
+| Biadditivity of the formal Gaussian pairing for the CM curve at an inert prime (`CMFormalBiadd`): for the model of discriminant `1` of a CM lattice and an inert `ℓ ≥ 5`, `ℓ ∤ d`, a unit `ε` of the maximal unramified extension makes `be = ph(X ⊕ Y) − ph(X) − ph(Y)` biadditive up to `≃` | The CM inputs `CMFormalInert.CMInertLubinTate` (CM-b, Deuring, Lubin–Tate and Honda: at an inert `ℓ ≥ 5` a unit `ε` of the maximal unramified extension makes `t(ε·log_LT(T))` integral) and `CMThetaOne.CMjIntegral` (CM-c, Weber and Deuring: `j` is an algebraic integer) | `CMFormalBiadd.be_biadd_cm` |
+| The classification of the formal Gaussian pairing for the CM curve at an inert prime `ℓ ≥ 5`, `ℓ ∤ d` (`CMFormalBiadd`): given a Frobenius lift `φ` on the maximal unramified extension, the uniqueness statement `CMFormalBiadd.GaussClass` for it and the hermitian property of `be`, the unit `ε` of CM-b has `be ≃ c·serAB` with `φ(c) = −c` and `‖c‖ ≤ 1` | The CM inputs `CMFormalInert.CMInertLubinTate` (CM-b), `CMThetaOne.CMjIntegral` (CM-c), `CMFormalBiadd.CMUnramified` (CM-a′, Weber and Shimura reciprocity: the invariants of the model of discriminant `1` lie in the maximal unramified extension at `ℓ ≥ 5`, `ℓ ∤ d`) and `CMFormalBiadd.CMs2Unram` (CM-d strengthened, Masser and Katz: `s₂` of that lattice lies there and is integral) | `CMFormalBiadd.be_classification_cm` |
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function | `WindowGRH.WindowBound`: for every primitive `χ` and `θ > 1/2`, the weighted error of the ramp sums of the cyclic family of `χ` is at most `C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large | `WindowGRH.rhAndGRH_of_windowBound` |
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function, also resting on the half-plane `Re s > 11/12` for `ζ` and every Dirichlet `L`-function, a result formalised in the library that no referee has read ([openai-half-plane.md](openai-half-plane.md)) | `ZetaBalance.PairBound`, the construction alone: for every primitive `χ` and every `ε₀ > 0` there are `ε ∈ (0, ε₀)` and `A ≥ 1` such that, for every large `Y`, every pair of primes `(q, d)` meeting `ZetaTwist.WinPair ε Y` has a sub-window `[Y′, Y′²]`, with `Y ≤ Y′ ≤ Y^{A/2}`, at every `x` of which a setting `S` with `S.q = q` and `S.d = d` and a character `κ` of `A` lifting `χ` (`ZetaBalance.Setting.Lifts`) has lattice data (`ZetaBalance.LatticeData S κ x ε X`) whose thin classes lie beyond `X = (Nx)^{log x}` | `ZetaBalance.rhAndGRH_of_pairBound` |
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function, also resting on the half-plane `Re s > 11/12` for `ζ` and every Dirichlet `L`-function, a result formalised in the library that no referee has read ([openai-half-plane.md](openai-half-plane.md)) | `ZetaBalance.SixTermBound`: `ZetaBalance.PairBound` with six-term data (`ZetaBalance.SixTermData S κ x ε X`) in place of lattice data: weights and, at each translate of the kernel `A₀` of `κ`, a frame meeting the hypotheses of the frame inequality at its rank-weighted mean slope (`SlopeFrame.Frame.mean`), with numbers of its words (the slope of the forms, the split primes, the auxiliary prime) and of the translate (the vanishing gain, the forced vanishing, a scale `v > 0`, `log(g₀g₁)`, six slacks) that meet the archive's six inequalities G1–G6, and one budget for the slacks and the losses of the frame inequality | `ZetaBalance.rhAndGRH_of_sixTermBound` |

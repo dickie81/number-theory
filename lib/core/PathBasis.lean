@@ -184,7 +184,6 @@ theorem IsStep.antitone {v : Bool} {b : ℕ} {ν μ : Fin n → ℤ} (h : IsStep
 
 /-- **A Pieri path** of type `(vec, B)` with `N` letters in `n` coordinates: weights `μ_0 = 0, μ_1, …, μ_N`
 (`mu t` after `t` letters), one step per letter, constant after `N`. -/
-@[ext]
 structure PieriPath (n N : ℕ) (vec : ℕ → Bool) (B : ℕ → ℕ) where
   /-- **The weights**: `mu t` after `t` letters. -/
   mu : ℕ → Fin n → ℤ
@@ -972,11 +971,6 @@ theorem isStdFilling_canFill (lam : Fin n → ℤ) : IsStdFilling lam (canFill l
 /-- **The index set of the path family**: Pieri paths with a standard filling of their end weight. -/
 abbrev PathIdx (n N : ℕ) (vec : ℕ → Bool) (B : ℕ → ℕ) :=
   Σ P : PieriPath n N vec B, {I // IsStdFilling (P.mu N) I}
-
-instance : Finite (PathIdx n N vec B) :=
-  have : ∀ P : PieriPath n N vec B, Finite {I // IsStdFilling (P.mu N) I} :=
-    fun P => (card_stdFilling (P.antitone N)).1
-  inferInstance
 
 /-- **The path family** `Ψ(P, I)`. -/
 def pathFam (R : Type*) [CommRing R] (x : PathIdx n N vec B) : MvPolynomial (ℕ × Fin n) R :=

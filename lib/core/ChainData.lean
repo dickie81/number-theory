@@ -328,7 +328,6 @@ inductive ModelL (J : ℕ) (nL : ZMod J → ℕ) (r : ℕ)
   | crs (j : ZMod J) (m : Fin r)
   /-- The tangent copy of the frame row `(j, m)`. -/
   | tan (j : ZMod J) (m : Fin r)
-  deriving DecidableEq
 
 section Letters
 

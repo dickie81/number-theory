@@ -1356,6 +1356,8 @@ theorem le_hwSum (hW : G.Stable W) : W ≤ G.hwSum W := by
   rw [← hs]
   exact Submodule.sum_mem _ fun μ _ => key _ μ le_rfl _ (G.comp_mem hW μ hxW) (G.isWt_comp μ x)
 
+/-- **Highest weight vectors generate**: a finite-dimensional stable subspace is the sum of the submodules generated
+by its highest weight vectors. -/
 theorem hwSum_eq (hW : G.Stable W) : G.hwSum W = W := le_antisymm (G.hwSum_le hW) (G.le_hwSum hW)
 
 omit [CharZero K] [FiniteDimensional K W] in

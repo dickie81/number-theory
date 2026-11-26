@@ -32,10 +32,10 @@ lattices and its edge lattices.
   `X_{l,c} ↦ Σ_b ϖ^{[b < r]}·X_{l,b}·σ^s(g)_{cb}` for a covector letter. So the *scaled* variables (`scaled`) are the
   normal coordinates of the vector letters and the plane coordinates of the covector letters, and `nd` counts them;
   `ord_g F ≥ i` means `OrdGe ϖ i (ℓ_g F)`. At `g = 1` it is the scaling of the scaled variables (`liftSub_one_X`).
-* *Lines and planes.* `planeOf p r g` is the span over `W/p` of the rows `i < r` of `g⁻¹` modulo `p`, `lineOf` the
-  case `r = 1`. For a basis `h` of a source lattice `L″ = h·W^k`, the edge *adapted to `g`* is the one with adapted
-  basis `h·g^{−T}`: source `L″`, target `L = h·g^{−T}D^{−1}W^k`. In the coordinates of `h`, `pL/pL″ ⊆ L″/pL″` is the
-  span of the columns `< r` of `g^{−T}`, that is `planeOf p r g`; `g = 1` gives the edge of the plane coordinates.
+* *Planes.* `planeOf p r g` is the span over `W/p` of the rows `i < r` of `g⁻¹` modulo `p` (the line for `r = 1`).
+  For a basis `h` of a source lattice `L″ = h·W^k`, the edge *adapted to `g`* is the one with adapted basis `h·g^{−T}`:
+  source `L″`, target `L = h·g^{−T}D^{−1}W^k`. In the coordinates of `h`, `pL/pL″ ⊆ L″/pL″` is the span of the columns
+  `< r` of `g^{−T}`, that is `planeOf p r g`; `g = 1` gives the edge of the plane coordinates.
 * *Odd positions* (L6, recomputed from `edgeLat`, `twist`, `lamAt` and `midBlk` in `thetaB_mem_edgeLat_iff`): on the
   flat model `ϖ` falls on the normal columns `c ≥ r` at even positions and on the plane columns `c < r` at odd
   positions; the edge condition is the order of the lift substitution, the factor `ϖ^{A_r}`, `A_r = Σ_{s even} d_s`,
@@ -637,13 +637,10 @@ theorem liftSub_one_X (r : ℕ) (vec : α → Bool) (pos : α → ℕ) (v : α �
   · simp
 
 /-- **The plane of a matrix** at type `r`: the span over `W/p` of the rows `i < r` of `g⁻¹` modulo `p` (the edge
-out of the source that `g` is adapted to; `lineOf` for `r = 1`). -/
+out of the source that `g` is adapted to; the line for `r = 1`). -/
 def planeOf (p r : ℕ) (g : Matrix (Fin k) (Fin k) W) :
     Submodule (W ⧸ Ideal.span {(p : W)}) (Fin k → W ⧸ Ideal.span {(p : W)}) :=
   Submodule.span _ {v | ∃ i : Fin k, i.val < r ∧ v = fun c => Ideal.Quotient.mk _ (g⁻¹ i c)}
-
-/-- **The line of a matrix**: the plane at type `1`, spanned by row `0` of `g⁻¹` modulo `p`. -/
-abbrev lineOf (p : ℕ) (g : Matrix (Fin k) (Fin k) W) := planeOf p 1 g
 
 end Lift
 
