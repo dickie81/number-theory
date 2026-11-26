@@ -221,6 +221,11 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
   - The architecture of the proof: `ZetaBalance.sharpBoundPinned_of_inputs` gives the frontier from the deep inputs,
     stated as hypotheses (`ZetaBalance.SharpInputs`), and the pieces to prove (`ZetaBalance.SharpPieces`), each
     discharging named clauses; the reduction is logical packaging, checked against the frontier on every build.
+  - The pieces proved so far. Finitely many classes of decorated unimodular hermitian lattices, each with a finite
+    stabiliser (`HermClasses.finite_DCl`, `HermClasses.finite_stab`), by Minkowski's theorem and a covolume bound
+    through the trace dual: the piece `ZetaBalance.FiniteClasses` (`ZetaBalance.finiteClasses_proved`). Bideterminants
+    span the dual Weyl module (`WeylFock.bidet_mem_nabla`, `WeylFock.span_bidet`), by a reproducing formula for the
+    Fock form and Cauchy–Binet: the core of the piece `ZetaBalance.FormsLattice`.
 
 ## How the statements differ from the archive's
 
