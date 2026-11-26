@@ -225,7 +225,9 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     stabiliser (`HermClasses.finite_DCl`, `HermClasses.finite_stab`), by Minkowski's theorem and a covolume bound
     through the trace dual: the piece `ZetaBalance.FiniteClasses` (`ZetaBalance.finiteClasses_proved`). Bideterminants
     span the dual Weyl module (`WeylFock.bidet_mem_nabla`, `WeylFock.span_bidet`), by a reproducing formula for the
-    Fock form and Cauchy–Binet: the core of the piece `ZetaBalance.FormsLattice`.
+    Fock form and Cauchy–Binet. From them the piece `ZetaBalance.FormsLattice` (`HermForms.formsLattice`,
+    `ZetaBalance.formsLattice_proved`): the forms finite-dimensional, the integral forms a lattice, and the Petersson
+    form positive definite at every complex place.
 
 ## How the statements differ from the archive's
 
