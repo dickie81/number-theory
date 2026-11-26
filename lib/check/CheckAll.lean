@@ -489,6 +489,7 @@ import SharpAdm
 import SharpParams
 import CoeffField
 import QuadSub
+import SharpCores
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2354,25 +2355,8 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ZetaBalance.SharpDesign.Adm.log_g_mem
 #print axioms ZetaBalance.exists_prime_norm_window
 #print axioms ZetaBalance.SharpDesign.exists_prime_arithT
-#print axioms CoeffField.conj_mem_of_normal
-#print axioms CoeffField.val_star
-#print axioms CoeffField.isTotallyComplex_of_ringHom
-#print axioms CoeffField.map_mem_of_basis
-#print axioms CoeffField.val_comp_codRestrict
-#print axioms CoeffField.subset_coeffClosure
-#print axioms CoeffField.finiteDimensional_coeffClosure
-#print axioms CoeffField.numberField_coeffClosure
-#print axioms CoeffField.normal_coeffClosure
-#print axioms CoeffField.conj_mem_coeffClosure
-#print axioms ZetaBalance.Setting.exists_sq_eq_neg_d
-#print axioms ZetaBalance.Setting.gaussE_sq
-#print axioms ZetaBalance.Setting.complexConj_sq_eq_neg
-#print axioms ZetaBalance.Setting.isIntegral_half
-#print axioms ZetaBalance.Setting.halfO_mul_conj
-#print axioms ZetaBalance.Setting.card_residue_of_dvd
-#print axioms ZetaBalance.Setting.modEq_one_of_norm
-#print axioms ZetaBalance.Setting.halfO_mul_conj_eq
-#print axioms ZetaBalance.Setting.isCoprime_halfO_conj
+#print axioms ZetaBalance.sharpPrimes
+#print axioms ZetaBalance.sharpSlopeFV
 #print axioms ZetaBalance.sharpBoundTheta_of_pinned
 #print axioms ThetaChain.Data.comp_zero_inp
 #print axioms ThetaNorm.th0_zero

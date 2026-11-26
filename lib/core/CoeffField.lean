@@ -4,8 +4,8 @@ import Mathlib
 # The coefficient field: normal number fields inside `ℂ`
 
 The coefficient field `K` of the sharp construction (`ZetaBalance.SharpCoeff`) is a number field, totally complex and
-normal over `ℚ`, with complex conjugation as its star, a CM type `τ_K` into it and an embedding `j : K → ℂ` with
-`j ∘ τ_K = τ`. This module builds such fields generically, as subfields of `ℂ`; the design's generators come later.
+normal over `ℚ`, with complex conjugation as its star, and a CM type `τ_K` into it. This module builds such fields
+generically, as subfields of `ℂ`; the generators are the construction's (`ZetaBalance.sharpCoeff`).
 
 **The closure** (`coeffClosure s`): the normal closure in `ℂ` of `ℚ(s)`, the compositum of the images of `ℚ(s)`
 under all its `ℚ`-embeddings into `ℂ`. It contains `s` (`subset_coeffClosure`). For a finite set `s` of algebraic
@@ -14,16 +14,14 @@ and it is normal over `ℚ` (`normal_coeffClosure`), as the minimal polynomials 
 
 **Conjugation is automatic.** A subfield `F ⊆ ℂ` normal over `ℚ` is stable under complex conjugation
 (`conj_mem_of_normal`): conjugation restricted to `F` is a `ℚ`-embedding `F → ℂ`, whose image is `F` by normality. So
-the closure need not adjoin `conj s`, and `conj_mem_coeffClosure` follows. Such an `F` carries the star `conj|_F`
-(`instStarRing`), with `F.val (star x) = conj (F.val x)` by definition (`val_star`).
+the closure need not adjoin `conj s`. Such an `F` carries the star `conj|_F` (`instStarRing`).
 
 **Totally complex** (`isTotallyComplex_of_ringHom`): a field receiving a ring map from a totally complex field is
 totally complex, as each of its embeddings into `ℂ` restricts to a non-real one of the source (Mathlib's
 `isTotallyComplex_of_algebra`). For `K = F` it is applied to the codomain restriction of an embedding of `E`.
 
 **Embeddings into `F`.** An embedding `σ : E → ℂ` lands in `F` once the images of a `ℚ`-basis of `E` do
-(`map_mem_of_basis`, as `σ` is `ℚ`-linear). Then `σ.codRestrict F` embeds `E` into `F`, with
-`F.val ∘ σ.codRestrict F = σ` by definition (`val_comp_codRestrict`).
+(`map_mem_of_basis`, as `σ` is `ℚ`-linear). Then `σ.codRestrict F` embeds `E` into `F`.
 -/
 
 namespace CoeffField
@@ -51,9 +49,6 @@ instance instStarRing : StarRing F where
   star_mul _ _ := Subtype.ext ((map_mul (starRingEnd ℂ) _ _).trans (mul_comm _ _))
   star_add _ _ := Subtype.ext (map_add (starRingEnd ℂ) _ _)
 
-/-- **The star is conjugation**: `F.val (star x) = conj (F.val x)`. -/
-theorem val_star (x : F) : F.val (star x) = conj (F.val x) := rfl
-
 end Normal
 
 /-! ### Totally complex fields and embeddings into a subfield -/
@@ -71,11 +66,6 @@ theorem map_mem_of_basis {E ι : Type*} [Field E] [CharZero E] (b : Module.Basis
     {F : IntermediateField ℚ ℂ} (h : ∀ i, σ (b i) ∈ F) (x : E) : σ x ∈ F :=
   (Submodule.span_le (p := (Subalgebra.toSubmodule F.toSubalgebra).comap σ.toRatAlgHom.toLinearMap).2
     (Set.range_subset_iff.2 h)) (b.mem_span x)
-
-/-- **The codomain restriction recovers the embedding**: `F.val ∘ σ.codRestrict F h = σ`. -/
-theorem val_comp_codRestrict {E : Type*} [Field E] (σ : E →+* ℂ) (F : IntermediateField ℚ ℂ) (h : ∀ x, σ x ∈ F) :
-    (F.val : F →+* ℂ).comp (σ.codRestrict F h) = σ :=
-  RingHom.ext fun _ => rfl
 
 /-! ### The coefficient closure -/
 
@@ -108,12 +98,6 @@ its normal closure in `ℂ` is a normal closure (`isNormalClosure_normalClosure`
 theorem normal_coeffClosure (hi : ∀ x ∈ s, IsIntegral ℚ x) : Normal ℚ (coeffClosure s) :=
   haveI := isAlgebraic_adjoin hi
   IsNormalClosure.normal (h := Algebra.IsAlgebraic.isNormalClosure_normalClosure fun _ => IsAlgClosed.splits _)
-
-/-- **The closure of algebraic numbers is stable under complex conjugation**, being normal. -/
-theorem conj_mem_coeffClosure (hi : ∀ x ∈ s, IsIntegral ℚ x) {x : ℂ} (hx : x ∈ coeffClosure s) :
-    conj x ∈ coeffClosure s :=
-  haveI := normal_coeffClosure hi
-  conj_mem_of_normal _ hx
 
 end
 

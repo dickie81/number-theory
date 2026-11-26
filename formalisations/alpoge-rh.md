@@ -268,6 +268,15 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     (`ZetaBalance.SharpDesign.Adm.lam_bounds`), `Λ_u + log 2 ≤ x` (`ZetaBalance.SharpDesign.Adm.lam_add_log_two_le`),
     `(log 4dM²)³ ≤ Λ_u` (`ZetaBalance.SharpDesign.Adm.logM_cube_le`) and `16x^ε ≤ log(g₀g₁) ≤ 17x^ε`
     (`ZetaBalance.SharpDesign.Adm.log_g_mem`). Two random choices the gain will need are not yet part of it.
+  - The construction, first stage (`ZetaBalance.sharpCons`): the coefficient field is the normal closure in `ℂ` of the
+    images of `E` (`CoeffField.coeffClosure`, a number field, totally complex, with conjugation as its star); one word
+    and one level per translate; the auxiliary prime `T` the least prime of `ArithT` in the window `(e^{Λ_u},
+    2e^{Λ_u}]`; the level-`T` places those of `conj((a + b√−d)/2)` and the places `SG` those of `conj π_{g₀}`,
+    `conj π_{g₁}`, with the canonical `√−d` of `E`, a quadratic Gauss sum (`ZetaBalance.Setting.gaussE`); the step-0
+    weights the design's, and the sources the whole cut. The period data, the target metric, `𝔞⁺`, `𝔞⁻`, the step-0
+    character and the heights are placeholders, for the pieces still to prove; no proof reads them. For it, the pieces
+    (T) (`ZetaBalance.sharpPrimes`, from `ShortNorm`) and (F) + (V) (`ZetaBalance.sharpSlopeFV`, from the exact slope
+    bound, whose constant is at most `41·Σ_t a_t·log x`) hold eventually in the design.
 
 ## How the statements differ from the archive's
 
@@ -304,6 +313,7 @@ The steps were written from the mathematics. Parts were written by helpers given
 
 | Result | Hypothesis | Lean |
 |---|---|---|
+| The piece (T) of `ZetaBalance.SharpPieces` for the construction `ZetaBalance.sharpCons`: at every admissible design with `x` large, every translate's auxiliary prime is a prime `T = ππ̄`, `π ≡ 1 (mod M)`, with `log T > Λ_u` | `ZetaBalance.ShortNorm` | `ZetaBalance.sharpPrimes` |
 | Admissible designs exist (the piece `params` of `ZetaBalance.SharpPieces`): for every primitive `χ`, small `ε` and large `Y`, every pair of `ZetaTwist.WinPair` has, at every `x` of its window, a setting with a character lifting `χ` and an admissible design (`ZetaBalance.SharpDesign.Adm`) | `ZetaBalance.ShortNorm`, which gives the design's split primes `g₀ ≠ g₁` | `ZetaBalance.sharpParams` |
 | The core of the auxiliary primes (T): primes `T = ππ̄`, `π = (a + b√−d)/2 ≡ 1 (mod M)`, in every dyadic window `(e^Λ, 2e^Λ]` once `log(4dM²) ≤ c√Λ`, so meeting `ArithT` with `log T` within `log 2` of any large target; a step of the piece `primes` of `ZetaBalance.SharpPieces` | `ZetaBalance.ShortNorm`: Chebotarev in short intervals for `ℚ(√−d)`, an input of `ZetaBalance.SharpInputs` | `ZetaBalance.exists_prime_norm_window`, `ZetaBalance.SharpDesign.exists_prime_arithT` |
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function | `WindowGRH.WindowBound`: for every primitive `χ` and `θ > 1/2`, the weighted error of the ramp sums of the cyclic family of `χ` is at most `C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large | `WindowGRH.rhAndGRH_of_windowBound` |
