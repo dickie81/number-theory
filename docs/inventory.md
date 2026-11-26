@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1951 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1956 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,8 +14,8 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 222 | 790 |
-| `lib/pnt` | 358 | 1048 |
+| `lib/core` | 224 | 794 |
+| `lib/pnt` | 359 | 1049 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -616,6 +616,11 @@ note of `formalisations/` that names it, if one does.
 - `HermClasses.dia_smul`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `HermClasses.mass_mk`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `HermClasses.act_ext_eLast`: Sanity ([note](../formalisations/alpoge-rh.md))
+
+#### `HermFinite`: Finitely many classes of decorated unimodular lattices, finite stabilisers
+
+- `HermClasses.finite_DCl`: Finitely many classes ([note](../formalisations/alpoge-rh.md))
+- `HermClasses.finite_stab`: Finite stabilisers ([note](../formalisations/alpoge-rh.md))
 
 #### `HermForms`: Forms on decorated lattices, the Petersson form, the ramified cut and the source lattices
 
@@ -1409,6 +1414,11 @@ note of `formalisations/` that names it, if one does.
 
 - `WeylFock.hw_mem_nabla`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `WeylFock.DeltaOL_subset_DeltaN_std`: Sanity ([note](../formalisations/alpoge-rh.md))
+
+#### `WeylSpan`: Bideterminants span the dual Weyl module
+
+- `WeylFock.bidet_mem_nabla`: `⊆` ([note](../formalisations/alpoge-rh.md))
+- `WeylFock.span_bidet`: Bideterminants span the dual Weyl module ([note](../formalisations/alpoge-rh.md))
 
 #### `WindowForm`: The prime-side window form: its algebra, its certification logic, and the counterexample mechanism
 
@@ -2564,6 +2574,10 @@ note of `formalisations/` that names it, if one does.
 
 - `ZetaBalance.sharpBoundPinned_of_inputs`: The sharp frontier from the inputs and the pieces ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.rhAndGRH_of_inputs`: CONDITIONAL. RH and GRH from the inputs and the pieces ([note](../formalisations/alpoge-rh.md))
+
+#### `SharpPiecesProved`: The pieces of the sharp frontier that are proved
+
+- `ZetaBalance.finiteClasses_proved`: The piece `FiniteClasses`, proved ([note](../formalisations/alpoge-rh.md))
 
 #### `ShortCharSums`: Short character sums
 
