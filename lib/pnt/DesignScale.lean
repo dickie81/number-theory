@@ -22,9 +22,8 @@ at one `x` from a bound `C ≤ x^a`, `a > 0`, which holds for large `x` (`tendst
 
 **The ranks** (`designRanks`), for `x^{2+8ε} ≤ |A| ≤ 2x^{2+8ε+ε/100}`: `k = 2⌈x^{9/2+10ε}/2⌉`,
 `m = 2⌈x^{1/2−ε/16}/2⌉` (`x^{1/2−ε/16} = √(xδ₁)`) and `t = 8fr + 4 + TO·nW − r`, with `r = k + m − 1` and `f = 2|A|`.
-They have `k ∈ [x^{9/2+10ε}, 2x^{9/2+10ε}]` (`designRanks_k_mem`), `m ∈ [x^{1/2−ε/16}, 2x^{1/2−ε/16}]`
-(`designRanks_m_mem`), `r + t = 8fr + 4 + TO·nW` (`designRanks_t_eq`), `r ≤ 3x^{9/2+10ε}` (`designRanks_r_le`) and
-`t ≤ x^{401}` (`designRanks_t_le`). The obligations of `Setting.Ranks`: `t` is odd since `r` is odd and `nW` is a
+They have `k ∈ [x^{9/2+10ε}, 2x^{9/2+10ε}]`, `m ∈ [x^{1/2−ε/16}, 2x^{1/2−ε/16}]`, `r + t = 8fr + 4 + TO·nW`,
+`r ≤ 3x^{9/2+10ε}` (`designRanks_r_le`) and `t ≤ x^{401}`. The obligations of `Setting.Ranks`: `t` is odd since `r` is odd and `nW` is a
 multiple of `8`; `t ≥ 7r + 4` gives `k + m + 4 ≤ t`, `3m < t` and `m² ≤ m(t + 1)`; and `m + 3 ≤ k`, `m ≤ f ≤ k`
 and `t ≤ x^{401}` are comparisons of powers of `y = x^{1/100} ≥ 4096`, as `ε < 1/52` puts every exponent between two
 hundredths: `y^{450} ≤ k ≤ 2y^{470}`, `y^{49} ≤ m ≤ 2y^{50}`, `y^{200} ≤ |A| ≤ 2y^{216}`, `L² ≤ y⁴` and
@@ -519,28 +518,6 @@ section designRanks
 variable (S : Setting) (hbig : DesignBig ε x) (hn₀ : x ^ (2 + 8 * ε) ≤ Fintype.card S.A)
   (hn₁ : (Fintype.card S.A : ℝ) ≤ 2 * x ^ (2 + 8 * ε + ε / 100))
 
-/-- **The window of `k`**: `x^{9/2+10ε} ≤ k ≤ 2x^{9/2+10ε}`. -/
-theorem designRanks_k_mem :
-    ((designRanks S x ε hbig hn₀ hn₁).k : ℝ) ∈ Set.Icc (x ^ (9 / 2 + 10 * ε)) (2 * x ^ (9 / 2 + 10 * ε)) :=
-  designK_mem hbig
-
-/-- **The window of `m`**: `x^{1/2−ε/16} ≤ m ≤ 2x^{1/2−ε/16}`, with `x^{1/2−ε/16} = √(xδ₁)`. -/
-theorem designRanks_m_mem :
-    ((designRanks S x ε hbig hn₀ hn₁).m : ℝ) ∈ Set.Icc (x ^ (1 / 2 - ε / 16)) (2 * x ^ (1 / 2 - ε / 16)) :=
-  designM_mem hbig
-
-/-- **The formula of `t`**: `r + t = 8fr + 4 + TO·nW`. -/
-theorem designRanks_t_eq :
-    (designRanks S x ε hbig hn₀ hn₁).r + (designRanks S x ε hbig hn₀ hn₁).t =
-      8 * S.f * (designRanks S x ε hbig hn₀ hn₁).r + 4 +
-        scTO x * scNW S.f (designRanks S x ε hbig hn₀ hn₁).k (designRanks S x ε hbig hn₀ hn₁).m
-          (designRanks S x ε hbig hn₀ hn₁).r (scL x ε) :=
-  designT_add S x ε
-
-/-- **`t ≤ x^{401}`**. -/
-theorem designRanks_t_le : ((designRanks S x ε hbig hn₀ hn₁).t : ℝ) ≤ x ^ 401 :=
-  designT_le S hbig hn₁
-
 /-- **`r ≤ 3x^{9/2+10ε}`**, as `m ≤ 2y^{50} ≤ x^{9/2+10ε}` for `y = x^{1/100}`. -/
 theorem designRanks_r_le : ((designRanks S x ε hbig hn₀ hn₁).r : ℝ) ≤ 3 * x ^ (9 / 2 + 10 * ε) := by
   have hy := hbig.le_rpow (c := 1 / 100) (by linarith [hbig.ε_lt])
@@ -627,6 +604,5 @@ end ZetaBalance
 
 #print axioms ZetaBalance.eventually_designBig
 #print axioms ZetaBalance.designRanks
-#print axioms ZetaBalance.designRanks_t_le
 #print axioms ZetaBalance.designRanks_r_le
 #print axioms ZetaBalance.eventually_behrend

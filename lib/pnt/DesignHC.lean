@@ -15,8 +15,7 @@ is a top, and `ρ` is thick exactly when it lies in `Θ(u)` (`placeKind_eq_thick
 
 **The families** (`hcFam`). From integers `Δ`, `H`, `B`, `W`, `P`, scales `a_t` and shifts `b_t` at the tops, and per
 translate a place `ρ*(u)` and a shift `σ(u) ≥ 0`, the parameter at `ρ` is:
-* `v_i = 4Δ(k − 2 − i)`, and `u_i = 4Δ(k − 1 − i) − ½` for `0 < i < k − 1`, at every place (`hcFam_v`,
-  `hcFam_u_mid`);
+* `v_i = 4Δ(k − 2 − i)`, and `u_i = 4Δ(k − 1 − i) − ½` for `0 < i < k − 1`, at every place;
 * `u_0 = a_t + (k − 1)/2` and `u_{k−1} = −b_t − (k − 1)/2` at the top `(1, t)` (`hcFam_u_top`), and
   `u_0 = 4Δ(2k − 2) + ½`, `u_{k−1} = −½` elsewhere (`hcFam_u_ntop`);
 * `b_j = β(ρ) + 2jH` and `e_j = b_j + H` (`hcFam_b`, `hcFam_e`), where the base `β(ρ)` (`hcBase`) is `b_t + P` at the
@@ -32,8 +31,6 @@ are `e_j − b_j = b_{j+1} − e_j = H`.
 **The windows** (`hcFam_windows`), for reals `b, w, p` with `B = ⌈b⌉`, `W = ⌈w⌉`, `P = ⌊p⌋`, shifts `σ ≤ H`, and
 `η = 2mH`: `b_t + p ≤ e_j ≤ b_t + p + η` at the top `(1, t)`, `b ≤ e_j ≤ b + η + 1` at a thick place,
 `w ≤ e_j ≤ w + η + 1` at a thin place, and `|b_i − e_j| ≤ η` everywhere. Every `e_j` is positive (`hcFam_e_pos`).
-**The cloud** (`hcFam_cloud`), with `S_c = 4kΔ`: the `v_i` and the middle `u_i` lie in `[0, S_c]`, and
-`S_c ≤ u_0 − v_0 ≤ 2S_c` at the places that are not tops.
 
 **The root-of-unity condition** (`exists_shift_RU`). When every `ρ*(u)` is thick and `w_E = torsionOrder E` divides
 `H`, shifts `σ(u) < w_E` make `∏_ρ τ_ρ(ζ)^{e_j(ρ)} = 1` for every `j` and every root of unity `ζ ∈ E`. Every root of
@@ -292,10 +289,6 @@ noncomputable def hcFam (R : S.Ranks) (TT T2 : Finset S.A) (a bT : S.A → ℤ) 
 
 variable (hyp : HCHyp R TT a bT Δ H B W P)
 
-/-- `v_i = 4Δ(k − 2 − i)`. -/
-theorem hcFam_v (u : S.A) (ρ : Φ S.A) (i : Fin (R.k - 1)) :
-    (hcFam R TT T2 a bT Δ H B W P ρstar σ hyp u ρ).v i = 4 * Δ * ((R.k : ℤ) - 2 - i) := rfl
-
 /-- `b_j = β(ρ) + 2jH`. -/
 theorem hcFam_b (u : S.A) (ρ : Φ S.A) (j : Fin R.m) :
     (hcFam R TT T2 a bT Δ H B W P ρstar σ hyp u ρ).b j = hcBase TT T2 bT B W P ρstar σ u ρ + j * (2 * H) := rfl
@@ -321,11 +314,6 @@ theorem hcFam_u_ntop {u : S.A} {ρ : Φ S.A} (h : placeKind TT T2 u ρ ≠ .top)
     (hcFam R TT T2 a bT Δ H B W P ρstar σ hyp u ρ).u ⟨R.k - 1, by have := R.m_add_three_le; omega⟩ = -1 / 2 := by
   have := R.m_add_three_le
   simp [hcFam, Setting.Ranks.hcOf, hcU0, hcUk, h, show R.k - 1 ≠ 0 by omega]
-
-/-- In the middle, `0 < i < k − 1`: `u_i = 4Δ(k − 1 − i) − ½`, at every place. -/
-theorem hcFam_u_mid (u : S.A) (ρ : Φ S.A) (i : Fin R.k) (hi0 : 0 < (i : ℕ)) (hi1 : (i : ℕ) < R.k - 1) :
-    (hcFam R TT T2 a bT Δ H B W P ρstar σ hyp u ρ).u i = 4 * Δ * ((R.k : ℚ) - 1 - i) - 1 / 2 := by
-  simp [hcFam, Setting.Ranks.hcOf, show (i : ℕ) ≠ 0 by omega, show (i : ℕ) ≠ R.k - 1 by omega]
 
 /-- Every `e_j` is positive. -/
 theorem hcFam_e_pos (u : S.A) (ρ : Φ S.A) (j : Fin R.m) :
@@ -386,37 +374,6 @@ theorem hcFam_windows {bR wR pR : ℝ} (hB : B = ⌈bR⌉) (hW : W = ⌈wR⌉) (
     have hi0 : (0 : ℝ) ≤ (i : ℕ) * H := by positivity
     push_cast
     rw [abs_le]
-    constructor <;> nlinarith
-
-/-- **The cloud**, with `S_c = 4kΔ`: `v_i ∈ [0, S_c]`, the middle `u_i ∈ [0, S_c]`, and `S_c ≤ u_0 − v_0 ≤ 2S_c` at a
-place that is not a top. -/
-theorem hcFam_cloud (u : S.A) (ρ : Φ S.A) :
-    (∀ i, 0 ≤ (hcFam R TT T2 a bT Δ H B W P ρstar σ hyp u ρ).v i ∧
-      (hcFam R TT T2 a bT Δ H B W P ρstar σ hyp u ρ).v i ≤ 4 * Δ * R.k) ∧
-    (∀ i : Fin R.k, 0 < (i : ℕ) → (i : ℕ) < R.k - 1 →
-      0 ≤ (hcFam R TT T2 a bT Δ H B W P ρstar σ hyp u ρ).u i ∧
-      (hcFam R TT T2 a bT Δ H B W P ρstar σ hyp u ρ).u i ≤ 4 * Δ * R.k) ∧
-    (placeKind TT T2 u ρ ≠ .top →
-      4 * Δ * R.k ≤ (hcFam R TT T2 a bT Δ H B W P ρstar σ hyp u ρ).u ⟨0, by have := R.m_add_three_le; omega⟩ -
-        (hcFam R TT T2 a bT Δ H B W P ρstar σ hyp u ρ).v ⟨0, by have := R.m_add_three_le; omega⟩ ∧
-      (hcFam R TT T2 a bT Δ H B W P ρstar σ hyp u ρ).u ⟨0, by have := R.m_add_three_le; omega⟩ -
-        (hcFam R TT T2 a bT Δ H B W P ρstar σ hyp u ρ).v ⟨0, by have := R.m_add_three_le; omega⟩ ≤
-          2 * (4 * Δ * R.k)) := by
-  have := R.m_add_three_le
-  have := R.two_le_m
-  have hΔ := hyp.Δ_pos
-  have hΔq : (1 : ℚ) ≤ Δ := by exact_mod_cast hΔ
-  have hk5 : (5 : ℚ) ≤ R.k := by exact_mod_cast (show 5 ≤ R.k by omega)
-  refine ⟨fun i => ?_, fun i hi0 hi1 => ?_, fun h => ?_⟩
-  · rw [hcFam_v]
-    have hi : (i : ℤ) + 2 ≤ R.k := by have := i.isLt; omega
-    constructor <;> nlinarith
-  · rw [hcFam_u_mid hyp u ρ i hi0 hi1]
-    have h1 : (1 : ℚ) ≤ i := by exact_mod_cast hi0
-    have h2 : (i : ℚ) + 2 ≤ R.k := by exact_mod_cast (show (i : ℕ) + 2 ≤ R.k by omega)
-    constructor <;> nlinarith
-  · rw [(hcFam_u_ntop hyp h).1, hcFam_v]
-    push_cast
     constructor <;> nlinarith
 
 /-! ## Roots of unity -/
@@ -575,7 +532,6 @@ end ZetaBalance
 #print axioms ZetaBalance.hcFam_u_top
 #print axioms ZetaBalance.hcFam_u_ntop
 #print axioms ZetaBalance.hcFam_windows
-#print axioms ZetaBalance.hcFam_cloud
 #print axioms ZetaBalance.hcFam_e_pos
 #print axioms ZetaBalance.exists_shift_RU
 #print axioms ZetaBalance.torsionOrder_le

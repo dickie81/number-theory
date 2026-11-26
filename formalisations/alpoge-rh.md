@@ -251,6 +251,21 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     and the cut is a sum of `2^{|ST|}`-scaled copies of the class lattices, so Fischer's inequality applies. The piece
     `SharpObj.SlopeFV` follows for an object whose sources are the whole cut, with antitone weights and `c_F` at least
     the exact constant within the budget (`ZetaBalance.SharpObj.slopeFV_exact`).
+  - The design, at the frontier's own scale: for every primitive `χ`, small `ε` and large `Y`, every pair of
+    `ZetaTwist.WinPair` has, at every `x` of its window, a setting with a character lifting `χ` and an admissible design
+    (`ZetaBalance.sharpParams`, from the input `ShortNorm`, which gives the split primes `g₀ ≠ g₁`). The design is the
+    archive's: ranks `k ≈ x^{9/2+10ε}`, `m ≈ x^{1/2−ε/16}`, `t ≤ x^{401}`; one top place per translate, with translates
+    in exact numbers on each coset of the kernel of `κ` (so the shares hold); a thick set of Behrend type, free of
+    small-coefficient three-point relations; Harish-Chandra families by kind of place, with a shift making every root of
+    unity act trivially; and the setting of the pair, whose discriminant is bounded through the cyclotomic field.
+    Admissibility (`ZetaBalance.SharpDesign.Adm`) records what the pieces use, and gives the slope budget its sizes: the
+    step-0 weights of every family pinned to a translate are antitone (`ZetaBalance.Setting.Ranks.wt0_antitone`) with
+    `|ν|, (Σλ)⁺ ≤ 2Σ_t a_t` (`ZetaBalance.SharpDesign.Adm.sum_natW_le`, `ZetaBalance.SharpDesign.Adm.sum_wt0_le`), `log
+    k ≤ 6 log x` (`ZetaBalance.SharpDesign.Adm.log_k_le`) and `[E:ℚ] ≤ Σ_t a_t/x`
+    (`ZetaBalance.SharpDesign.Adm.card_E_le`); and the auxiliary primes their window: `mx^ε/2 ≤ Λ_u ≤ 24mx^ε`
+    (`ZetaBalance.SharpDesign.Adm.lam_bounds`), `Λ_u + log 2 ≤ x` (`ZetaBalance.SharpDesign.Adm.lam_add_log_two_le`),
+    `(log 4dM²)³ ≤ Λ_u` (`ZetaBalance.SharpDesign.Adm.logM_cube_le`) and `16x^ε ≤ log(g₀g₁) ≤ 17x^ε`
+    (`ZetaBalance.SharpDesign.Adm.log_g_mem`). Two random choices the gain will need are not yet part of it.
 
 ## How the statements differ from the archive's
 

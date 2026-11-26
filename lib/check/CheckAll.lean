@@ -479,6 +479,14 @@ import LatticePseudo
 import DeltaVolume
 import FormSlopeExact
 import SlopeFExact
+import RelationFree
+import PairSetting
+import DesignScale
+import DesignTops
+import DesignHC
+import DesignPrimes
+import SharpAdm
+import SharpParams
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2332,6 +2340,16 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ZetaBalance.SharpObj.isLattice_map_M
 #print axioms HermForms.muArch_source_ge
 #print axioms ZetaBalance.SharpObj.slopeFV_exact
+#print axioms ZetaBalance.sharpParams
+#print axioms ZetaBalance.Setting.Ranks.wt0_antitone
+#print axioms ZetaBalance.SharpDesign.Adm.sum_natW_le
+#print axioms ZetaBalance.SharpDesign.Adm.sum_wt0_le
+#print axioms ZetaBalance.SharpDesign.Adm.log_k_le
+#print axioms ZetaBalance.SharpDesign.Adm.card_E_le
+#print axioms ZetaBalance.SharpDesign.Adm.lam_bounds
+#print axioms ZetaBalance.SharpDesign.Adm.lam_add_log_two_le
+#print axioms ZetaBalance.SharpDesign.Adm.logM_cube_le
+#print axioms ZetaBalance.SharpDesign.Adm.log_g_mem
 #print axioms ZetaBalance.exists_prime_norm_window
 #print axioms ZetaBalance.SharpDesign.exists_prime_arithT
 #print axioms ZetaBalance.sharpBoundTheta_of_pinned
