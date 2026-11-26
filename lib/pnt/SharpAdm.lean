@@ -38,9 +38,8 @@ the weights. The windows of `DesignHC` then put every `e_j` in `[w″, 2b]`, wit
 * the scales: `|TT|·x·e^{x^ε} ≤ Σ_t a_t`, `[E:ℚ] ≤ Σ_t a_t/x` (as `[E:ℚ] = 4|A| ≤ b`), the weights in `[w″, 2b]`;
 * (T): `16x^ε ≤ log(g₀g₁) ≤ 17x^ε`, `mx^ε/2 ≤ Λ_u ≤ 24mx^ε` (each term `log(w·v_E/π)` of `Λ_u` is in `[0, 2x^ε]`, as
   `v_E ≥ 1/2` and `2v_E ≤ N`), `Λ_u ≤ x/2`, `Λ_u + log 2 ≤ x` and `(log 4dM²)³ ≤ Λ_u` for `M = QS·q·d·(g₀g₁)²`;
-* (F), for the step-0 weights `λ_ρ = wt_0(⌊u − ½⌋, e)` (`Setting.Ranks.wt0`, the shape of `SharpDesign.Shp` at
-  `j = 0`) of **every** word family pinned to `u` (`SharpDesign.PinnedTo`, the pin of `pinBody` on an object's
-  `hcW`): `λ_ρ` is antitone (`wt0_antitone`, for every Harish-Chandra family), `|ν| = Σ_{ρ,i} ν_{ρ,i} ≤ 2Σ_t a_t`
+* (F), for the step-0 weights `λ_ρ = wt_0(⌊u − ½⌋, e)` (`Setting.Ranks.wt0`, the archive's step-0 weights) of
+  **every** word family pinned to `u` (`SharpDesign.PinnedTo`, the archive's word families): `λ_ρ` is antitone (`wt0_antitone`, for every Harish-Chandra family), `|ν| = Σ_{ρ,i} ν_{ρ,i} ≤ 2Σ_t a_t`
   (`sum_natW_le`) and `(Σ_{ρ,i} λ_{ρ,i})⁺ ≤ 2Σ_t a_t` (`sum_wt0_le`).
 
 **Route of the (F) bounds.** Interlacing gives `u_{i+1} + 1 ≤ u_i` (half-integers around an integer,
@@ -52,7 +51,7 @@ one place both sums are at most `[ρ top]·a_t + k(8Δk + 2b′ + k + 1)` (`plac
 
 **What is the construction's.** The objects' step-0 data (`SharpObj.n0`, `lam0`), their `ST`, `T` and `c_F` are
 not the design's: the API bounds the step-0 weights of every family pinned to `u` on `Fin n` with
-`n = k + 0·(t + 1)`, and the construction links `n0`, `lam0` to them (through `Shp` at `j = 0`), and `|ST|`,
+`n = k + 0·(t + 1)`, and the construction sets `n0`, `lam0` to them, and bounds `|ST|`,
 `Σ_{P ∈ ST} log N(P)` to `[E:ℚ]` and `log T`.
 
 **Deviations from the spec.**
@@ -480,8 +479,8 @@ theorem HC.u_add_le (H : R.HC) {i : ℕ} (j : ℕ) (hij : i ≤ j) (hj : j < R.k
     push_cast
     linarith
 
-/-- **The step-0 weights** `λ_ρ = wt_0(⌊u − ½⌋, e)` of a family, on `Fin n` with `n = k + 0·(t + 1)`: the shape of
-`SharpDesign.Shp` at `j = 0`, where an object's step-0 weights are pinned. -/
+/-- **The step-0 weights** `λ_ρ = wt_0(⌊u − ½⌋, e)` of a family, on `Fin n` with `n = k + 0·(t + 1)`: the weights
+`WeylFock.wt` at step `j = 0`, the archive's step-0 weights of an object. -/
 def wt0 (R : S.Ranks) (hw : R.HCFamily) {n : ℕ} (h : n = R.k + 0 * (R.t + 1)) : Φ S.A → Fin n → ℤ :=
   fun ρ i => WeylFock.wt R.k R.t 0 (fun ρ i => ⌊(hw ρ).u i - 1 / 2⌋) (fun ρ => finN (hw ρ).e) ρ (Fin.cast h i)
 
@@ -533,7 +532,7 @@ theorem Setting.half_le_vE (S : Setting) : 1 / 2 ≤ S.vE := by
 namespace SharpDesign
 
 /-- **A word family pinned to the translate `u`**: the same `v`, `b`, `e`, `u_0` and `u_{k−1}` as `hc u` at every
-place, the pin of `SharpDesign.pinBody` on an object's `hcW ω`. -/
+place, as the archive's word families are. -/
 def PinnedTo (Dg : SharpDesign S κ x ε X) (u : S.A) (hw : Dg.R.HCFamily) : Prop :=
   ∀ ρ, (hw ρ).v = (Dg.hc u ρ).v ∧ (hw ρ).b = (Dg.hc u ρ).b ∧ (hw ρ).e = (Dg.hc u ρ).e ∧
     ∀ i : Fin Dg.R.k, ((i : ℕ) = 0 ∨ (i : ℕ) = Dg.R.k - 1) → (hw ρ).u i = (Dg.hc u ρ).u i

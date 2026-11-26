@@ -9,8 +9,9 @@ inequalities about the words of each translate give the gain (G) of `LatticeData
 
 **The data** (`SixTermData`), at each translate `u` of the kernel `A₀` of `κ`:
 * a frame (`SlopeFrame.Frame`), whose words `ω` have sources `N_ω` mapping to one target `C_u` with heights `h_ω`,
-  meeting the hypotheses of the frame inequality at the rank-weighted mean `s_u` of `μ(N_ω) − h_ω`
-  (`SlopeFrame.Frame.mean`); `HermitianLattice.frame` supplies the archive's own frames;
+  and a frame loss `L_u ≥ s_u − μ(C_u)`, at the rank-weighted mean `s_u` of `μ(N_ω) − h_ω` (`SlopeFrame.Frame.mean`):
+  the conclusion of the frame inequality, which a frame meeting its hypotheses gives
+  (`SlopeFrame.Frame.Spread.frame_le`); `HermitianLattice.frame` supplies the archive's own frames;
 * for each word, the slope `μ(M_ω)` of its lattice of forms, its split primes `Ee_ω` and its auxiliary prime `T_ω`;
 * for the translate, the vanishing gain `Ga` at the inert places, the forced vanishing `Fo`, a scale `v > 0`,
   `lg = log(g₀g₁)`, and one slack `c_i` for each inequality.
@@ -34,22 +35,23 @@ The terms in `log(π/v)` cancel.
 `μ(N_ω) − h_ω − μ(C_u) ≥ gap(u) − c_u` (`SixTermData.gap_le_word`), with `c_u = c₁ + c₂ + c₃ + (Σ_t a_t)·c₄ + c₅ + c₆`
 (`SixTermData.slack`). The rank-weighted mean over the words gives `s_u − μ(C_u) ≥ gap(u) − c_u`
 (`SixTermData.gap_le_mean`), which is (G) of `LatticeData` with `E = Σ_{u ∈ A₀} c_u`. One budget,
-`Σ_{u ∈ A₀} (c_u + α_u H_u + β_u U_u log(1 + H_u/U_u)) ≤ |A₀|·x^{4ε}·Σ_t a_t`, is (Z). So six-term data are lattice data
-(`SixTermData.toLatticeData`), and the frontier `SixTermBound`, `PairBound` with six-term data, gives the Riemann
-hypothesis for `ζ` and every Dirichlet `L`-function (`rhAndGRH_of_sixTermBound`).
+`Σ_{u ∈ A₀} (c_u + L_u) ≤ |A₀|·x^{4ε}·Σ_t a_t`, is (Z). So six-term data are lattice data (`SixTermData.toLatticeData`),
+and the frontier `SixTermBound`, `PairBound` with six-term data, gives the Riemann hypothesis for `ζ` and every
+Dirichlet `L`-function (`rhAndGRH_of_sixTermBound`).
 
 **Against the archive:**
 * G5 is one-sided. The archive also uses its other side, with upper bounds on `μ_max(M_ω)` and `μ_max(N_ω)`, to get
-  the range condition (R). Here (R) stays a hypothesis of the frame (`SlopeFrame.Frame.Spread.range`).
+  the range condition (R) of the frame inequality. Here only the frame inequality's conclusion is asked, the loss
+  `L_u`; how it is bounded is the construction's.
 * The losses `Lo_ω` of the words in G1, and the archive's slack sizes, merge into one slack per inequality. All slacks
-  go into one budget with the losses of the frame inequality.
+  go into one budget with the frame losses.
 * The frames are abstract, so the frontier's strength does not depend on the lattices chosen.
 
 **What this frontier means.** Like `PairBound`, it is still satisfied by rank-one witnesses whenever the averaged gap
 bound holds (`docs/rh-rebuild.md`, "The construction, measured"). Take at each translate one word, with `N = C` of rank
-one, the identity of height `0` and `H = 0`, and put `μ(M) = 0`, `Ga = Σ_t Σ_j ASK`, `lg = Ee = 0`, `log T = Λ_u`, `Fo`
-that makes G1 exact, `c₃ = gap(u)` and every other slack `0`. Then G3 holds with equality by the key identity, the
-frame inequality loses nothing, and the budget is the averaged gap bound. The value of the module is the formalised
+one, the identity of height `0` and loss `L = 0`, and put `μ(M) = 0`, `Ga = Σ_t Σ_j ASK`, `lg = Ee = 0`,
+`log T = Λ_u`, `Fo` that makes G1 exact, `c₃ = gap(u)` and every other slack `0`. Then G3 holds with equality by the
+key identity, `s_u = μ(C_u)`, and the budget is the averaged gap bound. The value of the module is the formalised
 algebra of `ch_top`, about 3,000 lines of the archive. Content needs the objects defined: the canonical theta datum,
 with its forms, periods and target.
 
@@ -126,20 +128,15 @@ theorem key_identity (TT : Finset S.A) {m : ℕ} (a : S.A → ℝ) (w : Fin m �
 
 end Setting
 
-/-- **Six-term data at `x`**: weights for the kernel `A₀` of `κ` and, at each translate `u ∈ A₀`, a frame meeting the
-hypotheses of the frame inequality at its rank-weighted mean slope, with the numbers of its words and of the translate
-that meet the six inequalities G1–G6, and one budget (Z′) for every slack and the losses of the frame inequality. -/
+/-- **Six-term data at `x`**: weights for the kernel `A₀` of `κ` and, at each translate `u ∈ A₀`, a frame with a loss
+`L_u` bounding its rank-weighted mean slope less the slope of its target (the frame inequality's conclusion), with the
+numbers of its words and of the translate that meet the six inequalities G1–G6, and one budget (Z′) for every slack
+and the frame losses. -/
 structure SixTermData (S : Setting) (κ : S.A →* ℂˣ) (x ε X : ℝ) extends Weights S κ x ε X where
   /-- The frame at each translate: words `ω` with sources `N_ω`, mapping to the target `C_u` with heights `h_ω`. -/
   frame : S.A → Frame
-  /-- The ranges `U_u`. -/
-  U : S.A → ℝ
-  /-- The depths `H_u`. -/
-  H : S.A → ℝ
-  /-- The fixed spreading losses `α_u`. -/
-  α : S.A → ℝ
-  /-- The spreading slopes `β_u`. -/
-  β : S.A → ℝ
+  /-- The frame losses `L_u`. -/
+  L : S.A → ℝ
   /-- The slope `μ(M_ω)` of the lattice of forms of each word. -/
   μM : ∀ u, (frame u).ι → ℝ
   /-- The split primes `Ee_ω` of each word. -/
@@ -168,8 +165,9 @@ structure SixTermData (S : Setting) (κ : S.A →* ℂˣ) (x ε X : ℝ) extends
   c₆ : S.A → ℝ
   /-- The ranks of the words add up to a positive number. -/
   rk_pos : ∀ u ∈ A₀ κ, 0 < ∑ ω, (((frame u).N ω).rk ⊤ : ℝ)
-  /-- The hypotheses of the frame inequality at the rank-weighted mean slope, (R) among them. -/
-  spread : ∀ u ∈ A₀ κ, (frame u).Spread (frame u).mean (U u) (H u) (α u) (β u)
+  /-- **The frame loss**: `s_u − μ(C_u) ≤ L_u` at the rank-weighted mean slope `s_u`, the conclusion of the frame
+  inequality (`Frame.Spread.frame_le`). -/
+  frame_le : ∀ u ∈ A₀ κ, (frame u).mean - (frame u).C.deg ⊤ / (frame u).C.rk ⊤ ≤ L u
   /-- The scale is positive. -/
   v_pos : ∀ u ∈ A₀ κ, 0 < v u
   /-- **G1**, the vanishing: `μ(N_ω) ≥ μ(M_ω) + Ga + Fo − Ee_ω − c₁`. -/
@@ -185,9 +183,9 @@ structure SixTermData (S : Setting) (κ : S.A →* ℂˣ) (x ε X : ℝ) extends
   G5 : ∀ u ∈ A₀ κ, ∀ ω, Ee u ω - m * (∑ t ∈ TT, a t) * lg u ≤ c₅ u
   /-- **G6**, the gain: `Σ_t Σ_j ASK(a_t, t, w_{u,j}) − Ga ≤ c₆`. -/
   G6 : ∀ u ∈ A₀ κ, ∑ t ∈ TT, ∑ j, S.ASK (a t) t (w u j) - Ga u ≤ c₆ u
-  /-- **(Z′)**: the slacks and the losses of the frame inequality are small. -/
-  sizes : ∑ u ∈ A₀ κ, (c₁ u + c₂ u + c₃ u + (∑ t ∈ TT, a t) * c₄ u + c₅ u + c₆ u +
-    (α u * H u + β u * U u * Real.log (1 + H u / U u))) ≤ (A₀ κ).card * x ^ (4 * ε) * ∑ t ∈ TT, a t
+  /-- **(Z′)**: the slacks and the frame losses are small. -/
+  sizes : ∑ u ∈ A₀ κ, (c₁ u + c₂ u + c₃ u + (∑ t ∈ TT, a t) * c₄ u + c₅ u + c₆ u + L u) ≤
+    (A₀ κ).card * x ^ (4 * ε) * ∑ t ∈ TT, a t
 
 namespace SixTermData
 
@@ -218,17 +216,15 @@ theorem gap_le_mean {u : S.A} (hu : u ∈ A₀ κ) :
   have h := mul_le_mul_of_nonneg_right (D.gap_le_word hu ω) (Nat.cast_nonneg (((D.frame u).N ω).rk ⊤))
   linarith [((D.frame u).N ω).slope_mul_rk]
 
-/-- **Six-term data are lattice data**, with `s_u` the rank-weighted mean of `μ(N_ω) − h_ω` and `E = Σ_{u ∈ A₀} c_u`. -/
+/-- **Six-term data are lattice data**, with `s_u` the rank-weighted mean of `μ(N_ω) − h_ω`, the same losses `L_u`
+and `E = Σ_{u ∈ A₀} c_u`. -/
 noncomputable def toLatticeData : LatticeData S κ x ε X where
   toWeights := D.toWeights
   frame := D.frame
   s u := (D.frame u).mean
-  U := D.U
-  H := D.H
-  α := D.α
-  β := D.β
+  L := D.L
   E := ∑ u ∈ A₀ κ, D.slack u
-  spread := D.spread
+  frame_le := D.frame_le
   gain := by
     rw [← Finset.sum_add_distrib]
     exact Finset.sum_le_sum fun u hu => by linarith [D.gap_le_mean hu]

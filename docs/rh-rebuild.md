@@ -542,9 +542,11 @@ construction, measured"). In order:
    documentation): G1–G6, the key identity (`ZetaBalance.Setting.key_identity`) with its cancellations, and the frame
    inequality give `PairBound` (`ZetaBalance.rhAndGRH_of_sixTermBound`). With `ZetaFrame`'s 109 lines, that is the
    algebra of `ch_top`, about 3,000 archive lines. Against the archive:
-   - G5 is one-sided, and the range condition (R) stays a hypothesis of the frame;
+   - G5 is one-sided, and the range condition (R) was a hypothesis of the frame. Since 26 November 2026 the frame
+     inequality enters through its conclusion, a frame loss `L_u ≥ s_u − μ(C_u)`; `KFrame.frame_le_of_frameCond`
+     keeps the archive's route, through (R);
    - the words' losses and the archive's slack sizes merge into one slack per inequality, all in one budget with the
-     losses of the frame inequality.
+     frame losses.
 
    It is still equivalent to the gap bound, as above: frames of rank one satisfy it whenever that bound holds.
 2. **A sharp frontier**, stated 24–26 November 2026 (PR #134). The construction's objects are
@@ -557,7 +559,10 @@ construction, measured"). In order:
    specified the objects; each finding was fixed. The last audit finds the frontier true, up to the inferred steps
    it records, and finds no trivial witness. What stays existential is the archive's own freedom: the cusp subspace,
    the twist characters within their stated shape, the transfers, the target metric and unit phases. The audits
-   and specifications are working notes outside the repository.
+   and specifications are working notes outside the repository. On 26 November 2026 two simplifications changed the
+   sharp data after the audits: the forced orders became a field chosen by the construction (they cancel between
+   (G↓) and (G↑)), and the frame condition (S) with the range and the depth (R) gave way to their conclusion, a frame
+   loss `L_u ≥ s_u − μ(C_u)`.
 3. **Self-contained components:**
    - the sizes of the auxiliary primes;
    - the frame condition at one complex place (`LinkS`, about 100K archive lines). The step from it to (RS) is done

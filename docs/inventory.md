@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1977 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1979 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -15,7 +15,7 @@ note of `formalisations/` that names it, if one does.
 | Layer | Modules with results | Results |
 |---|---|---|
 | `lib/core` | 227 | 799 |
-| `lib/pnt` | 364 | 1065 |
+| `lib/pnt` | 365 | 1067 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
 
@@ -2591,8 +2591,8 @@ note of `formalisations/` that names it, if one does.
 
 #### `SharpBound`: The sharp frontier `SharpBound` and its bridge to `SixTermData` — CONDITIONAL on the half-plane
 
+- `ZetaBalance.KFrame.frame_le_of_frameCond`: The frame loss from the frame condition ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.SharpData.nonempty_sixTermData`: Sanity ([note](../formalisations/alpoge-rh.md))
-- `ZetaBalance.SharpData.toSixTermData_Fo`: Sanity ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.rhAndGRH_of_sharpBound`: CONDITIONAL. The Riemann hypothesis for `ζ` and every Dirichlet `L`-function from the sharp frontier ([note](../formalisations/alpoge-rh.md))
 
 #### `SharpChain`: The sharp frontier with the theta chain — CONDITIONAL on the half-plane
@@ -2601,16 +2601,21 @@ note of `formalisations/` that names it, if one does.
 - `ZetaBalance.sharpBoundTheta_of_pinned`: The pinned frontier implies `SharpBoundTheta`. ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.rhAndGRH_of_sharpBoundPinned`: CONDITIONAL. RH and GRH from the pinned frontier ([note](../formalisations/alpoge-rh.md))
 
-#### `SharpInputs`: The sharp frontier from its inputs and its pieces — CONDITIONAL on the half-plane
+#### `SharpCores`: The pieces (T) and (F) + (V) for the construction
 
-- `ZetaBalance.sharpBoundPinned_of_inputs`: The sharp frontier from the inputs and the pieces ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.sharpPrimes`: (T) for the construction ([note](../formalisations/alpoge-rh.md))
+- `ZetaBalance.sharpSlopeFV`: (F) + (V) for the construction ([note](../formalisations/alpoge-rh.md))
+
+#### `SharpInputs`: The six-term frontier from its inputs and its pieces — CONDITIONAL on the half-plane
+
+- `ZetaBalance.sixTermBound_of_inputs`: The six-term frontier from the inputs and the pieces ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.rhAndGRH_of_inputs`: CONDITIONAL. RH and GRH from the inputs and the pieces ([note](../formalisations/alpoge-rh.md))
 
 #### `SharpParams`: The design's parameters
 
 - `ZetaBalance.sharpParams`: `SharpPieces.params` ([note](../formalisations/alpoge-rh.md))
 
-#### `SharpPiecesProved`: The pieces of the sharp frontier that are proved
+#### `SharpPiecesProved`: The pieces of the frontier's proof that are proved
 
 - `ZetaBalance.finiteClasses_proved`: The piece `FiniteClasses`, proved ([note](../formalisations/alpoge-rh.md))
 - `ZetaBalance.formsLattice_proved`: The piece `FormsLattice`, proved ([note](../formalisations/alpoge-rh.md))

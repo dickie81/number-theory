@@ -18,28 +18,37 @@ frame is `KLattice.frame`, rescaled to the archive's units by `c = −log 2 + lo
 `C_u = Ctgt`, `B_ω = P_{μ0}`, with transfers, `μ(w) = μ0` off `Tw` and the fractional `𝔞_ω = 𝔞⁺(𝔞⁻)⁻¹` nonzero
 (`𝔞⁺, 𝔞⁻ ≠ 0`).
 
-**Sharp data** (`SharpData`, L7.5): weights, the parameters of the forced orders (ranks, Harish-Chandra families with
-`w_{u,j} = e_j`, split primes `g₀ ≠ g₁`), and per translate a frame, auxiliary primes `T_ω`, the constants of the frame
-condition and slacks `c↓, c↑, c_T ≥ 0`, meeting (T), (G↓), (G↑), (S), (R) and (Z). `Fo := ForcedOrders.Fo` at the
-cut-off `X″ = x·|A|·exp(x^{ε/3})` (`Setting.cutX`, L7.1), with the twist `Setting.twA κ` of the archive's Artin map
-for odd `χ` (verify-A F1; `ForcedOrders`, "The twist `c`"), is fixed, `v = v_E` and `lg = log(g₀g₁)`. (R) is stated with
-`SlopeLe`/`SlopeGe` at the rank-weighted mean (FrameRescale: `muMax`/`muMin` need a bound).
+**Sharp data** (`SharpData`, L7.5): weights, the parameters of the design (ranks, Harish-Chandra families with
+`w_{u,j} = e_j`, split primes `g₀ ≠ g₁`), and per translate a frame, auxiliary primes `T_ω`, forced orders `Fo_u`, a
+frame loss `L_u ≥ 0` and slacks `c↓, c↑, c_T ≥ 0`, meeting (T), (G↓), (G↑), the frame loss and (Z); `v = v_E` and
+`lg = log(g₀g₁)`.
+
+**The forced orders are the construction's.** `Fo_u` enters (G↓) with a plus sign and (G↑) with a minus sign, and
+cancels in their sum (`SixTermData.gap_le_word`). So it is a field, chosen by the construction, not fixed: the archive's
+value is `ForcedOrders.Fo` at the cut-off `X″ = x·|A|·exp(x^{ε/3})` (`Setting.cutX`, L7.1), with the twist
+`Setting.twA κ` of the archive's Artin map for odd `χ` (verify-A F1; `ForcedOrders`, "The twist `c`").
+
+**The frame loss is the frame inequality's conclusion**, `s_u − μ(C_u) ≤ L_u` at the rank-weighted mean `s_u`, which
+is all the bridge reads. The archive's route to it, the frame condition (S) at one place with the range and the depth
+(R), stated with `SlopeLe`/`SlopeGe` at the rank-weighted mean (FrameRescale: `muMax`/`muMin` need a bound), is
+`KFrame.frame_le_of_frameCond`, through `KLattice.spread_of_frameCond` and the frame inequality.
 
 **The bridge** (`SharpData.toSixTermData`, L7.6): `Ga = ΣΣASK`, `Ee = m·(Σ_t a_t)·lg`, `μM = μ(N_ω) − Ga − Fo + Ee`,
-`c₁ = c₅ = c₆ = 0`; G1, G5, G6 hold with equality, G2 is (G↓), G3 is (G↑), G4 is (T). `spread` comes from (S) through
-`KLattice.spread_of_frameCond` and from (R); `sizes` is (Z).
+`c₁ = c₅ = c₆ = 0`; G1, G5, G6 hold with equality, G2 is (G↓), G3 is (G↑), G4 is (T). The frame loss passes through,
+and `sizes` is (Z).
 
 **The frontier** (`SharpBound`): `SixTermBound`'s outer shape, with `d ≡ 3 (mod 4)` (needed for `CMHost`'s `E`, `τ`
 and classes to be the archive's) and realised sharp data over a totally complex coefficient field `K`, with a CM type
 `τ_K` lifting `Setting.τ`. `rhAndGRH_of_sharpBound` goes through `rhAndGRH_of_sixTermBound`.
 
 **Choices and open hooks.**
-* `δ = 0` in (S): the target lattice spans `K^κ`, so no padding; `α = η + 2√e/(1 − √e)`, `β = 2/(1 − √e)`.
+* `δ = 0` in (S) (`KFrame.frame_le_of_frameCond`): the target lattice spans `K^κ`, so no padding;
+  `α = η + 2√e/(1 − √e)`, `β = 2/(1 − √e)`.
 * **The chain** enters at one point, `ChainHook`, a predicate on the `col` of the period data (CHAIN HOOK below).
 * The source spaces `V_ω` of `KFrame.Realises` are generic; the frontier means `X ⊓ HermForms.Vω` for a cusp subspace
   `X` stable under the diamond operators (L7 notes, item 3). `Tw` closed under conjugation is not yet stated.
 
-**Sanity theorems:** `SharpData.nonempty_sixTermData`, `SharpData.toSixTermData_Fo`.
+**Sanity theorem:** `SharpData.nonempty_sixTermData`.
 
 **CONDITIONAL.** `rhAndGRH_of_sharpBound` rests on the half-plane `Re s > 11/12`, as `rhAndGRH_of_sixTermBound` does.
 -/
@@ -117,16 +126,36 @@ theorem rankSpread (v : Pl K) (c : F.ι → ℝ) {e η : ℝ}
     F.frame.RankSpread (η + 2 * √e / (1 - √e)) (2 / (1 - √e)) :=
   KLattice.spread_of_frameCond F.tgt F.src F.B F.hB F.ht F.hφ v c hc
 
+/-- **The frame loss from the frame condition** (the archive's route, for frames of several words): (S), the frame
+condition at one place `v` for the `c_ω·B_ω` with constants `e`, `η`, and (R), positive total rank, the range
+`μ_max(N_ω) − h_ω ≤ s + U` and the depth `μ_min(C) ≥ s − H` at the rank-weighted mean `s`, with `U > 0` and `H ≥ 0`,
+give `s − μ(C) ≤ αH + βU log(1 + H/U)` with `α = η + 2√e/(1 − √e)` and `β = 2/(1 − √e)` (`rankSpread`,
+`Frame.Spread.frame_le`): a frame loss for `SharpData.frame_le`. -/
+theorem frame_le_of_frameCond (v : Pl K) (c : F.ι → ℝ) {e η U H : ℝ}
+    (hc : FrameAtPlace.FrameCond (fun ω => c ω • F.comp ω v) e η) (hrk : 0 < ∑ ω, ((F.frame.N ω).rk ⊤ : ℝ))
+    (hU : 0 < U) (hH : 0 ≤ H) (hrange : ∀ ω, (F.frame.N ω).SlopeLe (F.frame.mean + U + F.frame.h ω))
+    (hdepth : F.frame.C.SlopeGe ⊤ (F.frame.mean - H)) :
+    F.frame.mean - F.frame.C.deg ⊤ / F.frame.C.rk ⊤ ≤
+      (η + 2 * √e / (1 - √e)) * H + 2 / (1 - √e) * U * Real.log (1 + H / U) :=
+  Frame.Spread.frame_le
+    { U_pos := hU
+      H_nonneg := hH
+      β_nonneg := div_nonneg zero_le_two (sub_nonneg.2 (Real.sqrt_le_one.2 hc.e_lt_one.le))
+      mean := by rw [Frame.mean, div_mul_cancel₀ _ hrk.ne']
+      range := hrange
+      depth := hdepth
+      spread := F.rankSpread v c hc }
+
 end KFrame
 
 /-! ## Sharp data (L7.5) -/
 
-/-- **Sharp data at `x`** (spec L7.5): weights for the kernel `A₀` of `κ`, the parameters that fix the forced orders
-(ranks `R`, Harish-Chandra families `hc u` with `w_{u,j} = e_j`, split primes `g₀ ≠ g₁`), and at each translate `u` a
-hermitian frame of `O_K`-lattices (sources `N_ω`, target `C_u`, maps `B_ω`), auxiliary primes `T_ω`, the constants of
-the frame condition and three nonnegative slacks, meeting (T), (G↓), (G↑), (S), (R) and (Z). All slopes and heights
-are in the archive's units (`KFrame.frame`); `Fo := ForcedOrders.Fo` (twisted by `twA κ`) is fixed, `v := v_E` and
-`lg = log(g₀g₁)`. -/
+/-- **Sharp data at `x`** (spec L7.5): weights for the kernel `A₀` of `κ`, the parameters of the design (ranks `R`,
+Harish-Chandra families `hc u` with `w_{u,j} = e_j`, split primes `g₀ ≠ g₁`), and at each translate `u` a hermitian
+frame of `O_K`-lattices (sources `N_ω`, target `C_u`, maps `B_ω`), auxiliary primes `T_ω`, forced orders `Fo_u`, a
+nonnegative frame loss and three nonnegative slacks, meeting (T), (G↓), (G↑), the frame loss and (Z). All slopes and
+heights are in the archive's units (`KFrame.frame`); `v := v_E` and `lg = log(g₀g₁)`. The forced orders are free:
+they cancel between (G↓) and (G↑) (the archive's are `ForcedOrders.Fo`, twisted by `twA κ`). -/
 structure SharpData (S : Setting) (κ : S.A →* ℂˣ) (x ε X : ℝ) (K : Type) [Field K] [NumberField K]
     [IsTotallyComplex K] extends Weights S κ x ε X where
   /-- The ranks `(k, m, t)`. -/
@@ -153,32 +182,18 @@ structure SharpData (S : Setting) (κ : S.A →* ℂˣ) (x ε X : ℝ) (K : Type
   T : ∀ u, (fr u).ι → ℕ
   /-- The auxiliary primes are prime. -/
   T_prime : ∀ u ω, (T u ω).Prime
-  /-- The complex place `v` of the frame condition. -/
-  pl : S.A → Pl K
-  /-- The scalars `c_ω > 0` of the frame condition. -/
-  cω : ∀ u, (fr u).ι → ℝ
-  /-- The constant `e` of the frame condition. -/
-  e : S.A → ℝ
-  /-- The constant `η` of the frame condition. -/
-  η : S.A → ℝ
-  /-- The ranges `U_u`. -/
-  U : S.A → ℝ
-  /-- The depths `H_u`. -/
-  H : S.A → ℝ
+  /-- The forced orders `Fo_u` of each translate, read by (G↓) and (G↑) alike. -/
+  Fo : S.A → ℝ
+  /-- The frame loss `L_u` of each translate. -/
+  loss : S.A → ℝ
   /-- The slack `c↓` of (G↓). -/
   cDn : S.A → ℝ
   /-- The slack `c↑` of (G↑). -/
   cUp : S.A → ℝ
   /-- The slack `c_T` of (T). -/
   cT : S.A → ℝ
-  /-- `c_ω > 0`. -/
-  cω_pos : ∀ u ω, 0 < cω u ω
-  /-- `0 ≤ e`. -/
-  e_nonneg : ∀ u, 0 ≤ e u
-  /-- `U > 0`. -/
-  U_pos : ∀ u ∈ A₀ κ, 0 < U u
-  /-- `H ≥ 0`. -/
-  H_nonneg : ∀ u ∈ A₀ κ, 0 ≤ H u
+  /-- `L_u ≥ 0`. -/
+  loss_nonneg : ∀ u, 0 ≤ loss u
   /-- `c↓ ≥ 0`. -/
   cDn_nonneg : ∀ u, 0 ≤ cDn u
   /-- `c↑ ≥ 0`. -/
@@ -187,34 +202,25 @@ structure SharpData (S : Setting) (κ : S.A →* ℂˣ) (x ε X : ℝ) (K : Type
   cT_nonneg : ∀ u, 0 ≤ cT u
   /-- **(T)**: `log T_ω ≥ Λ_u − c_T`. -/
   hT : ∀ u ∈ A₀ κ, ∀ ω, S.lam (w u) S.vE (Real.log (g₀ * g₁)) - cT u ≤ Real.log (T u ω)
-  /-- **(G↓)**: `μ(N_ω) ≥ Σ_t Σ_j ASK(a_t, t, w_{u,j}) − m(Σ_t a_t)·lg + Fo(𝒫_u) − c↓`. -/
+  /-- **(G↓)**: `μ(N_ω) ≥ Σ_t Σ_j ASK(a_t, t, w_{u,j}) − m(Σ_t a_t)·lg + Fo_u − c↓`. -/
   hGdn : ∀ u ∈ A₀ κ, ∀ ω, ∑ t ∈ TT, ∑ j, S.ASK (a t) t (w u j) - m * (∑ t ∈ TT, a t) * Real.log (g₀ * g₁) +
-    R.Fo (hc u) (S.twA κ) g₀ g₁ (S.cutX x ε) - cDn u ≤ ((fr u).frame.N ω).deg ⊤ / ((fr u).frame.N ω).rk ⊤
-  /-- **(G↑)**: `μ_g(C_u) + h_g(B_ω) − Fo(𝒫_u) ≤ MAIN_ω + c↑`. -/
-  hGup : ∀ u ∈ A₀ κ, ∀ ω, (fr u).frame.C.deg ⊤ / (fr u).frame.C.rk ⊤ + (fr u).frame.h ω -
-    R.Fo (hc u) (S.twA κ) g₀ g₁ (S.cutX x ε) ≤ S.mainW TT m a S.vE (T u ω) + cUp u
-  /-- **(S)**: the frame condition at `v` for the `c_ω·B_ω`, with constants `e` and `η` (the target spans, so no
-  padding: `δ = 0`). -/
-  hS : ∀ u ∈ A₀ κ, FrameAtPlace.FrameCond (fun ω => cω u ω • (fr u).comp ω (pl u)) (e u) (η u)
-  /-- **(R)**: the ranks of the words add up to a positive number. -/
+    Fo u - cDn u ≤ ((fr u).frame.N ω).deg ⊤ / ((fr u).frame.N ω).rk ⊤
+  /-- **(G↑)**: `μ_g(C_u) + h_g(B_ω) − Fo_u ≤ MAIN_ω + c↑`. -/
+  hGup : ∀ u ∈ A₀ κ, ∀ ω, (fr u).frame.C.deg ⊤ / (fr u).frame.C.rk ⊤ + (fr u).frame.h ω - Fo u ≤
+    S.mainW TT m a S.vE (T u ω) + cUp u
+  /-- The ranks of the words add up to a positive number. -/
   rk_pos : ∀ u ∈ A₀ κ, 0 < ∑ ω, (((fr u).frame.N ω).rk ⊤ : ℝ)
-  /-- **(R)**: `μ_max(N_ω) − h_ω ≤ s_u + U`, with `s_u` the rank-weighted mean of `μ(N_ω) − h_ω`. -/
-  range : ∀ u ∈ A₀ κ, ∀ ω, ((fr u).frame.N ω).SlopeLe ((fr u).frame.mean + U u + (fr u).frame.h ω)
-  /-- **(R)**: `μ_min(C_u) ≥ s_u − H`. -/
-  depth : ∀ u ∈ A₀ κ, (fr u).frame.C.SlopeGe ⊤ ((fr u).frame.mean - H u)
-  /-- **(Z)**: `Σ_u [c↓ + c↑ + (Σ_t a_t)c_T + αH + βU log(1 + H/U)] ≤ |A₀|·x^{4ε}·Σ_t a_t`, with
-  `α = η + 2√e/(1 − √e)` and `β = 2/(1 − √e)`. -/
-  sizes : ∑ u ∈ A₀ κ, (cDn u + cUp u + (∑ t ∈ TT, a t) * cT u +
-    ((η u + 2 * √(e u) / (1 - √(e u))) * H u + 2 / (1 - √(e u)) * U u * Real.log (1 + H u / U u))) ≤
-      (A₀ κ).card * x ^ (4 * ε) * ∑ t ∈ TT, a t
+  /-- **The frame loss**: `s_u − μ(C_u) ≤ L_u`, with `s_u` the rank-weighted mean of `μ(N_ω) − h_ω` (the frame
+  inequality's conclusion; from (S) and (R) by `KFrame.frame_le_of_frameCond`). -/
+  frame_le : ∀ u ∈ A₀ κ, (fr u).frame.mean - (fr u).frame.C.deg ⊤ / (fr u).frame.C.rk ⊤ ≤ loss u
+  /-- **(Z)**: `Σ_u [c↓ + c↑ + (Σ_t a_t)c_T + L_u] ≤ |A₀|·x^{4ε}·Σ_t a_t`. -/
+  sizes : ∑ u ∈ A₀ κ, (cDn u + cUp u + (∑ t ∈ TT, a t) * cT u + loss u) ≤
+    (A₀ κ).card * x ^ (4 * ε) * ∑ t ∈ TT, a t
 
 namespace SharpData
 
 variable {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ} {K : Type} [Field K] [NumberField K] [IsTotallyComplex K]
   (D : SharpData S κ x ε X K)
-
-/-- The forced orders of a translate, `Fo(𝒫_u) = ForcedOrders.Fo`, in the archive's units. -/
-noncomputable def Fo (u : S.A) : ℝ := D.R.Fo (D.hc u) (S.twA κ) D.g₀ D.g₁ (S.cutX x ε)
 
 /-- `lg = log(g₀g₁)`. -/
 noncomputable def lg : ℝ := Real.log (D.g₀ * D.g₁)
@@ -225,28 +231,14 @@ noncomputable def Ga (u : S.A) : ℝ := ∑ t ∈ D.TT, ∑ j, S.ASK (D.a t) t (
 /-- The split primes `Ee = m·(Σ_t a_t)·lg`. -/
 noncomputable def Ee : ℝ := D.m * (∑ t ∈ D.TT, D.a t) * D.lg
 
-/-- **The rank-spreading hypotheses** at the rank-weighted mean slope, from (S) and (R). -/
-theorem spread {u : S.A} (hu : u ∈ A₀ κ) :
-    (D.fr u).frame.Spread (D.fr u).frame.mean (D.U u) (D.H u) (D.η u + 2 * √(D.e u) / (1 - √(D.e u)))
-      (2 / (1 - √(D.e u))) where
-  U_pos := D.U_pos u hu
-  H_nonneg := D.H_nonneg u hu
-  β_nonneg := div_nonneg zero_le_two (sub_nonneg.2 (Real.sqrt_le_one.2 (D.hS u hu).e_lt_one.le))
-  mean := by rw [Frame.mean, div_mul_cancel₀ _ (D.rk_pos u hu).ne']
-  range := D.range u hu
-  depth := D.depth u hu
-  spread := (D.fr u).rankSpread (D.pl u) (D.cω u) (D.hS u hu)
-
-/-- **The bridge** (spec L7.6): sharp data are six-term data, with the rescaled hermitian frames, `Ga = ΣΣASK`,
-`Ee = m·(Σ_t a_t)·lg`, `μM = μ(N_ω) − Ga − Fo + Ee`, `v = v_E`, slacks `c₂ = c↓`, `c₃ = c↑`, `c₄ = c_T` and
-`c₁ = c₅ = c₆ = 0`. G1, G5 and G6 hold with equality, G2 is (G↓), G3 is (G↑) and G4 is (T). -/
+/-- **The bridge** (spec L7.6): sharp data are six-term data, with the rescaled hermitian frames, the same forced
+orders and frame losses, `Ga = ΣΣASK`, `Ee = m·(Σ_t a_t)·lg`, `μM = μ(N_ω) − Ga − Fo + Ee`, `v = v_E`, slacks
+`c₂ = c↓`, `c₃ = c↑`, `c₄ = c_T` and `c₁ = c₅ = c₆ = 0`. G1, G5 and G6 hold with equality, G2 is (G↓), G3 is (G↑)
+and G4 is (T). -/
 noncomputable def toSixTermData : SixTermData S κ x ε X where
   toWeights := D.toWeights
   frame u := (D.fr u).frame
-  U := D.U
-  H := D.H
-  α u := D.η u + 2 * √(D.e u) / (1 - √(D.e u))
-  β u := 2 / (1 - √(D.e u))
+  L := D.loss
   μM u ω := ((D.fr u).frame.N ω).deg ⊤ / ((D.fr u).frame.N ω).rk ⊤ - D.Ga u - D.Fo u + D.Ee
   Ee _ _ := D.Ee
   T u ω := D.T u ω
@@ -261,10 +253,10 @@ noncomputable def toSixTermData : SixTermData S κ x ε X where
   c₅ _ := 0
   c₆ _ := 0
   rk_pos := D.rk_pos
-  spread _ hu := D.spread hu
+  frame_le := D.frame_le
   v_pos _ _ := S.vE_pos
   G1 _ _ _ := by linarith
-  G2 u hu ω := by have := D.hGdn u hu ω; simp only [Ga, Fo, Ee, lg] at *; linarith
+  G2 u hu ω := by have := D.hGdn u hu ω; simp only [Ga, Ee, lg] at *; linarith
   G3 u hu ω := D.hGup u hu ω
   G4 u hu ω := D.hT u hu ω
   G5 _ _ _ := by simp [Ee, lg]
@@ -274,10 +266,6 @@ noncomputable def toSixTermData : SixTermData S κ x ε X where
 /-- **Sanity:** the bridge, as a theorem: sharp data give six-term data. -/
 theorem nonempty_sixTermData (h : Nonempty (SharpData S κ x ε X K)) : Nonempty (SixTermData S κ x ε X) :=
   h.map toSixTermData
-
-/-- **Sanity:** the bridge keeps the forced orders of the parameters, `Fo = ForcedOrders.Fo`. -/
-theorem toSixTermData_Fo (u : S.A) : D.toSixTermData.Fo u = D.R.Fo (D.hc u) (S.twA κ) D.g₀ D.g₁ (S.cutX x ε) :=
-  rfl
 
 end SharpData
 
