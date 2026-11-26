@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 1977 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 1996 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 227 | 799 |
+| `lib/core` | 229 | 818 |
 | `lib/pnt` | 364 | 1065 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -297,6 +297,19 @@ note of `formalisations/` that names it, if one does.
 #### `CmWD`: The piecewise model with data coefficients, and the uniform pointwise bound `εw`
 
 - `CmWD.w_data`
+
+#### `CoeffField`: The coefficient field: normal number fields inside `ℂ`
+
+- `CoeffField.conj_mem_of_normal`: A normal subfield of `ℂ` is stable under complex conjugation
+- `CoeffField.val_star`: The star is conjugation
+- `CoeffField.isTotallyComplex_of_ringHom`: Totally complex by a ring map
+- `CoeffField.map_mem_of_basis`: An embedding lands in `F` if a basis does
+- `CoeffField.val_comp_codRestrict`: The codomain restriction recovers the embedding
+- `CoeffField.subset_coeffClosure`: The closure contains its generators
+- `CoeffField.finiteDimensional_coeffClosure`: The closure of finitely many algebraic numbers is finite-dimensional
+- `CoeffField.numberField_coeffClosure`: The closure of finitely many algebraic numbers is a number field
+- `CoeffField.normal_coeffClosure`: The closure of algebraic numbers is normal
+- `CoeffField.conj_mem_coeffClosure`: The closure of algebraic numbers is stable under complex conjugation
 
 #### `Concave`: Pólya's theorem for even concave probes, with no representation hypothesis
 
@@ -971,6 +984,18 @@ note of `formalisations/` that names it, if one does.
 #### `QuadIdeals`: The ideals of a quadratic field of each norm, and its Dedekind zeta function
 
 - `QuadIdeals.trichotomy`: Every prime splits, is inert or ramifies
+
+#### `QuadSub`: The quadratic subfield of the CM host
+
+- `ZetaBalance.Setting.gaussE_sq`: `gaussE² = −d`
+- `ZetaBalance.Setting.exists_sq_eq_neg_d`: `√−d ∈ E`
+- `ZetaBalance.Setting.complexConj_sq_eq_neg`: `conj s = −s`
+- `ZetaBalance.Setting.isIntegral_half`: `(a + bs)/2` is integral
+- `ZetaBalance.Setting.halfO_mul_conj`: The norm form
+- `ZetaBalance.Setting.card_residue_of_dvd`: Residue degree one
+- `ZetaBalance.Setting.modEq_one_of_norm`: `g ≡ 1 (mod N)`
+- `ZetaBalance.Setting.halfO_mul_conj_eq`: `π_g·conj π_g = g`
+- `ZetaBalance.Setting.isCoprime_halfO_conj`: `(π_g, conj π_g) = (1)`
 
 #### `RamanujanCongruences`: Ramanujan's partition congruences, from Jacobi's cube and Euler's pentagonal theorem
 
