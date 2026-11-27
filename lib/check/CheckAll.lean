@@ -391,6 +391,7 @@ import ModFD
 import ModFourier
 import ModTruncation
 import ModMaassSelberg
+import ModLaplacian
 import XiReflectionBand
 import SquaresCongruences
 import RamanujanCongruences
@@ -2089,6 +2090,20 @@ twin-form rates at `11/12`. -/
 #print axioms ModMaassSelberg.memLp_EY
 #print axioms ModMaassSelberg.maass_selberg_phi
 #print axioms ModMaassSelberg.maass_selberg_phi_diag
+#print axioms ModMaassSelberg.Estar_conj
+#print axioms ModMaassSelberg.EstarY_conj
+#print axioms ModMaassSelberg.EY_conj
+#print axioms ModMaassSelberg.integral_norm_EY_sq_critical
+#print axioms ModMaassSelberg.integral_norm_EY_sq_critical_re
+#print axioms ModMaassSelberg.integral_norm_EY_sq
+#print axioms ModMaassSelberg.integral_norm_EY_sq_re
+#print axioms ModLaplacian.hk_ode
+#print axioms ModLaplacian.Λ₀_eq_tsum
+#print axioms ModLaplacian.Estar_eq_tsum
+#print axioms ModLaplacian.tsum_boundary
+#print axioms ModLaplacian.lap_Estar
+#print axioms ModLaplacian.lap_Estar_div
+#print axioms ModLaplacian.lap_E
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq

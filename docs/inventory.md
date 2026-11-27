@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2472 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2486 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 272 | 1238 |
+| `lib/core` | 273 | 1252 |
 | `lib/pnt` | 375 | 1121 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -1212,6 +1212,16 @@ note of `formalisations/` that names it, if one does.
 - `ModFourier.hasSum_cos_Estar`: The Fourier expansion of `E*` as a cosine series
 - `ModFourier.hasSum_fourier_Estar_explicit`: The Fourier expansion of `E*`
 
+#### `ModLaplacian`: The hyperbolic Laplacian and the eigen-equation of the Eisenstein series of `SL(2, ℤ)`
+
+- `ModLaplacian.hk_ode`: The profile equation
+- `ModLaplacian.Λ₀_eq_tsum`: `Λ₀_z(s) = Σ_{v ≠ 0} h₀(q_z(v))`
+- `ModLaplacian.Estar_eq_tsum`: `E*` as a lattice sum
+- `ModLaplacian.tsum_boundary`: The boundary identity
+- `ModLaplacian.lap_Estar`: `ΔE*(·, s) = s(1 − s)E*(·, s)`
+- `ModLaplacian.lap_Estar_div`: The normalised eigen-equation
+- `ModLaplacian.lap_E`: `ΔE(·, s) = s(1 − s)E(·, s)`
+
 #### `ModMaassSelberg`: The Maass–Selberg relation for `SL(2, ℤ)`
 
 - `ModMaassSelberg.integral_fd_tsum`: Unfolding over `Γ_∞\SL(2, ℤ)` for integrable functions
@@ -1227,6 +1237,13 @@ note of `formalisations/` that names it, if one does.
 - `ModMaassSelberg.memLp_EY`
 - `ModMaassSelberg.maass_selberg_phi`: The Maass–Selberg relation
 - `ModMaassSelberg.maass_selberg_phi_diag`: The Maass–Selberg relation on the anti-diagonal
+- `ModMaassSelberg.Estar_conj`: `E*(z, s̄) = conj E*(z, s)`
+- `ModMaassSelberg.EstarY_conj`
+- `ModMaassSelberg.EY_conj`
+- `ModMaassSelberg.integral_norm_EY_sq_critical`: The `L²` norm of `E^Y` on the critical line
+- `ModMaassSelberg.integral_norm_EY_sq_critical_re`: The real form, and **positivity**
+- `ModMaassSelberg.integral_norm_EY_sq`: The `L²` norm of `E^Y` off the critical line
+- `ModMaassSelberg.integral_norm_EY_sq_re`: The real form, and **positivity**, off the critical line.
 
 #### `ModTruncation`: The truncated Eisenstein series of `SL(2, ℤ)`: boundedness, square-integrability, holomorphy in `s`
 

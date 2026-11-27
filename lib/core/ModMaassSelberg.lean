@@ -23,13 +23,22 @@ Milestone B of the scattering theory of `SL(2, ℤ)\ℍ²`. With `E*^Y` the trun
     + (φ(s₂)Y^{s₁−s₂} − φ(s₁)Y^{s₂−s₁})/(s₁ − s₂)` and
   `∫_𝒟 E^Y(s)E^Y(1 − s) dμ = 2 log Y − (φ'/φ)(s) + (φ(1 − s)Y^{2s−1} − φ(s)Y^{1−2s})/(2s − 1)`.
 
-The proof is by unfolding and analytic continuation; the Laplacian eigen-equation and Green's identity are not used.
+* **Conjugation** (`Estar_conj`, `EstarY_conj`, `EY_conj`): `E*(z, s̄) = conj E*(z, s)`, and likewise for the truncations.
+* **The `L²` norm** (`integral_norm_EY_sq_critical`, `integral_norm_EY_sq`): taking `s₂ = s̄₁` gives `‖E^Y(·, s)‖²`.
+  On the critical line `Re s = ½`, `Im s ≠ 0` (so `s̄ = 1 − s`),
+  `∫_𝒟 |E^Y(z, s)|² dμ = 2 log Y − (φ'/φ)(s) + (φ(1 − s)Y^{2s−1} − φ(s)Y^{1−2s})/(2s − 1)`;
+  for `Re s = σ > ½`, `Im s = t ≠ 0`,
+  `∫_𝒟 |E^Y(z, s)|² dμ = (Y^{2σ−1} − |φ(s)|²Y^{1−2σ})/(2σ − 1) + (conj φ(s) Y^{2it} − φ(s)Y^{−2it})/(2it)`;
+  the real forms `integral_norm_EY_sq_critical_re`, `integral_norm_EY_sq_re` record that these are `≥ 0`.
+
+The proof is by unfolding and analytic continuation; the Laplacian eigen-equation (proved separately in
+`ModLaplacian`) and Green's identity are not used.
 -/
 import Mathlib
 import ModTruncation
 
 open Complex Real Filter Topology Set MeasureTheory UpperHalfPlane Metric ModularGroup
-open scoped MatrixGroups ENNReal NNReal
+open scoped MatrixGroups ENNReal NNReal ComplexConjugate
 
 noncomputable section
 
@@ -1049,5 +1058,124 @@ theorem maass_selberg_phi_diag {Y : ℝ} (hY : 1 ≤ Y) {s : ℂ} (hs : s ∈ U)
   simp only [PavlovFaddeev.scatteringMatrix, f1, f2]
   field_simp
   ring
+
+/-! ## Conjugation -/
+
+lemma conj_fmod (z : ℍ) (t : ℝ) : conj ((thetaFEPair z).f_modif t) = (thetaFEPair z).f_modif t := by
+  rw [fmod_eq]
+  split_ifs <;> simp [Complex.conj_ofReal]
+
+lemma mellin_fmod_conj (z : ℍ) (s : ℂ) :
+    mellin (thetaFEPair z).f_modif (conj s) = conj (mellin (thetaFEPair z).f_modif s) := by
+  unfold mellin
+  rw [← integral_conj]
+  refine setIntegral_congr_fun measurableSet_Ioi fun t (ht : 0 < t) => ?_
+  have harg : (t : ℂ).arg ≠ π := by
+    rw [Complex.arg_ofReal_of_nonneg ht.le]; exact Real.pi_ne_zero.symm
+  simp only [smul_eq_mul, map_mul, conj_fmod]
+  congr 1
+  rw [show conj s - 1 = conj (s - 1) by simp, Complex.cpow_conj _ _ harg, Complex.conj_ofReal]
+
+/-- **`E*(z, s̄) = conj E*(z, s)`**, for every `s`. -/
+theorem Estar_conj (z : ℍ) (s : ℂ) : Estar z (conj s) = conj (Estar z s) := by
+  unfold Estar Lambda
+  rw [Λ_thetaFEPair, Λ_thetaFEPair]
+  simp only [WeakFEPair.Λ₀, mellin_fmod_conj, map_div₀, map_sub, map_one, map_ofNat]
+
+lemma ct_conj (y : ℝ) (s : ℂ) : ct y (conj s) = conj (ct y s) := by
+  by_cases hy : 0 < y
+  · rw [ct_pos hy, ct_pos hy, intervalIntegral.integral_of_le zero_le_one,
+      intervalIntegral.integral_of_le zero_le_one, ← integral_conj]
+    simp_rw [Estar_conj]
+  · simp [ct, hy]
+
+theorem EstarY_conj (Y : ℝ) (s : ℂ) (z : ℍ) : EstarY Y (conj s) z = conj (EstarY Y s z) := by
+  unfold EstarY
+  split_ifs <;> simp [Estar_conj, ct_conj]
+
+lemma completed_two_mul_conj (s : ℂ) :
+    completedRiemannZeta (2 * conj s) = conj (completedRiemannZeta (2 * s)) := by
+  rw [← PavlovFaddeev.completed_conj, map_mul, map_ofNat]
+
+theorem EY_conj (Y : ℝ) (s : ℂ) (z : ℍ) : EY Y (conj s) z = conj (EY Y s z) := by
+  simp only [EY, EstarY_conj, completed_two_mul_conj, map_div₀]
+
+lemma mul_EY_conj (Y : ℝ) (s : ℂ) (z : ℍ) : EY Y s z * EY Y (conj s) z = ((‖EY Y s z‖ ^ 2 : ℝ) : ℂ) := by
+  rw [EY_conj, Complex.mul_conj, Complex.normSq_eq_norm_sq]
+
+lemma mem_U_of_im_ne_zero {s : ℂ} (h : s.im ≠ 0) : s ∈ U := by
+  rw [mem_U]
+  refine ⟨?_, ?_, ?_⟩ <;> rintro rfl <;> simp at h
+
+lemma ofReal_integral_norm_sq (Y : ℝ) (s : ℂ) :
+    ((∫ z in fd, ‖EY Y s z‖ ^ 2 : ℝ) : ℂ) = ∫ z in fd, EY Y s z * EY Y (conj s) z := by
+  simp_rw [mul_EY_conj]
+  exact integral_complex_ofReal.symm
+
+/-- **The `L²` norm of `E^Y` on the critical line**: for `Y ≥ 1`, `Re s = ½` and `Im s ≠ 0`,
+`‖E^Y(·, s)‖²_{L²(𝒟)} = 2 log Y − (φ'/φ)(s) + (φ(1 − s)Y^{2s−1} − φ(s)Y^{1−2s})/(2s − 1)`. -/
+theorem integral_norm_EY_sq_critical {Y : ℝ} (hY : 1 ≤ Y) {s : ℂ} (hre : s.re = 1 / 2) (him : s.im ≠ 0) :
+    ((∫ z in fd, ‖EY Y s z‖ ^ 2 : ℝ) : ℂ) =
+      2 * (Real.log Y : ℂ) - deriv PavlovFaddeev.scatteringMatrix s / PavlovFaddeev.scatteringMatrix s +
+        (PavlovFaddeev.scatteringMatrix (1 - s) * (Y : ℂ) ^ (2 * s - 1) -
+          PavlovFaddeev.scatteringMatrix s * (Y : ℂ) ^ (1 - 2 * s)) / (2 * s - 1) := by
+  have hc : conj s = 1 - s := by
+    apply Complex.ext <;> simp [hre]; norm_num
+  rw [ofReal_integral_norm_sq, hc]
+  refine maass_selberg_phi_diag hY (mem_U_of_im_ne_zero him)
+    (PavlovFaddeev.completed_ne_zero_of_one_le_re (by simp [hre])) (PavlovFaddeev.numerator_ne_zero hre.le)
+
+/-- The real form, and **positivity**: on the critical line, with `Y ≥ 1` and `Im s ≠ 0`,
+`∫_𝒟 |E^Y(z, s)|² dμ = Re(2 log Y − (φ'/φ)(s) + (φ(1 − s)Y^{2s−1} − φ(s)Y^{1−2s})/(2s − 1)) ≥ 0`. -/
+theorem integral_norm_EY_sq_critical_re {Y : ℝ} (hY : 1 ≤ Y) {s : ℂ} (hre : s.re = 1 / 2) (him : s.im ≠ 0) :
+    ∫ z in fd, ‖EY Y s z‖ ^ 2 =
+      (2 * (Real.log Y : ℂ) - deriv PavlovFaddeev.scatteringMatrix s / PavlovFaddeev.scatteringMatrix s +
+        (PavlovFaddeev.scatteringMatrix (1 - s) * (Y : ℂ) ^ (2 * s - 1) -
+          PavlovFaddeev.scatteringMatrix s * (Y : ℂ) ^ (1 - 2 * s)) / (2 * s - 1)).re ∧
+    0 ≤ (2 * (Real.log Y : ℂ) - deriv PavlovFaddeev.scatteringMatrix s / PavlovFaddeev.scatteringMatrix s +
+        (PavlovFaddeev.scatteringMatrix (1 - s) * (Y : ℂ) ^ (2 * s - 1) -
+          PavlovFaddeev.scatteringMatrix s * (Y : ℂ) ^ (1 - 2 * s)) / (2 * s - 1)).re := by
+  rw [← integral_norm_EY_sq_critical hY hre him, Complex.ofReal_re]
+  exact ⟨rfl, integral_nonneg fun z => sq_nonneg _⟩
+
+/-- **The `L²` norm of `E^Y` off the critical line**: for `Y ≥ 1`, `Re s > ½` and `Im s ≠ 0`,
+`‖E^Y(·, s)‖² = (Y^{2σ−1} − |φ(s)|²Y^{1−2σ})/(2σ − 1) + (conj φ(s) · Y^{2it} − φ(s)Y^{−2it})/(2it)`,
+`s = σ + it`. -/
+theorem integral_norm_EY_sq {Y : ℝ} (hY : 1 ≤ Y) {s : ℂ} (hre : 1 / 2 < s.re) (him : s.im ≠ 0) :
+    ((∫ z in fd, ‖EY Y s z‖ ^ 2 : ℝ) : ℂ) =
+      ((Y : ℂ) ^ (2 * (s.re : ℂ) - 1) -
+          ((‖PavlovFaddeev.scatteringMatrix s‖ ^ 2 : ℝ) : ℂ) * (Y : ℂ) ^ (1 - 2 * (s.re : ℂ))) /
+          (2 * (s.re : ℂ) - 1) +
+        (conj (PavlovFaddeev.scatteringMatrix s) * (Y : ℂ) ^ (2 * (s.im : ℂ) * Complex.I) -
+          PavlovFaddeev.scatteringMatrix s * (Y : ℂ) ^ (-(2 * (s.im : ℂ) * Complex.I))) / (2 * (s.im : ℂ) * Complex.I) := by
+  have hU : s ∈ U := mem_U_of_im_ne_zero him
+  have hU' : conj s ∈ U := mem_U_of_im_ne_zero (by simpa using him)
+  have h1 : s + conj s ≠ 1 := by
+    intro h; have := congrArg Complex.re h; simp at this; linarith
+  have h2 : s ≠ conj s := by
+    intro h; have := congrArg Complex.im h; simp at this; exact him (by linarith)
+  have hΛ₁ : completedRiemannZeta (2 * s) ≠ 0 :=
+    PavlovFaddeev.completed_ne_zero_of_one_le_re (by simp; linarith)
+  have hΛ₂ : completedRiemannZeta (2 * conj s) ≠ 0 :=
+    PavlovFaddeev.completed_ne_zero_of_one_le_re (by simp; linarith)
+  rw [ofReal_integral_norm_sq, maass_selberg_phi hY hU hU' h1 h2 hΛ₁ hΛ₂, PavlovFaddeev.scatteringMatrix_conj]
+  have e1 : s + conj s - 1 = 2 * (s.re : ℂ) - 1 := by rw [Complex.add_conj]; push_cast; ring
+  have e2 : 1 - s - conj s = 1 - 2 * (s.re : ℂ) := by rw [sub_sub, Complex.add_conj]; push_cast; ring
+  have e3 : s - conj s = 2 * (s.im : ℂ) * Complex.I := by rw [Complex.sub_conj]; push_cast; ring
+  have e4 : conj s - s = -(2 * (s.im : ℂ) * Complex.I) := by rw [← e3]; ring
+  have e5 : PavlovFaddeev.scatteringMatrix s * conj (PavlovFaddeev.scatteringMatrix s) =
+      ((‖PavlovFaddeev.scatteringMatrix s‖ ^ 2 : ℝ) : ℂ) := by
+    rw [Complex.mul_conj, Complex.normSq_eq_norm_sq]
+  rw [e1, e2, e3, e4, e5]
+
+/-- The real form, and **positivity**, off the critical line. -/
+theorem integral_norm_EY_sq_re {Y : ℝ} (hY : 1 ≤ Y) {s : ℂ} (hre : 1 / 2 < s.re) (him : s.im ≠ 0) :
+    0 ≤ (((Y : ℂ) ^ (2 * (s.re : ℂ) - 1) -
+          ((‖PavlovFaddeev.scatteringMatrix s‖ ^ 2 : ℝ) : ℂ) * (Y : ℂ) ^ (1 - 2 * (s.re : ℂ))) /
+          (2 * (s.re : ℂ) - 1) +
+        (conj (PavlovFaddeev.scatteringMatrix s) * (Y : ℂ) ^ (2 * (s.im : ℂ) * Complex.I) -
+          PavlovFaddeev.scatteringMatrix s * (Y : ℂ) ^ (-(2 * (s.im : ℂ) * Complex.I))) / (2 * (s.im : ℂ) * Complex.I)).re := by
+  rw [← integral_norm_EY_sq hY hre him, Complex.ofReal_re]
+  exact integral_nonneg fun z => sq_nonneg _
 
 end ModMaassSelberg
