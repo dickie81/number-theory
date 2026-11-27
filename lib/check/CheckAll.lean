@@ -387,6 +387,7 @@ import PavlovFaddeev
 import ModEisenstein
 import ModContinuation
 import ModFD
+import ModFourier
 import XiReflectionBand
 import SquaresCongruences
 import RamanujanCongruences
@@ -2006,6 +2007,19 @@ twin-form rates at `11/12`. -/
 #print axioms ModFD.lintegral_strip_im
 #print axioms ModFD.lintegral_fd_tsum_coprime_im
 #print axioms ModFD.lintegral_fd_tsum_nq
+#print axioms ModFourier.theta_le_zero
+#print axioms ModFourier.integral_mul_Λ₀
+#print axioms ModFourier.integral_mul_Lambda
+#print axioms ModFourier.differentiable_mellin_avgF
+#print axioms ModFourier.integral_Estar
+#print axioms ModFourier.differentiableAt_constTerm
+#print axioms ModFourier.constTerm_Estar_all
+#print axioms ModFourier.integral_ek_theta
+#print axioms ModFourier.mellin_term
+#print axioms ModFourier.integral_ek_Lambda
+#print axioms ModFourier.fourierCoeff_Estar
+#print axioms ModFourier.sum_D
+#print axioms ModFourier.fourierCoeff_Estar_divisors
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq

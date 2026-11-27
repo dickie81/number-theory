@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2211 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2224 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 251 | 1013 |
+| `lib/core` | 252 | 1026 |
 | `lib/pnt` | 369 | 1085 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -996,6 +996,22 @@ note of `formalisations/` that names it, if one does.
 - `ModFD.lintegral_strip_im`: Integrating a function of `im z` over the strip
 - `ModFD.lintegral_fd_tsum_coprime_im`: Rankin–Selberg unfolding
 - `ModFD.lintegral_fd_tsum_nq`: Rankin–Selberg unfolding, in the coordinates of `E`
+
+#### `ModFourier`: The Fourier expansion of the completed Eisenstein series of `SL(2, ℤ)`
+
+- `ModFourier.theta_le_zero`: The majorant
+- `ModFourier.integral_mul_Λ₀`: Fubini
+- `ModFourier.integral_mul_Lambda`: `∫_0^1 w(x)Λ_{x+iy}(s) dx`
+- `ModFourier.differentiable_mellin_avgF`: The Mellin transform of the average is entire
+- `ModFourier.integral_Estar`: The constant term of `E*` for every `s`
+- `ModFourier.differentiableAt_constTerm`: `s ↦ ∫_0^1 E*(x + iy, s) dx` is holomorphic off `s = 0, 1`
+- `ModFourier.constTerm_Estar_all`: The constant term of `E*` for every `s ≠ 0, ½, 1`
+- `ModFourier.integral_ek_theta`: The `k`-th Fourier coefficient of `θ_{x+iy}(t)`
+- `ModFourier.mellin_term`: One term of the Fourier coefficient
+- `ModFourier.integral_ek_Lambda`: The `k`-th Fourier coefficient of `Λ_{x+iy}(s)`
+- `ModFourier.fourierCoeff_Estar`: The nonzero Fourier coefficients of `E*`
+- `ModFourier.sum_D`: The divisor sum
+- `ModFourier.fourierCoeff_Estar_divisors`: The Fourier coefficients of `E*` with the divisor function
 
 #### `OddMargin2`: Odd-sector margin `4·10⁻⁵` at `L = 1/2`
 
