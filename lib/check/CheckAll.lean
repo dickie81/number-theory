@@ -518,6 +518,30 @@ import LocalRank
 import FockNorm
 import WeylCount
 import PadicUnits
+import EllipticAdd
+import EllipticLegendre
+import EllipticDivisor
+import EllipticSigma
+import CMThetaJets
+import CMFormalBiadd
+import RowsLattice
+import LetterFock
+import GlRep
+import IsoProjectors
+import TwistedDegree
+import PathBasis
+import GenIndex
+import LocalOrbit
+import SymbolData
+import ChainData
+import FormMuMax
+import SharpTarget
+import SharpFrame
+import GainCert
+import GainConsts
+import DesignOrbits
+import SharpRangeCert
+import SourceMuMax
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2657,6 +2681,212 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms PadicUnits.exists_binomial_approx
 #print axioms PadicUnits.exists_diagonal_congr
 #print axioms PadicUnits.gram_window
+#print axioms EllipticAdd.sigmaW_add_mul_sub
+#print axioms EllipticAdd.weierstrassP_eq_iff
+#print axioms EllipticAdd.zetaW_add
+#print axioms EllipticAdd.weierstrassP_add
+#print axioms EllipticAdd.sigmaW_two_mul
+#print axioms EllipticAdd.wpC_eq_lc
+#print axioms EllipticAdd.wpC_eq_G
+#print axioms EllipticAdd.hasSum_weierstrassP
+#print axioms EllipticLegendre.legendre
+#print axioms EllipticDivisor.EllPole.exists_poly
+#print axioms EllipticDivisor.Gq_pow_eq_poly
+#print axioms EllipticDivisor.Gq_eq_zero_iff
+#print axioms EllipticDivisor.tendsto_mul_Gq
+#print axioms EllipticDivisor.hasDerivAt_Gq_neg
+#print axioms EllipticDivisor.hasDerivAt_Gq
+#print axioms EllipticDivisor.logDeriv_Gq
+#print axioms EllipticDivisor.legendre_ne_zero
+#print axioms EllipticSigma.sgStar_taylor
+#print axioms EllipticSigma.sigE_taylor
+#print axioms CMThetaOne.zetaW_half'
+#print axioms CMThetaOne.th0_taylor'
+#print axioms CMThetaOne.th0_jets_mem'
+#print axioms CMThetaOne.th0_jets_mem_closure'
+#print axioms CMThetaOne.th0_jets_mem_range'
+#print axioms CMThetaOne.th0_jets_isAlgebraic'
+#print axioms CMThetaOne.th0_jets_int'
+#print axioms CMThetaOne.canon_jets_isAlgebraic'
+#print axioms CMThetaOne.canon_jets_int'
+#print axioms CMThetaOne.canon_jets_mem_range'
+#print axioms HermForms.rows_span
+#print axioms HermForms.rows_fg
+#print axioms HermForms.DeltaN_subset_nablaN
+#print axioms HermForms.kapN_smul_mem_DeltaN
+#print axioms HermForms.exists_int_smul_mem_nablaN
+#print axioms HermForms.exists_coeff_twist_mem_nablaN
+#print axioms LetterFock.planeOf
+#print axioms LetterFock.frob_pow
+#print axioms LetterFock.liftSub_mem_gInt
+#print axioms LetterFock.theta0_mem_nabla
+#print axioms LetterFock.theta0_injOn
+#print axioms LetterFock.theta0_surj
+#print axioms LetterFock.theta_shape
+#print axioms LetterFock.rowOp_theta0
+#print axioms LetterFock.nf_theta0
+#print axioms LetterFock.theta0_mem_nablaInt_iff
+#print axioms LetterFock.thetaB_mem_nab_iff
+#print axioms LetterFock.thetaB_mem_edgeLat_iff
+#print axioms LetterFock.bilin_eq_lfock
+#print axioms LetterFock.lfock_monomial
+#print axioms LetterFock.lfock_letE
+#print axioms LetterFock.theta0_nondeg
+#print axioms GlRep.E_pfac
+#print axioms GlRep.E_pfac_pfac
+#print axioms GlRep.kill_of_chain
+#print axioms GlRep.xproj_of_hw
+#print axioms GlRep.isHw_xproj
+#print axioms GlRep.xproj_lowSp
+#print axioms GlRep.cas_comm
+#print axioms GlRep.cas_gen
+#print axioms GlRep.casVal_lt
+#print axioms GlRep.le_hwSum
+#print axioms GlRep.hwSum_eq
+#print axioms GlRep.hw_eq_zero_of_mem_lowSp
+#print axioms GlRep.isoPart_indep
+#print axioms GlRep.iSup_isoPart
+#print axioms GlRep.typeProj_E
+#print axioms GlRep.typeProj_comp
+#print axioms GlRep.typeProj_comm
+#print axioms GlRep.typeProj_comm_typeProj
+#print axioms GlRep.xproj_eq_typeProj
+#print axioms GlRep.invForm_zero
+#print axioms GlRep.isoAvg_spec
+#print axioms GlRep.hwProj_int
+#print axioms GlRep.isoProj_int
+#print axioms GlRep.typeProj_int
+#print axioms GlRep.kostant_int
+#print axioms TwistedDegree.twCol_int
+#print axioms TwistedDegree.twCol_deg
+#print axioms TwistedDegree.twCol_ord
+#print axioms TwistedDegree.twCol_cong
+#print axioms TwistedDegree.JoinCond.colCond
+#print axioms TwistedDegree.colK_plane
+#print axioms TwistedDegree.colK_plane_const
+#print axioms CMFormalBiadd.addLaw_lattice
+#print axioms CMFormalBiadd.weierODE_lattice
+#print axioms CMFormalBiadd.addLaw_weierODE_map
+#print axioms CMFormalBiadd.isInt_rhoLT
+#print axioms CMFormalBiadd.parallelogram
+#print axioms CMFormalBiadd.be_symm
+#print axioms CMFormalBiadd.be_biadd
+#print axioms CMFormalBiadd.be_biadd_cm
+#print axioms CMFormalBiadd.isInt_translate
+#print axioms CMFormalBiadd.th0_eq_exp_neg_ph_mul
+#print axioms CMFormalBiadd.serAB_biadd
+#print axioms CMFormalBiadd.isHerm_C_mul_serAB
+#print axioms CMFormalBiadd.be_classification
+#print axioms CMFormalBiadd.be_classification_cm
+#print axioms AddSubgroup.logIdx_add
+#print axioms AddSubgroup.logIdx_mono
+#print axioms Submodule.logIdx_smul
+#print axioms Submodule.relIndex_smul
+#print axioms Submodule.relIndex_inf_iInf_le
+#print axioms NumberField.log_abs_norm_map_div
+#print axioms LocalOrbit.prevVDist_spec
+#print axioms LocalOrbit.even_posOf_iff
+#print axioms LocalOrbit.FrameSys.rows_mem
+#print axioms LocalOrbit.FrameSys.rows_strictMono
+#print axioms LocalOrbit.FrameSys.Proper.le_card_evBefore
+#print axioms LocalOrbit.FrameSys.card_evBefore_ge_anchor
+#print axioms LocalOrbit.FrameSys.Proper.anchor_mem_seg
+#print axioms LocalOrbit.FrameSys.Proper.anchor_lt_f
+#print axioms LocalOrbit.FrameSys.push_le_push_first
+#print axioms LocalOrbit.FrameSys.Proper.push_add_lt_push_anchor
+#print axioms LocalOrbit.FrameSys.Proper.late_eq
+#print axioms LocalOrbit.FrameSys.Proper.seg_eq
+#print axioms LocalOrbit.FrameSys.Proper.card_late
+#print axioms LocalOrbit.FrameSys.Proper.exists_row_of_top
+#print axioms LocalOrbit.FrameSys.Proper.lateAt_strictMono
+#print axioms LocalOrbit.FrameSys.Proper.lateAt_mem_late
+#print axioms LocalOrbit.FrameSys.Proper.seg_add_J
+#print axioms LocalOrbit.FrameSys.Proper.late_add_J
+#print axioms LocalOrbit.FrameSys.Proper.loose_add_J
+#print axioms LocalOrbit.FrameSys.Proper.nL_add_J
+#print axioms LocalOrbit.FrameSys.Proper.push_add_J
+#print axioms LocalOrbit.FrameSys.Proper.sum_late
+#print axioms LocalOrbit.FrameSys.Proper.sum_card_late
+#print axioms LocalOrbit.FrameSys.Proper.lt_J_mul
+#print axioms LocalOrbit.FrameSys.Proper.three_lt_J
+#print axioms LocalOrbit.SegOK
+#print axioms LocalOrbit.IsGoodSet
+#print axioms SymbolData.valS_zero
+#print axioms SymbolData.topS_zero
+#print axioms SymbolData.sum_piDeg
+#print axioms LocalOrbit.FrameSys.isOneSided_zero
+#print axioms LocalOrbit.FrameSys.segPush_X
+#print axioms LocalOrbit.FrameSys.half_B_le_thrStar
+#print axioms LocalOrbit.FrameSys.symGen
+#print axioms LocalOrbit.FrameSys.mStar
+#print axioms LocalOrbit.FrameSys.cPrime
+#print axioms ChainData.letES_X
+#print axioms ChainData.letES_comm
+#print axioms ChainData.isWH_derivation
+#print axioms ChainData.letES_X_isWH
+#print axioms ChainData.letES_X_isWH_row
+#print axioms ChainData.letES_diag_X
+#print axioms ChainData.letES_diag_of_isWH
+#print axioms ChainData.letterRep
+#print axioms ChainData.finiteDimensional_LHom
+#print axioms ChainData.letterRep_stable
+#print axioms ChainData.modelMap
+#print axioms ChainData.IsY
+#print axioms ChainData.HCond
+#print axioms ChainData.Dm
+#print axioms ChainData.Dl
+#print axioms ChainData.κp
+#print axioms ChainData.n₀
+#print axioms LocalOrbit.FrameSys.Mem
+#print axioms PathBasis.colK_isWH
+#print axioms PathBasis.PieriPath.card_change
+#print axioms PathBasis.PieriPath.pathPoly_isWH
+#print axioms PathBasis.PieriPath.colH_step
+#print axioms PathBasis.PieriPath.colCond
+#print axioms PathBasis.pathPoly_eq_prod
+#print axioms PathBasis.pathPoly_map
+#print axioms PathBasis.isStdFilling_canFill
+#print axioms PathBasis.card_stdFilling
+#print axioms PathBasis.sum_dimW_paths
+#print axioms PathBasis.card_pathIdx
+#print axioms PathBasis.pathFam
+#print axioms KLattice.slopeLe_of_coord
+#print axioms ZetaBalance.quotGram_spec
+#print axioms KLattice.norm_hom_le_of_coisometry
+#print axioms ZetaBalance.frame_of_sharpNI
+#print axioms ZetaBalance.SharpObj.frameExists_of
+#print axioms ZetaBalance.SharpObj.GainCert.idx_ge
+#print axioms ZetaBalance.SharpObj.gain_of_cert
+#print axioms ZetaBalance.SharpObj.GainCert.colength_le
+#print axioms ZetaBalance.SharpObj.GainCert.le_N
+#print axioms ZetaBalance.SharpObj.GainCert.N_le
+#print axioms ZetaBalance.SharpObj.idx_eq_logIdx
+#print axioms ZetaBalance.SharpObj.N_eq_of_principal
+#print axioms ZetaBalance.Setting.DesignAdm.lt_of_cls_ne_split
+#print axioms ZetaBalance.orbitPos_mem_topPositions
+#print axioms ZetaBalance.TilePar.IsGood.prevV_spec
+#print axioms ZetaBalance.Setting.DesignAdm.two_mul_scL1_le
+#print axioms ZetaBalance.pairSetting_twoAdic
+#print axioms ZetaBalance.Setting.TwoAdic.sum_log_div_le
+#print axioms ZetaBalance.Setting.DesignAdm.sum_log_div_smallOrder_le
+#print axioms ZetaBalance.Setting.not_collides_of_signal
+#print axioms ZetaBalance.basePoint_mul_pow
+#print axioms ZetaBalance.mem_scWb
+#print axioms ZetaBalance.SharpDesign.FamAt.aZ_mem_scWa
+#print axioms ZetaBalance.TilePar.IsGood.winCard_le_K
+#print axioms ZetaBalance.Setting.collides_iff_of_inert
+#print axioms ZetaBalance.tilePar_ok
+#print axioms ZetaBalance.TilePar.IsGood.winCard_le_N₁
+#print axioms ZetaBalance.IsVType
+#print axioms ZetaBalance.SharpDesign.badTops
+#print axioms ZetaBalance.Setting.cand
+#print axioms ZetaBalance.sharpRange_of_cert
+#print axioms KLattice.slopeLe_rescale_of_le_smul
+#print axioms ZetaBalance.SharpObj.rangeLe_of_cert
+#print axioms ZetaBalance.SharpObj.sourceRangeLe_of_muMaxLe
+#print axioms KLattice.exists_smul_sublattice
+#print axioms ZetaBalance.sharpMuMax_of_coordCert
+#print axioms ZetaBalance.SharpObj.muMaxLe_of_coordCert
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
 #print axioms ZetaBalance.rhAndGRH_of_latticeBound
 #print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound
