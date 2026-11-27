@@ -281,11 +281,6 @@ theorem marked_of_blockInd_ne_zero {n' b : ℕ} (he : Set.InjOn e (Set.Iio n')) 
   cellInd_ne_zero he hb hi (prod_ne_zero_iff.1 h i (mem_range.2 hi))
 
 omit [Fintype α] in
-/-- The block event is nonnegative. -/
-theorem blockInd_nonneg (b : ℕ) (T : Finset α) : 0 ≤ blockInd Tp e b T :=
-  prod_nonneg fun i _ => cellInd_nonneg b i T
-
-omit [Fintype α] in
 /-- The block event is at most `1`. -/
 theorem blockInd_le_one {n' b : ℕ} (he : Set.InjOn e (Set.Iio n')) (hb : b < n' / Tp.blockLen) (T : Finset α) :
     blockInd Tp e b T ≤ 1 :=

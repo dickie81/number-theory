@@ -140,9 +140,6 @@ theorem not_dvd_normOm {ℓ d : ℕ} (hd4 : d % 4 = 3) (hin : ¬ ∃ x : ZMod �
 def omInvLat (d : ℕ) (Λ : PeriodPair) : AddSubgroup ℂ :=
   Λ.lattice.toAddSubgroup.comap (AddMonoidHom.mulLeft (omK0 d))
 
-/-- **Membership in `ω⁻¹Λ`.** -/
-theorem mem_omInvLat {d : ℕ} {Λ : PeriodPair} {z : ℂ} : z ∈ omInvLat d Λ ↔ omK0 d * z ∈ Λ.lattice := Iff.rfl
-
 /-- **A lattice point in coordinates**: `x = a·ω₁ + b·ω₂` with the coordinates of `latticeBasis`. -/
 theorem coe_eq_repr (Λ : PeriodPair) (x : Λ.lattice) :
     (x : ℂ) = (Λ.latticeBasis.repr x 0 : ℂ) * Λ.ω₁ + (Λ.latticeBasis.repr x 1 : ℂ) * Λ.ω₂ := by
@@ -316,13 +313,6 @@ theorem exists_sgMult (hor : 0 < (Λ.ω₂ / Λ.ω₁).im) {l : ℂ} (hl : l ∈
     simp only [← Complex.exp_add, etaR]
     ring_nf
   linear_combination c * sigmaW Λ z * he
-
-/-- **The multiplier is unique.** -/
-theorem SgMult.unique {l κ κ' : ℂ} (h : SgMult Λ l κ) (h' : SgMult Λ l κ') : κ = κ' := by
-  have e := (h (Λ.ω₁ / 2)).symm.trans (h' (Λ.ω₁ / 2))
-  have hs := sgStar_ne_zero Λ Λ.ω₁_div_two_notMem_lattice
-  have he := Complex.exp_ne_zero (((Real.pi / area Λ : ℝ) : ℂ) * starRingEnd ℂ l * (Λ.ω₁ / 2))
-  exact mul_right_cancel₀ he (mul_right_cancel₀ hs e)
 
 /-- **The multiplier of a period whose half is not a period**: `κ = −e^{(π/A)l̄l/2}` (put `z = −l/2`), so
 `κ² = e^{(π/A)l̄l}`. -/
@@ -730,11 +720,6 @@ theorem area_swapPair (Λ : PeriodPair) : area (swapPair Λ) = area Λ := by
 theorem sgStar_swapPair (Λ : PeriodPair) : sgStar (swapPair Λ) = sgStar Λ := by
   funext z
   simp only [sgStar, sigmaW_eq, sigP_swapPair, s2_swapPair]
-
-/-- **Swapping keeps `σ*/z`.** -/
-theorem sigE_swapPair (Λ : PeriodPair) : sigE (swapPair Λ) = sigE Λ := by
-  funext z
-  simp only [sigE, sigP_swapPair, s2_swapPair]
 
 /-- **Swapping keeps the translates.** -/
 theorem Gq_swapPair (Λ : PeriodPair) (q : ℂ) : Gq (swapPair Λ) q = Gq Λ q := by

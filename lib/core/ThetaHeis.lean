@@ -91,10 +91,6 @@ theorem Hf_zero_right (x : ι → ℂ) : Hf s x 0 = 0 := by simp [Hf]
 theorem Hf_neg_left (x y : ι → ℂ) : Hf s (-x) y = -Hf s x y := by
   simpa using Hf_smul_left s (-1) x y
 
-/-- **`H(x, −y) = −H(x, y)`.** -/
-theorem Hf_neg_right (x y : ι → ℂ) : Hf s x (-y) = -Hf s x y := by
-  simpa using Hf_smul_right s (-1) x y
-
 /-- **The real part of `H(x + y, x + y)`**: `Re H(x, x) + Re H(y, y) + 2·Re H(x, y)`. -/
 theorem Hf_add_add_re (x y : ι → ℂ) :
     (Hf s (x + y) (x + y)).re = (Hf s x x).re + (Hf s y y).re + 2 * (Hf s x y).re := by
@@ -118,10 +114,6 @@ theorem al_mul_self (x : ι → ℂ) : al s sd x * al s sd x = 1 := by
 /-- **`α(0) = 1`.** -/
 theorem al_zero : al s sd (0 : ι → ℂ) = 1 := by
   simp [al, Hf_zero_left]
-
-/-- **`α(−x) = α(x)`.** -/
-theorem al_neg (x : ι → ℂ) : al s sd (-x) = al s sd x := by
-  simp only [al, Hf_neg_left, Hf_neg_right, neg_neg]
 
 /-- **`α(x) = (−1)^m`** when `sd·Re H(x, x) = m ∈ ℤ`. -/
 theorem al_eq_of_int {x : ι → ℂ} {m : ℤ} (h : sd * (Hf s x x).re = m) : al s sd x = (-1) ^ m := by

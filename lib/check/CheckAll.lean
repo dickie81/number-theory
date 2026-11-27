@@ -542,6 +542,46 @@ import GainConsts
 import DesignOrbits
 import SharpRangeCert
 import SourceMuMax
+import PathSpan
+import PathStraighten
+import TwistSlope
+import TwistPair
+import SourceMuMaxTw
+import SharpMuMaxProof
+import CMFormalGauss
+import CMEquiv
+import UnramFrobLift
+import EllipticDivPoly
+import TorsionInt
+import GqAdd
+import TorsTransl
+import CMTorsion
+import MvTay
+import ThetaHeis
+import ThetaCompare
+import HermGS
+import FormalQuad
+import HClass
+import ThetaGauss
+import FirstMeans
+import FirstAssembly
+import OffTop
+import SourceKeys
+import SourceCore
+import SourceOneSided
+import GainExponents
+import GainOrbit
+import GainAsk
+import GainSums
+import GainLoss
+import GainLoss2
+import GainErrors
+import GainCount
+import DesignTiles
+import ProdWeights
+import TileProb
+import TopsSelect
+import DesignG2
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -2887,6 +2927,143 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms KLattice.exists_smul_sublattice
 #print axioms ZetaBalance.sharpMuMax_of_coordCert
 #print axioms ZetaBalance.SharpObj.muMaxLe_of_coordCert
+#print axioms PathSpan.inv_empty_left
+#print axioms PathSpan.inv_singleton_left
+#print axioms PathSpan.sg_eq_sgn
+#print axioms PathSpan.straighten
+#print axioms PathSpan.garnir_step
+#print axioms PathSpan.garnir_all
+#print axioms PathSpan.card_monomials
+#print axioms PathBasis.pathFam_basis
+#print axioms PathBasis.pathFam_basis_apply
+#print axioms KLattice.slopeLe_of_twPair
+#print axioms HermForms.pair_mem_one
+#print axioms HermForms.pow_smul_mem_DeltaN_of_le
+#print axioms HermForms.petTw_mem_of_Mint
+#print axioms HermForms.slopeLe_source
+#print axioms ZetaBalance.sharpMuMax
+#print axioms ZetaBalance.sharpRange_of_certSmall
+#print axioms ZetaBalance.frameLoss_of_sharpNI_cert
+#print axioms CMFormalGauss.gauss_structure
+#print axioms CMFormalGauss.gaussClass_of_isClosed
+#print axioms CMFormalGauss.gaussClass_unramC
+#print axioms CMFormalGauss.be_classification_cm'
+#print axioms CMFormalGauss.be_classification_cm_bdd
+#print axioms CMEquiv.sgStar_omK0_mul
+#print axioms CMEquiv.cm_equiv
+#print axioms CMEquiv.be_simeq_serAB_cm
+#print axioms CMEquiv.isHerm_be_cm
+#print axioms CMEquiv.be_classification_cm_omega
+#print axioms UnramFrobLift.unramFrob
+#print axioms UnramFrobLift.isHerm_be_cm'
+#print axioms UnramFrobLift.be_classification_cm_omega'
+#print axioms EllipticDivPoly.eval_ΨSq_eq_zero
+#print axioms TorsTransl.isInt_translate'
+#print axioms CMTorsion.cm_equiv'
+#print axioms CMTorsion.be_simeq_serAB_cm'
+#print axioms CMTorsion.isHerm_be_cm_classical
+#print axioms CMTorsion.be_classification_cm_classical
+#print axioms MvTay.mtay_mul
+#print axioms MvTay.mtay_congr
+#print axioms MvTay.constantCoeff_mtay
+#print axioms MvTay.lineR_mtay
+#print axioms MvTay.mtay_unit
+#print axioms ThetaHeis.Iop_Iop_eq_smul
+#print axioms ThetaHeis.Iop_mem_Th
+#print axioms ThetaHeis.comp_mem_Th
+#print axioms ThetaHeis.Iop_comp
+#print axioms ThetaHeis.Iop_eq_finsum
+#print axioms ThetaCompare.eq_smul_F0c
+#print axioms ThetaCompare.thMoved_mem_Th
+#print axioms ThetaCompare.theta_compare
+#print axioms HermGS.exists_gsBasis
+#print axioms HermGS.orth4_spec
+#print axioms HermGS.pow4_theta_edual
+#print axioms FormalQuad.quad_transfer
+#print axioms FormalQuad.ph_simeq_serAB_diag
+#print axioms ThetaHClass.isIntK_expMv_of_small
+#print axioms ThetaHClass.hClass_exp
+#print axioms ThetaHClass.HClass.mul
+#print axioms ThetaHClass.HClass.change
+#print axioms ThetaGauss.norm_coeff_pow_four_le
+#print axioms ThetaGauss.theta_gauss
+#print axioms ThetaGauss.theta_gauss'
+#print axioms FirstMeans.boxSum_mono
+#print axioms FirstMeans.prod_sum_rho
+#print axioms FirstMeans.ext_add
+#print axioms FirstAssembly.goodSys_le
+#print axioms FirstAssembly.goodSys_split
+#print axioms FirstAssembly.key_ineq
+#print axioms FirstAssembly.boxSum_kappaF_le
+#print axioms FirstAssembly.llp_first
+#print axioms FirstAssembly.first_local
+#print axioms OffTop.goodSys_offTop
+#print axioms OffTop.offTop
+#print axioms OffTop.first_local'
+#print axioms SourceKeys.locPoly_offPlane
+#print axioms SourceKeys.ad_one_Tp
+#print axioms SourceCore.ordGe_of_gInt
+#print axioms SourceCore.keyprod_gInt
+#print axioms SourceCore.keyPres_unscaled
+#print axioms SourceCore.keyPresSpan_mul
+#print axioms SourceCore.iterate
+#print axioms SourceCore.realise_core
+#print axioms SourceOneSided.GapZeroKeyed
+#print axioms SourceOneSided.DetDiv
+#print axioms SourceOneSided.budgetDet
+#print axioms SourceOneSided.label_keyPres
+#print axioms SourceOneSided.otherDeg_le
+#print axioms ZetaBalance.SharpDesign.Eexp_rat_nonneg
+#print axioms ZetaBalance.SharpDesign.Eexp_gi_sub_nonneg
+#print axioms ZetaBalance.SharpDesign.errT_nonneg
+#print axioms ZetaBalance.SharpDesign.Fexp_rat_nonneg
+#print axioms ZetaBalance.SharpDesign.Fexp_gi_nonpos
+#print axioms ZetaBalance.SharpDesign.Fexp_sqrtd_nonpos
+#print axioms ZetaBalance.SharpDesign.sExp_gi
+#print axioms ZetaBalance.SharpDesign.sExp_gbar
+#print axioms ZetaBalance.SharpDesign.sExp_cut
+#print axioms ZetaBalance.SharpDesign.sExp_sqrtd
+#print axioms ZetaBalance.SharpDesign.sExp_rat_of_not_mem
+#print axioms ZetaBalance.SharpDesign.arithT_sharpT
+#print axioms ZetaBalance.SharpDesign.gainAlpha₀_ne_zero
+#print axioms ZetaBalance.SharpDesign.gainBeta₀_ne_zero
+#print axioms ZetaBalance.SharpDesign.abs_sum_round_le
+#print axioms ZetaBalance.SharpDesign.lnorm_elt_of_adm
+#print axioms ZetaBalance.SharpDesign.log_norm_gain
+#print axioms ZetaBalance.SharpDesign.log_norm_gain_map
+#print axioms ZetaBalance.SharpDesign.gain_le
+#print axioms ZetaBalance.SharpDesign.orbit_ineq
+#print axioms ZetaBalance.SharpDesign.orbit_ineq_tr
+#print axioms ZetaBalance.SharpDesign.card_basePts_mul_le
+#print axioms ZetaBalance.SharpDesign.gains_ge_ask
+#print axioms ZetaBalance.SharpDesign.ask_eq_sum
+#print axioms ZetaBalance.SharpDesign.askU_eq_askE
+#print axioms ZetaBalance.SharpDesign.sum_wt_filter
+#print axioms ZetaBalance.SharpDesign.gain_le_of_adm
+#print axioms ZetaBalance.SharpDesign.fallback_le
+#print axioms ZetaBalance.Setting.pos_twistTop
+#print axioms ZetaBalance.SharpDesign.wt_orbit
+#print axioms ZetaBalance.tilePar_r
+#print axioms ZetaBalance.gainBig_eventually
+#print axioms ZetaBalance.Setting.TwoAdic.le_of_odd
+#print axioms ZetaBalance.SharpDesign.losses_le
+#print axioms ZetaBalance.SharpDesign.errors_le
+#print axioms ZetaBalance.SharpDesign.rounding_le
+#print axioms ZetaBalance.SharpDesign.cG_le
+#print axioms ZetaBalance.SharpDesign.log_sharpT_le_lam
+#print axioms ZetaBalance.SharpDesign.sum_sExp_logN
+#print axioms ZetaBalance.SharpDesign.sum_Fexp_eq_Fo
+#print axioms ZetaBalance.SharpDesign.gain_numbers
+#print axioms ZetaBalance.SharpDesign.gain_numbers_adm
+#print axioms ZetaBalance.SharpDesign.fewBadTops_iff
+#print axioms ZetaBalance.ProdWeights.ind_le_sum_powersetCard
+#print axioms ZetaBalance.ProdWeights.pexp_marked_ge
+#print axioms ZetaBalance.Setting.DesignAdm.exists_tops_G1
+#print axioms ZetaBalance.shares_of_approx
+#print axioms ZetaBalance.SharpDesign.BTNarrow
+#print axioms ZetaBalance.SharpDesign.G2At
+#print axioms ZetaBalance.exists_le_boxMean
+#print axioms ZetaBalance.Setting.DesignAdm.exists_design
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
 #print axioms ZetaBalance.rhAndGRH_of_latticeBound
 #print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound

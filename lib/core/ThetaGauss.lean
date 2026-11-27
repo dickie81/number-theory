@@ -124,26 +124,6 @@ theorem IsBddK.C_mul {F : MvPowerSeries σ ℂ_[ℓ]} (hF : IsBddK F) (c : ℂ_[
       rw [pow_add, map_mul, map_mul]; ring]
   exact (isIntK_C hj).mul hk
 
-/-- **Finite sums of bounded series are bounded.** -/
-theorem isBddK_sum {κ : Type} (s : Finset κ) {F : κ → MvPowerSeries σ ℂ_[ℓ]} (hF : ∀ i ∈ s, IsBddK (F i)) :
-    IsBddK (∑ i ∈ s, F i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => exact ⟨0, fun n => by simp⟩
-  | insert j s hj ih =>
-    rw [sum_insert hj]
-    exact (hF j (mem_insert_self j s)).add (ih fun i hi => hF i (mem_insert_of_mem hi))
-
-/-- **Finite products of bounded series are bounded.** -/
-theorem isBddK_prod {κ : Type} (s : Finset κ) {F : κ → MvPowerSeries σ ℂ_[ℓ]} (hF : ∀ i ∈ s, IsBddK (F i)) :
-    IsBddK (∏ i ∈ s, F i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using (isIntK_one (σ := σ) (K := ℂ_[ℓ])).isBddK
-  | insert j s hj ih =>
-    rw [prod_insert hj]
-    exact (hF j (mem_insert_self j s)).mul (ih fun i hi => hF i (mem_insert_of_mem hi))
-
 /-- **Integral substitution keeps boundedness** (zero constant terms). -/
 theorem IsBddK.subst {τ : Type} [Finite σ] {F : MvPowerSeries σ ℂ_[ℓ]} (hF : IsBddK F)
     {ψ : σ → MvPowerSeries τ ℂ_[ℓ]} (hψ : ∀ s, IsIntK (ψ s)) (hψ0 : ∀ s, MvPowerSeries.constantCoeff (ψ s) = 0) :
