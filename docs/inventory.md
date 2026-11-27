@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2722 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2742 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 318 | 1434 |
+| `lib/core` | 319 | 1454 |
 | `lib/pnt` | 389 | 1175 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -1295,6 +1295,29 @@ note of `formalisations/` that names it, if one does.
 - `PsiOmega.mertens_omega_half`: `M(x) = Ω±(x^θ)` for every `0 < θ < ½`, unconditionally
 - `PsiOmega.rh_of_liouville_bound`: A one-sided bound `εL(x) ≤ c√x` gives RH ([note](../formalisations/weil-positivity.md))
 - `PsiOmega.rh_of_polya`: Pólya's conjecture implies RH ([note](../formalisations/weil-positivity.md))
+
+#### `ModCasimir`: The flat torus `ℂ/(ℤ + ℤτ)`: spectral zeta function, one-loop determinant and Casimir energy
+
+- `ModCasimir.wave_add_lattice`: The plane waves `exp(i⟨k_v, ·⟩)` live on the torus
+- `ModCasimir.normSq_dualVec`: `|k_v|² = λ_v`.
+- `ModCasimir.flatLap_wave`: The plane waves are eigenfunctions of the flat Laplacian
+- `ModCasimir.flatLap_wave_dualVec`: The torus eigenfunctions
+- `ModCasimir.zetaT_eq`: `ζ_T(s) = (y/4π)^s Λ_τ(s)/Γ(s)`
+- `ModCasimir.zetaT_eq_Estar`: `ζ_T(s) = (y/4π)^s · 2E*(τ, s)/Γ(s)`
+- `ModCasimir.hasSum_zetaT`: The spectral zeta function is the zeta-regularised eigenvalue sum
+- `ModCasimir.differentiableAt_zetaT`: `ζ_T` is holomorphic off `s = 1`
+- `ModCasimir.zetaT_zero`: `ζ_T(0) = −1`
+- `ModCasimir.Λ₀_one`: Kronecker's limit formula for the entire part
+- `ModCasimir.hasDerivAt_zetaT_zero`: `ζ_T'(0) = 2kron(τ) − log y = −log(y²|η(τ)|⁴)`
+- `ModCasimir.deriv_zetaT_zero`: `ζ_T'(0) = 2kron(τ) − log y`.
+- `ModCasimir.logDet_eq`: The zeta-regularised determinant of the flat torus
+- `ModCasimir.exp_neg_deriv_zetaT_zero`: `det'Δ = (Im τ)²|η(τ)|⁴`
+- `ModCasimir.kron_smul`: The Kronecker limit function is `SL(2, ℤ)`-invariant
+- `ModCasimir.deriv_zetaT_zero_add_log_smul`: The scale-invariant part of the determinant is modular invariant
+- `ModCasimir.det_div_area_smul`: `det'Δ/area = (Im τ)|η(τ)|⁴` is `SL(2, ℤ)`-invariant
+- `ModCasimir.casimir_eq`: The Casimir energy of the flat torus
+- `ModCasimir.hasSum_circleZeta`: The zeta function of the circle
+- `ModCasimir.circle_casimir`: The Casimir energy of a massless scalar on a circle of length `L`
 
 #### `ModContinuation`: The completed Eisenstein series of `SL(2, ℤ)`: continuation, functional equation and constant term
 

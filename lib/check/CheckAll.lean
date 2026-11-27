@@ -396,6 +396,7 @@ import ModKronecker
 import ModMasser
 import ModLaxPhillips
 import ModWavePackets
+import ModCasimir
 import XiReflectionBand
 import SquaresCongruences
 import RamanujanCongruences
@@ -2214,6 +2215,26 @@ twin-form rates at `11/12`. -/
 #print axioms ModWavePackets.memLp_wavePacket
 #print axioms ModWavePackets.msKernel_eq
 #print axioms ModWavePackets.integral_wavePacket_mul_conj
+#print axioms ModCasimir.wave_add_lattice
+#print axioms ModCasimir.normSq_dualVec
+#print axioms ModCasimir.flatLap_wave
+#print axioms ModCasimir.flatLap_wave_dualVec
+#print axioms ModCasimir.zetaT_eq
+#print axioms ModCasimir.zetaT_eq_Estar
+#print axioms ModCasimir.hasSum_zetaT
+#print axioms ModCasimir.differentiableAt_zetaT
+#print axioms ModCasimir.zetaT_zero
+#print axioms ModCasimir.Λ₀_one
+#print axioms ModCasimir.hasDerivAt_zetaT_zero
+#print axioms ModCasimir.deriv_zetaT_zero
+#print axioms ModCasimir.logDet_eq
+#print axioms ModCasimir.exp_neg_deriv_zetaT_zero
+#print axioms ModCasimir.kron_smul
+#print axioms ModCasimir.deriv_zetaT_zero_add_log_smul
+#print axioms ModCasimir.det_div_area_smul
+#print axioms ModCasimir.casimir_eq
+#print axioms ModCasimir.hasSum_circleZeta
+#print axioms ModCasimir.circle_casimir
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq
