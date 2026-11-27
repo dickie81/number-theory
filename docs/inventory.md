@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2695 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2722 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 316 | 1407 |
+| `lib/core` | 318 | 1434 |
 | `lib/pnt` | 389 | 1175 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -1382,6 +1382,31 @@ note of `formalisations/` that names it, if one does.
 - `ModLaplacian.lap_Estar_div`: The normalised eigen-equation
 - `ModLaplacian.lap_E`: `ΔE(·, s) = s(1 − s)E(·, s)`
 
+#### `ModLaxPhillips`: Lax–Phillips scattering for `SL(2, ℤ)\ℍ²`: the semigroup `Z(t)`, the inner scattering function, and RH
+
+- `ModLaxPhillips.LPData.Z_zero`: `Z(0) = P_K`
+- `ModLaxPhillips.LPData.Z_add`: The semigroup law
+- `ModLaxPhillips.LPData.norm_Z_le`: `Z(t)` is a contraction
+- `ModLaxPhillips.LPData.adjoint_Z`: `Z(t)* = P_K U(−t) P_K`
+- `ModLaxPhillips.S0_eq`: `S₀(s) = ((s − 1)/s)φ(s)`
+- `ModLaxPhillips.differentiableAt_S0`: `S₀` is holomorphic on a neighbourhood of every point of `Re s ≥ ½`
+- `ModLaxPhillips.norm_S0_line`: `S₀` is unimodular on the critical line
+- `ModLaxPhillips.S0_mul_one_sub`: The functional equation
+- `ModLaxPhillips.S0_eq_zero_iff`: The zeros of `S₀` in `Re s > ½`
+- `ModLaxPhillips.mem_resonances`: The resonances are half the nontrivial zeros
+- `ModLaxPhillips.resonance_reflect`: The resonances come in pairs
+- `ModLaxPhillips.rh_iff_resonances_quarter`: RH is one decay rate for every resonance
+- `ModLaxPhillips.rh_iff_resonances_le_quarter`: RH is the slowest decay
+- `ModLaxPhillips.maass_selberg_ineq`: The Maass–Selberg inequality at `Y = 1`
+- `ModLaxPhillips.norm_scatteringMatrix_le`: Polynomial growth of `φ` from Maass–Selberg
+- `ModLaxPhillips.norm_S0_le`: The same bound for `S₀`
+- `ModLaxPhillips.e_mem_K`: Each resonant state lies in the scattering subspace
+- `ModLaxPhillips.Zstar_e`: Each resonance is an eigenvalue of the Lax–Phillips semigroup
+- `ModLaxPhillips.norm_Zstar_e`: The decay rate of a resonant state
+- `ModLaxPhillips.exp_le_norm_Z`: No faster decay of the semigroup than any resonance
+- `ModLaxPhillips.rh_iff_uniform_decay`: RH is one uniform decay rate
+- `ModLaxPhillips.rh_iff_decay_le_quarter`: RH is no resonant state decaying faster than `e^{−t/4}`
+
 #### `ModMaassSelberg`: The Maass–Selberg relation for `SL(2, ℤ)`
 
 - `ModMaassSelberg.integral_fd_tsum`: Unfolding over `Γ_∞\SL(2, ℤ)` for integrable functions
@@ -1426,6 +1451,14 @@ note of `formalisations/` that names it, if one does.
 - `ModTruncation.memLp_EstarY`: `E*^Y(·, s)` is square-integrable on the fundamental domain
 - `ModTruncation.integrable_EstarY_mul`
 - `ModTruncation.differentiableOn_integral_EstarY`: `s ↦ ∫_𝒟 E*^Y(z, s₁)E*^Y(z, s) dμ` is holomorphic on `ℂ \ {0, ½, 1}`
+
+#### `ModWavePackets`: Eisenstein wave packets on `SL(2, ℤ)\ℍ²`: the cusp transform and the Maass–Selberg inner product
+
+- `ModWavePackets.integral_cuspFn_Estar`: The Eisenstein transform of a cusp function is its constant-term transform
+- `ModWavePackets.integral_cuspFn_EY`: The scattering matrix between incoming and outgoing cusp waves
+- `ModWavePackets.memLp_wavePacket`: Eisenstein wave packets are square-integrable on `𝒟`
+- `ModWavePackets.msKernel_eq`: The kernel explicitly
+- `ModWavePackets.integral_wavePacket_mul_conj`: The Maass–Selberg relation for wave packets
 
 #### `MvTay`: Multivariable Taylor series at `0`
 
