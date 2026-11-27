@@ -307,8 +307,6 @@ lemma norm_a0_le (s : ℂ) {y : ℝ} (hy : 1 ≤ y) :
     Real.rpow_le_rpow_of_exponent_le hy (by simp; linarith [neg_abs_le s.re])
   gcongr
 
-lemma measurableSet_fd' : MeasurableSet (fd : Set ℍ) := measurableSet_fd
-
 /-- The function `1_{Im z > Y} a₀(Im z, s₁)(E*(z, s₂) − a₀(Im z, s₂))`. -/
 def gY (Y : ℝ) (s₁ s₂ : ℂ) (z : ℍ) : ℂ := if Y < z.im then ct z.im s₁ * (Estar z s₂ - ct z.im s₂) else 0
 
@@ -480,11 +478,6 @@ lemma continuous_Er_x {y : ℝ} (hy : 0 < y) {σ : ℝ} (hσ : 1 < σ) : Continu
   simp_rw [E_ofReal] at h
   have := Complex.continuous_re.comp h
   exact this.congr fun x => by simp
-
-lemma Er_T (z : ℍ) (σ : ℝ) : Er (T • z) σ = Er z σ := by
-  have h := E_smul T z σ
-  rw [E_ofReal, E_ofReal] at h
-  exact_mod_cast h
 
 lemma integral_Er {y : ℝ} (hy : 0 < y) {σ : ℝ} (hσ : 1 < σ) :
     ((∫ x in (0 : ℝ)..1, Er (pt x y hy) σ : ℝ) : ℂ) =
