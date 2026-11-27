@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2677 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2695 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 314 | 1389 |
+| `lib/core` | 316 | 1407 |
 | `lib/pnt` | 389 | 1175 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -1359,6 +1359,19 @@ note of `formalisations/` that names it, if one does.
 - `ModFourier.hasSum_cos_Estar`: The Fourier expansion of `E*` as a cosine series
 - `ModFourier.hasSum_fourier_Estar_explicit`: The Fourier expansion of `E*`
 
+#### `ModKronecker`: Kronecker's first limit formula
+
+- `ModKronecker.besselK_half`: `K_{1/2}` is elementary
+- `ModKronecker.hasSum_divisor_inv`: The `q`-series of `−log ∏(1 − qᵐ)`
+- `ModKronecker.log_norm_eta`: `log|η(z)| = −πy/12 + Re Σ_{m ≥ 1} log(1 − qᵐ)`
+- `ModKronecker.hasSum_cos_one`: The cosine series at `s = 1`
+- `ModKronecker.Estar_sub_constTerm_one`: `E*(z, 1)` minus its constant term
+- `ModKronecker.completedRiemannZeta_two`: `Λ(2) = π/6` (`Λ(2) = π^{−1}Γ(1)ζ(2)`).
+- `ModKronecker.continuous_Estar_sub_constTerm`: `s ↦ E*(z, s) − ∫_0^1 E*(u + iy, s) du` is entire
+- `ModKronecker.tendsto_Estar_sub_pole`: Kronecker's first limit formula
+- `ModKronecker.tendsto_Lambda_sub_pole`: Kronecker's first limit formula for the Epstein zeta function
+- `ModKronecker.tendsto_E_sub_pole`: Kronecker's first limit formula for `E(z, s) = E*(z, s)/Λ(2s)`
+
 #### `ModLaplacian`: The hyperbolic Laplacian and the eigen-equation of the Eisenstein series of `SL(2, ℤ)`
 
 - `ModLaplacian.hk_ode`: The profile equation
@@ -1391,6 +1404,17 @@ note of `formalisations/` that names it, if one does.
 - `ModMaassSelberg.integral_norm_EY_sq_critical_re`: The real form, and **positivity**
 - `ModMaassSelberg.integral_norm_EY_sq`: The `L²` norm of `E^Y` off the critical line
 - `ModMaassSelberg.integral_norm_EY_sq_re`: The real form, and **positivity**, off the critical line.
+
+#### `ModMasser`: Masser's `s₂`, `E₂*` and the Kronecker limit function
+
+- `ModMasser.tsum_telescope`: A telescoping series over `ℤ`
+- `ModMasser.hasSum_e2Summand_zetaW`: The quasi-period `η₁ = 2ζ_W(1/2)` of `ℤ + ℤτ` as an iterated Eisenstein sum
+- `ModMasser.zetaW_half_eq_G2`: `η₁ = G₂(τ)`
+- `ModMasser.s2_tauPair`: Masser's `s₂` of `ℤ + ℤτ` is `(π²/3)E₂*(τ)`
+- `ModMasser.hasDerivAt_kron_re`: `∂_x kron(τ) = −2 Re(η′/η)(τ)`
+- `ModMasser.hasDerivAt_kron_im`: `∂_y kron(τ) = −1/(2y) + 2 Im(η′/η)(τ)`
+- `ModMasser.wirtinger_kron`: `E₂*` is `∂_τ` of the Kronecker limit function
+- `ModMasser.s2_eq_wirtinger_kron`: Masser's `s₂` is `4πi ∂_τ` of the Kronecker limit function
 
 #### `ModTruncation`: The truncated Eisenstein series of `SL(2, ℤ)`: boundedness, square-integrability, holomorphy in `s`
 

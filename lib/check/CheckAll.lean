@@ -392,6 +392,8 @@ import ModFourier
 import ModTruncation
 import ModMaassSelberg
 import ModLaplacian
+import ModKronecker
+import ModMasser
 import XiReflectionBand
 import SquaresCongruences
 import RamanujanCongruences
@@ -2165,6 +2167,24 @@ twin-form rates at `11/12`. -/
 #print axioms ModLaplacian.lap_Estar
 #print axioms ModLaplacian.lap_Estar_div
 #print axioms ModLaplacian.lap_E
+#print axioms ModKronecker.besselK_half
+#print axioms ModKronecker.hasSum_divisor_inv
+#print axioms ModKronecker.log_norm_eta
+#print axioms ModKronecker.hasSum_cos_one
+#print axioms ModKronecker.Estar_sub_constTerm_one
+#print axioms ModKronecker.completedRiemannZeta_two
+#print axioms ModKronecker.continuous_Estar_sub_constTerm
+#print axioms ModKronecker.tendsto_Estar_sub_pole
+#print axioms ModKronecker.tendsto_Lambda_sub_pole
+#print axioms ModKronecker.tendsto_E_sub_pole
+#print axioms ModMasser.tsum_telescope
+#print axioms ModMasser.hasSum_e2Summand_zetaW
+#print axioms ModMasser.zetaW_half_eq_G2
+#print axioms ModMasser.s2_tauPair
+#print axioms ModMasser.hasDerivAt_kron_re
+#print axioms ModMasser.hasDerivAt_kron_im
+#print axioms ModMasser.wirtinger_kron
+#print axioms ModMasser.s2_eq_wirtinger_kron
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq
