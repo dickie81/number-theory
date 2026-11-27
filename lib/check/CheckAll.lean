@@ -2217,6 +2217,10 @@ twin-form rates at `11/12`. -/
 #print axioms ModWavePackets.integral_wavePacket_mul_conj
 #print axioms ModCasimirPlates.integrable_transverse
 #print axioms ModCasimirPlates.integral_transverse
+#print axioms ModCasimirPlates.hasSum_plateZeta
+#print axioms ModCasimirPlates.casimirPlates_eq
+#print axioms ModCasimirPlates.hasDerivAt_casimirPlates
+#print axioms ModCasimirPlates.casimir_pressure
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq
