@@ -1,7 +1,7 @@
 import PairSetting
 
 /-!
-# The tops of the design: translates with exact coset counts
+# The tops of the design: translates with exact or approximate coset counts
 
 A step of the proof of the sharp frontier (`SharpInputs`, the field `SharpPieces.params`): the translates `TT` of the
 design (its tops) and the field `Weights.shares` that they carry, for a character `κ` of order `o` of a finite
@@ -27,9 +27,14 @@ the parts in `a₀` cancel by the two cases above, and what is left has norm at 
 **The coset counts of the archive** (`counts_archive`): for every `γ`, the tops in `γA₀` number `λ(γ)|TT|` exactly,
 with `λ = 4/(3o + 1)` on `A₀` and `3/(3o + 1)` off it, so within the archive's precision `x^{ε−1}|TT|`.
 
+**Approximate counts** (`shares_of_approx`, for the random tops of `TopsSelect`): if every coset holds
+`λ(γ)|TT| + d_γ` tops with `|d_γ| ≤ η|TT|`, the part of the shares in `a₀` is `a₀Σ_ζ d_ζ ζ^k`, at most `oη Σ_t a_t`,
+so the shares hold once `oη + 2θ ≤ x^{ε−1}`.
+
 **Choices.** The archive draws `TT` with coset counts within `x^{ε−1}|TT|` of `λ(γ)|TT|`; exact counts make the
-shares an identity up to the spread of the scales. The statements hold for every finite abelian group, so they apply
-to `S.A` for every setting `S`.
+shares an identity up to the spread of the scales, and counts within `η|TT|` cost the factor `o` of
+`shares_of_approx`. The statements hold for every finite abelian group, so they apply to `S.A` for every setting
+`S`.
 -/
 
 open Finset
@@ -218,8 +223,119 @@ theorem counts_archive [DecidableEq A]
   rw [hcount, sub_self, abs_zero]
   exact mul_nonneg (Real.rpow_nonneg hx _) (Nat.cast_nonneg _)
 
+/-- **The shares from approximate counts** (`Weights.shares` for random tops): if every coset `γA₀` holds
+`λ(γ)|TT| + d_γ` tops with `|d_γ| ≤ η|TT|` (`λ = 4/(3o + 1)` on `A₀`, `3/(3o + 1)` off it), the scales satisfy
+`a₀ ≤ a_t ≤ a₀(1 + θ)` on `TT` and `oη + 2θ ≤ x^{ε−1}`, then `‖Σ_t a_t κ(t)^k − Σ_t a_t/(3o + 1)‖ ≤ x^{ε−1} Σ_t a_t`
+for `0 < k < o`. Over the values `ζ` of `κ` (`sum_comp_eq`), `Σ_t κ(t)^k = Σ_ζ (λ_ζ|TT| + d_ζ)ζ^k` and
+`Σ_ζ λ_ζ ζ^k = (3Σ_ζ ζ^k + 1)/(3o + 1) = 1/(3o + 1)` (`sum_image_pow`), so the part in `a₀` is at most
+`a₀·o·η|TT| ≤ oη Σ_t a_t` (`card_image_eq`); the rest is at most `2θ Σ_t a_t`, as in `shares_of_counts`. -/
+theorem shares_of_approx [DecidableEq A] {η : ℝ}
+    (hTT : ∀ γ : A, |((TT.filter fun t => γ⁻¹ * t ∈ A₀ κ).card : ℝ) -
+      (if γ ∈ A₀ κ then 4 else 3) / (3 * orderOf κ + 1) * TT.card| ≤ η * TT.card)
+    {a : A → ℝ} {a₀ θ x ε : ℝ} (ha₀ : 0 ≤ a₀) (hθ₀ : 0 ≤ θ) (ha : ∀ t ∈ TT, a₀ ≤ a t ∧ a t ≤ a₀ * (1 + θ))
+    (hθ : orderOf κ * η + 2 * θ ≤ x ^ (ε - 1)) :
+    ∀ k, 0 < k → k < orderOf κ → ‖∑ t ∈ TT, (a t : ℂ) * (κ t : ℂ) ^ k -
+      (((3 * (orderOf κ : ℝ) + 1)⁻¹ * ∑ t ∈ TT, a t : ℝ) : ℂ)‖ ≤ x ^ (ε - 1) * ∑ t ∈ TT, a t := by
+  intro k hk hko
+  rcases TT.eq_empty_or_nonempty with hT | hT
+  · subst hT
+    simp
+  have hn₀ : (0 : ℝ) < TT.card := by exact_mod_cast hT.card_pos
+  have hη : 0 ≤ η := le_of_mul_le_mul_right (by rw [zero_mul]; exact (abs_nonneg _).trans (hTT 1)) hn₀
+  have hc1 : (3 * (orderOf κ : ℝ) + 1)⁻¹ ≤ 1 :=
+    inv_le_one_of_one_le₀ (by linarith [(orderOf κ).cast_nonneg (α := ℝ)])
+  have hr (t : A) (ht : t ∈ TT) : 0 ≤ a t - a₀ ∧ a t - a₀ ≤ θ * a t := by
+    obtain ⟨h1, h2⟩ := ha t ht
+    have := mul_le_mul_of_nonneg_right h1 hθ₀
+    constructor <;> linarith
+  have hR0 : 0 ≤ ∑ t ∈ TT, (a t - a₀) := sum_nonneg fun t ht => (hr t ht).1
+  have hRle : ∑ t ∈ TT, (a t - a₀) ≤ θ * ∑ t ∈ TT, a t := by
+    rw [mul_sum]
+    exact sum_le_sum fun t ht => (hr t ht).2
+  have hP : 0 ≤ ∑ t ∈ TT, a t := sum_nonneg fun t ht => ha₀.trans (ha t ht).1
+  have hA : a₀ * TT.card ≤ ∑ t ∈ TT, a t := by
+    rw [mul_comm, ← nsmul_eq_mul, ← sum_const]
+    exact sum_le_sum fun t ht => (ha t ht).1
+  -- the counts over the values of `κ`
+  set d : ℂˣ → ℝ := fun ζ => ((TT.filter (κ · = ζ)).card : ℝ) -
+    (if ζ = 1 then 4 else 3) / (3 * orderOf κ + 1) * TT.card with hd_def
+  have hd : ∀ ζ ∈ univ.image κ, |d ζ| ≤ η * TT.card := by
+    intro ζ hζ
+    obtain ⟨γ, -, rfl⟩ := mem_image.1 hζ
+    have hfil : TT.filter (fun t => γ⁻¹ * t ∈ A₀ κ) = TT.filter (κ · = κ γ) := filter_congr fun t _ => by
+      rw [mem_A₀, map_mul, map_inv, inv_mul_eq_one, eq_comm]
+    have := hTT γ
+    rw [hfil] at this
+    simpa only [hd_def, mem_A₀] using this
+  have h1 : (1 : ℂˣ) ∈ univ.image κ := mem_image.2 ⟨1, mem_univ _, map_one κ⟩
+  have hsum : ∑ t ∈ TT, (κ t : ℂ) ^ k =
+      ∑ ζ ∈ univ.image κ, (d ζ : ℂ) * (ζ : ℂ) ^ k + ((TT.card / (3 * orderOf κ + 1) : ℝ) : ℂ) := by
+    rw [sum_comp_eq κ TT fun ζ : ℂˣ => (ζ : ℂ) ^ k]
+    have e : ∀ ζ : ℂˣ, (TT.filter (κ · = ζ)).card • (ζ : ℂ) ^ k = (d ζ : ℂ) * (ζ : ℂ) ^ k +
+        ((TT.card / (3 * orderOf κ + 1) : ℝ) : ℂ) * (3 * (ζ : ℂ) ^ k + if ζ = 1 then 1 else 0) := by
+      intro ζ
+      rw [nsmul_eq_mul]
+      simp only [hd_def]
+      by_cases h : ζ = 1
+      · rw [ite_eq_left h, ite_eq_left h, h, Units.val_one, one_pow]
+        push_cast
+        ring
+      · rw [ite_eq_right h, ite_eq_right h]
+        push_cast
+        ring
+    rw [sum_congr rfl fun ζ _ => e ζ, sum_add_distrib, ← mul_sum, sum_add_distrib, ← mul_sum,
+      sum_image_pow κ hk hko, sum_ite_eq', ite_eq_left h1]
+    ring
+  have key : ∑ t ∈ TT, (a t : ℂ) * (κ t : ℂ) ^ k - (((3 * (orderOf κ : ℝ) + 1)⁻¹ * ∑ t ∈ TT, a t : ℝ) : ℂ) =
+      (a₀ : ℂ) * ∑ ζ ∈ univ.image κ, (d ζ : ℂ) * (ζ : ℂ) ^ k +
+        (∑ t ∈ TT, ((a t - a₀ : ℝ) : ℂ) * (κ t : ℂ) ^ k -
+          (((3 * (orderOf κ : ℝ) + 1)⁻¹ * ∑ t ∈ TT, (a t - a₀) : ℝ) : ℂ)) := by
+    have e1 : ∑ t ∈ TT, (a t : ℂ) * (κ t : ℂ) ^ k =
+        (a₀ : ℂ) * ∑ t ∈ TT, (κ t : ℂ) ^ k + ∑ t ∈ TT, ((a t - a₀ : ℝ) : ℂ) * (κ t : ℂ) ^ k := by
+      rw [mul_sum, ← sum_add_distrib]
+      refine sum_congr rfl fun t _ => ?_
+      push_cast
+      ring
+    have e3 : ∑ t ∈ TT, (a t - a₀) = ∑ t ∈ TT, a t - a₀ * TT.card := by
+      rw [sum_sub_distrib, sum_const, nsmul_eq_mul]
+      ring
+    rw [e1, hsum, e3]
+    push_cast
+    ring
+  rw [key]
+  have hD : ‖(a₀ : ℂ) * ∑ ζ ∈ univ.image κ, (d ζ : ℂ) * (ζ : ℂ) ^ k‖ ≤ orderOf κ * η * ∑ t ∈ TT, a t := by
+    rw [norm_mul, Complex.norm_real, Real.norm_of_nonneg ha₀]
+    have h2 : ‖∑ ζ ∈ univ.image κ, (d ζ : ℂ) * (ζ : ℂ) ^ k‖ ≤ orderOf κ * (η * TT.card) := by
+      refine (norm_sum_le _ _).trans ?_
+      calc ∑ ζ ∈ univ.image κ, ‖(d ζ : ℂ) * (ζ : ℂ) ^ k‖ ≤ ∑ _ζ ∈ univ.image κ, η * TT.card := by
+            refine sum_le_sum fun ζ hζ => ?_
+            obtain ⟨γ, -, rfl⟩ := mem_image.1 hζ
+            rw [norm_mul, norm_pow, norm_apply, one_pow, mul_one, Complex.norm_real, Real.norm_eq_abs]
+            exact hd _ hζ
+        _ = orderOf κ * (η * TT.card) := by rw [sum_const, card_image_eq, nsmul_eq_mul]
+    calc a₀ * ‖∑ ζ ∈ univ.image κ, (d ζ : ℂ) * (ζ : ℂ) ^ k‖ ≤ a₀ * (orderOf κ * (η * TT.card)) :=
+          mul_le_mul_of_nonneg_left h2 ha₀
+      _ = orderOf κ * η * (a₀ * TT.card) := by ring
+      _ ≤ orderOf κ * η * ∑ t ∈ TT, a t := mul_le_mul_of_nonneg_left hA (by positivity)
+  have hE : ‖∑ t ∈ TT, ((a t - a₀ : ℝ) : ℂ) * (κ t : ℂ) ^ k -
+      (((3 * (orderOf κ : ℝ) + 1)⁻¹ * ∑ t ∈ TT, (a t - a₀) : ℝ) : ℂ)‖ ≤ 2 * θ * ∑ t ∈ TT, a t := by
+    calc _ ≤ ‖∑ t ∈ TT, ((a t - a₀ : ℝ) : ℂ) * (κ t : ℂ) ^ k‖ +
+          ‖(((3 * (orderOf κ : ℝ) + 1)⁻¹ * ∑ t ∈ TT, (a t - a₀) : ℝ) : ℂ)‖ := norm_sub_le _ _
+      _ ≤ ∑ t ∈ TT, (a t - a₀) + (3 * (orderOf κ : ℝ) + 1)⁻¹ * ∑ t ∈ TT, (a t - a₀) := by
+          refine add_le_add ((norm_sum_le _ _).trans (le_of_eq (sum_congr rfl fun t ht => ?_))) ?_
+          · rw [norm_mul, norm_pow, norm_apply, one_pow, mul_one, Complex.norm_real,
+              Real.norm_of_nonneg (hr t ht).1]
+          · rw [Complex.norm_real, Real.norm_of_nonneg (by positivity)]
+      _ ≤ 2 * θ * ∑ t ∈ TT, a t := by
+          have := mul_le_mul_of_nonneg_right hc1 hR0
+          linarith
+  calc _ ≤ orderOf κ * η * ∑ t ∈ TT, a t + 2 * θ * ∑ t ∈ TT, a t := (norm_add_le _ _).trans (add_le_add hD hE)
+    _ = (orderOf κ * η + 2 * θ) * ∑ t ∈ TT, a t := by ring
+    _ ≤ x ^ (ε - 1) * ∑ t ∈ TT, a t := mul_le_mul_of_nonneg_right hθ hP
+
 end ZetaBalance
 
+#print axioms ZetaBalance.shares_of_approx
 #print axioms ZetaBalance.exists_TT_counts
 #print axioms ZetaBalance.card_TT_of_counts
 #print axioms ZetaBalance.shares_of_counts

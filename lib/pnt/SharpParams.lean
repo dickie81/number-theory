@@ -1,5 +1,6 @@
 import SharpAdm
 import DesignTops
+import TopsSelect
 
 /-!
 # The design's parameters
@@ -17,24 +18,26 @@ parameters (`DesignPar`) and split primes meeting `BuildOk`: the design with the
 `δ = 2mH + 1 + b/(kx^{13})`. Its `Weights` fields: `thick_near` from the windows of `DesignHC` and
 `a_t/x ∈ [b, b + b/(kx^{13})]`; `thick_small` and `thin_far` from the sizes of `SharpAdm`, with
 `X = (Nx)^{log x} ≤ X′/3` (`X_le`; a top, at `(1, c·t)`, is thin to `Weights`); `thick_card` as `s ↦ a₀^s` is injective
-on `T`; `shares` from exact coset counts (`shares_of_counts`). Every clause of `Adm` is then a hypothesis, a definition
-or a lemma (`counts_archive`, `margin`). The builder takes `TT`, the scales and the top shifts as inputs, so the Stage-2
-random choices change only its inputs.
+on `T`; `shares` from coset counts within `x⁻¹|TT|` (`shares_of_approx`: `o·x⁻¹ + 2θ ≤ x^{ε−1}`). Every clause of
+`Adm` is then a hypothesis (G1 among them), a definition or a lemma (the counts within `x^{ε−1}|TT|`, `margin`); the
+2-adic clause comes with the setting-level ones. The builder takes `TT`, the scales and the top shifts as inputs, so
+the Stage-2 random choices change only its inputs.
 
-**The inputs** (`exists_design`): tops with exact coset counts and `M = ⌈δ₁|A|/(3o + 1)⌉` (`exists_tops`,
-`exists_TT_counts`); a generator of the cyclic `A₀` and a relation-free `T` of Behrend type, dense by Behrend's
-comparison (`exists_thick`, `RelFree.exists_six`, `eventually_behrend`); `a_t = ⌈a⌉`, `b_t = ⌈b′⌉`; `s* ∈ T`; the
-shifts of `exists_shift_RU`; the split primes as a hypothesis.
+**The inputs** (`exists_design`): random tops with coset counts within `x⁻¹|TT|`, the density window and G1
+(`exists_tops_G1`, `TopsSelect`, under the growth `TopsBig ε x`); a generator of the cyclic `A₀` and a relation-free
+`T` of Behrend type, dense by Behrend's comparison (`exists_thick`, `RelFree.exists_six`, `eventually_behrend`);
+`a_t = ⌈a⌉`, `b_t = ⌈b′⌉`; `s* ∈ T`; the shifts of `exists_shift_RU`; the split primes as a hypothesis.
 
 **The setting** (`pairSetting_designAdm`). `WinPair` gives `d ≡ 7 (mod 16)`, `q ≡ 3 (mod 8)`,
 `log q, log d > Y^{ε/5}/2 ≥ x^{ε/10}/2`, `(−d/p) = 1` for `q` and every prime `p ≤ x^{ε/10}` (they divide `d + 1`,
 `jacobiSym_neg_eq_one`) and `log N ≤ 4 log x + x^{ε/5} + x^{ε/5}log² x ≤ 3x^{ε/5}log² x`; `PairSetting` gives the
 window of `|A|` (`2^e ≤ |A| = o|A₀| ≤ o·2^e`) and `QS ≤ 4·2^e·f`; Littlewood's bound
-`|L′/L(1, χ_d)| ≤ M log log(d + 16)` (`Littlewood.norm_logDeriv_one_le`, unconditional) gives A4.
+`|L′/L(1, χ_d)| ≤ M log log(d + 16)` (`Littlewood.norm_logDeriv_one_le`, unconditional) gives A4; the setting is
+2-adic at the level `e` (`pairSetting_twoAdic`).
 
 **The thresholds** of `sharpParams`, all at `x ≥ Y`: the growth package, `ord χ, f ≤ x^{ε/100}`, `8f ≤ x`,
-`log x ≥ 4`, `M log x ≤ x^ε`, Behrend's comparison at `C = 6` and `ShortNorm`'s `x₀` (`exists_split_primes`); and
-`f ≤ Y^{ε/5}/2` for `PairArith`.
+`log x ≥ 4`, `M log x ≤ x^ε`, Behrend's comparison at `C = 6`, the growth of the tops (`TopsBig`,
+`topsBig_eventually`) and `ShortNorm`'s `x₀` (`exists_split_primes`); and `f ≤ Y^{ε/5}/2` for `PairArith`.
 
 **Inputs.** `ShortNorm`, for the split primes only. The primitivity of `χ` is not used: the field's shape asks for
 it.
@@ -55,17 +58,20 @@ noncomputable abbrev Setting.DesignAdm.R (hS : S.DesignAdm κ x ε) : S.Ranks :=
 /-- The thick set `T2 = {a₀^s : s ∈ T}` of the parameters. -/
 noncomputable abbrev DesignPar.T2 (pr : DesignPar S) : Finset S.A := pr.T.image (pr.a₀ ^ ·)
 
-/-- **What the builder needs of its inputs**: exact coset counts of the tops (`exists_TT_counts`) and their density
-window, the windows of `a_t` and `b_t`, a generator `a₀` of `A₀`, a relation-free dense `T` in range with `s* ∈ T`,
-shifts `σ < w_E` meeting the root-of-unity condition, and split primes. -/
+/-- **What the builder needs of its inputs**: approximate coset counts of the tops, their density window and G1
+(`exists_tops_G1`), the windows of `a_t` and `b_t`, a generator `a₀` of `A₀`, a relation-free dense `T` in range with
+`s* ∈ T`, shifts `σ < w_E` meeting the root-of-unity condition, and split primes. -/
 structure BuildOk (hS : S.DesignAdm κ x ε) (TT : Finset S.A) (pr : DesignPar S) (g₀ g₁ : ℕ) : Prop where
-  /-- Exact counts: `4M` tops in `A₀` and `3M` over each other value of `κ`, `M > 0`. -/
-  counts : ∃ M, 0 < M ∧ ∀ ζ : ℂˣ,
-    (TT.filter (κ · = ζ)).card = if ζ = 1 then 4 * M else if ζ ∈ κ.range then 3 * M else 0
+  /-- The coset counts within `x⁻¹|TT|`: `|#(TT ∩ γA₀) − λ(γ)|TT|| ≤ x⁻¹|TT|`, `λ = 4/(3o + 1)` on `A₀` and
+  `3/(3o + 1)` off it. -/
+  counts : ∀ γ : S.A, |((TT.filter fun t => γ⁻¹ * t ∈ A₀ κ).card : ℝ) -
+    (if γ ∈ A₀ κ then 4 else 3) / (3 * orderOf κ + 1) * TT.card| ≤ x⁻¹ * TT.card
   /-- `|TT| ≥ δ₁|A|/2`. -/
   TT_ge : scδ₁ x ε * Fintype.card S.A / 2 ≤ TT.card
   /-- `|TT| ≤ 2δ₁|A|`. -/
   TT_le : (TT.card : ℝ) ≤ 2 * scδ₁ x ε * Fintype.card S.A
+  /-- (G1) for `TT`, at `k = designK x ε`. -/
+  G1 : S.FewBadTopsAt κ x ε (designK x ε) TT
   /-- `a ≤ a_t ≤ a + a/(kx^{13})`. -/
   a_mem : ∀ t ∈ TT, scA x ε ≤ pr.aZ t ∧ (pr.aZ t : ℝ) ≤ scA x ε + scA x ε / (designK x ε * x ^ 13)
   /-- `b′ ≤ b_t ≤ b′(1 + x^{−1/4})`. -/
@@ -318,33 +324,46 @@ theorem thick_card : x ^ (-ε) * (A₀ κ).card ≤ pr.T2.card := by
   calc x ^ (-ε) * (A₀ κ).card ≤ x ^ (-ε) * Fintype.card S.A := by gcongr
     _ ≤ pr.T.card := hI.T_card
 
-/-- **`Weights.shares`** from the exact counts (`shares_of_counts`), with `θ = 1/(kx^{13})`, `2θ ≤ 1/x ≤ x^{ε−1}`. -/
+/-- **`Weights.shares`** from the counts within `x⁻¹|TT|` (`shares_of_approx`), with `θ = 1/(kx^{13})`:
+`o·x⁻¹ + 2θ ≤ (x^{ε/100} + 1)x⁻¹ ≤ x^{ε−1}`. -/
 theorem shares : ∀ k, 0 < k → k < orderOf κ → ‖∑ t ∈ TT, ((pr.aZ t : ℝ) : ℂ) * (κ t : ℂ) ^ k -
     (((3 * (orderOf κ : ℝ) + 1)⁻¹ * ∑ t ∈ TT, (pr.aZ t : ℝ) : ℝ) : ℂ)‖ ≤ x ^ (ε - 1) * ∑ t ∈ TT, (pr.aZ t : ℝ) := by
-  obtain ⟨M, -, hTT⟩ := hI.counts
   have hx0 := hS.big.pos
   have hx := hS.big.x_ge
   have hk1 := hS.big.designK_le.1
   have h13 : 0 < (designK x ε : ℝ) * x ^ 13 := by positivity
-  refine shares_of_counts hTT (a := fun t => (pr.aZ t : ℝ)) (a₀ := scA x ε) (θ := 1 / (designK x ε * x ^ 13))
-    (scA_pos ε hx0).le (by positivity) (fun t ht => ⟨(hI.a_mem t ht).1, ?_⟩) ?_
+  refine shares_of_approx hI.counts (a := fun t => (pr.aZ t : ℝ)) (a₀ := scA x ε)
+    (θ := 1 / (designK x ε * x ^ 13)) (scA_pos ε hx0).le (by positivity) (fun t ht => ⟨(hI.a_mem t ht).1, ?_⟩) ?_
   · have e : scA x ε * (1 + 1 / (designK x ε * x ^ 13)) = scA x ε + scA x ε / (designK x ε * x ^ 13) := by ring
     rw [e]
     exact (hI.a_mem t ht).2
-  · have h1 : x ^ (-1 : ℝ) ≤ x ^ (ε - 1) :=
-      Real.rpow_le_rpow_of_exponent_le hS.big.one_lt.le (by linarith [hS.big.ε_pos])
-    rw [Real.rpow_neg_one] at h1
-    have h2 : 2 * (1 / ((designK x ε : ℝ) * x ^ 13)) ≤ x⁻¹ := by
+  · have h2 : 2 * (1 / ((designK x ε : ℝ) * x ^ 13)) ≤ x⁻¹ := by
       rw [← one_div, mul_one_div, div_le_div_iff₀ h13 hx0]
       have h3 : x ^ 2 ≤ x ^ 13 := pow_le_pow_right₀ (by linarith) (by norm_num)
       nlinarith [mul_le_mul_of_nonneg_right hk1 (pow_pos hx0 13).le]
-    linarith
+    have h3 : x ^ (ε / 100) + 1 ≤ x ^ ε := by
+      have e : x ^ ε = x ^ (ε / 100) * x ^ (99 * ε / 100) := by
+        rw [← Real.rpow_add hx0]
+        congr 1
+        ring
+      have h4 : 4096 ≤ x ^ (99 * ε / 100) := hS.big.le_rpow (by linarith [hS.big.ε_pos])
+      have h5 : 1 ≤ x ^ (ε / 100) := Real.one_le_rpow hS.big.one_lt.le (by linarith [hS.big.ε_pos])
+      nlinarith
+    have e2 : x ^ (ε - 1) = x ^ ε * x⁻¹ := by rw [Real.rpow_sub hx0, Real.rpow_one, div_eq_mul_inv]
+    have hxinv : 0 < x⁻¹ := inv_pos.2 hx0
+    rw [e2]
+    calc (orderOf κ : ℝ) * x⁻¹ + 2 * (1 / (designK x ε * x ^ 13)) ≤ x ^ (ε / 100) * x⁻¹ + x⁻¹ :=
+          add_le_add (mul_le_mul_of_nonneg_right hS.orderOf_le hxinv.le) h2
+      _ = (x ^ (ε / 100) + 1) * x⁻¹ := by ring
+      _ ≤ x ^ ε * x⁻¹ := mul_le_mul_of_nonneg_right h3 hxinv.le
 
-/-- **`Weights.TT_nonempty`**: `|TT| = (3o + 1)M > 0`. -/
+/-- **`Weights.TT_nonempty`**: `|TT| ≥ δ₁|A|/2 > 0`. -/
 theorem TT_nonempty : TT.Nonempty := by
-  obtain ⟨M, hM, hTT⟩ := hI.counts
-  rw [← Finset.card_pos, card_TT_of_counts hTT]
-  positivity
+  rw [← Finset.card_pos]
+  have hδ := hS.big.scδ₁_mem.1
+  have hn : (0 : ℝ) < Fintype.card S.A := Nat.cast_pos.2 Fintype.card_pos
+  have h1 : (0 : ℝ) < scδ₁ x ε * Fintype.card S.A / 2 := by positivity
+  exact_mod_cast h1.trans_le hI.TT_ge
 
 /-- **`(−d/g) = 1`** for the split primes (`jacobiSym_neg_d_of_norm`, with `d ≥ 100` and `d ∣ N ∣ β`). -/
 theorem leg {g : ℕ} (hg : g ∈ [g₀, g₁]) (hgp : g.Prime) : jacobiSym (-(S.d : ℤ)) g = 1 := by
@@ -409,8 +428,9 @@ theorem BuildOk.famAt {hS : S.DesignAdm κ x ε} {TT : Finset S.A} {pr : DesignP
   hyp := hI.hyp
   hc_eq _ := rfl
 
-/-- **The built design is admissible**: every clause is a hypothesis of the builder, a definition (`X`, the ranks,
-`T2`, the families) or a lemma (the coset counts from the exact ones, `counts_archive`; the margin). -/
+/-- **The built design is admissible**: every clause is a hypothesis of the builder (G1 among them), a definition
+(`X`, the ranks, `T2`, the families) or a lemma (the coset counts within `x^{ε−1}|TT|` from those within `x⁻¹|TT|`;
+the margin). -/
 theorem buildDesign_adm (hS : S.DesignAdm κ x ε) (TT : Finset S.A) (pr : DesignPar S) (g₀ g₁ : ℕ)
     (hI : BuildOk hS TT pr g₀ g₁) : (buildDesign hS TT pr g₀ g₁ hI).Adm where
   toDesignAdm := hS
@@ -421,13 +441,16 @@ theorem buildDesign_adm (hS : S.DesignAdm κ x ε) (TT : Finset S.A) (pr : Desig
   TT_ge := hI.TT_ge
   TT_le := hI.TT_le
   TT_counts γ := by
-    obtain ⟨M, -, hTT⟩ := hI.counts
-    exact counts_archive hTT hS.big.pos.le γ
+    have h1 : x ^ (-1 : ℝ) ≤ x ^ (ε - 1) :=
+      Real.rpow_le_rpow_of_exponent_le hS.big.one_lt.le (by linarith [hS.big.ε_pos])
+    rw [Real.rpow_neg_one] at h1
+    exact (hI.counts γ).trans (mul_le_mul_of_nonneg_right h1 (Nat.cast_nonneg _))
   P_margin := hS.margin
   fam := ⟨pr, hI.famAt⟩
   ru := hI.ru hI.hyp
   split := hI.split
   exc := hI.exc
+  G1 := hI.G1
 
 /-! ## The inputs of the builder -/
 
@@ -451,65 +474,6 @@ theorem card_A₀_ge : (Fintype.card S.A : ℝ) ≤ x ^ (ε / 100) * (A₀ κ).c
   have h5 := hS.card_ge
   have h6 : 0 < x ^ (ε / 100) := Real.rpow_pos_of_pos hx0 _
   nlinarith
-
-/-- **The tops**: with `M = ⌈δ₁|A|/(3o + 1)⌉ > 0`, `4M ≤ |A₀|`, so `exists_TT_counts` gives tops with exact coset
-counts, and `|TT| = (3o + 1)M ∈ [δ₁|A|, δ₁|A| + 3o + 1] ⊆ [δ₁|A|/2, 2δ₁|A|]`. -/
-theorem exists_tops : ∃ TT : Finset S.A, (∃ M, 0 < M ∧ ∀ ζ : ℂˣ,
-    (TT.filter (κ · = ζ)).card = if ζ = 1 then 4 * M else if ζ ∈ κ.range then 3 * M else 0) ∧
-    scδ₁ x ε * Fintype.card S.A / 2 ≤ TT.card ∧ (TT.card : ℝ) ≤ 2 * scδ₁ x ε * Fintype.card S.A := by
-  have hx0 := hS.big.pos
-  have hx := hS.big.x_ge
-  obtain ⟨hA1, hA2⟩ := hS.card_A₀_ge
-  have ho1 : (1 : ℝ) ≤ orderOf κ := by exact_mod_cast orderOf_pos κ
-  have ho2 := hS.orderOf_le
-  have hn : (Fintype.card S.A : ℝ) = orderOf κ * (A₀ κ).card := by exact_mod_cast card_A_eq κ
-  have hδ0 : 0 < scδ₁ x ε := Real.rpow_pos_of_pos hx0 _
-  have hδ1 : scδ₁ x ε ≤ 1 / 2 := by
-    have h1 : 2 ≤ x ^ (ε / 8) := le_trans (by norm_num) (hS.big.le_rpow (by linarith [hS.big.ε_pos]))
-    unfold scδ₁
-    rw [Real.rpow_neg hx0.le]
-    rw [inv_le_comm₀ (Real.rpow_pos_of_pos hx0 _) (by norm_num)]
-    linarith
-  have h3o : (0 : ℝ) < 3 * orderOf κ + 1 := by positivity
-  set c := scδ₁ x ε * Fintype.card S.A / (3 * orderOf κ + 1) with hc
-  have hc0 : 0 < c := by
-    have : (0 : ℝ) < Fintype.card S.A := Nat.cast_pos.2 Fintype.card_pos
-    positivity
-  have hM1 : c ≤ ⌈c⌉₊ := Nat.le_ceil c
-  have hM2 : (⌈c⌉₊ : ℝ) < c + 1 := Nat.ceil_lt_add_one hc0.le
-  have hc3 : c ≤ scδ₁ x ε * (A₀ κ).card / 3 := by
-    rw [hc, hn, div_le_div_iff₀ h3o (by norm_num)]
-    have : (0 : ℝ) ≤ scδ₁ x ε * (A₀ κ).card := by positivity
-    nlinarith
-  have h4M : 4 * ⌈c⌉₊ ≤ (A₀ κ).card := by
-    have : (4 * ⌈c⌉₊ : ℝ) ≤ (A₀ κ).card := by
-      have : scδ₁ x ε * (A₀ κ).card ≤ (A₀ κ).card / 2 := by
-        have : (0 : ℝ) ≤ (A₀ κ).card := Nat.cast_nonneg _
-        nlinarith
-      linarith
-    exact_mod_cast this
-  obtain ⟨TT, hTT⟩ := exists_TT_counts κ ⌈c⌉₊ h4M
-  have hcard : (TT.card : ℝ) = (3 * orderOf κ + 1) * ⌈c⌉₊ := by exact_mod_cast card_TT_of_counts hTT
-  have hcc : (3 * orderOf κ + 1) * c = scδ₁ x ε * Fintype.card S.A := by
-    rw [hc]; field_simp
-  -- `3o + 1 ≤ δ₁|A|`
-  have hsmall : 3 * (orderOf κ : ℝ) + 1 ≤ scδ₁ x ε * Fintype.card S.A := by
-    have e1 : scδ₁ x ε * x ^ (2 + 8 * ε) = x ^ (ε / 100) * x ^ (2 + 8 * ε - ε / 8 - ε / 100) := by
-      unfold scδ₁
-      rw [← Real.rpow_add hx0, ← Real.rpow_add hx0]; ring_nf
-    have e2 := hS.big.le_rpow (c := 2 + 8 * ε - ε / 8 - ε / 100) (by linarith [hS.big.ε_lt, hS.big.ε_pos])
-    have e3 : 1 ≤ x ^ (ε / 100) := Real.one_le_rpow hS.big.one_lt.le (by linarith [hS.big.ε_pos])
-    have e4 : scδ₁ x ε * x ^ (2 + 8 * ε) ≤ scδ₁ x ε * Fintype.card S.A :=
-      mul_le_mul_of_nonneg_left hS.card_ge hδ0.le
-    nlinarith
-  refine ⟨TT, ⟨⌈c⌉₊, Nat.ceil_pos.2 hc0, hTT⟩, ?_, ?_⟩
-  · rw [hcard]
-    have : (3 * orderOf κ + 1 : ℝ) * c ≤ (3 * orderOf κ + 1) * ⌈c⌉₊ := by gcongr
-    have : (0 : ℝ) ≤ scδ₁ x ε * Fintype.card S.A := by positivity
-    linarith
-  · rw [hcard]
-    have : (3 * orderOf κ + 1 : ℝ) * ⌈c⌉₊ ≤ (3 * orderOf κ + 1) * (c + 1) := by gcongr
-    linarith
 
 /-- **The thick set**: a generator `a₀` of the cyclic `A₀`, and a relation-free `T ⊆ [0, N₀)` at level `L_w`,
 `N₀ = ⌊|A₀|/(4L_w)⌋` (`RelFree.exists_six`), so `4L_w s < |A₀|` on `T`. Its density
@@ -593,10 +557,11 @@ theorem exists_thick [IsCyclic κ.ker]
       _ ≤ 1 * (N₀ * Real.exp (-c)) := by gcongr
       _ ≤ T.card := by rw [one_mul]; exact hT1
 
-/-- **An admissible design at `x`**, for a setting meeting the setting-level clauses with `A₀` cyclic, Behrend's
-comparison at `x` and split primes: the tops (`exists_tops`), the thick set (`exists_thick`), `a_t = ⌈a⌉`,
-`b_t = ⌈b′⌉`, `s* ∈ T`, the shifts of `exists_shift_RU`, then `buildDesign`. -/
-theorem exists_design [IsCyclic κ.ker]
+/-- **An admissible design at `x`**, for a setting meeting the setting-level clauses with `A₀` cyclic, the growth
+of the tops (`TopsBig`), Behrend's comparison at `x` and split primes: the random tops (`exists_tops_G1`: the coset
+counts, the density window and G1), the thick set (`exists_thick`), `a_t = ⌈a⌉`, `b_t = ⌈b′⌉`, `s* ∈ T`, the shifts
+of `exists_shift_RU`, then `buildDesign`. -/
+theorem exists_design [IsCyclic κ.ker] (hT : TopsBig ε x)
     (hbeh : 8 * scLw x ε * Real.exp (6 * √(3 * Real.log x * Real.log (2 * scLw x ε + 1))) ≤ x ^ (ε / 2))
     (hg : ∃ g₀ g₁ : ℕ, g₀.Prime ∧ g₁.Prime ∧ g₀ ≠ g₁ ∧ (∀ g ∈ [g₀, g₁],
       ((designK x ε : ℝ) * Real.exp (x ^ ε)) ^ 8 ≤ g ∧ (g : ℝ) ≤ 2 * ((designK x ε : ℝ) * Real.exp (x ^ ε)) ^ 8 ∧
@@ -605,7 +570,7 @@ theorem exists_design [IsCyclic κ.ker]
     ∃ Dg : SharpDesign S κ x ε (((S.N : ℝ) * x) ^ Real.log x), Dg.Adm := by
   have hx := hS.big.x_ge
   have hx0 := hS.big.pos
-  obtain ⟨TT, hTT, hge, hle⟩ := hS.exists_tops
+  obtain ⟨TT, hTT, hge, hle, hG1⟩ := hS.exists_tops_G1 hT
   obtain ⟨a₀, T, ha₀, hord, hrange, hrf, hcard⟩ := hS.exists_thick hbeh
   obtain ⟨sstar, hs⟩ : T.Nonempty := by
     rw [← Finset.card_pos]
@@ -651,7 +616,7 @@ theorem exists_design [IsCyclic κ.ker]
   obtain ⟨g₀, g₁, hg₀, hg₁, hne, hsplit, hexc⟩ := hg
   let pr : DesignPar S := ⟨fun _ => ⌈scA x ε⌉, fun _ => ⌈scB' x ε⌉, a₀, T, sstar, σ⟩
   have hI : BuildOk hS TT pr g₀ g₁ :=
-    ⟨hTT, hge, hle, ha, hb, ha₀, hord, hrange, hrf, hcard, hs, hσ, fun _ => hru, hg₀, hg₁, hne, hsplit, hexc⟩
+    ⟨hTT, hge, hle, hG1, ha, hb, ha₀, hord, hrange, hrf, hcard, hs, hσ, fun _ => hru, hg₀, hg₁, hne, hsplit, hexc⟩
   exact ⟨buildDesign hS TT pr g₀ g₁ hI, buildDesign_adm hS TT pr g₀ g₁ hI⟩
 
 end Setting.DesignAdm
@@ -681,7 +646,8 @@ theorem exists_level {y : ℝ} (hy : 1 < y) : ∃ e : ℕ, y ≤ 2 ^ e ∧ (2 : 
 
 /-- **The setting of a pair meets the setting-level clauses** at `x ∈ [Y, Y²]`, for a pair of `WinPair ε Y`, a level
 with `x^{2+8ε} ≤ 2^e ≤ 2x^{2+8ε}`, the growth package at `x` and `Y`, `ord χ, f ≤ x^{ε/100}`, `8f ≤ x`,
-`log x ≥ 4`, and Littlewood's bound `|L′/L(1, χ)| ≤ M log log(N + 16)` with `M log x ≤ x^ε`. -/
+`log x ≥ 4`, and Littlewood's bound `|L′/L(1, χ)| ≤ M log log(N + 16)` with `M log x ≤ x^ε`; the 2-adic clause at
+the level `e` is `pairSetting_twoAdic`. -/
 theorem pairSetting_designAdm {f : ℕ} [NeZero f] (χ : DirichletCharacter ℂ f) {Y : ℝ} {q d : ℕ}
     (hw : ZetaTwist.WinPair ε Y q d) (hpa : PairArith f q d) {e : ℕ} (hbig : DesignBig ε x)
     (hbigY : DesignBig ε Y) (hYx : Y ≤ x) (hxY : x ≤ Y ^ 2) (he1 : x ^ (2 + 8 * ε) ≤ 2 ^ e)
@@ -712,7 +678,8 @@ theorem pairSetting_designAdm {f : ℕ} [NeZero f] (χ : DirichletCharacter ℂ 
     · have := hw.d_mod
       omega
     · exact hw.small_dvd p hp hp2 (hpx.trans hxY')
-  refine ⟨hbig, he1.trans hn1, ?_, ho', ?_, hw.d_mod, hw.q_mod, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨hbig, he1.trans hn1, ?_, ho', ?_, hw.d_mod, hw.q_mod, ?_, ?_, ?_, ?_, ?_, ?_,
+    ⟨e, pairSetting_twoAdic χ hpa e⟩⟩
   · -- `|A| = o|A₀| ≤ x^{ε/100}·2^e`
     have h1 : (Fintype.card (pairSetting χ hpa e).A : ℝ) =
         orderOf (pairChar χ hpa e) * (A₀ (pairChar χ hpa e)).card := by exact_mod_cast card_A_eq _
@@ -807,8 +774,8 @@ theorem pairSetting_designAdm {f : ℕ} [NeZero f] (χ : DirichletCharacter ℂ 
 and a pair of `WinPair ε Y`, `Y′ = Y`; at every `x ∈ [Y, Y²]`, the setting of the pair at the level
 `x^{2+8ε} ≤ 2^e ≤ 2x^{2+8ε}` (`pairSetting`, with `κ = pairChar` lifting `χ`) and an admissible design
 (`exists_design`). The thresholds: the growth package, `ord χ, f ≤ x^{ε/100}`, `8f ≤ x`, `log x ≥ 4`,
-`M log x ≤ x^ε` for Littlewood's `M`, Behrend's comparison, `ShortNorm`'s `x₀` (`exists_split_primes`), all at
-`x ≥ Y`, and `f ≤ Y^{ε/5}/2` for `PairArith`. -/
+`M log x ≤ x^ε` for Littlewood's `M`, Behrend's comparison, the growth of the tops (`topsBig_eventually`),
+`ShortNorm`'s `x₀` (`exists_split_primes`), all at `x ≥ Y`, and `f ≤ Y^{ε/5}/2` for `PairArith`. -/
 theorem sharpParams (hS : ShortNorm) : Params fun Dg => Dg.Adm := by
   intro f _ χ _ ε₀ hε₀
   set ε := min ε₀ (1 / 52) / 2 with hεdef
@@ -827,29 +794,32 @@ theorem sharpParams (hS : ShortNorm) : Params fun Dg => Dg.Adm := by
       rw [mul_one_div, div_le_one (by linarith)]
       linarith
     nlinarith [Real.rpow_nonneg (show (0 : ℝ) ≤ x by linarith) ε]
+  obtain ⟨xT, hxT⟩ := topsBig_eventually hε
   have ev : ∀ᶠ x in atTop, DesignBig ε x ∧ (orderOf χ : ℝ) ≤ x ^ (ε / 100) ∧ (f : ℝ) ≤ x ^ (ε / 100) ∧
       8 * (f : ℝ) ≤ x ∧ 4 ≤ Real.log x ∧ M * Real.log x ≤ x ^ ε ∧ xs ≤ x ∧
-      8 * scLw x ε * Real.exp (6 * √(3 * Real.log x * Real.log (2 * scLw x ε + 1))) ≤ x ^ (ε / 2) := by
+      8 * scLw x ε * Real.exp (6 * √(3 * Real.log x * Real.log (2 * scLw x ε + 1))) ≤ x ^ (ε / 2) ∧
+      TopsBig ε x := by
     filter_upwards [eventually_designBig ε hε hε52,
       (tendsto_rpow_atTop (show 0 < ε / 100 by positivity)).eventually_ge_atTop (orderOf χ : ℝ),
       (tendsto_rpow_atTop (show 0 < ε / 100 by positivity)).eventually_ge_atTop (f : ℝ),
       eventually_ge_atTop (8 * (f : ℝ)), Real.tendsto_log_atTop.eventually_ge_atTop 4, hMlog,
-      eventually_ge_atTop xs, eventually_behrend (C := 6) (by norm_num) hε (by linarith)]
-      with x h1 h2 h3 h4 h5 h6 h7 h8
-    exact ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩
+      eventually_ge_atTop xs, eventually_behrend (C := 6) (by norm_num) hε (by linarith),
+      eventually_ge_atTop xT]
+      with x h1 h2 h3 h4 h5 h6 h7 h8 h9
+    exact ⟨h1, h2, h3, h4, h5, h6, h7, h8, hxT x h9⟩
   obtain ⟨x₁, hx₁⟩ := eventually_atTop.1 ev
   filter_upwards [eventually_ge_atTop x₁,
     (tendsto_rpow_atTop (show 0 < ε / 5 by positivity)).eventually_ge_atTop (2 * (f : ℝ))] with Y hY hYf
   intro q d hw
   refine ⟨Y, ⟨le_rfl, by norm_num⟩, fun x hx => ?_⟩
   have hbY := (hx₁ Y hY).1
-  obtain ⟨hbig, ho, hf, hf8, hl4, hMx, hxs', hbeh⟩ := hx₁ x (hY.trans hx.1)
+  obtain ⟨hbig, ho, hf, hf8, hl4, hMx, hxs', hbeh, hT⟩ := hx₁ x (hY.trans hx.1)
   have hpa : PairArith f q d := hw.pairArith (by linarith)
   obtain ⟨e, he1, he2⟩ := exists_level (Real.one_lt_rpow hbig.one_lt (by linarith : (0 : ℝ) < 2 + 8 * ε))
   have hS' := pairSetting_designAdm χ hw hpa hbig hbY hx.1 hx.2 he1 he2 ho hf hf8 hl4 hM0 hMb hMx
   refine ⟨pairSetting χ hpa e, pairChar χ hpa e, rfl, rfl, by have := hw.d_mod; show d % 4 = 3; omega,
     pairChar_lifts χ hpa e, ?_⟩
-  refine hS'.exists_design hbeh (hxs x hxs' _ _ (designK x ε + designM x ε - 1) (designK x ε)
+  refine hS'.exists_design hT hbeh (hxs x hxs' _ _ (designK x ε + designM x ε - 1) (designK x ε)
     (Fact.out : (pairSetting χ hpa e).d.Prime) (by have := hS'.d_mod; omega) hS'.hundred_le_d
     (pairSetting χ hpa e).d_dvd_N (NeZero.pos _) hS'.log_N_le ?_ ?_)
   · have := hbig.designK_le.1

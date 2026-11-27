@@ -2,6 +2,7 @@ import DesignPrimes
 import DesignHC
 import DesignScale
 import RelationFree
+import DesignTiles
 
 /-!
 # Admissible designs
@@ -11,20 +12,21 @@ A step of the proof of the sharp frontier (`SharpInputs`): the field `SharpPiece
 design is the archive's, read in the repo's coordinates; `SharpParams` builds one at every `x` of the frontier's
 windows (`sharpParams`).
 
-**The clauses** (`SharpDesign.Adm`, Stage 1 of the design spec: A1–A11). The setting-level ones, which do not read
-the design, are a structure of their own that `Adm` extends (`Setting.DesignAdm`): the growth package `DesignBig ε x`
-(A1), the window `x^{2+8ε} ≤ |A| ≤ 2x^{2+8ε+ε/100}`, `ord κ ≤ x^{ε/100}`, `QS ≤ 4|A|x^{ε/100}` (A2), the pair
+**The clauses** (`SharpDesign.Adm`, Stage 1 of the design spec: A1–A11). The setting-level ones, which do not read the
+design, are a structure of their own that `Adm` extends (`Setting.DesignAdm`): the growth package `DesignBig ε x` (A1),
+the window `x^{2+8ε} ≤ |A| ≤ 2x^{2+8ε+ε/100}`, `ord κ ≤ x^{ε/100}`, `QS ≤ 4|A|x^{ε/100}` (A2), the pair
 (`d ≡ 7 (mod 16)`, `q ≡ 3 (mod 8)`, `log q, log d > x^{ε/10}/2`, `(−d/q) = 1`, `(−d/p) = 1` for `p ≤ x^{ε/10}`,
-`log N ≤ 3x^{ε/5}log² x`, A3) and `|Re L′/L(1, χ_d)| ≤ x^ε` (A4). The design-level ones: `X = (Nx)^{log x}` (A1),
-the ranks `k`, `m`, `t` of `designRanks` (A6), the window and the coset counts of the tops (A7), the margin
-`P > (k − 1)/2 + 3` (A9), the root-of-unity condition (A10) and the split primes (A11). The parameters that
-`SharpDesign` does not record (`DesignPar`: the integer scales `a_t`, the top shifts `b_t`, the generator `a₀` of
-`A₀`, the exponents `T` of the thick set, `s*` and the shifts `σ`) are bound by one existential (`Adm.fam`), with the
-clauses that read them (`SharpDesign.FamAt`): the windows of `a_t` and `b_t` (A7), `a₀` generates `A₀` (A2),
-`T2 = {a₀^s : s ∈ T}` with `T` relation-free at level `L_w`, in range and dense (A8), and the families are the
-formulas of `DesignHC` at the design's integers (`designFam`, A9): `Δ = ⌈x⌉` (`c_D = 1`), `H = w_E⌈x^{402}⌉`,
-`B = ⌈b⌉`, `W = ⌈w″⌉`, `P = ⌊b′/x⌋` and `ρ*(u) = (−1, a₀^{s*}u)`, with **twisted tops**: the top data `(a_t, b_t)`
-of the translate `t ∈ TT` sits at the place `(1, c·t)`, `c = twA κ` (`[−1]_A` for odd `κ`, `1` for even; `c² = 1`,
+`log N ≤ 3x^{ε/5}log² x`, A3), `|Re L′/L(1, χ_d)| ≤ x^ε` (A4) and the 2-adic structure at some level (`Setting.TwoAdic`,
+A2). The design-level ones: `X = (Nx)^{log x}` (A1), the ranks `k`, `m`, `t` of `designRanks` (A6), the window and the
+coset counts of the tops (A7), the margin `P > (k − 1)/2 + 3` (A9), the root-of-unity condition (A10), the split primes
+(A11) and the Stage-2 clause G1, few tops on bad orbits (`SharpDesign.FewBadTops`, defined in `DesignTiles`). The
+parameters that `SharpDesign` does not record (`DesignPar`: the integer scales `a_t`, the top shifts `b_t`, the
+generator `a₀` of `A₀`, the exponents `T` of the thick set, `s*` and the shifts `σ`) are bound by one existential
+(`Adm.fam`), with the clauses that read them (`SharpDesign.FamAt`): the windows of `a_t` and `b_t` (A7), `a₀` generates
+`A₀` (A2), `T2 = {a₀^s : s ∈ T}` with `T` relation-free at level `L_w`, in range and dense (A8), and the families are
+the formulas of `DesignHC` at the design's integers (`designFam`, A9): `Δ = ⌈x⌉` (`c_D = 1`), `H = w_E⌈x^{402}⌉`,
+`B = ⌈b⌉`, `W = ⌈w″⌉`, `P = ⌊b′/x⌋` and `ρ*(u) = (−1, a₀^{s*}u)`, with **twisted tops**: the top data `(a_t, b_t)` of
+the translate `t ∈ TT` sits at the place `(1, c·t)`, `c = twA κ` (`[−1]_A` for odd `κ`, `1` for even; `c² = 1`,
 `Setting.twA_mul_self`). So the tops of `hcFam` are `c·TT` with the data `t ↦ a_{c·t}`, `b_{c·t}`. Each field's
 docstring names the pieces that read it.
 
@@ -70,7 +72,8 @@ not the design's: the API bounds the step-0 weights of every family pinned to `u
 * A6 pins `k`, `m`, `t` to `designRanks`' values; their windows are lemmas.
 * A9 states the families as `hcFam` at the design's integers (`designFam`), which carries every formula of the spec;
   the windows and the cloud are lemmas of `DesignHC`. The tops are placed at `(1, c·t)` (above), not at `(1, t)`.
-* The Stage-2 clauses G1, G2 (the gain's random choices) are not here.
+* Of the Stage-2 clauses (the gain's random choices) G1 is here; G2 and the narrow window of the top shifts read the
+  local theory's data at a prime, and are added downstream of it.
 -/
 
 open NumberField
@@ -156,6 +159,8 @@ structure Setting.DesignAdm (S : Setting) (κ : S.A →* ℂˣ) (x ε : ℝ) : P
   log_N_le : Real.log S.N ≤ 3 * x ^ (ε / 5) * Real.log x ^ 2
   /-- (A4) `|Re L′/L(1, χ_d)| ≤ x^ε`, the term of `MAIN`. (G↑). -/
   logDeriv_le : |(logDeriv (DirichletCharacter.LFunction (legChar S.d)) 1).re| ≤ x ^ ε
+  /-- (A2) The 2-adic structure at some level (`Setting.TwoAdic`): small and odd orders are sparse. The gain. -/
+  twoAdic : ∃ e, S.TwoAdic κ e
 
 /-- **The parameters of a design that `SharpDesign` does not record**: the integer scales `a_t` and top shifts `b_t`,
 the generator `a₀` of `A₀`, the exponents `T` of the thick set, the place index `s*` and the root-of-unity shifts
@@ -211,7 +216,7 @@ structure FamAt (pr : DesignPar S) : Prop where
   hc_eq : ∀ u, Dg.hc u = designFam S x ε Dg.R (Dg.TT.image (S.twA κ * ·)) Dg.T2 (pr.aZ ∘ (S.twA κ * ·))
     (pr.bT ∘ (S.twA κ * ·)) (designStar pr.a₀ pr.sstar) pr.σ hyp u
 
-/-- **An admissible design** (the field `adm` of `SharpPieces`): the clauses A1–A11 of the design spec. -/
+/-- **An admissible design** (the field `adm` of `SharpPieces`): the clauses A1–A11 of the design spec and G1. -/
 structure Adm : Prop extends S.DesignAdm κ x ε where
   /-- (A1) `X = (Nx)^{log x}`. (Z), the gain. -/
   X_eq : X = ((S.N : ℝ) * x) ^ Real.log x
@@ -241,6 +246,8 @@ structure Adm : Prop extends S.DesignAdm κ x ε where
     ∃ α β : ℤ, 4 * (g : ℤ) = α ^ 2 + S.d * β ^ 2 ∧ (S.N : ℤ) ∣ β ∧ α ≡ β + 2 [ZMOD 2 * S.N]
   /-- (A11) `Exc_r(g₀) ∩ Exc_r(g₁) = ∅`. The gain. -/
   exc : Disjoint (ExcSet Dg.R.r Dg.g₀) (ExcSet Dg.R.r Dg.g₁)
+  /-- (G1) Few tops on bad orbits. The gain, the local theory. -/
+  G1 : Dg.FewBadTops
 
 end SharpDesign
 

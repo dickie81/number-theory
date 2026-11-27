@@ -4,14 +4,13 @@ import DesignOrbits
 # The gain's sums
 
 A step of the proof of the sharp frontier (`SharpInputs`, the piece `gain`; module M-G7s of the gain's numbers): the
-closed-form constant and the Stage-2 clause that the gain's numbers are stated against, the growth package that
-absorbs the tile parameters' constants `10^{O(1/ε)}`, and the elementary sums over primes that the losses and the
-errors read.
+closed-form constant that the gain's numbers are stated against, the growth package that absorbs the tile
+parameters' constants `10^{O(1/ε)}`, and the elementary sums over primes that the losses and the errors read.
 
-**Definitions.** The constant `c_G = x^{1+2ε}·|A|·e^{x^ε}` (`Setting.cGform`); the clause G1,
-`Σ_{p ∈ PR} (log p/p)·|badTops p| ≤ |TT|·x^{−2+ε}` (`SharpDesign.FewBadTops`), as M-G4 will add it to `Adm`; and the
-growth package `GainBig ε x` (with `k = designK x ε`): `(G′ + 2)·x^{ε/3} + 1000 log x ≤ x^ε/8`,
-`N₁ + r ≤ x^{1/8}` and `10⁹ ≤ x^{ε/8}`.
+**Definitions.** The constant `c_G = x^{1+2ε}·|A|·e^{x^ε}` (`Setting.cGform`) and the growth package `GainBig ε x`
+(with `k = designK x ε`): `(G′ + 2)·x^{ε/3} + 1000 log x ≤ x^ε/8`, `N₁ + r ≤ x^{1/8}` and `10⁹ ≤ x^{ε/8}`. The clause
+G1, `Σ_{p ∈ PR} (log p/p)·|badTops p| ≤ |TT|·x^{−2+ε}` (`SharpDesign.FewBadTops`), is defined in `DesignTiles` and
+is the clause `SharpDesign.Adm.G1`.
 
 **The growth package holds eventually** (`gainBig_eventually`): for every `ε > 0` some `x₀` has `GainBig ε x` at
 every `x ≥ x₀`. The parameters `G′`, `N₁`, `r` of `tilePar` do not read `k`, and `r = ⌈8(h* + 2)/ε⌉ + 1` does not
@@ -54,14 +53,10 @@ namespace ZetaBalance
 
 noncomputable section
 
-/-! ## The constant, the clause G1, the growth package -/
+/-! ## The constant and the growth package -/
 
 /-- **The closed-form constant** `c_G = x^{1+2ε}·|A|·e^{x^ε}` (the gain spec's C4). -/
 def Setting.cGform (S : Setting) (x ε : ℝ) : ℝ := x ^ (1 + 2 * ε) * Fintype.card S.A * scB x ε
-
-/-- **(G1)**, the Stage-2 clause as M-G4 will add it to `Adm`: `Σ_{p ∈ PR} (log p/p)·|badTops p| ≤ |TT|·x^{−2+ε}`. -/
-def SharpDesign.FewBadTops {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ} (Dg : SharpDesign S κ x ε X) : Prop :=
-  ∑ p ∈ S.PR κ x ε, (Real.log p / p) * ((Dg.badTops p).card : ℝ) ≤ Dg.TT.card * x ^ (-2 + ε)
 
 /-- **The growth conditions of the gain's numbers**, eventually true in `x` at a fixed `ε` (`gainBig_eventually`): the
 tile parameters `G′`, `N₁`, `r` of `tilePar` (at `k = designK x ε`, which they do not read) against powers of `x`. -/

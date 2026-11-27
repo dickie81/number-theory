@@ -25,6 +25,10 @@ meeting `ErrOK`, for every real `col ≤ c_G/6`:
 So the left side is at most `Σ_ϖ n_ϖ·log N(ϖ) − c_G + c_G/4 + c_G/4 + c_G/12 = Σ_ϖ n_ϖ·log N(ϖ) − 5c_G/12`, and
 `col ≤ c_G/6 ≤ 5c_G/12` as `c_G ≥ 0` (`cG_le`).
 
+**At every admissible design** (`gain_numbers_adm`): the 2-adic structure and G1 are clauses of `Adm`
+(`Setting.DesignAdm.twoAdic`, `SharpDesign.Adm.G1`, M-G4), so the numbers hold under `FamAt`, `GainBig` and `ErrOK`
+alone.
+
 **Against the spec.**
 * No hypothesis `twA κ = 1`: the bridge `askU_eq_askE` holds at every `κ`, as the design puts the top data of the
   translate `t` at the place `(1, c·t)`, `c = twA κ` (twisted tops, `SharpAdm`).
@@ -76,6 +80,17 @@ theorem gain_numbers (hA : Dg.Adm) {pr : DesignPar S} (hF : Dg.FamAt pr) {e : �
   have hm : (Dg.m : ℝ) = Dg.R.m := by rw [Dg.hm]
   rw [ask_eq_sum_askE hA hF u, hm]
   linarith
+
+/-- **The gain's numbers at every admissible design** (M-G4): `gain_numbers` with the 2-adic structure and G1 taken
+from the clauses (`Setting.DesignAdm.twoAdic`, `SharpDesign.Adm.G1`), so only `FamAt`, `GainBig` and `ErrOK`
+remain. -/
+theorem gain_numbers_adm (hA : Dg.Adm) {pr : DesignPar S} (hF : Dg.FamAt pr) (hB : GainBig ε x) (u : S.A)
+    (ED : ErrData S Dg.R) (hED : Dg.ErrOK u ED) {col : ℝ} (hcol : col ≤ S.cGform x ε / 6) :
+    ∑ t ∈ Dg.TT, ∑ j, S.ASK (Dg.a t) t (Dg.w u j) - Dg.m * (∑ t ∈ Dg.TT, Dg.a t) * Real.log (Dg.g₀ * Dg.g₁) +
+        Dg.R.Fo (Dg.hc u) (S.twA κ) Dg.g₀ Dg.g₁ (S.cutX x ε) - S.cGform x ε ≤
+      ∑ ϖ ∈ Dg.primeSet ED, (Dg.nExp pr u ED ϖ : ℝ) * Dg.logN u ϖ - col := by
+  obtain ⟨e, he⟩ := hA.twoAdic
+  exact gain_numbers hA hF he hA.G1 hB u ED hED hcol
 
 end SharpDesign
 
