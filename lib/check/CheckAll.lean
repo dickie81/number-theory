@@ -394,6 +394,8 @@ import ModMaassSelberg
 import ModLaplacian
 import ModKronecker
 import ModMasser
+import ModLaxPhillips
+import ModWavePackets
 import XiReflectionBand
 import SquaresCongruences
 import RamanujanCongruences
@@ -2185,6 +2187,33 @@ twin-form rates at `11/12`. -/
 #print axioms ModMasser.hasDerivAt_kron_im
 #print axioms ModMasser.wirtinger_kron
 #print axioms ModMasser.s2_eq_wirtinger_kron
+#print axioms ModLaxPhillips.LPData.Z_zero
+#print axioms ModLaxPhillips.LPData.Z_add
+#print axioms ModLaxPhillips.LPData.norm_Z_le
+#print axioms ModLaxPhillips.LPData.adjoint_Z
+#print axioms ModLaxPhillips.S0_eq
+#print axioms ModLaxPhillips.differentiableAt_S0
+#print axioms ModLaxPhillips.norm_S0_line
+#print axioms ModLaxPhillips.S0_mul_one_sub
+#print axioms ModLaxPhillips.S0_eq_zero_iff
+#print axioms ModLaxPhillips.mem_resonances
+#print axioms ModLaxPhillips.resonance_reflect
+#print axioms ModLaxPhillips.rh_iff_resonances_quarter
+#print axioms ModLaxPhillips.rh_iff_resonances_le_quarter
+#print axioms ModLaxPhillips.maass_selberg_ineq
+#print axioms ModLaxPhillips.norm_scatteringMatrix_le
+#print axioms ModLaxPhillips.norm_S0_le
+#print axioms ModLaxPhillips.e_mem_K
+#print axioms ModLaxPhillips.Zstar_e
+#print axioms ModLaxPhillips.norm_Zstar_e
+#print axioms ModLaxPhillips.exp_le_norm_Z
+#print axioms ModLaxPhillips.rh_iff_uniform_decay
+#print axioms ModLaxPhillips.rh_iff_decay_le_quarter
+#print axioms ModWavePackets.integral_cuspFn_Estar
+#print axioms ModWavePackets.integral_cuspFn_EY
+#print axioms ModWavePackets.memLp_wavePacket
+#print axioms ModWavePackets.msKernel_eq
+#print axioms ModWavePackets.integral_wavePacket_mul_conj
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq

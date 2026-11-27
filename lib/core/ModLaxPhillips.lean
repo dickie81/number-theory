@@ -1,3 +1,36 @@
+/-
+# Lax–Phillips scattering for `SL(2, ℤ)\ℍ²`: the semigroup `Z(t)`, the inner scattering function, and RH
+
+Milestone C of the scattering theory of `SL(2, ℤ)\ℍ²`, after P. Lax and R. Phillips, *Scattering Theory for
+Automorphic Functions* (1976), and B. S. Pavlov and L. D. Faddeev (1972). With `φ(s) = Λ(2s − 1)/Λ(2s)`
+(`PavlovFaddeev.scatteringMatrix`):
+* **The Lax–Phillips semigroup** (`LPData`, `LPData.Z_zero`, `LPData.Z_add`, `LPData.norm_Z_le`,
+  `LPData.adjoint_Z`): for a unitary group `U(t)` on a Hilbert space with an incoming subspace `D₋`
+  (`U(−t)D₋ ⊆ D₋`) and a closed outgoing subspace `D₊` (`U(t)D₊ ⊆ D₊`), `D₊ ⊥ D₋`, and `K = (D₋ ⊕ D₊)^⊥`, the
+  compression `Z(t) = P_K U(t) P_K` has `Z(0) = P_K`, `Z(t + s) = Z(t)Z(s)` for `t, s ≥ 0`, `‖Z(t)‖ ≤ 1`, and
+  `Z(t)* = P_K U(−t) P_K`.
+* **The inner scattering function** `S₀(s) = ((s − 1)/s)φ(s)` (`S0`, `S0_eq`), written with Mathlib's entire `Λ₀`:
+  holomorphic at every point of `Re s ≥ ½` (`differentiableAt_S0`; the pole of `φ` at `s = 1`, the constant
+  eigenfunction, is removed), `|S₀(½ + it)| = 1` for every real `t` (`norm_S0_line`), `S₀(s)S₀(1 − s) = 1`
+  (`S0_mul_one_sub`), and on `Re s > ½` its zeros are those of `Λ(2s − 1)` (`S0_eq_zero_iff`).
+* **The Maass–Selberg bound** (`maass_selberg_ineq`, `norm_scatteringMatrix_le`, `norm_S0_le`): from
+  `‖E^1(·, s)‖² ≥ 0`, `(1 − |φ(s)|²)/(2σ − 1) − Im φ(s)/t ≥ 0`, so `|φ(σ + it)|, |S₀(σ + it)| ≤ 1 + (2σ − 1)/|t|`
+  for `σ > ½`, `t ≠ 0`.
+* **The resonances** (`resonances`, `mem_resonances`, `resonance_reflect`, `rh_iff_resonances_quarter`,
+  `rh_iff_resonances_le_quarter`): `μ` with `Re μ > 0` and `S₀(½ + μ) = 0`, which are exactly `μ = ρ/2` for the
+  nontrivial zeros `ρ`; they pair as `μ ↔ ½ − μ`; RH iff every resonance has `Re μ = ¼`, iff every one has
+  `Re μ ≤ ¼`.
+* **The translation model** (`LP`, `e_mem_K`, `Zstar_e`, `norm_Zstar_e`, `exp_le_norm_Z`): on `L²(ℝ)` with the
+  translations `U(t)`, `D₋ = L²(−∞, 0)` and `D₊` the functions on `[0, ∞)` orthogonal to every resonant state
+  `e_μ(u) = e^{−μu}1_{u ≥ 0}` (the Beurling–Lax subspace of the Blaschke product of the zeros of `S₀`), each `e_μ`
+  is a nonzero vector of `K` with `Z(t)* e_μ = e^{−μt}e_μ`, so it decays at the rate `Re μ`, and
+  `e^{−t Re μ} ≤ ‖Z(t)‖ ≤ 1`.
+* **RH as one decay rate** (`rh_iff_uniform_decay`, `rh_iff_decay_le_quarter`): Mathlib's `RiemannHypothesis` iff
+  `‖Z(t)* e_μ‖ = e^{−t/4}‖e_μ‖` for every resonance `μ` and `t ≥ 0`, iff no resonant state decays faster than
+  `e^{−t/4}`.
+These are equivalences, with no bearing on RH. Not proved here: `|S₀| ≤ 1` on `Re s > ½` (an inner function), the
+model's derivation from the automorphic wave equation, and that every eigenvalue of `Z(t)*` is a resonance.
+-/
 import Mathlib
 import ModMaassSelberg
 

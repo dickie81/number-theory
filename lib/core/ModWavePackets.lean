@@ -1,3 +1,22 @@
+/-
+# Eisenstein wave packets on `SL(2, ℤ)\ℍ²`: the cusp transform and the Maass–Selberg inner product
+
+Milestone C, geometric half. With `E*` the completed Eisenstein series, `a₀(y, s) = Λ(2s)y^s + Λ(2s − 1)y^{1−s}`
+its constant term, `E^Y = E*^Y/Λ(2s)` the normalised truncation and `φ = PavlovFaddeev.scatteringMatrix`:
+* **The Eisenstein transform of a cusp function** (`cuspFn`, `integral_cuspFn_Estar`, `integral_cuspFn_EY`): for
+  `f` continuous, vanishing on `y > R`, and `F(z) = f(Im z)1_{Im z > 1}`,
+  `∫_𝒟 F(z)E*(z, s) dμ = ∫_{y > 1} f(y)a₀(y, s)y^{−2} dy` for `s ≠ 0, ½, 1` (Fubini on `{|x| ≤ ½, y > 1} ⊂ 𝒟`), and
+  for `Y ≥ R`, `Λ(2s) ≠ 0`, `∫_𝒟 F(z)E^Y(z, s) dμ = ∫_{y > 1} f(y)(y^s + φ(s)y^{1−s})y^{−2} dy`: an outgoing wave
+  plus `φ(s)` times an incoming one, so `φ(½ + it)` is the scattering matrix between the two Mellin transforms.
+* **Wave packets** (`wavePacket`, `memLp_wavePacket`): for `g` continuous and `0 < a ≤ b`,
+  `Ψ_Y(g)(z) = ∫_a^b g(t)E^Y(z, ½ + it) dt` is in `L²(𝒟)` (indeed bounded).
+* **Their Maass–Selberg inner product** (`msKernel`, `msKernel_eq`, `integral_wavePacket_mul_conj`): for `Y ≥ 1`,
+  `∫_𝒟 Ψ_Y(g) conj Ψ_Y(h) dμ = ∫∫_{(a,b]²} g(t₁) conj h(t₂) K_Y(t₁, t₂) dt₁ dt₂` with
+  `K_Y = (Y^{i(t₁−t₂)} − φ₁ conj φ₂ Y^{−i(t₁−t₂)})/(i(t₁ − t₂)) + (conj φ₂ Y^{i(t₁+t₂)} − φ₁ Y^{−i(t₁+t₂)})/(i(t₁ + t₂))`,
+  `φ_j = φ(½ + it_j)`, by Fubini and `ModMaassSelberg.maass_selberg_phi` off the diagonal.
+The limit `Y → ∞` (Plancherel for the continuous spectrum) and the spectral decomposition of `L²(𝒟)` are not
+proved here.
+-/
 import Mathlib
 import ModMaassSelberg
 
