@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2224 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2231 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 252 | 1026 |
+| `lib/core` | 252 | 1033 |
 | `lib/pnt` | 369 | 1085 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -1012,6 +1012,13 @@ note of `formalisations/` that names it, if one does.
 - `ModFourier.fourierCoeff_Estar`: The nonzero Fourier coefficients of `E*`
 - `ModFourier.sum_D`: The divisor sum
 - `ModFourier.fourierCoeff_Estar_divisors`: The Fourier coefficients of `E*` with the divisor function
+- `ModFourier.Estar_periodic`: `E*(x + iy, s)` is `1`-periodic in `x`
+- `ModFourier.continuous_Estar_x`: `x ↦ E*(x + iy, s)` is continuous
+- `ModFourier.norm_fourierCoeff_Estar_le`: Exponential decay of the Fourier coefficients
+- `ModFourier.summable_fourierCoeff_Estar`: The Fourier coefficients of `E*` are summable
+- `ModFourier.hasSum_fourier_Estar`: The Fourier series of `E*`
+- `ModFourier.hasSum_cos_Estar`: The Fourier expansion of `E*` as a cosine series
+- `ModFourier.hasSum_fourier_Estar_explicit`: The Fourier expansion of `E*`
 
 #### `OddMargin2`: Odd-sector margin `4·10⁻⁵` at `L = 1/2`
 

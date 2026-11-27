@@ -20,7 +20,14 @@ series is `E*(z, s) = Λ_z(s)/2`, with `Λ_z = WeakFEPair.Λ` of the theta funct
   Mellin transform `2√y(|n|/|m|)^{s−1/2}K_{s−1/2}(2πy|k|)` with the library's `Eis.besselK`, and so, for every `s`,
   `∫_0^1 e^{−2πikx}E*(x + iy, s) dx = 2√y Σ_{d ∣ |k|}(|k|/d²)^{s−1/2}K_{s−1/2}(2π|k|y)`, the classical
   `2√y|k|^{s−1/2}σ_{1−2s}(|k|)K_{s−1/2}(2π|k|y)`.
-The Fourier series itself (the sum of the coefficients against `e^{2πikx}` reconstructing `E*`) is not built here.
+* **The Fourier series** (`Estar_periodic`, `continuous_Estar_x`, `norm_fourierCoeff_Estar_le`,
+  `summable_fourierCoeff_Estar`, `hasSum_fourier_Estar`, `hasSum_cos_Estar`, `hasSum_fourier_Estar_explicit`):
+  `x ↦ E*(x + iy, s)` is `1`-periodic (`E*(Tz, s) = E*(z, s)`) and continuous (dominated convergence with the
+  majorant `θ_{iy}`), so a continuous function on `ℝ/ℤ`; its coefficients decay like `|k|^N e^{−πy|k|}` (the decay
+  of `Eis.besselK`), so are summable, and Mathlib's `has_pointwise_sum_fourier_series_of_summable` gives, for every
+  `s` and `x`, `E*(x + iy, s) = Σ_{k ∈ ℤ} a_k e^{2πikx}`; pairing `±k`,
+  `E*(x + iy, s) = Λ(2s)y^s + Λ(2s − 1)y^{1−s} + 4√y Σ_{n ≥ 1}(Σ_{d ∣ n}(n/d²)^{s−1/2})K_{s−1/2}(2πny)cos(2πnx)`
+  for `s ≠ 0, ½, 1` (and with the constant term `∫_0^1 E*(u + iy, s) du` for every `s`).
 -/
 import Mathlib
 import ModContinuation
@@ -630,5 +637,210 @@ theorem fourierCoeff_Estar_divisors {k : ℤ} (hk : k ≠ 0) (s : ℂ) :
         ∑ d ∈ k.natAbs.divisors, ((|(k : ℝ)| / (d : ℝ) ^ 2 : ℝ) : ℂ) ^ (s - 1 / 2) := by
   rw [fourierCoeff_Estar hy hk s, sum_D hk]
   ring
+
+/-! ## The Fourier series -/
+
+lemma pt_add_one (x : ℝ) : pt (x + 1) y hy = ModularGroup.T • pt x y hy := by
+  rw [UpperHalfPlane.modular_T_smul]
+  apply UpperHalfPlane.ext
+  simp [pt, UpperHalfPlane.coe_vadd]
+  ring
+
+/-- **`E*(x + iy, s)` is `1`-periodic in `x`**, by `E*(Tz, s) = E*(z, s)`. -/
+theorem Estar_periodic (s : ℂ) : Function.Periodic (fun x => Estar (pt x y hy) s) 1 := fun x => by
+  simp only
+  rw [pt_add_one, Estar_smul]
+
+lemma continuous_theta_x {t : ℝ} (ht : 0 < t) : Continuous fun x => theta (pt x y hy) t := by
+  have e : (fun x => theta (pt x y hy) t) =
+      fun x => ((((1 / (t / y) ^ (1 / 2 : ℝ) : ℝ) : ℂ) * ∑' p, dualTerm (pt x y hy) t p)).re := by
+    funext x
+    have h := theta_eq_dual (pt x y hy) ht
+    rw [pt_im] at h
+    rw [← h, Complex.ofReal_re]
+  rw [e]
+  refine Complex.continuous_re.comp (continuous_const.mul ?_)
+  refine continuous_tsum (u := fun p => ‖dualTerm (pt 0 y hy) t p‖) (fun p => ?_)
+    (summable_dualTerm _ ht).norm (fun p x => ?_)
+  · simp only [dualTerm, pt_re, pt_im]
+    fun_prop
+  · rw [norm_dualTerm, norm_dualTerm, pt_im, pt_im]
+
+lemma continuous_fmod_x (t : ℝ) : Continuous fun x => (thetaFEPair (pt x y hy)).f_modif t := by
+  simp_rw [fmod_eq]
+  split_ifs with h1 h2
+  · exact Complex.continuous_ofReal.comp ((continuous_theta_x hy (by linarith)).sub continuous_const)
+  · exact Complex.continuous_ofReal.comp ((continuous_theta_x hy h2.1).sub continuous_const)
+  · exact continuous_const
+
+lemma continuous_Λ₀ (s : ℂ) : Continuous fun x => (thetaFEPair (pt x y hy)).Λ₀ s := by
+  simp only [WeakFEPair.Λ₀, mellin]
+  refine continuous_of_dominated
+    (bound := fun t => ‖(t : ℂ) ^ (s - 1)‖ * ‖(thetaFEPair (pt 0 y hy)).f_modif t‖)
+    (fun x => ?_) (fun x => ae_of_all _ fun t => ?_) ?_ (ae_of_all _ fun t => ?_)
+  · exact ((Eis.measurable_ofReal_cpow (s - 1)).smul
+      ((measurable_fmod hy).comp measurable_prodMk_left)).aestronglyMeasurable
+  · rw [norm_smul]
+    exact mul_le_mul_of_nonneg_left (fmod_nonneg_le hy _ _) (norm_nonneg _)
+  · exact (mellinConvergent_fmod hy s).norm.congr (ae_of_all _ fun t => norm_smul _ _)
+  · exact (continuous_fmod_x hy t).const_smul ((t : ℂ) ^ (s - 1))
+
+/-- **`x ↦ E*(x + iy, s)` is continuous**, for every `s`: dominated convergence in the Mellin integral, with the
+majorant `θ_{iy}`. -/
+theorem continuous_Estar_x (s : ℂ) : Continuous fun x => Estar (pt x y hy) s := by
+  simp only [Estar, Lambda, Λ_thetaFEPair]
+  exact (((continuous_Λ₀ hy s).sub continuous_const).sub continuous_const).div_const 2
+
+/-- `x ↦ E*(x + iy, s)` on the circle `ℝ/ℤ`. -/
+def EstarCircle (s : ℂ) : C(UnitAddCircle, ℂ) :=
+  ⟨(Estar_periodic hy s).lift, (continuous_Estar_x hy s).quotient_liftOn' _⟩
+
+lemma EstarCircle_coe (s : ℂ) (x : ℝ) : EstarCircle hy s (x : UnitAddCircle) = Estar (pt x y hy) s := rfl
+
+lemma fourierCoeff_EstarCircle (s : ℂ) (k : ℤ) : fourierCoeff (EstarCircle hy s) k =
+    ∫ x in (0 : ℝ)..1, cexp (-(2 * π * Complex.I * k * x)) * Estar (pt x y hy) s := by
+  rw [fourierCoeff_eq_intervalIntegral _ k 0, zero_add, div_one, one_smul]
+  refine intervalIntegral.integral_congr fun x _ => ?_
+  rw [fourier_coe_apply, smul_eq_mul, EstarCircle_coe]
+  push_cast
+  ring_nf
+
+lemma rpow_le_abs {a K : ℝ} (ha : 0 < a) (haK : a ≤ K) (hiK : a⁻¹ ≤ K) (hK : 1 ≤ K) (r : ℝ) :
+    a ^ r ≤ K ^ |r| := by
+  rcases le_or_gt 0 r with hr | hr
+  · exact (Real.rpow_le_rpow ha.le haK hr).trans (Real.rpow_le_rpow_of_exponent_le hK (le_abs_self r))
+  · have e : a ^ r = a⁻¹ ^ (-r) := by
+      rw [Real.inv_rpow ha.le, Real.rpow_neg ha.le, inv_inv]
+    rw [e, abs_of_neg hr]
+    exact Real.rpow_le_rpow (inv_pos.2 ha).le hiK (by linarith)
+
+lemma norm_divSum_le {k : ℤ} (hk : k ≠ 0) (w : ℂ) :
+    ‖∑ d ∈ k.natAbs.divisors, ((|(k : ℝ)| / (d : ℝ) ^ 2 : ℝ) : ℂ) ^ w‖ ≤ |(k : ℝ)| ^ (1 + |w.re|) := by
+  have hK : (k.natAbs : ℝ) = |(k : ℝ)| := by rw [Nat.cast_natAbs, Int.cast_abs]
+  have hK1 : (1 : ℝ) ≤ |(k : ℝ)| := by
+    rw [← hK]; exact_mod_cast Nat.one_le_iff_ne_zero.2 (Int.natAbs_ne_zero.2 hk)
+  have hK0 : (0 : ℝ) < |(k : ℝ)| := by linarith
+  refine (norm_sum_le _ _).trans ?_
+  have hterm : ∀ d ∈ k.natAbs.divisors,
+      ‖((|(k : ℝ)| / (d : ℝ) ^ 2 : ℝ) : ℂ) ^ w‖ ≤ |(k : ℝ)| ^ |w.re| := by
+    intro d hd
+    have hd1 : (1 : ℝ) ≤ d := by exact_mod_cast Nat.pos_of_mem_divisors hd
+    have hdk : (d : ℝ) ≤ |(k : ℝ)| := by
+      rw [← hK]; exact_mod_cast Nat.divisor_le hd
+    have ha : 0 < |(k : ℝ)| / (d : ℝ) ^ 2 := by positivity
+    rw [Complex.norm_cpow_eq_rpow_re_of_pos ha]
+    refine rpow_le_abs ha (div_le_self hK0.le (by nlinarith)) ?_ hK1 _
+    rw [inv_div, div_le_iff₀ hK0]
+    nlinarith
+  refine (Finset.sum_le_sum hterm).trans ?_
+  rw [Finset.sum_const, nsmul_eq_mul, Real.rpow_add hK0, Real.rpow_one]
+  refine mul_le_mul_of_nonneg_right ?_ (by positivity)
+  rw [← hK]
+  exact_mod_cast Nat.card_divisors_le_self _
+
+/-- **Exponential decay of the Fourier coefficients**: for `k ≠ 0`,
+`|∫_0^1 e^{−2πikx}E*(x + iy, s) dx| ≤ C|k|^N e^{−πy|k|}` with `C`, `N` depending only on `y` and `s`. -/
+theorem norm_fourierCoeff_Estar_le (s : ℂ) {k : ℤ} (hk : k ≠ 0) :
+    ‖∫ x in (0 : ℝ)..1, cexp (-(2 * π * Complex.I * k * x)) * Estar (pt x y hy) s‖ ≤
+      (√y * Eis.bkR (s - 1 / 2).re (2 * π * y / 2)) * |(k : ℝ)| ^ ⌈1 + |(s - 1 / 2).re|⌉₊ *
+        rexp (-(π * y) * |(k : ℝ)|) := by
+  have hK1 : (1 : ℝ) ≤ |(k : ℝ)| := by
+    have : (1 : ℝ) ≤ (k.natAbs : ℝ) := by exact_mod_cast Nat.one_le_iff_ne_zero.2 (Int.natAbs_ne_zero.2 hk)
+    rwa [Nat.cast_natAbs, Int.cast_abs] at this
+  rw [fourierCoeff_Estar_divisors hy hk s, norm_mul, norm_mul, norm_mul, Complex.norm_real,
+    Real.norm_of_nonneg (Real.sqrt_nonneg _), Complex.norm_ofNat]
+  have hB := (Eis.norm_besselK_le (s - 1 / 2) (2 * π * |(k : ℝ)| * y)).trans
+    (mul_le_mul_of_nonneg_left (Eis.bkR_le_exp (r := (s - 1 / 2).re) (x₀ := 2 * π * y)
+      (x := 2 * π * |(k : ℝ)| * y) (by positivity)
+      (by nlinarith [mul_le_mul_of_nonneg_left hK1 (by positivity : (0 : ℝ) ≤ 2 * π * y)])) (by norm_num))
+  have hS := (norm_divSum_le hk (s - 1 / 2)).trans
+    (Real.rpow_le_rpow_of_exponent_le hK1 (Nat.le_ceil (1 + |(s - 1 / 2).re|)))
+  rw [Real.rpow_natCast] at hS
+  have he : rexp (-(2 * π * |(k : ℝ)| * y / 2)) = rexp (-(π * y) * |(k : ℝ)|) := by ring_nf
+  rw [he] at hB
+  have h0 : 0 ≤ Eis.bkR (s - 1 / 2).re (2 * π * y / 2) := Eis.bkR_nonneg _ _
+  calc 2 * √y * ‖Eis.besselK (s - 1 / 2) (2 * π * |(k : ℝ)| * y)‖ *
+        ‖∑ d ∈ k.natAbs.divisors, ((|(k : ℝ)| / (d : ℝ) ^ 2 : ℝ) : ℂ) ^ (s - 1 / 2)‖
+      ≤ 2 * √y * (1 / 2 * (rexp (-(π * y) * |(k : ℝ)|) * Eis.bkR (s - 1 / 2).re (2 * π * y / 2))) *
+          |(k : ℝ)| ^ ⌈1 + |(s - 1 / 2).re|⌉₊ := by gcongr
+    _ = _ := by ring
+
+/-- **The Fourier coefficients of `E*` are summable** over `k ∈ ℤ`, for every `y > 0` and `s`. -/
+theorem summable_fourierCoeff_Estar (s : ℂ) :
+    Summable fun k : ℤ => ∫ x in (0 : ℝ)..1, cexp (-(2 * π * Complex.I * k * x)) * Estar (pt x y hy) s := by
+  set C := √y * Eis.bkR (s - 1 / 2).re (2 * π * y / 2)
+  set N := ⌈1 + |(s - 1 / 2).re|⌉₊
+  have hg : Summable fun k : ℤ => C * |(k : ℝ)| ^ N * rexp (-(π * y) * |(k : ℝ)|) := by
+    have h := (Real.summable_pow_mul_exp_neg_nat_mul N (show 0 < π * y by positivity)).mul_left C
+    refine Summable.of_nat_of_neg ?_ ?_
+    · refine h.congr fun n => ?_
+      simp only [Int.cast_natCast, Nat.abs_cast]
+      ring
+    · refine h.congr fun n => ?_
+      simp only [Int.cast_neg, Int.cast_natCast, abs_neg, Nat.abs_cast]
+      ring
+  refine hg.of_norm_bounded_eventually ?_
+  filter_upwards [eventually_cofinite_ne 0] with k hk
+  exact norm_fourierCoeff_Estar_le hy s hk
+
+/-- **The Fourier series of `E*`**: for `y > 0`, every `x` and every `s`,
+`E*(x + iy, s) = Σ_{k ∈ ℤ} a_k(y, s)e^{2πikx}` with `a_k(y, s) = ∫_0^1 e^{−2πiku}E*(u + iy, s) du`, from Mathlib's
+`has_pointwise_sum_fourier_series_of_summable`. -/
+theorem hasSum_fourier_Estar (s : ℂ) (x : ℝ) :
+    HasSum (fun k : ℤ => (∫ u in (0 : ℝ)..1, cexp (-(2 * π * Complex.I * k * u)) * Estar (pt u y hy) s) *
+      cexp (2 * π * Complex.I * k * x)) (Estar (pt x y hy) s) := by
+  have hs : Summable (fourierCoeff (EstarCircle hy s)) := by
+    rw [show fourierCoeff (EstarCircle hy s) = _ from funext (fourierCoeff_EstarCircle hy s)]
+    exact summable_fourierCoeff_Estar hy s
+  have h := has_pointwise_sum_fourier_series_of_summable hs (x : UnitAddCircle)
+  rw [EstarCircle_coe] at h
+  refine h.congr_fun fun k => ?_
+  rw [fourierCoeff_EstarCircle, fourier_coe_apply, smul_eq_mul, Complex.ofReal_one, div_one]
+
+lemma coeff_natAbs (s : ℂ) {k : ℤ} {n : ℕ} (hk : k.natAbs = n + 1) :
+    ∫ u in (0 : ℝ)..1, cexp (-(2 * π * Complex.I * k * u)) * Estar (pt u y hy) s =
+      2 * (√y : ℂ) * Eis.besselK (s - 1 / 2) (2 * π * ((n + 1 : ℕ) : ℝ) * y) *
+        ∑ d ∈ (n + 1).divisors, ((((n + 1 : ℕ) : ℝ) / (d : ℝ) ^ 2 : ℝ) : ℂ) ^ (s - 1 / 2) := by
+  have hk0 : k ≠ 0 := by rintro rfl; simp at hk
+  have e : |(k : ℝ)| = ((n + 1 : ℕ) : ℝ) := by rw [← hk, Nat.cast_natAbs, Int.cast_abs]
+  rw [fourierCoeff_Estar_divisors hy hk0 s, e, hk]
+
+/-- **The Fourier expansion of `E*` as a cosine series**, for every `s`:
+`E*(x + iy, s) − ∫_0^1 E*(u + iy, s) du = 4√y Σ_{n ≥ 1}(Σ_{d ∣ n}(n/d²)^{s−1/2})K_{s−1/2}(2πny)cos(2πnx)`. -/
+theorem hasSum_cos_Estar (s : ℂ) (x : ℝ) :
+    HasSum (fun n : ℕ => 4 * (√y : ℂ) * Eis.besselK (s - 1 / 2) (2 * π * ((n + 1 : ℕ) : ℝ) * y) *
+        (∑ d ∈ (n + 1).divisors, ((((n + 1 : ℕ) : ℝ) / (d : ℝ) ^ 2 : ℝ) : ℂ) ^ (s - 1 / 2)) *
+          Complex.cos (2 * π * ((n + 1 : ℕ) : ℂ) * x))
+      (Estar (pt x y hy) s - ∫ u in (0 : ℝ)..1, Estar (pt u y hy) s) := by
+  set f : ℤ → ℂ := fun k => (∫ u in (0 : ℝ)..1, cexp (-(2 * π * Complex.I * k * u)) * Estar (pt u y hy) s) *
+      cexp (2 * π * Complex.I * k * x)
+  have hf : HasSum f (Estar (pt x y hy) s) := hasSum_fourier_Estar hy s x
+  have h := (hasSum_nat_add_iff' 1).2 hf.nat_add_neg
+  have h0 : f 0 = ∫ u in (0 : ℝ)..1, Estar (pt u y hy) s := by simp [f]
+  rw [Finset.sum_range_one, Nat.cast_zero, neg_zero] at h
+  rw [show Estar (pt x y hy) s + f 0 - (f 0 + f 0) = Estar (pt x y hy) s - f 0 by ring, h0] at h
+  refine h.congr_fun fun n => ?_
+  simp only [f]
+  rw [coeff_natAbs hy s (k := ((n + 1 : ℕ) : ℤ)) (n := n) (Int.natAbs_natCast _),
+    coeff_natAbs hy s (k := -((n + 1 : ℕ) : ℤ)) (n := n) (by rw [Int.natAbs_neg, Int.natAbs_natCast]), ← mul_add]
+  have hc : cexp (2 * π * Complex.I * (((n + 1 : ℕ) : ℤ) : ℂ) * x) +
+      cexp (2 * π * Complex.I * ((-((n + 1 : ℕ) : ℤ) : ℤ) : ℂ) * x) =
+        2 * Complex.cos (2 * π * ((n + 1 : ℕ) : ℂ) * x) := by
+    rw [Complex.two_cos]
+    push_cast
+    ring_nf
+  rw [hc]
+  ring
+
+/-- **The Fourier expansion of `E*`**, for `s ≠ 0, ½, 1`:
+`E*(x + iy, s) = Λ(2s)y^s + Λ(2s − 1)y^{1−s} + 4√y Σ_{n ≥ 1}(Σ_{d ∣ n}(n/d²)^{s−1/2})K_{s−1/2}(2πny)cos(2πnx)`. -/
+theorem hasSum_fourier_Estar_explicit {s : ℂ} (h0 : s ≠ 0) (hh : s ≠ 1 / 2) (h1 : s ≠ 1) (x : ℝ) :
+    HasSum (fun n : ℕ => 4 * (√y : ℂ) * Eis.besselK (s - 1 / 2) (2 * π * ((n + 1 : ℕ) : ℝ) * y) *
+        (∑ d ∈ (n + 1).divisors, ((((n + 1 : ℕ) : ℝ) / (d : ℝ) ^ 2 : ℝ) : ℂ) ^ (s - 1 / 2)) *
+          Complex.cos (2 * π * ((n + 1 : ℕ) : ℂ) * x))
+      (Estar (pt x y hy) s - (completedRiemannZeta (2 * s) * (y : ℂ) ^ s +
+        completedRiemannZeta (2 * s - 1) * (y : ℂ) ^ (1 - s))) := by
+  rw [← constTerm_Estar_all hy h0 hh h1]
+  exact hasSum_cos_Estar hy s x
 
 end ModFourier

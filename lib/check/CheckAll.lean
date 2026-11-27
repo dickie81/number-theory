@@ -2020,6 +2020,13 @@ twin-form rates at `11/12`. -/
 #print axioms ModFourier.fourierCoeff_Estar
 #print axioms ModFourier.sum_D
 #print axioms ModFourier.fourierCoeff_Estar_divisors
+#print axioms ModFourier.Estar_periodic
+#print axioms ModFourier.continuous_Estar_x
+#print axioms ModFourier.norm_fourierCoeff_Estar_le
+#print axioms ModFourier.summable_fourierCoeff_Estar
+#print axioms ModFourier.hasSum_fourier_Estar
+#print axioms ModFourier.hasSum_cos_Estar
+#print axioms ModFourier.hasSum_fourier_Estar_explicit
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq
