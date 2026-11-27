@@ -6,7 +6,8 @@ import EllipticDivisor
 
 D1a′ of the D1 plan, concluded as far as it goes: the Gaussian pairing `be(X, Y) = ph(X ⊕ Y) − ph(X) − ph(Y)` of
 `CMFormalGroup` is biadditive up to `≃`, the translates `εT·G_q(z(T))` are integral units, and the explicit Gaussian
-`c·serAB` is biadditive; the uniqueness half of the classification `be ≃ c·serAB` is stated (`GaussClass`), not proved.
+`c·serAB` is biadditive; the uniqueness half of the classification `be ≃ c·serAB` is stated here (`GaussClass`) and
+proved for closed `k` in `CMFormalGauss`.
 
 **From the analytic to the formal.** `tay f = Σ ∂ⁿf(0)/n!·zⁿ` (`tay`) is additive, multiplicative and compatible
 with dilations on functions analytic at `0` (`tay_mul`, `tay_comp_mul`), and `tay(σ*/z) = exp(logSig)` (`tay_sigE`,
@@ -2604,12 +2605,13 @@ theorem isHerm_C_mul_serAB (c : ℂ_[ℓ]) : IsHerm (MvPowerSeries.C c * serAB �
   rw [e]
   exact Simeq.refl _
 
-/-- **The uniqueness half of the classification** (a statement, not proved here): over a subfield `k` of `ℂ_ℓ`
-with a Frobenius lift `φ`, every symmetric, hermitian series with coefficients in `k`, without constant term and
-biadditive up to `≃` on the height-2 Lubin–Tate group, is `≃ c·serAB` for some `c ∈ k` with `φ(c) = −c`,
-`‖c‖ ≤ 1` (symmetric biextension classes ↔ the Rosati-fixed part `ℤ_ℓ`; the hermitian condition kills
-`b·log_LT(X)log_LT(Y)`). `serAB_biadd`, `coeff_serAB_swap` and `isHerm_C_mul_serAB` show that every such `c·serAB`
-satisfies the hypotheses. -/
+/-- **The uniqueness half of the classification** (a statement): over a subfield `k` of `ℂ_ℓ` with a Frobenius
+lift `φ`, every symmetric, hermitian series with coefficients in `k`, without constant term and biadditive up to `≃`
+on the height-2 Lubin–Tate group, is `≃ c·serAB` for some `c ∈ k` with `φ(c) = −c`, `‖c‖ ≤ 1` (the hermitian
+condition kills `b·log_LT(X)log_LT(Y)`). `serAB_biadd`, `coeff_serAB_swap` and `isHerm_C_mul_serAB` show that every
+such `c·serAB` satisfies the hypotheses. It fails for some non-closed `k` (the constant `c` is an `ℓ`-adic limit);
+`CMFormalGauss.gaussClass_of_isClosed` proves it for closed `k` containing a Teichmüller `ζ` with `‖ζ − ζ^ℓ‖ = 1`,
+in particular for `unramC ℓ` (`gaussClass_unramC`). -/
 def GaussClass (k : Subfield ℂ_[ℓ]) (φ : k →+* k) : Prop :=
   (∀ x : k, ‖x‖ ≤ 1 → ‖φ x - x ^ ℓ‖ ≤ ‖(ℓ : k)‖) →
   ∀ B : MvPowerSeries (Fin 2) ℂ_[ℓ], (∀ n, MvPowerSeries.coeff n B ∈ k) → MvPowerSeries.constantCoeff B = 0 →
