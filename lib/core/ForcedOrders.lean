@@ -27,9 +27,10 @@ coordinates on `Φ`; the frontier passes `c = Setting.twA κ` (`[−1]_A` for od
 `Setting.τ`'s untwisted coordinates, in which the archive's orbits step by `hP_c(p) = c·[p]_A` at inert and signal `p`
 alike (`Setting.hPtw`, through `nP` and `pos`), and its `FRamD` pairs `(1, t)` with `(−1, c·t)`: read through the
 relabelling `(s, t) ↦ (s, t·c^{[s = −1]})` of `Φ` that matches the two CM types, these are the archive's `Fo`.
-`FTypeG` and the special branch of `FInert` sum over all of `Φ`, so need no twist. **Known mismatch:** the six-term
-`ASK` of (G↓), through `Setting.partner` (`ZetaBalance`; `ZetaGap`, "Coordinates"), keeps the untwisted coordinates,
-not the archive's `askP` for odd `χ`: a known gap of the same small size, left there.
+`FTypeG` and the special branch of `FInert` sum over all of `Φ`, so need no twist. The six-term `ASK` of (G↓),
+through `Setting.partner` (`ZetaBalance`; `ZetaGap`, "Coordinates"), keeps the untwisted coordinates; at odd `χ` it is
+still the gain's ask in the twisted ones, exactly, as the design puts the top data of the translate `t` at the place
+`(1, c·t)` (twisted tops: `SharpAdm`; `SharpDesign.askU_eq_askE`). No gap is left at odd `χ`.
 
 **Checks.** `0 ≤ lpF(ℓ, n, D) ≤ ℓ/(ℓ² − 1)·Σ D` for `ℓ > 1` and `D ≥ 0` (`lpF_nonneg_le`, the archive's
 `FactLpF`); `FTypeG ≤ 0` (`FTypeG_nonpos`); and `FInert ≥ 0` for nonnegative weights (`FInert_nonneg`).

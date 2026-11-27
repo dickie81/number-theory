@@ -5,8 +5,8 @@ import GainOrbit
 
 A step of the proof of the sharp frontier (`SharpInputs`, the piece `gain`; module M-G7b of the gain's numbers): the
 frontier's ask `Σ_t Σ_j ASK(a_t, t, w_{u,j})` as a finite sum over the prime powers, in the frontier's (untwisted)
-coordinates; its bridge to the gain's (twisted) coordinates of `GainOrbit` at an even `κ`; and the size of the gain at
-an admissible design, which the fallback of the colength reads.
+coordinates; its bridge to the gain's (twisted) coordinates of `GainOrbit`, exact at every `κ` (twisted tops); and the
+size of the gain at an admissible design, which the fallback of the colength reads.
 
 **Definitions.** The primes of the ask, `p ≤ 2X″` with `p ∤ N` and `p` not split (`Setting.askSupp`); the ask of a top
 at such a `p` in the frontier's coordinates, `Σ_{e ∈ gainExps} (a_t/p^e − w_j(ρ_t(p^e)))⁺` with the partner
@@ -24,10 +24,15 @@ the series is a sum over the prime powers `p^e`, `p ∈ askSupp`, `e ∈ gainExp
 At an admissible design every weight is in `[w″, 2b]` with `w″ ≥ x^{437} ≥ 1` and `a_t ≤ 2a = 2X″·w″` (`X″ = a/w″`),
 and the lifts `j < m` of the frontier are those of the ranks (`Dg.hm`).
 
-**The two coordinates** (`askU_eq_askE`). At an odd `e` and a non-split `p ∤ N`, `ρ_t(p^e) = pos_p(1, t; e)` at the
-twist `1` (`Setting.partner_pow_eq_pos`): `[p^e]_A = [p]_A^e` (`Setting.clsA_pow`), and
-`(−p^e/q) = (−1/q)(p/q)^e = −(p/q)` (`q ≡ 3 (mod 4)`) is `−1` at a signal `p` (`(p/q) = 1`) and `1` at an inert one,
-the sign of `pos_p` at odd steps. So at an even `κ` (`twA κ = 1`) the ask `askU` is the gain's `askE`.
+**The two coordinates** (`askU_eq_askE`, for every `κ`). At an odd `e` and a non-split `p ∤ N`,
+`ρ_t(p^e) = pos_p(1, t; e)` at the twist `1` (`Setting.partner_pow_eq_pos`): `[p^e]_A = [p]_A^e` (`Setting.clsA_pow`),
+and `(−p^e/q) = (−1/q)(p/q)^e = −(p/q)` (`q ≡ 3 (mod 4)`) is `−1` at a signal `p` (`(p/q) = 1`) and `1` at an inert
+one, the sign of `pos_p` at odd steps. At the twist `c = twA κ` (`c² = 1`) the orbit of the place `(1, c·t)` meets the
+same partners, `pos_c(1, c·t; e) = ρ_t(p^e)`, as `c·t·(c[p])^e = c^{e+1}[p]^e t` (`Setting.pos_twistTop`). The design
+puts the top data of `t` at `(1, c·t)` (twisted tops, `SharpAdm`), and the gain reads the weights there
+(`GainExponents.wt`: `w_j(z) = e_J(z.1, c·z.2)`), so its weight at `pos_c(1, t; e)` is the frontier's at `ρ_t(p^e)`
+(`wt_orbit`) and the frontier's ask `askU` is the gain's `askE`, exactly. Sums of the weights over a sign-defined set
+of places are the same in both readings (`sum_wt_filter`).
 
 **The size of the gain** (`gain_le_of_adm`, `fallback_le`): `0 ≤ G_j(p) ≤ 4|TT|·a/p` at an admissible design, and so
 `Σ_{p ∈ P} 2 log p·Σ_j G_j(p) ≤ 8m|TT|·a·Σ_{p ∈ P} log p/p`. The hypotheses of `gain_le` hold there: the shift
@@ -39,8 +44,8 @@ caps `w̃_j + c₀ ≥ w″ − κ_j` are nonnegative, and so are the penalties 
 * The statements are the spec's. The generic identity `Setting.ASK_eq_sum` (any `a ≤ 2a`, any `W ≥ 1` with
   `a ≤ 2X″·W`) is stated apart from the design, and `Setting.inertPrimes_subset_askSupp` (Step A of the losses) is
   added.
-* Only the even case of the bridge is proved (`twA κ = 1`). For an odd `κ` the sign of `pos_p` is the same, and the
-  `A`-coordinate of `pos_p(1, t; e)` is `[−1]_A` times that of `ρ_t(p^e)`; that case is left to its own module.
+* The bridge holds for every `κ`, odd ones included, with no analytic input: the odd case is closed by the twisted
+  tops (`SharpAdm`), not by comparing two classes of primes.
 -/
 
 open Finset
@@ -254,6 +259,19 @@ theorem partner_pow_eq_pos {p : ℕ} (hp : p.Prime) (hN : ¬ p ∣ S.N) (hcls : 
   · show S.clsA (p ^ e) * t = t * S.hPtw 1 p ^ e
     rw [hPtw, one_mul, hP, frob, S.clsA_pow hunit, mul_comm]
 
+/-- **The twisted top's orbit meets the frontier's partners**: for `c² = 1`, an odd `e` and a non-split `p ∤ N`,
+`pos_c(1, c·t; e) = ρ_t(p^e)`, as `c·t·(c[p])^e = c^{e+1}[p]^e t = [p]^e t` (`partner_pow_eq_pos`). -/
+theorem pos_twistTop {c : S.A} (hc : c * c = 1) {p : ℕ} (hp : p.Prime) (hN : ¬ p ∣ S.N)
+    (hcls : S.cls p ≠ .split) (t : S.A) {e : ℕ} (he : Odd e) :
+    S.pos c p (1, c * t) e = S.partner t (p ^ e) := by
+  rw [S.partner_pow_eq_pos hp hN hcls t he]
+  obtain ⟨i, rfl⟩ := he
+  have hc2 : c ^ (2 * i + 1) = c := by rw [pow_succ, pow_mul, sq, hc, one_pow, one_mul]
+  unfold pos hPtw
+  refine Prod.ext rfl ?_
+  simp only [mul_pow, hc2, one_mul]
+  rw [mul_mul_mul_comm, hc, one_mul]
+
 end Setting
 
 namespace SharpDesign
@@ -263,14 +281,16 @@ variable {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ} (Dg : SharpDesign S 
 /-! ## The ask in the frontier's coordinates -/
 
 /-- **The ask of a top at `p`**, in the frontier's (untwisted) coordinates: `Σ_{e ∈ gainExps} (a_t/p^e −
-w_j(ρ_t(p^e)))⁺`, with the partner `ρ_t(n) = ((−n/q), [n]_A·t)` of `Setting.partner`. -/
+w_j(ρ_t(p^e)))⁺`, with the partner `ρ_t(n) = ((−n/q), [n]_A·t)` of `Setting.partner` and the frontier's weights
+`w_{u,j} = e_j` of `hc u` (`Setting.Ranks.wj`). -/
 def askU (u : S.A) (J : Fin Dg.R.m) (p : ℕ) (t : S.A) : ℝ :=
-  ∑ e ∈ gainExps x ε p, max (Dg.a t / (p : ℝ) ^ e - Dg.wt u J (S.partner t (p ^ e))) 0
+  ∑ e ∈ gainExps x ε p, max (Dg.a t / (p : ℝ) ^ e - Dg.R.wj (Dg.hc u) J (S.partner t (p ^ e))) 0
 
-/-- **The ask at `d`**: every `e ≥ 1` with `d^e ≤ 2a`, and beyond, up to `log_d⌈2a⌉ + 1`. -/
+/-- **The ask at `d`**: every `e ≥ 1` with `d^e ≤ 2a`, and beyond, up to `log_d⌈2a⌉ + 1`, with the frontier's
+weights. -/
 def askAtD (u : S.A) (J : Fin Dg.R.m) (t : S.A) : ℝ :=
   ∑ e ∈ Icc 1 (Nat.log S.d ⌈2 * scA x ε⌉₊ + 1),
-    max (Dg.a t / (S.d : ℝ) ^ e - Dg.wt u J (S.partner t (S.d ^ e))) 0
+    max (Dg.a t / (S.d : ℝ) ^ e - Dg.R.wj (Dg.hc u) J (S.partner t (S.d ^ e))) 0
 
 variable {Dg}
 
@@ -316,24 +336,46 @@ theorem ask_eq_sum (hA : Dg.Adm) {pr : DesignPar S} (hF : Dg.FamAt pr) (u : S.A)
   refine sum_congr rfl fun t ht => ?_
   rw [← (finCongr Dg.hm).sum_comp]
   refine sum_congr rfl fun j _ => ?_
-  have hwj : Dg.w u j = Dg.wt u (Fin.cast Dg.hm j) := funext fun ρ => Dg.hw u j ρ
+  have hwj : Dg.w u j = fun ρ => (Dg.R.wj (Dg.hc u) (Fin.cast Dg.hm j) ρ : ℝ) := funext fun ρ => Dg.hw u j ρ
   have hX0 : 0 ≤ S.cutX x ε := by unfold Setting.cutX; have := hA.big.pos; positivity
-  rw [hwj, S.ASK_eq_sum (W := Dg.wt u (Fin.cast Dg.hm j)) t (hA.a_le_two hF ht)
+  rw [hwj, S.ASK_eq_sum (W := fun ρ => (Dg.R.wj (Dg.hc u) (Fin.cast Dg.hm j) ρ : ℝ)) t (hA.a_le_two hF ht)
     (fun ρ => hw1.trans (hA.e_mem u ρ _).1) fun ρ => ?_]
   · simp only [askU, askAtD, mul_sum, finCongr_apply]
   · have h1 := (hA.e_mem u ρ (Fin.cast Dg.hm j)).1
     have h2 := hA.a_le_two hF ht
-    have : 2 * S.cutX x ε * scW'' S x ε ≤ 2 * S.cutX x ε * Dg.wt u (Fin.cast Dg.hm j) ρ :=
+    have : 2 * S.cutX x ε * scW'' S x ε ≤ 2 * S.cutX x ε * (Dg.R.wj (Dg.hc u) (Fin.cast Dg.hm j) ρ : ℝ) :=
       mul_le_mul_of_nonneg_left h1 (by linarith)
     linarith
 
-/-- **The two coordinates agree at an even `κ`**: with `twA κ = 1`, `askU = askE` at every non-split `p ∤ N`, as
-`ρ_t(p^e) = pos_p(1, t; e)` at the odd `e` of `gainExps` (`Setting.partner_pow_eq_pos`). -/
-theorem askU_eq_askE (hχ : S.twA κ = 1) (u : S.A) (J : Fin Dg.R.m) {p : ℕ} (hp : p.Prime) (hN : ¬ p ∣ S.N)
+/-- **The gain's weight on the orbit of a top is the frontier's weight at the partner**: at an odd `e` and a
+non-split `p ∤ N`, `w_j(pos_c(1, t; e))` reads `hc u` at `(z.1, c·z.2)` for `z = pos_c(1, t; e)`, which is
+`pos_c(1, c·t; e) = ρ_t(p^e)` (`Setting.pos_twistTop`, `c² = 1`). -/
+theorem wt_orbit (u : S.A) (J : Fin Dg.R.m) {p : ℕ} (hp : p.Prime) (hN : ¬ p ∣ S.N) (hcls : S.cls p ≠ .split)
+    (t : S.A) {e : ℕ} (he : Odd e) :
+    Dg.wt u J (S.pos (S.twA κ) p (1, t) e) = Dg.R.wj (Dg.hc u) J (S.partner t (p ^ e)) := by
+  rw [← S.pos_twistTop (S.twA_mul_self κ) hp hN hcls t he]
+  unfold wt Setting.pos
+  simp only [mul_assoc]
+
+/-- **The two coordinates agree, at every `κ`**: `askU = askE` at every non-split `p ∤ N`, as the gain's weight at
+`pos_c(1, t; e)` is the frontier's at `ρ_t(p^e)` for the odd `e` of `gainExps` (`wt_orbit`; twisted tops). -/
+theorem askU_eq_askE (u : S.A) (J : Fin Dg.R.m) {p : ℕ} (hp : p.Prime) (hN : ¬ p ∣ S.N)
     (hcls : S.cls p ≠ .split) (t : S.A) : Dg.askU u J p t = Dg.askE u J p t := by
   unfold askU askE
   refine sum_congr rfl fun e he => ?_
-  rw [hχ, S.partner_pow_eq_pos hp hN hcls t (odd_of_mem_gainExps he)]
+  rw [Dg.wt_orbit u J hp hN hcls t (odd_of_mem_gainExps he)]
+
+/-- **Sums of the gain's weights over a sign-defined set of places are the frontier's**: `z ↦ (z.1, c·z.2)` is a
+bijection of each such set (`c² = 1`), so `Σ_{z.1 ∈ P} g(w_j(z)) = Σ_{z.1 ∈ P} g(e_J(z))` (as for `Σ_ρ w`, `Φ_p⁻`). -/
+theorem sum_wt_filter (u : S.A) (J : Fin Dg.R.m) (P : ℤˣ → Prop) [DecidablePred P] (g : ℝ → ℝ) :
+    ∑ z ∈ (univ : Finset (Φ S.A)).filter (fun z => P z.1), g (Dg.wt u J z) =
+      ∑ z ∈ (univ : Finset (Φ S.A)).filter (fun z => P z.1), g (Dg.R.wj (Dg.hc u) J z) := by
+  refine sum_nbij' (fun z => (z.1, S.twA κ * z.2)) (fun z => (z.1, S.twA κ * z.2)) ?_ ?_ ?_ ?_ ?_
+  · intro z hz; simpa using hz
+  · intro z hz; simpa using hz
+  · intro z _; simp [S.twA_mul_twA_mul κ]
+  · intro z _; simp [S.twA_mul_twA_mul κ]
+  · intro z _; rfl
 
 open scoped Classical in
 /-- **The size of the gain at an admissible design**: `0 ≤ G_j(p) ≤ 4|TT|·a/p` (`gain_le`): the caps
@@ -348,7 +390,7 @@ theorem gain_le_of_adm (hA : Dg.Adm) {pr : DesignPar S} (hF : Dg.FamAt pr) (u : 
   have hc0 := Dg.c0_nonneg
   refine Dg.gain_le hA.one_le_x pr u J p (fun z => ?_) (fun t₀ _ => ?_) fun s hs =>
     ⟨by linarith [hA.two_c0_le_a hF hs], hA.a_le_two hF hs⟩
-  · have : scW'' S x ε ≤ Dg.wt u J z := (hA.e_mem u z J).1
+  · have : scW'' S x ε ≤ Dg.wt u J z := (hA.e_mem u (z.1, S.twA κ * z.2) J).1
     unfold wsh
     linarith
   · have hb' := hA.big.b'_ge

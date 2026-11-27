@@ -12,13 +12,14 @@ the pair (`pairSetting`, with `κ = pairChar` lifting `χ`) at a level `e` with 
 
 **The builder** (`buildDesign`, `buildDesign_adm`). From the setting-level clauses (`Setting.DesignAdm`), tops `TT`,
 parameters (`DesignPar`) and split primes meeting `BuildOk`: the design with the ranks `designRanks`, the families
-`designFam` with weights `w_{u,j} = e_j`, the scales `a_t`, the thick set `{a₀^s : s ∈ T}` and
+`designFam` with weights `w_{u,j} = e_j` and twisted tops (the data `(a_t, b_t)` of the translate `t` at the place
+`(1, c·t)`, `c = twA κ`: `SharpAdm`, "Why twisted tops"), the scales `a_t`, the thick set `{a₀^s : s ∈ T}` and
 `δ = 2mH + 1 + b/(kx^{13})`. Its `Weights` fields: `thick_near` from the windows of `DesignHC` and
 `a_t/x ∈ [b, b + b/(kx^{13})]`; `thick_small` and `thin_far` from the sizes of `SharpAdm`, with
-`X = (Nx)^{log x} ≤ X′/3` (`X_le`); `thick_card` as `s ↦ a₀^s` is injective on `T`; `shares` from exact coset counts
-(`shares_of_counts`). Every clause of `Adm` is then a hypothesis, a definition or a lemma (`counts_archive`,
-`margin`). The builder takes `TT`, the scales and the top shifts as inputs, so the Stage-2 random choices change only
-its inputs.
+`X = (Nx)^{log x} ≤ X′/3` (`X_le`; a top, at `(1, c·t)`, is thin to `Weights`); `thick_card` as `s ↦ a₀^s` is injective
+on `T`; `shares` from exact coset counts (`shares_of_counts`). Every clause of `Adm` is then a hypothesis, a definition
+or a lemma (`counts_archive`, `margin`). The builder takes `TT`, the scales and the top shifts as inputs, so the Stage-2
+random choices change only its inputs.
 
 **The inputs** (`exists_design`): tops with exact coset counts and `M = ⌈δ₁|A|/(3o + 1)⌉` (`exists_tops`,
 `exists_TT_counts`); a generator of the cyclic `A₀` and a relation-free `T` of Behrend type, dense by Behrend's
@@ -83,9 +84,11 @@ structure BuildOk (hS : S.DesignAdm κ x ε) (TT : Finset S.A) (pr : DesignPar S
   sstar_mem : pr.sstar ∈ pr.T
   /-- `σ(u) < w_E`. -/
   σ_lt : ∀ u, pr.σ u < Units.torsionOrder S.E
-  /-- The root-of-unity condition for the families. -/
-  ru : ∀ hyp : DesignHyp S x ε hS.R TT pr.aZ pr.bT, ∀ u j (ζ : S.E), (∃ n, 0 < n ∧ ζ ^ n = 1) →
-    ∏ ρ, (S.τ ρ ζ) ^ ((designFam S x ε hS.R TT pr.T2 pr.aZ pr.bT (designStar pr.a₀ pr.sstar) pr.σ hyp u ρ).e j) = 1
+  /-- The root-of-unity condition for the families (twisted tops: the data of `t` at `(1, c·t)`, `c = twA κ`). -/
+  ru : ∀ hyp : DesignHyp S x ε hS.R (TT.image (S.twA κ * ·)) (pr.aZ ∘ (S.twA κ * ·)) (pr.bT ∘ (S.twA κ * ·)),
+    ∀ u j (ζ : S.E), (∃ n, 0 < n ∧ ζ ^ n = 1) →
+      ∏ ρ, (S.τ ρ ζ) ^ ((designFam S x ε hS.R (TT.image (S.twA κ * ·)) pr.T2 (pr.aZ ∘ (S.twA κ * ·))
+        (pr.bT ∘ (S.twA κ * ·)) (designStar pr.a₀ pr.sstar) pr.σ hyp u ρ).e j) = 1
   /-- `g₀` is prime. -/
   g₀_prime : g₀.Prime
   /-- `g₁` is prime. -/
@@ -177,24 +180,33 @@ namespace BuildOk
 variable {hS : S.DesignAdm κ x ε} {TT : Finset S.A} {pr : DesignPar S} {g₀ g₁ : ℕ} (hI : BuildOk hS TT pr g₀ g₁)
 include hI
 
-/-- The inequalities of the builder's families. -/
-theorem hyp : DesignHyp S x ε hS.R TT pr.aZ pr.bT :=
-  hS.buildHyp (fun t ht => (hI.a_mem t ht).1) (fun t ht => (hI.bT_mem t ht).1)
+/-- The inequalities of the builder's families, with twisted tops: the tops `c·TT` carry `a_{c·y}`, `b_{c·y}`. -/
+theorem hyp : DesignHyp S x ε hS.R (TT.image (S.twA κ * ·)) (pr.aZ ∘ (S.twA κ * ·)) (pr.bT ∘ (S.twA κ * ·)) :=
+  hS.buildHyp (fun _ hy => (hI.a_mem _ (S.twA_mul_mem_of_mem_image κ hy)).1)
+    (fun _ hy => (hI.bT_mem _ (S.twA_mul_mem_of_mem_image κ hy)).1)
 
-/-- **The builder's families**: `designFam` at the parameters. -/
+/-- **The builder's families**: `designFam` at the parameters, with **twisted tops**: the top data `(a_t, b_t)` of
+the translate `t` sits at the place `(1, c·t)`, `c = twA κ`. -/
 noncomputable abbrev fam : S.A → hS.R.HCFamily :=
-  designFam S x ε hS.R TT pr.T2 pr.aZ pr.bT (designStar pr.a₀ pr.sstar) pr.σ hI.hyp
+  designFam S x ε hS.R (TT.image (S.twA κ * ·)) pr.T2 (pr.aZ ∘ (S.twA κ * ·)) (pr.bT ∘ (S.twA κ * ·))
+    (designStar pr.a₀ pr.sstar) pr.σ hI.hyp
 
 /-- `b′ ≤ b_t ≤ 2b′`. -/
 theorem bT_le : ∀ t ∈ TT, scB' x ε ≤ pr.bT t ∧ (pr.bT t : ℝ) ≤ 2 * scB' x ε := fun t ht =>
   ⟨(hI.bT_mem t ht).1, hS.big.le_two_mul_scB' (hI.bT_mem t ht).2⟩
+
+/-- `b′ ≤ b_{c·y} ≤ 2b′` at the twisted tops `y ∈ c·TT`. -/
+theorem bT_le_tw : ∀ y ∈ TT.image (S.twA κ * ·), scB' x ε ≤ pr.bT (S.twA κ * y) ∧
+    (pr.bT (S.twA κ * y) : ℝ) ≤ 2 * scB' x ε := fun _ hy =>
+  hI.bT_le _ (S.twA_mul_mem_of_mem_image κ hy)
 
 /-- **`Weights.thick_near`**: a thick weight lies in `[b, b + 2mH + 1]` (`hcFam_windows`) and
 `a_t/x ∈ [b, b + b/(kx^{13})]`. -/
 theorem thick_near {t : S.A} (ht : t ∈ TT) (u : S.A) (j : Fin hS.R.m) {s : S.A} (hs : s ∈ pr.T2) :
     |((hI.fam u (-1, s * u)).e j : ℝ) - (pr.aZ t : ℝ) / x| ≤
       hS.R.m * (2 * designH S x) + 1 + scB x ε / (hS.R.k * x ^ 13) := by
-  have hpk : placeKind TT pr.T2 u (-1, s * u) = .thick := placeKind_eq_thick.2 (Finset.mem_image_of_mem _ hs)
+  have hpk : placeKind (TT.image (S.twA κ * ·)) pr.T2 u (-1, s * u) = .thick :=
+    placeKind_eq_thick.2 (Finset.mem_image_of_mem _ hs)
   have hσH : ∀ u, pr.σ u ≤ designH S x := fun u => by
     have h1 : (pr.σ u : ℝ) < designH S x := lt_of_lt_of_le (by exact_mod_cast hI.σ_lt u) hS.designH_mem.1
     exact_mod_cast h1.le
@@ -267,7 +279,7 @@ thin place `w ≤ 2w″` and `a/(2w″) = x|A|X′/2` (`e_window`, `X_le`). -/
 theorem thin_far {t : S.A} (ht : t ∈ TT) (u : S.A) (j : Fin hS.R.m) {ρ : Φ S.A} (hρ : ρ ∉ S.thickSet pr.T2 u) :
     ((S.N : ℝ) * x) ^ Real.log x ≤ (pr.aZ t : ℝ) / (hI.fam u ρ).e j := by
   obtain ⟨wt, wn, wl, -⟩ := hS.e_window (T2 := pr.T2) (ρstar := designStar pr.a₀ pr.sstar) hS.big.designM_le
-    hI.σ_lt hI.bT_le hI.hyp u ρ j
+    hI.σ_lt hI.bT_le_tw hI.hyp u ρ j
   have hx0 := hS.big.pos
   have hw0 : 0 < scW'' S x ε := scW''_pos S ε hx0
   have he0 : (0 : ℝ) < (hI.fam u ρ).e j := lt_of_lt_of_le hw0 wl
@@ -276,7 +288,7 @@ theorem thin_far {t : S.A} (ht : t ∈ TT) (u : S.A) (j : Fin hS.R.m) {ρ : Φ S
   have hb0 := scB'_pos ε hx0
   suffices h : scX' x ε / 3 ≤ scA x ε / (hI.fam u ρ).e j from
     hS.X_le.trans (h.trans (div_le_div_of_nonneg_right (hI.a_mem t ht).1 he0.le))
-  rcases hpk : placeKind TT pr.T2 u ρ
+  rcases hpk : placeKind (TT.image (S.twA κ * ·)) pr.T2 u ρ
   · have e : scA x ε / (3 * scB' x ε) = scX' x ε / 3 := by
       unfold scB'
       field_simp
@@ -630,9 +642,11 @@ theorem exists_design [IsCyclic κ.ker]
     have h4 : scB' x ε * x⁻¹ ≤ scB' x ε * x ^ (-(1 / 4 : ℝ)) :=
       mul_le_mul_of_nonneg_left h1 (scB'_pos ε hx0).le
     exact ⟨Int.le_ceil _, by linarith [Int.ceil_lt_add_one (scB' x ε)]⟩
-  have hyp := hS.buildHyp (fun t ht => (ha t ht).1) (fun t ht => (hb t ht).1)
-  have hstar : ∀ u, placeKind TT (T.image (a₀ ^ ·)) u (designStar a₀ sstar u) = .thick := fun u =>
-    placeKind_eq_thick.2 (Finset.mem_image.2 ⟨a₀ ^ sstar, Finset.mem_image_of_mem _ hs, rfl⟩)
+  have hyp := hS.buildHyp (TT := TT.image (S.twA κ * ·)) (aZ := (fun _ => ⌈scA x ε⌉) ∘ (S.twA κ * ·))
+    (bT := (fun _ => ⌈scB' x ε⌉) ∘ (S.twA κ * ·)) (fun _ hy => (ha _ (S.twA_mul_mem_of_mem_image κ hy)).1)
+    (fun _ hy => (hb _ (S.twA_mul_mem_of_mem_image κ hy)).1)
+  have hstar : ∀ u, placeKind (TT.image (S.twA κ * ·)) (T.image (a₀ ^ ·)) u (designStar a₀ sstar u) = .thick :=
+    fun u => placeKind_eq_thick.2 (Finset.mem_image.2 ⟨a₀ ^ sstar, Finset.mem_image_of_mem _ hs, rfl⟩)
   obtain ⟨σ, hσ, hru⟩ := exists_shift_RU hyp hstar (dvd_mul_right _ _)
   obtain ⟨g₀, g₁, hg₀, hg₁, hne, hsplit, hexc⟩ := hg
   let pr : DesignPar S := ⟨fun _ => ⌈scA x ε⌉, fun _ => ⌈scB' x ε⌉, a₀, T, sstar, σ⟩

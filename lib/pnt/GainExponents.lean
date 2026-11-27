@@ -14,10 +14,12 @@ generate `𝔞⁺`, `𝔞⁻` in the construction (the gain spec, C1). The bookk
 frontier's `ASK` and `Fo` (M-G7), and the local theorems that realise them, read the definitions here.
 
 **Orbit data** (`DesignOrbits`). At an inert or signal `p` with the twist `c = twA κ` the step is `σ_p = orbitStep c p`;
-the orbits that carry tops are those of the base points `basePoint σ_p (TT)` (`basePts`), with tops `topsOn p t₀`; a
-top is V-type at an even position (`IsVType`), its partner at step `e` is `pos_p(1, s; e)`, and a collision is
-`Setting.Collides`. The weights are `w_j(z) = e_J(z)` of `hc u` (`wt`, lift `j = J + 1`), shifted
-`w̃_j(z) = w_j(z) − (k + (2j − 1)(t + 1))/2` (`wsh`); `c₀ = 16kΔ` (`c0`), `S_c = 4kΔ` (`cloud`) and `η = 2mH` (`eta`).
+the orbits that carry tops are those of the base points `basePoint σ_p (TT)` (`basePts`), with tops `topsOn p t₀`; a top
+is V-type at an even position (`IsVType`), its partner at step `e` is `pos_p(1, s; e)`, and a collision is
+`Setting.Collides`. All of this is in the translates' coordinates, where the top of `t ∈ TT` is `(1, t)`; the design
+puts that top at `(1, c·t)` (twisted tops, `SharpAdm`), so the weights are `w_j(z) = e_J(z.1, c·z.2)` of `hc u` (`wt`,
+lift `j = J + 1`), shifted `w̃_j(z) = w_j(z) − (k + (2j − 1)(t + 1))/2` (`wsh`); `c₀ = 16kΔ` (`c0`), `S_c = 4kΔ`
+(`cloud`) and `η = 2mH` (`eta`).
 
 **Per orbit** (the gain spec, §2.5): `ā_s = a_s − 2c₀` (`abar`), `cap_{s,e} = w̃_j(partner(s, e)) + c₀` (`cap`),
 `γ_p = p/(p² − 1)` (`gamP`), the slack (`sl`), the trivial gain `g^{tr}` (`gTr`), the served gain `g^{sv}` (`gSv`), the
@@ -80,8 +82,8 @@ with their elements of `O_E` (`elt`) and their `log N_{F/ℚ}` (`logN`: `2 log p
   spec's `FRamD(J) + …` at `d` is read as the archive's per-place form, whose forced part is kept on the `F` side here:
   then the `d`-summand of `Fo` is carried exactly (§2.3) and the divisibility asked at `√−d` is the weakest that does.
 * `F^+(p)` (`Fplus`) is the forced order's part over the plus-sign places (`z.1 = 1`, whose orbits stay there) at inert
-  `p`, and `0` at signal `p`, where every place has the minus sign (`Φ_p⁻ = Φ`). A top is a place `(1, t)`, `t ∈ TT`,
-  so `Φ_p⁻` holds no top at inert `p`.
+  `p`, and `0` at signal `p`, where every place has the minus sign (`Φ_p⁻ = Φ`). A top has the sign `1` (it is
+  `(1, t)`, `t ∈ TT`, here and `(1, c·t)` in the design), so `Φ_p⁻` holds no top at inert `p`.
 * `π̄_i = π_{g_i}` (`normPi` at the modulus `N`): the conjugate of `conj π_{g_i}`, over which the level places `SG`
   lie (`sharpSG`). `π_T = conj(tz)` for the translate's auxiliary prime (`sharpTz`): its places are the cut places `ST`
   (`sharpST`). One word per translate, as in the construction.
@@ -194,8 +196,11 @@ def cloud : ℝ := 4 * Dg.R.k * designΔ x
 /-- `η = 2mH`, the spread of the families' weights. -/
 def eta : ℝ := 2 * Dg.R.m * designH S x
 
-/-- **The weight** `w_j(z) = e_J(z)` of `hc u` at the lift `j = J + 1`. -/
-def wt (u : S.A) (J : Fin Dg.R.m) (z : Φ S.A) : ℝ := Dg.R.wj (Dg.hc u) J z
+/-- **The weight** `w_j(z) = e_J(z)` of `hc u` at the lift `j = J + 1`, read at `(z.1, c·z.2)`, `c = twA κ`: the
+gain works in the translates' coordinates, where the top of the translate `t` is `(1, t)`, and the design puts it at
+the place `(1, c·t)` (twisted tops, `SharpAdm`). As `c` commutes with the orbit step, the orbit of `(1, c·t)` is `c`
+times that of `(1, t)`, so the orbits, tops, collisions and served sets are unchanged. -/
+def wt (u : S.A) (J : Fin Dg.R.m) (z : Φ S.A) : ℝ := Dg.R.wj (Dg.hc u) J (z.1, S.twA κ * z.2)
 
 /-- **The shifted weight** `w̃_j(z) = w_j(z) − (k + (2j − 1)(t + 1))/2`, `j = J + 1`. -/
 def wsh (u : S.A) (J : Fin Dg.R.m) (z : Φ S.A) : ℝ :=
@@ -617,14 +622,17 @@ theorem cloud_nonneg : 0 ≤ Dg.cloud := by unfold cloud; positivity
 theorem eta_nonneg : 0 ≤ Dg.eta := by unfold eta; positivity
 
 /-- **The weights are positive** (`Weights.w_pos`, through `w_{u,j} = e_j`). -/
-theorem wt_pos (u : S.A) (J : Fin Dg.R.m) (z : Φ S.A) : 0 < Dg.wt u J z := by
+theorem wj_pos (u : S.A) (J : Fin Dg.R.m) (z : Φ S.A) : (0 : ℝ) < Dg.R.wj (Dg.hc u) J z := by
   have h := Dg.w_pos u (Fin.cast Dg.hm.symm J) z
   rw [Dg.hw u (Fin.cast Dg.hm.symm J) z] at h
-  simpa [wt] using h
+  simpa using h
+
+/-- **The gain's weights are positive.** -/
+theorem wt_pos (u : S.A) (J : Fin Dg.R.m) (z : Φ S.A) : 0 < Dg.wt u J z := Dg.wj_pos u J _
 
 /-- **The weights are nonnegative integers.** -/
 theorem wj_nonneg (u : S.A) (J : Fin Dg.R.m) (z : Φ S.A) : 0 ≤ Dg.R.wj (Dg.hc u) J z :=
-  (Int.cast_pos.1 (Dg.wt_pos u J z)).le
+  (Int.cast_pos.1 (Dg.wj_pos u J z)).le
 
 /-- `N_m ≥ 1`. -/
 theorem one_le_N : 1 ≤ Dg.R.N Dg.R.m :=

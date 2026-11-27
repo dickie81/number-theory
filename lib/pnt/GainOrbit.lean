@@ -47,7 +47,8 @@ served orbits obey `orbit_ineq`, their depths make up `τ_p − e_p`, and the un
 
 **The design's facts used** (`SharpDesign.Adm.*`, from `Adm` and `FamAt`): `c₀ ≤ x^{437} ≤ w″ ≤ w` (`c0_le`,
 `c0_le_wt`), `2c₀ ≤ a_t ≤ a(1 + 1/x) ≤ 2a` at the tops (`two_c0_le_a`, `a_le`, `a_le_two`), the top window
-`b_y + b′/x ≤ w_j(1, y) ≤ b_y + b′/x + η` (`top_window`, from `hcFam_windows`), and `m ≥ 1` (`one_le_m`).
+`b_y + b′/x ≤ w_j(1, y) ≤ b_y + b′/x + η` (`top_window`, from `hcFam_windows` at the design's top `(1, c·y)`: the
+gain's `w_j(z)` reads `hc u` at `(z.1, c·z.2)`, `GainExponents.wt`), and `m ≥ 1` (`one_le_m`).
 
 **Orbits** (in any finite abelian group): base points are fixed (`basePoint_basePoint`), `basePoint(t)·σ^i` sits at
 the position `i` for `i < ord σ` (`orbitPos_basePoint_mul`), going back `d ≤ ord σ` positions and forward `d` returns
@@ -249,7 +250,7 @@ theorem c0_le : Dg.c0 ≤ x ^ 437 := by
 
 /-- **Every weight is at least `c₀`**: `w ≥ w″ ≥ x^{437} ≥ c₀`. -/
 theorem c0_le_wt (u : S.A) (J : Fin Dg.R.m) (z : Φ S.A) : Dg.c0 ≤ Dg.wt u J z :=
-  hA.c0_le.trans (hA.toDesignAdm.w''_ge.trans (hA.e_mem u z J).1)
+  hA.c0_le.trans (hA.toDesignAdm.w''_ge.trans (hA.e_mem u (z.1, S.twA κ * z.2) J).1)
 
 /-- **`2c₀ ≤ a_t`** at a top: `a_t ≥ a = x·b ≥ x^{850}`. -/
 theorem two_c0_le_a {pr : DesignPar S} (hF : Dg.FamAt pr) {t : S.A} (ht : t ∈ Dg.TT) :
@@ -289,7 +290,8 @@ theorem a_le_two {pr : DesignPar S} (hF : Dg.FamAt pr) {t : S.A} (ht : t ∈ Dg.
   have : scA x ε / x ≤ scA x ε := div_le_self ha (by linarith)
   linarith [hA.a_le hF ht]
 
-/-- **The top window**: `b_y + b′/x ≤ w_j(1, y) ≤ b_y + b′/x + η` at a top `y` (`hcFam_windows`). -/
+/-- **The top window**: `b_y + b′/x ≤ w_j(1, y) ≤ b_y + b′/x + η` at a top `y` (`hcFam_windows`): `w_j(1, y)` is the
+weight of `hc u` at the design's top `(1, c·y)`, which carries `b_{c·(c·y)} = b_y` (twisted tops). -/
 theorem top_window {pr : DesignPar S} (hF : Dg.FamAt pr) (u : S.A) (J : Fin Dg.R.m) {y : S.A}
     (hy : y ∈ Dg.TT) :
     (pr.bT y : ℝ) + scB' x ε / x ≤ Dg.wt u J (1, y) ∧ Dg.wt u J (1, y) ≤ pr.bT y + scB' x ε / x + Dg.eta := by
@@ -298,8 +300,9 @@ theorem top_window {pr : DesignPar S} (hF : Dg.FamAt pr) (u : S.A) (J : Fin Dg.R
       lt_of_lt_of_le (by exact_mod_cast hF.σ_lt u) hA.toDesignAdm.designH_mem.1
     exact_mod_cast h1.le
   obtain ⟨Wt, -⟩ := hcFam_windows hF.hyp (T2 := Dg.T2) (ρstar := designStar pr.a₀ pr.sstar)
-    (bR := scB x ε) (wR := scW'' S x ε) (pR := scB' x ε / x) rfl rfl rfl hHσ u (1, y) J
-  have h := Wt (placeKind_eq_top.2 ⟨rfl, hy⟩)
+    (bR := scB x ε) (wR := scW'' S x ε) (pR := scB' x ε / x) rfl rfl rfl hHσ u (1, S.twA κ * y) J
+  have h := Wt (placeKind_eq_top.2 ⟨rfl, Finset.mem_image_of_mem _ hy⟩)
+  simp only [Function.comp_apply, S.twA_mul_twA_mul κ] at h
   unfold wt eta
   rw [Setting.Ranks.wj, hF.hc_eq u]
   constructor

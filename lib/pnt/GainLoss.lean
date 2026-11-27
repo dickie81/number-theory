@@ -390,7 +390,7 @@ theorem askE_le_of_gt (hA : Dg.Adm) {pr : DesignPar S} (hF : Dg.FamAt pr) (u : S
   have hterm : ∀ e ∈ gainExps x ε p, max (Dg.a t / (p : ℝ) ^ e - Dg.wt u J (S.pos (S.twA κ) p (1, t) e)) 0 ≤
       if e = 1 then scW'' S x ε / x else 0 := by
     intro e he
-    have hwe := (hA.e_mem u (S.pos (S.twA κ) p (1, t) e) J).1
+    have hwe := (hA.e_mem u ((S.pos (S.twA κ) p (1, t) e).1, S.twA κ * (S.pos (S.twA κ) p (1, t) e).2) J).1
     have hwe' : scW'' S x ε ≤ Dg.wt u J (S.pos (S.twA κ) p (1, t) e) := hwe
     split_ifs with h1e
     · subst h1e
@@ -431,14 +431,14 @@ theorem log_mul_askAtD_le (hA : Dg.Adm) {pr : DesignPar S} (hF : Dg.FamAt pr) (u
   have h1 : Dg.askAtD u J t ≤ (Nat.log S.d ⌈2 * scA x ε⌉₊ + 1 : ℕ) * (2 * scA x ε / S.d) := by
     unfold askAtD
     calc ∑ e ∈ Icc 1 (Nat.log S.d ⌈2 * scA x ε⌉₊ + 1),
-          max (Dg.a t / (S.d : ℝ) ^ e - Dg.wt u J (S.partner t (S.d ^ e))) 0 ≤
+          max (Dg.a t / (S.d : ℝ) ^ e - Dg.R.wj (Dg.hc u) J (S.partner t (S.d ^ e))) 0 ≤
         ∑ _e ∈ Icc 1 (Nat.log S.d ⌈2 * scA x ε⌉₊ + 1), 2 * scA x ε / S.d := by
           refine sum_le_sum fun e he => max_le ?_ (by positivity)
           have he1 := (mem_Icc.1 he).1
           have hde : (S.d : ℝ) ≤ (S.d : ℝ) ^ e := le_self_pow₀ hd1 (by omega)
           have : Dg.a t / (S.d : ℝ) ^ e ≤ 2 * scA x ε / S.d :=
             div_le_div₀ (by linarith) ha2 hd0 hde
-          linarith [Dg.wt_pos u J (S.partner t (S.d ^ e))]
+          linarith [Dg.wj_pos u J (S.partner t (S.d ^ e))]
       _ = _ := by rw [sum_const, Nat.card_Icc, nsmul_eq_mul]; push_cast; ring
   calc Real.log S.d * Dg.askAtD u J t ≤
       Real.log S.d * ((Nat.log S.d ⌈2 * scA x ε⌉₊ + 1 : ℕ) * (2 * scA x ε / S.d)) :=

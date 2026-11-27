@@ -14,8 +14,8 @@ frame loss from (NI) and small certificates (`frameLoss_of_sharpNI_cert`). All s
   integer `m` in every place of every `ST_ω`, `μ_max(M_ω) ≤ 2n₀·negW(λ_ω)·log|m|` in every realising frame
   (`HermForms.slopeLe_source`: the twisted Petersson pairing, Theorems A and B).
 * **The negative determinant twists** (`negW_sharpLam0_le`): `λ_{ρ,k−1} = u_{k−1} + k/2 − ½` (`wt0_eq`), which is
-  `−b_t ≥ −2b′` at a top (`hcFam_u_top`, `Adm.bT_le`) and `k/2 − 1 ≥ 0` elsewhere (`hcFam_u_ntop`), so
-  `negW(λ_0) ≤ |Φ|·2b′ ≤ 4x³·b′` (`card_Φ`, `card_le_cube`).
+  `−b_t ≥ −2b′` at a top (`hcFam_u_top`, `Adm.bT_le_tw`; the top `(1, c·t)` carries `b_t`) and `k/2 − 1 ≥ 0`
+  elsewhere (`hcFam_u_ntop`), so `negW(λ_0) ≤ |Φ|·2b′ ≤ 4x³·b′` (`card_Φ`, `card_le_cube`).
 * **The budget** (`sharpMuMax`). With `m = T` (the auxiliary prime, in every place of `ST`), `n₀ = k ≤ 2x⁵`,
   `log T ≤ x` and `b′ = a/X′ ≤ A/x^{410}`, `A = Σ_t a_t`: `B = 2k·negW(λ_0)·log T ≤ 16x⁹·b′ ≤ 16A/x^{401} ≤ A`
   (`sharpB_le`). The proof of `cFx_le` gives `c_F^{exact} ≤ 0.036x^εA + 5A`, so `B + c_F^{exact} ≤ 0.036x^εA + 6A
@@ -79,8 +79,8 @@ end SharpObj
 variable {S : Setting} {κ : S.A →* ℂˣ} {x ε X : ℝ}
 
 /-- (SP2) **The negative determinant twists of the step-0 weights are small**: `negW λ_0 ≤ 4x³·b′`, `b′ = a/X′`.
-The last weight is `λ_{ρ,k−1} = u_{k−1} + k/2 − ½` (`wt0_eq`): `−b_t ≥ −2b′` at a top (`hcFam_u_top`,
-`Adm.bT_le`), `k/2 − 1 ≥ 0` elsewhere (`hcFam_u_ntop`); and `|Φ| = 2|A| ≤ 2x³` (`card_Φ`, `card_le_cube`). -/
+The last weight is `λ_{ρ,k−1} = u_{k−1} + k/2 − ½` (`wt0_eq`): `−b_t ≥ −2b′` at the top `(1, c·t)` (`hcFam_u_top`,
+`Adm.bT_le_tw`), `k/2 − 1 ≥ 0` elsewhere (`hcFam_u_ntop`); and `|Φ| = 2|A| ≤ 2x³` (`card_Φ`, `card_le_cube`). -/
 theorem negW_sharpLam0_le {Dg : SharpDesign S κ x ε X} (hA : Dg.Adm) (u : S.A) :
     (negW (sharpLam0 Dg u) : ℝ) ≤ 4 * x ^ 3 * scB' x ε := by
   obtain ⟨pr, hF⟩ := hA.fam
@@ -101,12 +101,13 @@ theorem negW_sharpLam0_le {Dg : SharpDesign S κ x ε X} (hA : Dg.Adm) (u : S.A)
       ring
     have hneg : -((sharpLam0 Dg u ρ ⟨Dg.R.k - 1, by omega⟩ : ℤ) : ℝ) ≤ 2 * scB' x ε := by
       rw [hl]
-      by_cases hpk : placeKind Dg.TT Dg.T2 u ρ = .top
-      · have ek : (Dg.hc u ρ).u ⟨Dg.R.k - 1, by omega⟩ = -pr.bT ρ.2 - ((Dg.R.k : ℚ) - 1) / 2 := by
+      by_cases hpk : placeKind (Dg.TT.image (S.twA κ * ·)) Dg.T2 u ρ = .top
+      · have ek : (Dg.hc u ρ).u ⟨Dg.R.k - 1, by omega⟩ = -pr.bT (S.twA κ * ρ.2) - ((Dg.R.k : ℚ) - 1) / 2 := by
           rw [hF.hc_eq u]; exact (hcFam_u_top hF.hyp hpk).2
-        have ek' : ((Dg.hc u ρ).u ⟨Dg.R.k - 1, by omega⟩ : ℝ) = -(pr.bT ρ.2 : ℝ) - ((Dg.R.k : ℝ) - 1) / 2 := by
+        have ek' : ((Dg.hc u ρ).u ⟨Dg.R.k - 1, by omega⟩ : ℝ) =
+            -(pr.bT (S.twA κ * ρ.2) : ℝ) - ((Dg.R.k : ℝ) - 1) / 2 := by
           rw [ek]; push_cast; ring
-        obtain ⟨-, b2⟩ := hA.bT_le hF ρ.2 (placeKind_eq_top.1 hpk).2
+        obtain ⟨-, b2⟩ := hA.bT_le_tw hF ρ.2 (placeKind_eq_top.1 hpk).2
         rw [ek']
         linarith
       · have ek : (Dg.hc u ρ).u ⟨Dg.R.k - 1, by omega⟩ = -1 / 2 := by

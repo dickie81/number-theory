@@ -443,25 +443,28 @@ theorem errSizes (hA : Dg.Adm) (hB : GainBig ε x) : Dg.ErrSizes where
 
 /-! ## The error exponent at an inert or signal prime -/
 
-/-- **The weights at the plus-sign places are at most `3b′`**: a place `(1, t)` is a top (`≤ 3b′`) or thin
-(`≤ 2w″ ≤ 2b′`), as the thick places have the sign `−1` (`Setting.DesignAdm.e_window`). -/
+/-- **The weights at the plus-sign places are at most `3b′`**: the gain reads `hc u` at `(1, c·t)` for `z = (1, t)`,
+a plus-sign place, which is a top (`≤ 3b′`) or thin (`≤ 2w″ ≤ 2b′`), as the thick places have the sign `−1`
+(`Setting.DesignAdm.e_window`). -/
 theorem wt_le_of_plus (hA : Dg.Adm) {pr : DesignPar S} (hF : Dg.FamAt pr) (u : S.A) (J : Fin Dg.R.m)
     {z : Φ S.A} (hz : z.1 = 1) : Dg.wt u J z ≤ 3 * scB' x ε := by
   have hm : (Dg.R.m : ℝ) ≤ 2 * x := by rw [hA.m_eq]; exact hA.big.designM_le
-  obtain ⟨Wt, Wn, -, -⟩ := hA.toDesignAdm.e_window (T2 := Dg.T2) (ρstar := designStar pr.a₀ pr.sstar) hm
-    hF.σ_lt (hA.bT_le hF) hF.hyp u z J
+  set z' : Φ S.A := (z.1, S.twA κ * z.2) with hz'
+  have hz1 : z'.1 = 1 := hz
+  obtain ⟨Wt, Wn, -, -⟩ := hA.toDesignAdm.e_window (T2 := Dg.T2) (ρstar := designStar pr.a₀ pr.sstar)
+    (bT := pr.bT ∘ (S.twA κ * ·)) hm hF.σ_lt (hA.bT_le_tw hF) hF.hyp u z' J
   have hw := hA.toDesignAdm.w''_le_b'
-  have hwt : Dg.wt u J z = ((designFam S x ε Dg.R Dg.TT Dg.T2 pr.aZ pr.bT (designStar pr.a₀ pr.sstar) pr.σ
-      hF.hyp u z).e J : ℝ) := by
+  have hwt : Dg.wt u J z = ((designFam S x ε Dg.R (Dg.TT.image (S.twA κ * ·)) Dg.T2 (pr.aZ ∘ (S.twA κ * ·))
+      (pr.bT ∘ (S.twA κ * ·)) (designStar pr.a₀ pr.sstar) pr.σ hF.hyp u z').e J : ℝ) := by
     unfold wt
     rw [Setting.Ranks.wj, hF.hc_eq u]
   rw [hwt]
-  rcases hk : placeKind Dg.TT Dg.T2 u z with _ | _ | _
+  rcases hk : placeKind (Dg.TT.image (S.twA κ * ·)) Dg.T2 u z' with _ | _ | _
   · exact Wt hk
   · exfalso
     obtain ⟨s, -, hs⟩ := mem_image.1 (placeKind_eq_thick.1 hk)
-    rw [← hs] at hz
-    exact (by decide : (-1 : ℤˣ) ≠ 1) hz
+    rw [← hs] at hz1
+    exact (by decide : (-1 : ℤˣ) ≠ 1) hz1
   · have := Wn hk
     have := scB'_pos ε hA.big.pos
     linarith
@@ -477,7 +480,8 @@ theorem card_places_le (P : Finset (Φ S.A)) : (P.card : ℝ) ≤ 2 * Fintype.ca
 theorem sum_wt_le (hA : Dg.Adm) (u : S.A) (J : Fin Dg.R.m) (P : Finset (Φ S.A)) :
     ∑ z ∈ P, Dg.wt u J z ≤ 4 * Fintype.card S.A * scB x ε := by
   have hb0 : 0 < scB x ε := Real.exp_pos _
-  calc ∑ z ∈ P, Dg.wt u J z ≤ ∑ _z ∈ P, 2 * scB x ε := sum_le_sum fun z _ => (hA.e_mem u z J).2
+  calc ∑ z ∈ P, Dg.wt u J z ≤ ∑ _z ∈ P, 2 * scB x ε :=
+        sum_le_sum fun z _ => (hA.e_mem u (z.1, S.twA κ * z.2) J).2
     _ = P.card * (2 * scB x ε) := by rw [sum_const, nsmul_eq_mul]
     _ ≤ (2 * Fintype.card S.A) * (2 * scB x ε) := by gcongr; exact card_places_le P
     _ = _ := by ring
