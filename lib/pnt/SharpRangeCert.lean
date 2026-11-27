@@ -33,9 +33,10 @@ object with its slack `c_F` replaced by the exact constant of (F) (`HermForms.cF
 
 **The result** (`ZetaBalance.sharpRange_of_cert`): (R′) holds with `U = max(B + c_F^{exact} + x^{4ε}Σ_t a_t/8, 0)` if,
 eventually in the design, `μ_max(M_ω) ≤ B` with `B + c_F^{exact} ≤ x^{4ε}Σ_t a_t/8` (`SharpMuMax`), and every word has
-a certificate of colength `2·log[M_ω : L]/rk ≤ x^{4ε}Σ_t a_t/8` (`SharpCertSmall`). The bound on `μ_max(M_ω)` is not
-proved in the library: it needs an integrality bound for the Petersson values of the integral forms (the Fock duals
-`Δ` of the bideterminant lattices `∇_O`), so `SharpMuMax` is a hypothesis.
+a certificate of colength `2·log[M_ω : L]/rk ≤ x^{4ε}Σ_t a_t/8` (`SharpCertSmall`). The bound on `μ_max(M_ω)` is
+proved (`ZetaBalance.sharpMuMax`, in `SharpMuMaxProof`, by the twisted Petersson pairing: the Petersson values of the
+integral forms, twisted by one automorphism of the coefficient field, are integral up to the level at `ST`), so (R′)
+needs only `SharpCertSmall` (`ZetaBalance.sharpRange_of_certSmall`).
 -/
 
 open NumberField
@@ -377,9 +378,8 @@ end SharpObj
 /-- **The bound on `μ_max(M_ω)`**, eventually in the design: at every admissible design with `ε` small and `x` large,
 at every translate `u ∈ A₀`, some `B` with `B + c_F^{exact} ≤ x^{4ε}Σ_t a_t/8` bounds the maximal slope of the
 construction's lattice of integral forms in every realising frame (`SharpObj.MuMaxLe`), where
-`c_F^{exact} = HermForms.cFx` is the exact constant of (F) (at most `x^{4ε}Σ_t a_t/8`, `cFx_le`). Not proved in the
-library: it needs an integrality bound for the Petersson values of the integral forms, whose values at the class
-representatives lie in the Fock duals `Δ` of the bideterminant lattices `∇_O`. -/
+`c_F^{exact} = HermForms.cFx` is the exact constant of (F) (at most `x^{4ε}Σ_t a_t/8`, `cFx_le`). Proved by
+`ZetaBalance.sharpMuMax` (in `SharpMuMaxProof`), with `B = 2k·negW(λ_0)·log T` from the twisted Petersson pairing. -/
 def SharpMuMax : Prop :=
   EventuallyAdm (fun Dg => Dg.Adm) fun {S κ x ε X} (Dg : SharpDesign S κ x ε X) => ∀ u ∈ A₀ κ, ∃ B : ℝ,
     B + HermForms.cFx Dg.R.k (sharpLam0 Dg u) (sharpST Dg u) ≤ x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 8 ∧
