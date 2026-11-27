@@ -29,6 +29,7 @@ import BallUpperEta
 import BallGap
 import BallPivot
 import PivotSharp
+import BallSlopeLattice
 import OrbitWindow
 import BallLoud
 import BallLow
@@ -704,6 +705,20 @@ if and only if `w_1` is a shortest vector of the orbit lattice, and under RH `±
 #print axioms PivotSharp.shortest_of_rh
 #print axioms PivotSharp.shortest_unique
 #print axioms PivotSharp.rh_iff_shortest
+#print axioms BallSlope.form_pos
+#print axioms BallSlope.OrbitSpace.covol_ge
+#print axioms BallSlope.OrbitSpace.covol_sq_ge
+#print axioms BallSlope.OrbitSpace.maxSlope
+#print axioms BallSlope.OrbitSpace.covol_top
+#print axioms BallSlope.OrbitSpace.deg_top
+#print axioms BallSlope.OrbitSpace.det_ge
+#print axioms BallSlope.OrbitSpace.inner_mulMap
+#print axioms BallSlope.OrbitSpace.norm_mulMap
+#print axioms BallSlope.OrbitSpace.norm_mulMapL_le
+#print axioms BallSlope.OrbitSpace.rk_img_mul
+#print axioms BallSlope.OrbitSpace.deg_img_mul
+#print axioms BallSlope.OrbitSpace.bost_mul
+#print axioms BallSlope.OrbitSpace.mul_frame
 
 /- The orbit form is Weil's form on a window (`formalisations/ball-rate.md`): on `Σ_n x_n = 0`, `Q_N(x)` is Weil's form
 of the step function `u^{1/2}Σ_n x_n 1_{(0, n]}(u)` on `[1, N]`, by the explicit formula for `ĝ(z)ĝ(−z)` at any parity. Under
