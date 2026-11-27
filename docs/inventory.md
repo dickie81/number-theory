@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2245 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2266 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 253 | 1047 |
+| `lib/core` | 255 | 1068 |
 | `lib/pnt` | 369 | 1085 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -1036,6 +1036,33 @@ note of `formalisations/` that names it, if one does.
 - `ModFourier.hasSum_fourier_Estar`: The Fourier series of `E*`
 - `ModFourier.hasSum_cos_Estar`: The Fourier expansion of `E*` as a cosine series
 - `ModFourier.hasSum_fourier_Estar_explicit`: The Fourier expansion of `E*`
+
+#### `ModMaassSelberg`: The Maass–Selberg relation for `SL(2, ℤ)`
+
+- `ModMaassSelberg.integral_fd_tsum`: Unfolding over `Γ_∞\SL(2, ℤ)` for integrable functions
+- `ModMaassSelberg.EstarY_eq_P`: On `𝒟`, for `Y ≥ 1` and `Re s > 1`, `E*^Y(z, s) = Λ(2s)P^Y(z, s)`
+- `ModMaassSelberg.integral_EstarY_mul_eq`: Dropping one truncation
+- `ModMaassSelberg.integrableOn_fS`: The unfolded integrand is integrable on the strip
+- `ModMaassSelberg.integral_fS`: The unfolded integral in coordinates
+- `ModMaassSelberg.integral_a0_H`: The profile integral
+- `ModMaassSelberg.integral_EstarY_mul_region`: Maass–Selberg, region of absolute convergence
+- `ModMaassSelberg.IY_cleared`: The cleared Maass–Selberg relation
+- `ModMaassSelberg.maass_selberg`: The Maass–Selberg relation
+- `ModMaassSelberg.maass_selberg_diag`
+- `ModMaassSelberg.memLp_EY`
+- `ModMaassSelberg.maass_selberg_phi`: The Maass–Selberg relation
+- `ModMaassSelberg.maass_selberg_phi_diag`: The Maass–Selberg relation on the anti-diagonal
+
+#### `ModTruncation`: The truncated Eisenstein series of `SL(2, ℤ)`: boundedness, square-integrability, holomorphy in `s`
+
+- `ModTruncation.integral_eq_coords`: The invariant integral in coordinates
+- `ModTruncation.differentiableOn_integral`: Holomorphy of a parameter integral
+- `ModTruncation.measurable_Estar`: `z ↦ E*(z, s)` is measurable on `ℍ`
+- `ModTruncation.norm_Estar_sub_ct_le`: Uniform exponential decay of `E* − a₀`
+- `ModTruncation.exists_bound_EstarY`: `E*^Y` is bounded on `Im z ≥ ½`, locally uniformly in `s ∈ ℂ \ {0, ½, 1}`
+- `ModTruncation.memLp_EstarY`: `E*^Y(·, s)` is square-integrable on the fundamental domain
+- `ModTruncation.integrable_EstarY_mul`
+- `ModTruncation.differentiableOn_integral_EstarY`: `s ↦ ∫_𝒟 E*^Y(z, s₁)E*^Y(z, s) dμ` is holomorphic on `ℂ \ {0, ½, 1}`
 
 #### `OddMargin2`: Odd-sector margin `4·10⁻⁵` at `L = 1/2`
 
