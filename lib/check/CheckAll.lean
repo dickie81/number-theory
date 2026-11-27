@@ -397,6 +397,7 @@ import ModMasser
 import ModLaxPhillips
 import ModWavePackets
 import ModCasimirPlates
+import ModEpsteinBox
 import XiReflectionBand
 import SquaresCongruences
 import RamanujanCongruences
@@ -2221,6 +2222,12 @@ twin-form rates at `11/12`. -/
 #print axioms ModCasimirPlates.casimirPlates_eq
 #print axioms ModCasimirPlates.hasDerivAt_casimirPlates
 #print axioms ModCasimirPlates.casimir_pressure
+#print axioms ModEpsteinBox.theta_inv
+#print axioms ModEpsteinBox.hasMellin_theta
+#print axioms ModEpsteinBox.differentiableAt_Lambda
+#print axioms ModEpsteinBox.Lambda_functional_equation
+#print axioms ModEpsteinBox.Lambda_residue_zero
+#print axioms ModEpsteinBox.Lambda_residue_half_dim
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq

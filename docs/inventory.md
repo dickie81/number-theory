@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2728 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2734 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 319 | 1440 |
+| `lib/core` | 320 | 1446 |
 | `lib/pnt` | 389 | 1175 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -1333,6 +1333,15 @@ note of `formalisations/` that names it, if one does.
 - `ModEisenstein.integral_epstein`: The integral of the Epstein sum over a period
 - `ModEisenstein.zeta_ratio_beta`: `√π Γ(s − ½)ζ(2s − 1)/(Γ(s)ζ(2s)) = Λ(2s − 1)/Λ(2s)`, written with the Beta integral.
 - `ModEisenstein.constTerm_eq`: The constant term of `E`
+
+#### `ModEpsteinBox`: The Epstein zeta function of a rectangular lattice in `ℝ^d`
+
+- `ModEpsteinBox.theta_inv`: Poisson duality
+- `ModEpsteinBox.hasMellin_theta`: On `Re s > d/2`, `Λ_a(s)` is the Mellin transform
+- `ModEpsteinBox.differentiableAt_Lambda`: `Λ_a` is holomorphic off `s = 0` and `s = d/2`
+- `ModEpsteinBox.Lambda_functional_equation`: The functional equation
+- `ModEpsteinBox.Lambda_residue_zero`: The pole at `s = 0`
+- `ModEpsteinBox.Lambda_residue_half_dim`: The pole at `s = d/2`
 
 #### `ModFD`: The fundamental domain of `SL(2, ℤ)`: its area, and unfolding over `Γ_∞\SL(2, ℤ)`
 
