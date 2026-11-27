@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2157 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2180 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 246 | 959 |
+| `lib/core` | 248 | 982 |
 | `lib/pnt` | 369 | 1085 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -210,6 +210,20 @@ note of `formalisations/` that names it, if one does.
 - `BallTower.ballVol_lt_five`: The ball volume is largest in dimension 5
 - `BallTower.sphereArea_lt_seven`: The sphere area is largest in dimension 7 (the sphere `S⁶`)
 - `BallTower.completing_factor_unique`: Uniqueness of the completing factor
+
+#### `BallUnitary`: The dilations of the ball orbit are unitary, and have no wandering vector
+
+- `BallUnitary.weights_eq_zero`: A discrete measure on the circle with vanishing Fourier coefficients is zero
+- `BallUnitary.dil_apply`: `U(t)` multiplies the coordinate of `ρ` by `e^{iγt}`.
+- `BallUnitary.dil_add`: `U(s + t) = U(s)U(t)`
+- `BallUnitary.dil_zpow`: `U(t)^k = U(kt)`
+- `BallUnitary.dil_single`: The spectrum of `U(t)` is pure point
+- `BallUnitary.not_wandering_zpow`: `U(t)` has no wandering vector, over `ℤ`
+- `BallUnitary.not_wandering`: `U(t)` has no wandering vector
+- `BallUnitary.Up_not_wandering`: `U_p` has no wandering vector
+- `BallUnitary.Up_eq_phi`: Under RH, `U_p = φ_p/√p`
+- `BallUnitary.Up_orbit`: `U_p(w_r) = w_{pr}/√p`
+- `BallUnitary.inner_orbit`: The orbit's Gram matrix
 
 #### `BallUpper`: The upper bound for the rate: the mean value from above, and the alternating vector
 
@@ -993,6 +1007,21 @@ note of `formalisations/` that names it, if one does.
 #### `ParitySplit`: Weil's form splits by parity: positivity for every real `g`
 
 - `WeilForm.weilQg_ge_twentieth_all`: Weil positivity for every real `g`, pure Lean ([note](../formalisations/weil-positivity.md))
+
+#### `PavlovFaddeev`: The scattering matrix of the modular surface: unitarity, and RH as one decay rate for its resonances
+
+- `PavlovFaddeev.scatteringMatrix_mul_one_sub`: `φ(s)φ(1 − s) = 1`
+- `PavlovFaddeev.completed_conj`: `Λ(s̄) = conj Λ(s)`
+- `PavlovFaddeev.scatteringMatrix_conj`: `φ(s̄) = conj φ(s)`
+- `PavlovFaddeev.completed_ne_zero_of_one_le_re`: `Λ` has no zero on `Re s ≥ 1`
+- `PavlovFaddeev.completed_ne_zero_of_re_le_zero`: `Λ` has no zero on `Re s ≤ 0`
+- `PavlovFaddeev.numerator_ne_zero`: The numerator vanishes nowhere on `Re s ≤ ½`
+- `PavlovFaddeev.denominator_zero_strip`: The denominator vanishes only in `0 < Re s < ½`
+- `PavlovFaddeev.norm_scatteringMatrix_line`: `φ` is unitary on the line of the continuous spectrum
+- `PavlovFaddeev.tendsto_norm_scatteringMatrix`: Each zero of the denominator is a pole of `φ`
+- `PavlovFaddeev.pole_iff`: In `0 < Re s < ½` the poles of `φ` are the zeros of `Λ(2s)`
+- `PavlovFaddeev.rh_iff_resonances_on_quarter`: RH is one decay rate for every resonance
+- `PavlovFaddeev.rh_iff_poles_on_quarter`: RH is the poles of `φ` on one line
 
 #### `PeriodTarget`: Branching, periods, the target `C_u` and the sources `N_ω`
 
