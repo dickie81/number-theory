@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2726 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2732 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 319 | 1438 |
+| `lib/core` | 319 | 1444 |
 | `lib/pnt` | 389 | 1175 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -1302,6 +1302,12 @@ note of `formalisations/` that names it, if one does.
 - `ModCasimir.zetaT_eq_Estar`: `ζ_T(s) = (y/4π)^s · 2E*(τ, s)/Γ(s)`
 - `ModCasimir.hasSum_zetaT`: The spectral zeta function is the zeta-regularised eigenvalue sum
 - `ModCasimir.differentiableAt_zetaT`: `ζ_T` is holomorphic off `s = 1`
+- `ModCasimir.zetaT_zero`: `ζ_T(0) = −1`
+- `ModCasimir.Λ₀_one`: Kronecker's limit formula for the entire part
+- `ModCasimir.hasDerivAt_zetaT_zero`: `ζ_T'(0) = 2kron(τ) − log y = −log(y²|η(τ)|⁴)`
+- `ModCasimir.deriv_zetaT_zero`: `ζ_T'(0) = 2kron(τ) − log y`.
+- `ModCasimir.logDet_eq`: The zeta-regularised determinant of the flat torus
+- `ModCasimir.exp_neg_deriv_zetaT_zero`: `det'Δ = (Im τ)²|η(τ)|⁴`
 
 #### `ModContinuation`: The completed Eisenstein series of `SL(2, ℤ)`: continuation, functional equation and constant term
 

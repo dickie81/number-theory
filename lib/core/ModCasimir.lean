@@ -117,4 +117,89 @@ theorem differentiableAt_zetaT (z : ℍ) {s : ℂ} (h1 : s ≠ 1) : Differentiab
   · have := (Complex.differentiable_one_div_Gamma.comp (differentiable_id.add_const 1)) s
     simpa [Function.comp_def, one_div] using this
 
+/-! ## The one-loop determinant: `ζ_T(0)` and `ζ_T'(0)` -/
+
+/-- **`ζ_T(0) = −1`**: minus the number of zero modes (the constants). -/
+theorem zetaT_zero (z : ℍ) : zetaT z 0 = -1 := by
+  simp [zetaT]
+
+/-- The functional equation of the entire part, `Λ₀(1 − s) = Λ₀(s)`. -/
+lemma Λ₀_one_sub (z : ℍ) (s : ℂ) : (thetaFEPair z).Λ₀ (1 - s) = (thetaFEPair z).Λ₀ s := by
+  have h := (thetaFEPair z).functional_equation₀ s
+  rw [thetaFEPair_symm] at h
+  have hk : (((thetaFEPair z).k : ℝ) : ℂ) = 1 := by simp [thetaFEPair]
+  have he : (thetaFEPair z).ε = 1 := rfl
+  rwa [hk, he, one_smul] at h
+
+lemma Lambda_sub_pole_eq (z : ℍ) (s : ℂ) : Lambda z s - 1 / (s - 1) = (thetaFEPair z).Λ₀ s - 1 / s := by
+  rw [Lambda_eq_Λ₀, show (1 : ℂ) - s = -(s - 1) by ring, div_neg]
+  ring
+
+/-- **Kronecker's limit formula for the entire part**: `Λ₀(1) = 1 + γ − log 4π + 2kron(τ)`, with
+`kron(τ) = −log(√y|η(τ)|²)`. -/
+theorem Λ₀_one (z : ℍ) : (thetaFEPair z).Λ₀ 1 =
+    ((1 + Real.eulerMascheroniConstant - Real.log (4 * π) + 2 * kron z : ℝ) : ℂ) := by
+  have h1 := tendsto_Lambda_sub_pole z
+  have hc : ContinuousAt (fun s => (thetaFEPair z).Λ₀ s - 1 / s) 1 :=
+    ((thetaFEPair z).differentiable_Λ₀ 1).continuousAt.sub (continuousAt_const.div continuousAt_id one_ne_zero)
+  have h2 : Tendsto (fun s => Lambda z s - 1 / (s - 1)) (𝓝[≠] 1) (𝓝 ((thetaFEPair z).Λ₀ 1 - 1 / 1)) := by
+    simp_rw [Lambda_sub_pole_eq]; exact hc.tendsto.mono_left nhdsWithin_le_nhds
+  have := tendsto_nhds_unique h2 h1
+  rw [div_one] at this
+  push_cast at this ⊢
+  linear_combination this
+
+/-- **`ζ_T'(0) = 2kron(τ) − log y = −log(y²|η(τ)|⁴)`**, the derivative of the spectral zeta function at `0`. -/
+theorem hasDerivAt_zetaT_zero (z : ℍ) :
+    HasDerivAt (zetaT z) ((2 * kron z - Real.log z.im : ℝ) : ℂ) 0 := by
+  have hy := z.im_pos
+  set a : ℝ := z.im / (4 * π) with ha
+  have ha0 : 0 < a := by positivity
+  have hA : HasDerivAt (fun s : ℂ => (a : ℂ) ^ s) ((a : ℂ) ^ (0 : ℂ) * Complex.log a * 1) 0 :=
+    (hasDerivAt_id (0 : ℂ)).const_cpow (Or.inl (by exact_mod_cast ha0.ne'))
+  set L := (thetaFEPair z).Λ₀
+  have hL : HasDerivAt L (deriv L 0) 0 := ((thetaFEPair z).differentiable_Λ₀ 0).hasDerivAt
+  have hq : HasDerivAt (fun s : ℂ => s / (1 - s)) ((1 * (1 - 0) - 0 * (-1)) / (1 - 0) ^ 2) 0 :=
+    (hasDerivAt_id (0 : ℂ)).div ((hasDerivAt_id (0 : ℂ)).const_sub 1) (by norm_num)
+  have hN : HasDerivAt (fun s : ℂ => s * L s - 1 - s / (1 - s))
+      ((1 * L 0 + 0 * deriv L 0) - (1 * (1 - 0) - 0 * (-1)) / (1 - 0) ^ 2) 0 :=
+    (((hasDerivAt_id (0 : ℂ)).mul hL).sub_const 1).sub hq
+  have hG : HasDerivAt (fun s : ℂ => Complex.Gamma (s + 1)) (-(Real.eulerMascheroniConstant : ℂ)) 0 := by
+    have := Complex.hasDerivAt_Gamma_one
+    rw [← zero_add (1 : ℂ)] at this
+    exact this.comp_add_const 0 1
+  have hG0 : Complex.Gamma (0 + 1) ≠ 0 := by rw [zero_add, Complex.Gamma_one]; exact one_ne_zero
+  have h := (hA.mul hN).div hG hG0
+  have hL0 : L 0 = ((1 + Real.eulerMascheroniConstant - Real.log (4 * π) + 2 * kron z : ℝ) : ℂ) := by
+    rw [← Λ₀_one, show (1 : ℂ) = 1 - 0 by ring, Λ₀_one_sub]
+  have hlog : Complex.log (a : ℂ) = ((Real.log z.im - Real.log (4 * π) : ℝ) : ℂ) := by
+    rw [← Complex.ofReal_log ha0.le, ha, Real.log_div hy.ne' (by positivity)]
+  convert h using 1
+  · funext s; simp [zetaT, a, L]
+  · simp only [Pi.mul_apply, zero_add, Complex.Gamma_one, Complex.cpow_zero, zero_mul, zero_div,
+      sub_zero, hL0, hlog]
+    push_cast
+    ring
+
+/-- `ζ_T'(0) = 2kron(τ) − log y`. -/
+theorem deriv_zetaT_zero (z : ℍ) : deriv (zetaT z) 0 = ((2 * kron z - Real.log z.im : ℝ) : ℂ) :=
+  (hasDerivAt_zetaT_zero z).deriv
+
+/-- **The zeta-regularised determinant of the flat torus** (Ray–Singer; Polchinski):
+`log det'Δ = −ζ_T'(0) = log(y²|η(τ)|⁴)`, i.e. `det'Δ = (Im τ)²|η(τ)|⁴`, with Mathlib's Dedekind `η`. -/
+theorem logDet_eq (z : ℍ) :
+    -(2 * kron z - Real.log z.im) = Real.log (z.im ^ 2 * ‖ModularForm.eta z‖ ^ 4) := by
+  have hy := z.im_pos
+  have hη : 0 < ‖ModularForm.eta z‖ := norm_pos_iff.2 (ModularForm.eta_ne_zero z.im_pos)
+  rw [kron, UpperHalfPlane.coe_im, Real.log_mul (Real.sqrt_pos.2 hy).ne' (by positivity), Real.log_pow,
+    Real.log_sqrt hy.le, Real.log_mul (by positivity) (by positivity), Real.log_pow, Real.log_pow]
+  push_cast
+  ring
+
+/-- **`det'Δ = (Im τ)²|η(τ)|⁴`**: `exp(−ζ_T'(0)) = y²|η(τ)|⁴`. -/
+theorem exp_neg_deriv_zetaT_zero (z : ℍ) :
+    Real.exp (-(2 * kron z - Real.log z.im)) = z.im ^ 2 * ‖ModularForm.eta z‖ ^ 4 := by
+  have hη : 0 < ‖ModularForm.eta z‖ := norm_pos_iff.2 (ModularForm.eta_ne_zero z.im_pos)
+  rw [logDet_eq, Real.exp_log (by have := z.im_pos; positivity)]
+
 end ModCasimir
