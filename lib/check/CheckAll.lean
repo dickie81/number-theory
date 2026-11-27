@@ -2215,6 +2215,10 @@ twin-form rates at `11/12`. -/
 #print axioms ModWavePackets.memLp_wavePacket
 #print axioms ModWavePackets.msKernel_eq
 #print axioms ModWavePackets.integral_wavePacket_mul_conj
+#print axioms ModCasimir.wave_add_lattice
+#print axioms ModCasimir.normSq_dualVec
+#print axioms ModCasimir.flatLap_wave
+#print axioms ModCasimir.flatLap_wave_dualVec
 #print axioms ModCasimir.zetaT_eq
 #print axioms ModCasimir.zetaT_eq_Estar
 #print axioms ModCasimir.hasSum_zetaT

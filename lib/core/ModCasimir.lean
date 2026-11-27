@@ -57,6 +57,88 @@ lemma lam_cpow_neg (z : ℍ) (s : ℂ) (v : Fin 2 → ℤ) :
   rw [ofReal_cpow_neg (lam_nonneg z v), lam_inv, term, Complex.ofReal_mul,
     Complex.mul_cpow_ofReal_nonneg (by positivity) (div_nonneg z.im_pos.le (nq_nonneg z v))]
 
+/-! ## The eigenfunctions -/
+
+/-- The Euclidean inner product `⟨k, w⟩ = Re(k w̄)` of `ℂ = ℝ²`. -/
+def ip (k w : ℂ) : ℝ := (k * (starRingEnd ℂ) w).re
+
+/-- The dual-lattice vector `k_v = (2πi/y)(v₁ + v₀τ)` of `ℤ + ℤτ`. -/
+def dualVec (z : ℍ) (v : Fin 2 → ℤ) : ℂ := 2 * π * Complex.I / z.im * ((v 1 : ℂ) + (v 0 : ℂ) * z)
+
+/-- The plane wave `w ↦ exp(i⟨k, w⟩)`. -/
+def wave (k w : ℂ) : ℂ := cexp (Complex.I * ip k w)
+
+/-- The flat Laplacian `Δf(w) = ∂²_u f + ∂²_v f`, `w = u + iv`, as the sum of the second derivatives along `1` and
+`i`. -/
+def flatLap (f : ℂ → ℂ) (w : ℂ) : ℂ :=
+  deriv (deriv fun t : ℝ => f (w + t)) 0 + deriv (deriv fun t : ℝ => f (w + t * Complex.I)) 0
+
+/-- `⟨k_v, m + nτ⟩ = 2π(nv₁ − mv₀)`. -/
+lemma ip_dualVec (z : ℍ) (v : Fin 2 → ℤ) (m n : ℤ) :
+    ip (dualVec z v) ((m : ℂ) + (n : ℂ) * z) = 2 * π * ((n * v 1 - m * v 0 : ℤ) : ℝ) := by
+  have hy : z.im ≠ 0 := z.im_pos.ne'
+  have e : (2 * π * Complex.I / z.im : ℂ) = ((2 * π / z.im : ℝ) : ℂ) * Complex.I := by push_cast; ring
+  simp only [ip, dualVec, e]
+  simp only [map_add, map_mul, map_intCast, Complex.mul_re, Complex.mul_im,
+    Complex.add_re, Complex.add_im, Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im,
+    Complex.intCast_re, Complex.intCast_im, Complex.conj_re, Complex.conj_im, UpperHalfPlane.coe_re,
+    UpperHalfPlane.coe_im]
+  push_cast
+  field_simp
+  ring
+
+/-- **The plane waves `exp(i⟨k_v, ·⟩)` live on the torus**: they are `ℤ + ℤτ`-periodic. -/
+theorem wave_add_lattice (z : ℍ) (v : Fin 2 → ℤ) (w : ℂ) (m n : ℤ) :
+    wave (dualVec z v) (w + ((m : ℂ) + (n : ℂ) * z)) = wave (dualVec z v) w := by
+  have hadd : ip (dualVec z v) (w + ((m : ℂ) + (n : ℂ) * z)) =
+      ip (dualVec z v) w + ip (dualVec z v) ((m : ℂ) + (n : ℂ) * z) := by
+    simp [ip, mul_add]
+  rw [wave, wave, hadd, ip_dualVec]
+  push_cast
+  rw [mul_add, Complex.exp_add]
+  have : Complex.I * (2 * π * ((n : ℂ) * (v 1 : ℂ) - (m : ℂ) * (v 0 : ℂ))) =
+      (((n * v 1 - m * v 0 : ℤ)) : ℂ) * (2 * π * Complex.I) := by push_cast; ring
+  rw [this, Complex.exp_int_mul_two_pi_mul_I, mul_one]
+
+/-- `|k_v|² = λ_v`. -/
+theorem normSq_dualVec (z : ℍ) (v : Fin 2 → ℤ) : Complex.normSq (dualVec z v) = lam z v := by
+  have hy : z.im ≠ 0 := z.im_pos.ne'
+  rw [dualVec, lam, nq, Complex.normSq_mul, show (v 1 : ℂ) + (v 0 : ℂ) * z = (v 0 : ℂ) * z + v 1 by ring]
+  congr 1
+  rw [show (2 * π * Complex.I / z.im : ℂ) = ((2 * π / z.im : ℝ) : ℂ) * Complex.I by push_cast; ring, Complex.normSq_mul,
+    Complex.normSq_ofReal, Complex.normSq_I]
+  ring
+
+lemma hasDerivAt_exp_line (c b : ℂ) (t : ℝ) :
+    HasDerivAt (fun t : ℝ => cexp (c + t * b)) (cexp (c + t * b) * b) t := by
+  have h : HasDerivAt (fun u : ℂ => cexp (c + u * b)) (cexp (c + t * b) * (0 + 1 * b)) (t : ℂ) :=
+    ((hasDerivAt_const _ c).add ((hasDerivAt_id (t : ℂ)).mul_const b)).cexp
+  simpa using h.comp_ofReal
+
+lemma deriv_deriv_exp_line (c b : ℂ) :
+    deriv (deriv fun t : ℝ => cexp (c + t * b)) 0 = cexp c * b ^ 2 := by
+  have h1 : deriv (fun t : ℝ => cexp (c + t * b)) = fun t : ℝ => cexp (c + t * b) * b :=
+    funext fun t => (hasDerivAt_exp_line c b t).deriv
+  rw [h1, ((hasDerivAt_exp_line c b 0).mul_const b).deriv]
+  simp; ring
+
+/-- **The plane waves are eigenfunctions of the flat Laplacian**: `Δ exp(i⟨k, ·⟩) = −|k|² exp(i⟨k, ·⟩)`. -/
+theorem flatLap_wave (k w : ℂ) : flatLap (wave k) w = -(Complex.normSq k : ℂ) * wave k w := by
+  have e1 : (fun t : ℝ => wave k (w + t)) = fun t : ℝ => cexp (Complex.I * ip k w + t * (Complex.I * k.re)) := by
+    funext t; simp only [wave, ip]; congr 1; simp [mul_add, Complex.mul_re]; ring
+  have e2 : (fun t : ℝ => wave k (w + t * Complex.I)) = fun t : ℝ => cexp (Complex.I * ip k w + t * (Complex.I * k.im)) := by
+    funext t; simp only [wave, ip]; congr 1; simp [mul_add, Complex.mul_re]; ring
+  rw [flatLap, e1, e2, deriv_deriv_exp_line, deriv_deriv_exp_line, wave, Complex.normSq_apply]
+  push_cast
+  ring_nf
+  rw [Complex.I_sq]
+  ring
+
+/-- **The torus eigenfunctions**: `Δ exp(i⟨k_v, ·⟩) = −λ_v exp(i⟨k_v, ·⟩)`, with `λ_v = (2π/y)²|v₀τ + v₁|²`. -/
+theorem flatLap_wave_dualVec (z : ℍ) (v : Fin 2 → ℤ) (w : ℂ) :
+    flatLap (wave (dualVec z v)) w = -(lam z v : ℂ) * wave (dualVec z v) w := by
+  rw [flatLap_wave, normSq_dualVec]
+
 /-! ## The spectral zeta function -/
 
 /-- **The spectral zeta function of the flat torus**, continued to all `s`:
