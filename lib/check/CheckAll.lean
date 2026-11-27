@@ -385,6 +385,10 @@ import EpsteinFlat
 import XiReflection
 import WengRankTwo
 import PavlovFaddeev
+import ModEisenstein
+import ModContinuation
+import ModFD
+import ModFourier
 import XiReflectionBand
 import SquaresCongruences
 import RamanujanCongruences
@@ -1987,6 +1991,57 @@ twin-form rates at `11/12`. -/
 #print axioms PavlovFaddeev.pole_iff
 #print axioms PavlovFaddeev.rh_iff_resonances_on_quarter
 #print axioms PavlovFaddeev.rh_iff_poles_on_quarter
+#print axioms ModEisenstein.summable_norm_term
+#print axioms ModEisenstein.term_smul
+#print axioms ModEisenstein.E_smul
+#print axioms ModEisenstein.epstein_smul
+#print axioms ModEisenstein.summable_norm_E
+#print axioms ModEisenstein.zeta_mul_E
+#print axioms ModEisenstein.E_eq_epstein
+#print axioms ModEisenstein.integral_G
+#print axioms ModEisenstein.integral_rpow_sq_add
+#print axioms ModEisenstein.hasSum_integral_mul_add
+#print axioms ModEisenstein.hasSum_integral_term
+#print axioms ModEisenstein.integral_epstein
+#print axioms ModEisenstein.zeta_ratio_beta
+#print axioms ModEisenstein.constTerm_eq
+#print axioms ModContinuation.theta_inv
+#print axioms ModContinuation.Estar_one_sub
+#print axioms ModContinuation.differentiableAt_Estar
+#print axioms ModContinuation.differentiableOn_Estar
+#print axioms ModContinuation.theta_smul
+#print axioms ModContinuation.Estar_smul
+#print axioms ModContinuation.Lambda_eq_epstein
+#print axioms ModContinuation.Estar_eq
+#print axioms ModContinuation.constTerm_Estar
+#print axioms ModFD.volume_fd
+#print axioms ModFD.volume_fd_diff_fdo
+#print axioms ModFD.ae_tsum_indicator_fd
+#print axioms ModFD.lintegral_fd_tsum_SL
+#print axioms ModFD.lintegral_fd_tsum_coprime
+#print axioms ModFD.lintegral_strip_im
+#print axioms ModFD.lintegral_fd_tsum_coprime_im
+#print axioms ModFD.lintegral_fd_tsum_nq
+#print axioms ModFourier.theta_le_zero
+#print axioms ModFourier.integral_mul_Λ₀
+#print axioms ModFourier.integral_mul_Lambda
+#print axioms ModFourier.differentiable_mellin_avgF
+#print axioms ModFourier.integral_Estar
+#print axioms ModFourier.differentiableAt_constTerm
+#print axioms ModFourier.constTerm_Estar_all
+#print axioms ModFourier.integral_ek_theta
+#print axioms ModFourier.mellin_term
+#print axioms ModFourier.integral_ek_Lambda
+#print axioms ModFourier.fourierCoeff_Estar
+#print axioms ModFourier.sum_D
+#print axioms ModFourier.fourierCoeff_Estar_divisors
+#print axioms ModFourier.Estar_periodic
+#print axioms ModFourier.continuous_Estar_x
+#print axioms ModFourier.norm_fourierCoeff_Estar_le
+#print axioms ModFourier.summable_fourierCoeff_Estar
+#print axioms ModFourier.hasSum_fourier_Estar
+#print axioms ModFourier.hasSum_cos_Estar
+#print axioms ModFourier.hasSum_fourier_Estar_explicit
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq

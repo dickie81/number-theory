@@ -23,7 +23,7 @@ lean_lib Zeta23 where
   srcDir := "lib/vendor/zeta23"
   globs := #[.submodules `Zeta23]
 
-/-- lib/core: 549 modules. -/
+/-- lib/core: 553 modules. -/
 lean_lib Core where
   srcDir := "lib/core"
   globs := #[
@@ -116,6 +116,7 @@ lean_lib Core where
     .one `ManinDegree, .one `ManinFrobenius, .one `ManinHasse, .one `ManinLattice,
     .one `ManinTwist, .one `MeanSquareHigh, .one `MeanSquareSup, .one `MeanSquareZeta,
     .one `MellinRowDep, .one `MellinSeparation, .one `MellinUniform, .one `MertensOmega,
+    .one `ModContinuation, .one `ModEisenstein, .one `ModFD, .one `ModFourier,
     .one `MollId, .one `Mollify, .one `OddMargin2, .one `OddPositivity,
     .one `OrbitWindow, .one `Orthogonality, .one `Osc, .one `PadicUnits,
     .one `ParabolaGap, .one `ParityCert, .one `ParityCont, .one `ParityGap,
