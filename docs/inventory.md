@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2588 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2642 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 294 | 1300 |
+| `lib/core` | 311 | 1354 |
 | `lib/pnt` | 389 | 1175 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -424,6 +424,22 @@ note of `formalisations/` that names it, if one does.
 - `CMTorsion.isHerm_be_cm_classical`: The hermitian property of `be` for the CM curve from the classical CM inputs alone ([note](../formalisations/alpoge-rh.md))
 - `CMTorsion.be_classification_cm_classical`: The classification for the CM curve from the classical CM inputs alone ([note](../formalisations/alpoge-rh.md))
 
+#### `CapacitySpan`: Capacity-constrained spans of the path basis (T3)
+
+- `CapacitySpan.gcomp_top_linearIndependent`: (E3) Top components are independent ([note](../formalisations/alpoge-rh.md))
+- `CapacitySpan.repr_eq_zero_of_mem_capSet`: (T3, coefficient form) ([note](../formalisations/alpoge-rh.md))
+- `CapacitySpan.capSet_eq_span`: (T3) The capacity set is the span of the admissible path polynomials ([note](../formalisations/alpoge-rh.md))
+- `CapacitySpan.capSet_image_map`: Reduction ([note](../formalisations/alpoge-rh.md))
+
+#### `CapacityWeights`: Capacity-constrained spans of the path basis (T3)
+
+- `CapacitySpan.valS_pathPoly`: V4 (`val`) ([note](../formalisations/alpoge-rh.md))
+- `CapacitySpan.topS_pathPoly`: V4 (`top`) ([note](../formalisations/alpoge-rh.md))
+- `CapacitySpan.span_subset_capSet`: The easy inclusion over any ring ([note](../formalisations/alpoge-rh.md))
+- `CapacitySpan.finrank_capSpan`: Dimension = chain sum ([note](../formalisations/alpoge-rh.md))
+- `CapacitySpan.card_capOK`: The chain sum ([note](../formalisations/alpoge-rh.md))
+- `CapacitySpan.mem_capSet_map_iff`: Saturation ([note](../formalisations/alpoge-rh.md))
+
 #### `CertInstances`: The certificate theorems as instances of the weighted certificate
 
 - `CertInstances.weilQ_ge_of_cert'`: `PoleRelax.weilQ_ge_of_cert`, verbatim statement, as the `(K, N, T) = (2, 6, 3.033953)` instance.
@@ -733,6 +749,25 @@ note of `formalisations/` that names it, if one does.
 - `FirstAssembly.llp_first`: The per-weight assembly ([note](../formalisations/alpoge-rh.md))
 - `FirstAssembly.first_local`: The first local theorem (L5) ([note](../formalisations/alpoge-rh.md))
 
+#### `FirstCloud`: The cloud step: from the flat weights to the actual top weights (L5, A-N15–N17)
+
+- `FirstCloud.cloudStep`: The cloud step ([note](../formalisations/alpoge-rh.md))
+- `FirstCloud.first_local''`: The first local theorem (L5) ([note](../formalisations/alpoge-rh.md))
+
+#### `FirstCloudCount`: The cloud count: good directions of a flat system at the next flat weight (L5, A-N17)
+
+- `FirstCloud.exists_retract_targets`: The retraction targets ([note](../formalisations/alpoge-rh.md))
+- `FirstCloud.cloud_count`: The cloud count ([note](../formalisations/alpoge-rh.md))
+
+#### `FirstCloudDim`: The dimensions of the cloud step (L5, A-N15, the Weyl count)
+
+- `FirstCloud.cloud_dims`: The dimensions of the cloud step ([note](../formalisations/alpoge-rh.md))
+
+#### `FirstCloudPair`: The cloud pairing and the cloud maps at one edge (L5, A-N16, A-N17)
+
+- `FirstCloud.exists_adj_tgt`: The cloud targets ([note](../formalisations/alpoge-rh.md))
+- `FirstCloud.goodSys_cloud`: The cloud step at one edge ([note](../formalisations/alpoge-rh.md))
+
 #### `FirstFailure`: The first positivity failure
 
 - `WeilForm.first_failure`: The first positivity failure ([note](../formalisations/weil-positivity.md))
@@ -742,6 +777,12 @@ note of `formalisations/` that names it, if one does.
 - `FirstMeans.boxSum_mono`: Box sums are monotone ([note](../formalisations/alpoge-rh.md))
 - `FirstMeans.prod_sum_rho`: The shifts multiply over the tops ([note](../formalisations/alpoge-rh.md))
 - `FirstMeans.ext_add`: `ext` is additive ([note](../formalisations/alpoge-rh.md))
+
+#### `FlatDimPf`: `FlatDim` from the path basis
+
+- `FlatDimPf.flatDim_le`: `FlatDim`, the half `FirstAssembly` uses ([note](../formalisations/alpoge-rh.md))
+- `FlatDimPf.flatDim`: `FlatDim` ([note](../formalisations/alpoge-rh.md))
+- `FlatDimPf.first_local_flat`: The first local theorem (L5) ([note](../formalisations/alpoge-rh.md))
 
 #### `FockNorm`: The Fock norm of the highest weight vector
 
@@ -927,11 +968,29 @@ note of `formalisations/` that names it, if one does.
 - `HalfPlaneJoins.lam_prefactor_eleven_twelfths`: The prefactor ([note](../formalisations/weil-positivity.md))
 - `BohrJoins.shell_eleven_twelfths`: The Bohr shell at `11/12`
 
+#### `HarmDecomp`: The harmonic decomposition of letter-pair polynomials, with denominators
+
+- `HarmDecomp.fj_mem_intP`: The harmonic pieces lose at most `p^{(k + 1)L}` ([note](../formalisations/alpoge-rh.md))
+- `HarmDecomp.Pairs.sum_piL`: The harmonic decomposition at several positions ([note](../formalisations/alpoge-rh.md))
+- `HarmDecomp.piL_mem_intP`: The projector of a list loses `p^{Σ_s (k + 1)L_s}` ([note](../formalisations/alpoge-rh.md))
+
+#### `HarmSplitPf`: The harmonic splitting with denominators (L5, A-N7)
+
+- `HarmSplitPf.harmSplit_of`: The harmonic splitting ([note](../formalisations/alpoge-rh.md))
+- `HarmSplitPf.harmSplit`: The harmonic splitting ([note](../formalisations/alpoge-rh.md))
+- `HarmSplitPf.first_local''`: The first local theorem (L5) ([note](../formalisations/alpoge-rh.md))
+
 #### `HasseEisenstein`: Hasse's bound for the curves `y² = x³ + D`: the Frobenius is an Eisenstein integer of norm `q`
 
 - `HasseEisenstein.card_points_of_mod_three_eq_two`: `y² = x³ + D` has `q + 1` points when `q ≡ 2 (mod 3)`
 - `HasseEisenstein.exists_eisenstein_trace`: The Frobenius of `y² = x³ + D` is an Eisenstein integer of norm `q`
 - `HasseEisenstein.abs_trace_le`: Hasse's bound for `y² = x³ + D`
+
+#### `HeckeTheta`: The Hecke relation of the theta chain and its iteration
+
+- `HeckeTheta.sum_conv`: A convolution in two steps ([note](../formalisations/alpoge-rh.md))
+- `HeckeTheta.hecke_chain`: The Hecke operators along the chain ([note](../formalisations/alpoge-rh.md))
+- `HeckeTheta.iterate_hecke`: The iteration lemma ([note](../formalisations/alpoge-rh.md))
 
 #### `HermClasses`: Hermitian spaces, decorated unimodular lattices and their classes
 
@@ -984,6 +1043,12 @@ note of `formalisations/` that names it, if one does.
 - `WeilForm.rh_of_simple_ground_states`: The chain with the zero-swap lemma plugged in ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_simple_ground_states'`: The chain, with `ζ ≠ 0` on `(0, 1)` discharged ([note](../formalisations/weil-positivity.md))
 
+#### `HwSatPf`: Saturation of highest weight vectors (`FirstCloud.HwSat`) and the first local theorem with the cloud inputs
+
+- `HwSatPf.hwSat_blocks`: Highest weight vectors are saturated ([note](../formalisations/alpoge-rh.md))
+- `HwSatPf.hwSat`: `HwSat` ([note](../formalisations/alpoge-rh.md))
+- `HwSatPf.first_local_cloud`: The first local theorem (L5) ([note](../formalisations/alpoge-rh.md))
+
 #### `InertModel`: The inert local model: lattice tuples, local Weyl lattices and Hecke operators
 
 - `InertModel.finite_edges`: Finiteness of the edges ([note](../formalisations/alpoge-rh.md))
@@ -1016,6 +1081,13 @@ note of `formalisations/` that names it, if one does.
 - `JacobiFourSquares.r4_zero`: `r₄(0) = 1`
 - `JacobiFourSquares.r4_eq`: Jacobi's four-square theorem
 
+#### `JetMinor`: The jet pairing, minors and directional Hasse derivatives
+
+- `JetMinor.det_add_rankOne`: The rank-one update of a determinant ([note](../formalisations/alpoge-rh.md))
+- `JetMinor.hasseDir_minorProd_eq_zero`: Hits beyond the columns vanish ([note](../formalisations/alpoge-rh.md))
+- `JetMinor.hasseDir_minorProd_eq_zero_cols`: Hits beyond the selected columns vanish ([note](../formalisations/alpoge-rh.md))
+- `JetMinor.frameJet`: The frame jet ([note](../formalisations/alpoge-rh.md))
+
 #### `KLattice`: Hermitian `O_K`-lattices in `K^ι`
 
 - `KLattice.inner_ψ`: The metric ([note](../formalisations/alpoge-rh.md))
@@ -1029,6 +1101,13 @@ note of `formalisations/` that names it, if one does.
 #### `KaiserBulk`: The bulk of the Kaiser probe and the doubled rate
 
 - `Kaiser.lam_kaiser`: Rung 0, doubled rate ([note](../formalisations/weil-positivity.md))
+
+#### `KernelCount`: Gaussian binomials, the edge count and Hecke adjointness
+
+- `KernelCount.qBinom_add`: q-Vandermonde ([note](../formalisations/alpoge-rh.md))
+- `KernelCount.card_subspace_eq_qBinom`: Subspaces of dimension `m` number `[n, m]_q` ([note](../formalisations/alpoge-rh.md))
+- `KernelCount.edge_count`: The edge count ([note](../formalisations/alpoge-rh.md))
+- `KernelCount.hecke_adjoint`: Hecke adjointness ([note](../formalisations/alpoge-rh.md))
 
 #### `KubotaCharacter`: Kubota's character
 
@@ -1104,6 +1183,14 @@ note of `formalisations/` that names it, if one does.
 
 - `WeilForm.rh_of_pairing_and_realRooted`: 1bu(ii) + item 6, assembled ([note](../formalisations/weil-positivity.md))
 - `WeilForm.rh_of_D_and_realRooted`: Theorem 1bu(ii) + item 6 in the paper's own terms ([note](../formalisations/weil-positivity.md))
+
+#### `LocalKernels`: The local chain at a served prime and the D1 → D2 contract
+
+- `LocalContract.LocalChain.vGe`: `F ∈ ϖ^{⌈2g⌉}·Int_j` ([note](../formalisations/alpoge-rh.md))
+- `LocalContract.LocalChain.chain`: The composite ([note](../formalisations/alpoge-rh.md))
+- `LocalContract.LocalChain.Iprod`: The served Hecke-product lattice ([note](../formalisations/alpoge-rh.md))
+- `LocalContract.Bridge`: (K3) The bridge ([note](../formalisations/alpoge-rh.md))
+- `LocalContract.NormLaw`: (K4) The normalisation law ([note](../formalisations/alpoge-rh.md))
 
 #### `LocalLattice`: The local lattice problem: edge lattices, the pairing and the model facts
 
@@ -1761,6 +1848,13 @@ note of `formalisations/` that names it, if one does.
 
 - `KLattice.slopeLe_of_twPair`: (TS10) **Theorem A, the maximal slope from an integral twisted pairing** ([note](../formalisations/alpoge-rh.md))
 
+#### `TwistWeights`: The generic translate and the twisted exponents (H1 of T3)
+
+- `TwistWeights.twistSub_eq_comp`: The factorisation ([note](../formalisations/alpoge-rh.md))
+- `TwistWeights.twistExps_eq`: (H1, equality; domains) ([note](../formalisations/alpoge-rh.md))
+- `TwistWeights.le_valS_iff`: `θ ≤ val_S F` ([note](../formalisations/alpoge-rh.md))
+- `TwistWeights.topS_le_iff`: `top_S F ≤ M` ([note](../formalisations/alpoge-rh.md))
+
 #### `TwistedDegree`: Frobenius-twisted column states (T9f)
 
 - `TwistedDegree.twCol_deg`: (deg) ([note](../formalisations/alpoge-rh.md))
@@ -1770,6 +1864,10 @@ note of `formalisations/` that names it, if one does.
 - `TwistedDegree.colK_plane`: The plane column state with a plane box ([note](../formalisations/alpoge-rh.md))
 - `TwistedDegree.colK_plane_const`: The plane column state without a plane box ([note](../formalisations/alpoge-rh.md))
 - `TwistedDegree.twCol_cong`: (cong) ([note](../formalisations/alpoge-rh.md))
+
+#### `TwoLetter`: The two-letter identification (Annex I's I4)
+
+- `TwoLetter.eq_zero_of_beta`: The flat model is injective on polynomials harmonic at every position ([note](../formalisations/alpoge-rh.md))
 
 #### `TwoVariableZeta`: The two-variable zeta function of Lagarias and Rains
 
@@ -2114,6 +2212,13 @@ note of `formalisations/` that names it, if one does.
 - `WeylCount.sum_prod_har`: The `Har` sum over the tops ([note](../formalisations/alpoge-rh.md))
 - `WeylCount.pow_le_card_codim`: `q^{r(k−r)}` subspaces of codimension `r` ([note](../formalisations/alpoge-rh.md))
 - `WeylCount.card_hyperplanes`: The hyperplane count ([note](../formalisations/alpoge-rh.md))
+
+#### `WeylDimPf`: The Weyl dimension formula for `∇` (`FirstCloud.WeylDim`)
+
+- `WeylDimPf.stdProd_linearIndependent`: The block products of standard row path polynomials are independent ([note](../formalisations/alpoge-rh.md))
+- `WeylDimPf.nabla_eq_span`: `∇` is the span of the block products of standard row path polynomials ([note](../formalisations/alpoge-rh.md))
+- `WeylDimPf.finrank_nabla`: The Weyl dimension formula for `∇`, block by block ([note](../formalisations/alpoge-rh.md))
+- `WeylDimPf.weylDim`: The Weyl dimension formula ([note](../formalisations/alpoge-rh.md))
 
 #### `WeylFock`: Weights, dual Weyl modules, the Fock form and the lattices `Δ_N`
 

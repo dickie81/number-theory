@@ -603,23 +603,86 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
       multidegree `B` (`PathSpan.card_monomials`, `PathBasis.card_pathIdx`): the path family is a basis of the
       polynomials of multidegree `B` over every commutative ring (`PathBasis.pathFam_basis`,
       `PathBasis.pathFam_basis_apply`).
-    - The first local theorem, L5 (`FirstMeans`, `FirstAssembly`, `OffTop`), at one orbit of an inert prime in the
-      setting `Unram`. The windows, the box mean, the depths and the numeric hypotheses are `FirstMeans`', with box sums
-      monotone (`FirstMeans.boxSum_mono`), the shifts multiplying over the tops (`FirstMeans.prod_sum_rho`) and the
-      extension by `0` additive (`FirstMeans.ext_add`). Good systems pass to sub-systems (`FirstAssembly.goodSys_le`)
-      and split over the flat pieces of the tensor of polynomial pairs, at denominator `D + 2u`
-      (`FirstAssembly.goodSys_split`); so `Σ_j κ_F·d(fl_j) ≤ κ_X·dim H(A, B)` (`FirstAssembly.key_ineq`), the box sums
-      of the flat exceptional fraction are at most `(4/3)|W_A|^N|W_B|^N(C_P + C_A)N·N₁/Y`
-      (`FirstAssembly.boxSum_kappaF_le`), and the per-weight assembly (`FirstAssembly.llp_first`) gives the first local
-      theorem (`FirstAssembly.first_local`): a per-orbit fraction `κ` with box mean at most `C·N·N₁/Y`, and the local
-      lattice property at every lattice. Its inputs are named statements, arguments of the theorem, for the later
-      modules to prove: `FirstAssembly.InputRank` (I1, the rank theorem of layer 2), `FirstMeans.SegMean` (I2, the
-      segment mean of layer 3), the bound I3 on `κ_P`, `FirstAssembly.HarmSplit` (the harmonic splitting),
-      `FirstAssembly.FlatDim` (the dimensions of the flat pieces), `FirstAssembly.CloudStep` (the cloud step) and
-      `FirstAssembly.OffTop` (the off-top step). The last is proved: `∇(λ)` factors into its top and off-top parts and
-      the Fock form is multiplicative over disjoint variables, so a good system of the top part gives one of the weight,
-      edge by edge (`OffTop.goodSys_offTop`); `FirstAssembly.OffTop` holds (`OffTop.offTop`), and the theorem holds
-      without it (`OffTop.first_local'`, below, "Conditional results").
+    - The capacity spans (`TwistWeights`, `CapStates`, `CapacityWeights`, `CapacityTop`, `CapacitySpan`, T3). The
+      twisted degrees `val_S`, `top_S` of `SymbolData` are read off the weights of one polynomial, the generic translate
+      `gtr F` (`x_l ↦ x_l·adj(g)` at the vector letters of `S`, `x_l ↦ g·x_l` at its covector letters, `g` the generic
+      matrix): the twisted substitution factors through it (`TwistWeights.twistSub_eq_comp`), and over a domain its
+      exponents at the column `c` are the `c`-th coordinates of the weights of `gtr F` (`TwistWeights.twistExps_eq`,
+      H1), so `θ ≤ val_S F` iff every weight `ν` has `θ ≤ ν_{n−1}`, and `top_S F ≤ M` iff every weight has `ν_0 ≤ M`
+      (`TwistWeights.le_valS_iff`, `TwistWeights.topS_le_iff`). Column states are runs of wedge and contraction steps,
+      which a change of frame transforms by the induced action on states (`CapStates`), so the weights of the translate
+      through the first `i` letters of a path polynomial `Ψ(P, I)` are dominated by `μ_i` (E1): `val_{<i} Ψ(P, I) ≥
+      μ_i(n − 1)` and `top_{<i} Ψ(P, I) ≤ μ_i(0)` (`CapacitySpan.valS_pathPoly`, `CapacitySpan.topS_pathPoly`, V4). The
+      weight-`μ_i` components factor, up to signs and powers of `det g`, through the path polynomials of an extended
+      word under an injective substitution, so they are linearly independent
+      (`CapacitySpan.gcomp_top_linearIndependent`, E2 and E3; `g` generic is essential). Hence T3: at checkpoints `i`
+      with bounds `θ_i`, `M_i`, the path-basis coordinates of a polynomial of multidegree `B` with `θ_i ≤ val_{<i}` and
+      `top_{<i} ≤ M_i` (the capacity set) vanish off the paths with `θ_i ≤ μ_i(n − 1)` and `μ_i(0) ≤ M_i`
+      (`CapacitySpan.repr_eq_zero_of_mem_capSet`), so over every domain the capacity set is the span of the admissible
+      path polynomials (`CapacitySpan.capSet_eq_span`; the inclusion `⊇` holds over every commutative ring,
+      `CapacitySpan.span_subset_capSet`). Over a field its dimension is the chain sum, `Σ dimW(μ_N)` over the admissible
+      paths (`CapacitySpan.finrank_capSpan`, `CapacitySpan.card_capOK`); membership is detected after an injective
+      coefficient map (`CapacitySpan.mem_capSet_map_iff`), and a surjection of domains, such as `O → k`, maps the
+      capacity set onto the capacity set (`CapacitySpan.capSet_image_map`).
+    - The first local theorem, L5 (`FirstMeans`, `FirstAssembly`, `OffTop`, `FlatDimPf`, `HarmDecomp`, `TwoLetter`,
+      `HarmSplitPf`, `FirstCloudBase`, `FirstCloudEdge`, `FirstCloudCount`, `FirstCloudPair`, `FirstCloudDim`,
+      `FirstCloud`, `WeylDimPf`, `HwSatPf`), at one orbit of an inert prime in the setting `Unram`. The windows, the box
+      mean, the depths and the numeric hypotheses are `FirstMeans`', with box sums monotone (`FirstMeans.boxSum_mono`),
+      the shifts multiplying over the tops (`FirstMeans.prod_sum_rho`) and the extension by `0` additive
+      (`FirstMeans.ext_add`). Good systems pass to sub-systems (`FirstAssembly.goodSys_le`) and split over the flat
+      pieces of the tensor of polynomial pairs, at denominator `D + 2u` (`FirstAssembly.goodSys_split`); so `Σ_j
+      κ_F·d(fl_j) ≤ κ_X·dim H(A, B)` (`FirstAssembly.key_ineq`), the box sums of the flat exceptional fraction are at
+      most `(4/3)|W_A|^N|W_B|^N(C_P + C_A)N·N₁/Y` (`FirstAssembly.boxSum_kappaF_le`), and the per-weight assembly
+      (`FirstAssembly.llp_first`) gives the first local theorem (`FirstAssembly.first_local`): a per-orbit fraction `κ`
+      with box mean at most `C·N·N₁/Y`, and the local lattice property at every lattice. Its inputs are named
+      statements, arguments of the theorem, for the later modules to prove: `FirstAssembly.InputRank` (I1, the rank
+      theorem of layer 2), `FirstMeans.SegMean` (I2, the segment mean of layer 3), the bound I3 on `κ_P`,
+      `FirstAssembly.HarmSplit` (the harmonic splitting), `FirstAssembly.FlatDim` (the dimensions of the flat pieces),
+      `FirstAssembly.CloudStep` (the cloud step) and `FirstAssembly.OffTop` (the off-top step). The last is proved:
+      `∇(λ)` factors into its top and off-top parts and the Fock form is multiplicative over disjoint variables, so a
+      good system of the top part gives one of the weight, edge by edge (`OffTop.goodSys_offTop`);
+      `FirstAssembly.OffTop` holds (`OffTop.offTop`), and the theorem holds without it (`OffTop.first_local'`, below,
+      "Conditional results"). Two more inputs are proved and a third is reduced to one classical input; the versions of
+      the theorem without them are there too. `FirstAssembly.FlatDim` holds for `k ≥ 2`
+      (`FlatDimPf.flatDim`; without it, `FlatDimPf.first_local_flat`). At a top the block shape of a flat weight is `(p
+      + q, q, …, q, 0)`, whose bideterminants are the images, under `X_{0,a} ↦ v_a`, `X_{1,a} ↦ η_a` (`v` the column `0`
+      of `x`, `η` the last row of `adj(x)`), of polynomials of multidegree `(p, q)` in a vector and a covector letter;
+      the path polynomials span these (T2), those whose Pieri path has `j ≥ 1` are killed (their column `p` reads `⟨v,
+      η⟩ = 0`), and the rest number `Har` (`FlatDimPf.flatDim_le`, the half `FirstAssembly.key_ineq` uses); the path
+      polynomials of the canonical row path lie in `∇` once placed in a block, and their products over the blocks are
+      independent, which gives the other half. `FirstAssembly.HarmSplit` holds in the setting `Unram` for `k ≥ 3`, with
+      Annex I's `u` and `a_max = 8a` (`HarmSplitPf.harmSplit`, from `HarmSplitPf.harmSplit_of`, for an `O` in which the
+      integers prime to `p` are invertible; without it, `HarmSplitPf.first_local''`). For two letters with pairing `h =
+      Σ_c X_{a,c}X_{b,c}` and pair Laplacian `Δ`, explicit operators `f_j`, with inverses of binomial coefficients as
+      coefficients, split a polynomial as `Σ_j h^j·f_j` with `Δf_j = 0`, losing at most `p^{(k + 1)⌊log_p(u + 2i)⌋}` on
+      integral polynomials (`HarmDecomp.fj_mem_intP`); at several positions `F = Σ_j (∏_s h_s^{j_s})·π_j(F)`
+      (`HarmDecomp.Pairs.sum_piL`), the losses of the projectors adding (`HarmDecomp.piL_mem_intP`). `H(A, B)` and the
+      flat weights are both images of letter polynomials, two letters per position (`TwoLetter`, I4), the flat model
+      being injective on the polynomials harmonic at every position (`TwoLetter.eq_zero_of_beta`, by evaluation at test
+      matrices whose last cofactor row is a scaling modulo the pairing); the splitting maps are the projectors `π_j`
+      read through the two models, and their twists by block lattices lose exactly what the twist constants absorb. The
+      cloud step `FirstAssembly.CloudStep` holds for `b′ > 0` and `k ≥ 2` given three classical inputs, named statements
+      (`FirstCloud.cloudStep`; with them in its place, `FirstCloud.first_local''`): the Weyl dimension formula for `∇`
+      (`FirstCloud.WeylDim`, I8); the cloud pairing, an equivariant, integral contraction `V(λ) × V(μ*) → V(H⁺)` with
+      top cloud vectors `s_b`, `s′_a`, `Con(F·s_b, s′_a) = δ_{ab}p^{κ_a}F·hw(fl₂)` and `κ_a ≤ D_c`, as many as the Weyl
+      dimension of the middle entries (`FirstCloud.CloudPair`, I5 with the contraction of N16); and the saturation of
+      multiplication by a highest weight vector (`FirstCloud.HwSat`, the domain half of I6). At one edge, a good system
+      at `H = fl(A, B)` gives targets at `H⁺ = fl(A + 2c, B + 2c)` through `·hw(fl₂)`
+      (`FirstCloud.exists_retract_targets`), a good system at `H⁺` leaves `r` combinations of its sources with
+      `#edges·(n₁ − r + n₂) ≤ d(H⁺)` (`FirstCloud.cloud_count`), and the adjoints of the contractions with the `s′_a`
+      are targets at `λ` (`FirstCloud.exists_adj_tgt`), so the edge carries a good system of size `m·r` at `λ`, `m` the
+      number of cloud vectors (`FirstCloud.goodSys_cloud`, N16 and N17); with the dimensions, `m·d(H) ≤ d(λ) ≤
+      e^ε·m·d(H)` and `d(H⁺) ≤ e^ε·d(H)`, `ε = 12Nkc/b′` (`FirstCloud.cloud_dims`), that is the rank the cloud step
+      asks. Two of its inputs are proved. `FirstCloud.WeylDim` holds over every field of characteristic `0`
+      (`WeylDimPf.weylDim`): block by block, the products of the standard row path polynomials span `∇`, since every
+      bideterminant straightens along the row path, the least path of its word (`WeylDimPf.nabla_eq_span`); they are
+      independent over every field (`WeylDimPf.stdProd_linearIndependent`) and number `∏_b dimW(ν_b)`
+      (`WeylDimPf.finrank_nabla`). `FirstCloud.HwSat` holds over a discrete valuation ring with fraction field of
+      characteristic `0` (`HwSatPf.hwSat`, from `HwSatPf.hwSat_blocks`): those products are bideterminants defined over
+      `ℤ` and stay independent over the residue field, so Gauss's lemma and the saturation of `∇_O` run at once modulo
+      the uniformiser. So the theorem holds from `FirstCloud.CloudPair`, `FirstAssembly.HarmSplit`, I1, I2 and I3
+      (`HwSatPf.first_local_cloud`), and, `FirstAssembly.HarmSplit` being proved, the inputs of L5 not yet proved are
+      the cloud pairing `FirstCloud.CloudPair` and I1, I2, I3.
     - The source side of the second local theorem, first part (`SourceKeys`, `SourceCore`, `SourceOneSided`; L6 N8). The
       explicit polynomials of N8 (pushed entries, plane determinants, even and odd keys, the localiser) under the
       adapted substitution `Φ_g`: `Φ_1` fixes the plane determinant of the rows (`SourceKeys.ad_one_Tp`), and the
@@ -744,6 +807,34 @@ thin scales and the twists, are proved, conditionally on the half-plane `Re s > 
     along an adapted basis, is `c₀·exp(−Ψ)·U` with `U` integral and `Ψ = Σ_i u_i(γ/2)·serAB(X_i, X_i)`
     (`ThetaGauss.theta_gauss`, for any Frobenius lift, and `ThetaGauss.theta_gauss'`, for that of `UnramFrobLift`), from
     the classical CM inputs alone (below).
+  - D2, the served valuation of the theta chain: first modules (`JetMinor`, `KernelCount`, `HeckeTheta`,
+    `LocalKernels`). Series (D2-1): the jet pairing `Σ_κ Q_κ·κ!·F_κ` of a polynomial with a power series pairs the
+    chain's series with products of minors of frame blocks. A rank-one update is affine in its coefficient, `det(B +
+    w·uᵀ) = det B + Σ_c u_c·det(B with column c replaced by w)` (`JetMinor.det_add_rankOne`), so along directions at one
+    position with one vector a product of minors has degree at most the number of its minors there, and its Hasse
+    derivatives beyond that vanish (`JetMinor.hasseDir_minorProd_eq_zero`); with a vector per direction but only the
+    Z-columns in `J`, a minor with Z-columns `I` has degree at most `#(I ∩ J)`
+    (`JetMinor.hasseDir_minorProd_eq_zero_cols`). The frame jet of one orbit (`JetMinor.frameJet`) and of all orbits,
+    the degree of the column product, `ρ_p = 1/(p² − 1)` and the column weights of a Hecke edge are defined, for the
+    frame-jet bounds and the bridge below. Lattices (D2-4, D2-5): Gaussian binomials satisfy q-Vandermonde, `[m + n, k]
+    = Σ_j q^{(m−j)(k−j)}·[m, j]·[n, k − j]` (`KernelCount.qBinom_add`), and count the subspaces of a space over a field
+    with `q` elements (`KernelCount.card_subspace_eq_qBinom`); so for `x·L ⊆ L′`, with `φ̄ : p⁻¹L/L → L′/pL′` of rank
+    `ρ`, the type-`i` edges `L₁ ⊂ L′` with `x·L ⊆ L₁` number `[N′ − ρ, i]_q` and the type-`r` edges `A ⊃ L` with `x·A ⊆
+    L′` number `[N − ρ, r]_q` (`KernelCount.edge_count`). Over class representatives of the lattice tuples under a
+    level, the sums over the edges up and down, weighted by the inverse orders of the stabilisers, agree for an
+    invariant function (`KernelCount.hecke_adjoint`, Hecke adjointness). Normalised Hecke operators with a one-step
+    relation `H_{j+1}(i)∘K_j = Σ_{l ≤ i} ε_{j,l}·K_j∘H_j(i − l)` along the steps `K_j` satisfy `H_j(i)∘chain_j = Σ_{l ≤
+    i} c_{j,l}·chain_j∘H_0(i − l)`, `c_j` the coefficients of `∏_{j′<j} Σ_l ε_{j′,l}X^l` (`HeckeTheta.hecke_chain`, by
+    convolution, `HeckeTheta.sum_conv`), so the combination of the `H_j(r − l)` by the coefficients of the inverse of
+    that product modulo `X^{r+1}` turns `chain_j` into `chain_j∘H_0(r)` (`HeckeTheta.iterate_hecke`, the iteration
+    lemma). The contract from D1 to D2 (D2-0, definitions only, which no theorem uses yet): the local chain at a served
+    prime (`LocalContract.LocalChain`: levels with ranks, class representatives, coefficient lattices and steps on the
+    local functions), its composite (`LocalContract.LocalChain.chain`), the valuation predicate `F ∈ ϖ^{⌈2g⌉}·Int j`
+    (`LocalContract.LocalChain.vGe`) and the served Hecke-product lattice (`LocalContract.LocalChain.Iprod`); the kernel
+    data D1 is to deliver (`LocalContract.LocalKernels`: the expansion of a step over the class representatives, K1; the
+    Gaussian frame form `ser = posGauss(γ)·R`, `R` integral and mixed-integral, K2; level equivariance, K5; and the
+    stabiliser losses); and two clauses stated on top, the bridge from frame jets to lattice valuations
+    (`LocalContract.Bridge`, K3) and the normalisation law (`LocalContract.NormLaw`, K4).
 
 ## How the statements differ from the archive's
 
@@ -798,7 +889,10 @@ The steps were written from the mathematics. Parts were written by helpers given
 | The classification of the formal Gaussian pairing of the CM curve at an inert `ℓ ≥ 5`, `ℓ ∤ d`, from the classical CM inputs alone (`CMTorsion`): some unit `ε` of the maximal unramified extension has `be ≃ c·serAB` with `φ(c) = −c` and `‖c‖ ≤ 1`, for the Frobenius lift `φ` of `UnramFrobLift` | The CM inputs `CMFormalInert.CMInertLubinTate` (CM-b), `CMThetaOne.CMjIntegral` (CM-c), `CMFormalBiadd.CMUnramified` (CM-a′) and `CMFormalBiadd.CMs2Unram` (CM-d strengthened) | `CMTorsion.be_classification_cm_classical` |
 | The classification of the formal Gaussian pairing of the CM curve with the uniqueness statement proved (`CMFormalGauss`): at an inert `ℓ ≥ 5`, `ℓ ∤ d`, for a Frobenius lift `φ` on the maximal unramified extension, some unit `ε` of it has `be ≃ c·serAB` with `φ(c) = −c` and `‖c‖ ≤ 1`, given, as an argument, the hermitian property of `be` or, in its place, bounded coefficients of `X·Y^{ℓ^{2j}}` in `be` | The CM inputs `CMFormalInert.CMInertLubinTate` (CM-b), `CMThetaOne.CMjIntegral` (CM-c), `CMFormalBiadd.CMUnramified` (CM-a′) and `CMFormalBiadd.CMs2Unram` (CM-d strengthened) | `CMFormalGauss.be_classification_cm'`, `CMFormalGauss.be_classification_cm_bdd` |
 | The Gaussian factorisation of the theta at an inert prime (`ThetaGauss`): for `θ` in the theta space of an `ω`-stable self-dual theta lattice `C` (`d ≡ 7 (mod 8)`), an inert `ℓ ≥ 5` with `ℓ ∤ d` and an `ℓ`-adapted orthogonal basis of `C`, some unit `ε` of the maximal unramified extension makes the Taylor series of `θ` in the Lubin–Tate coordinates of `ε` along the basis `c₀·exp(−Ψ)·U`, with `U` integral and `Ψ = Σ_i u_i(γ/2)·serAB(X_i, X_i)`, `φ(γ) = −γ`; for a given Frobenius lift `φ` (`ThetaGauss.theta_gauss`) or that of `UnramFrobLift` (`ThetaGauss.theta_gauss'`) | The CM inputs `CMFormalInert.CMInertLubinTate` (CM-b), `CMThetaOne.CMjIntegral` (CM-c), `CMFormalBiadd.CMUnramified` (CM-a′) and `CMFormalBiadd.CMs2Unram` (CM-d strengthened) | `ThetaGauss.theta_gauss`, `ThetaGauss.theta_gauss'` |
-| The first local theorem (L5): at one orbit of an inert `p ≥ 5` in the setting `Unram`, a per-orbit fraction `κ` with box mean at most `C·N·N₁/Y` and the local lattice property at every lattice, for the weights of the shape | Named statements, arguments of the theorems (each mentions their variables, so none is a closed hypothesis): `FirstAssembly.InputRank` (I1, the rank theorem of layer 2), `FirstMeans.SegMean` (I2, the segment mean of layer 3), the bound `κ_P ≤ C_P·N·N₁/Y` (I3), `FirstAssembly.HarmSplit` (the harmonic splitting), `FirstAssembly.FlatDim` (the dimensions of the flat pieces), `FirstAssembly.CloudStep` (the cloud step) and, for `FirstAssembly.first_local` only, `FirstAssembly.OffTop` (the off-top step, which `OffTop.offTop` proves) | `OffTop.first_local'`, `FirstAssembly.first_local` |
+| The first local theorem (L5): at one orbit of an inert `p ≥ 5` in the setting `Unram`, a per-orbit fraction `κ` with box mean at most `C·N·N₁/Y` and the local lattice property at every lattice, for the weights of the shape | Named statements, arguments of the theorems (each mentions their variables, so none is a closed hypothesis): `FirstAssembly.InputRank` (I1, the rank theorem of layer 2), `FirstMeans.SegMean` (I2, the segment mean of layer 3), the bound `κ_P ≤ C_P·N·N₁/Y` (I3), `FirstAssembly.HarmSplit` (the harmonic splitting, which `HarmSplitPf.harmSplit` proves for `k ≥ 3`), `FirstAssembly.FlatDim` (the dimensions of the flat pieces, which `FlatDimPf.flatDim` proves), `FirstAssembly.CloudStep` (the cloud step, which `FirstCloud.cloudStep` proves from three classical inputs) and, for `FirstAssembly.first_local` only, `FirstAssembly.OffTop` (the off-top step, which `OffTop.offTop` proves) | `OffTop.first_local'`, `FirstAssembly.first_local` |
+| The first local theorem (L5) with one input discharged: without `FirstAssembly.FlatDim` (`FlatDimPf.first_local_flat`), without `FirstAssembly.HarmSplit` (`HarmSplitPf.first_local''`), or with `FirstAssembly.CloudStep` replaced by the cloud step's three classical inputs (`FirstCloud.first_local''`) | Named statements, arguments of the theorems (each mentions their variables, so none is a closed hypothesis): `FirstAssembly.InputRank` (I1), `FirstMeans.SegMean` (I2), the bound `κ_P ≤ C_P·N·N₁/Y` (I3), and the two of `FirstAssembly.FlatDim`, `FirstAssembly.HarmSplit` and `FirstAssembly.CloudStep` not discharged; for `FirstCloud.first_local''`, in place of the last, `FirstCloud.WeylDim` (I8), `FirstCloud.CloudPair` (I5 with the contraction of N16) and `FirstCloud.HwSat` (the domain half of I6) | `FlatDimPf.first_local_flat`, `HarmSplitPf.first_local''`, `FirstCloud.first_local''` |
+| The cloud step of L5 (A-N15 to N17): at one orbit of an inert `p` in the setting `Unram`, for `b′ > 0` and `k ≥ 2`, `FirstAssembly.CloudStep` with the cloud exponent `D_c` | Classical inputs, named statements, arguments of the theorems (each mentions their variables, so none is a closed hypothesis): `FirstCloud.WeylDim` (I8, the Weyl dimension formula for `∇`, which `WeylDimPf.weylDim` proves), `FirstCloud.CloudPair` (I5 with the contraction of N16: an equivariant contraction `V(λ) × V(μ*) → V(H⁺)`, integral on `∇_O × ∇_O`, with top cloud vectors pairing to `δ_{ab}p^{κ_a}·hw(fl₂)`, `κ_a ≤ D_c`, not yet proved) and `FirstCloud.HwSat` (the domain half of I6: `F·hw(ν₂) ∈ ∇_O(ν + ν₂)` implies `F ∈ ∇_O(ν)`, which `HwSatPf.hwSat` proves over a discrete valuation ring) | `FirstCloud.cloudStep` |
+| The first local theorem (L5) with `FirstAssembly.FlatDim`, `FirstCloud.WeylDim` and `FirstCloud.HwSat` discharged: at one orbit of an inert `p ≥ 5` in the setting `Unram`, a per-orbit fraction `κ` with box mean at most `C·N·N₁/Y` and the local lattice property at every lattice | `FirstCloud.CloudPair` (I5 with the contraction of N16, the cloud pairing, with exponents at most `D_c`, not yet proved) and the named statements `FirstAssembly.HarmSplit` (which `HarmSplitPf.harmSplit` proves), `FirstAssembly.InputRank` (I1), `FirstMeans.SegMean` (I2) and the bound `κ_P ≤ C_P·N·N₁/Y` (I3), arguments of the theorems (each mentions their variables, so none is a closed hypothesis) | `HwSatPf.first_local_cloud` |
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function | `WindowGRH.WindowBound`: for every primitive `χ` and `θ > 1/2`, the weighted error of the ramp sums of the cyclic family of `χ` is at most `C x^θ` on windows `[Y, Y^λ]` with `Y` arbitrarily large | `WindowGRH.rhAndGRH_of_windowBound` |
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function, also resting on the half-plane `Re s > 11/12` for `ζ` and every Dirichlet `L`-function, a result formalised in the library that no referee has read ([openai-half-plane.md](openai-half-plane.md)) | `ZetaBalance.PairBound`, the construction alone: for every primitive `χ` and every `ε₀ > 0` there are `ε ∈ (0, ε₀)` and `A ≥ 1` such that, for every large `Y`, every pair of primes `(q, d)` meeting `ZetaTwist.WinPair ε Y` has a sub-window `[Y′, Y′²]`, with `Y ≤ Y′ ≤ Y^{A/2}`, at every `x` of which a setting `S` with `S.q = q` and `S.d = d` and a character `κ` of `A` lifting `χ` (`ZetaBalance.Setting.Lifts`) has lattice data (`ZetaBalance.LatticeData S κ x ε X`) whose thin classes lie beyond `X = (Nx)^{log x}` | `ZetaBalance.rhAndGRH_of_pairBound` |
 | The Riemann hypothesis for `ζ` and for every Dirichlet `L`-function, also resting on the half-plane `Re s > 11/12` for `ζ` and every Dirichlet `L`-function, a result formalised in the library that no referee has read ([openai-half-plane.md](openai-half-plane.md)) | `ZetaBalance.SixTermBound`: `ZetaBalance.PairBound` with six-term data (`ZetaBalance.SixTermData S κ x ε X`) in place of lattice data: weights and, at each translate of the kernel `A₀` of `κ`, a frame meeting the hypotheses of the frame inequality at its rank-weighted mean slope (`SlopeFrame.Frame.mean`), with numbers of its words (the slope of the forms, the split primes, the auxiliary prime) and of the translate (the vanishing gain, the forced vanishing, a scale `v > 0`, `log(g₀g₁)`, six slacks) that meet the archive's six inequalities G1–G6, and one budget for the slacks and the losses of the frame inequality | `ZetaBalance.rhAndGRH_of_sixTermBound` |
@@ -810,5 +904,5 @@ The steps were written from the mathematics. Parts were written by helpers given
 | The Riemann hypothesis, also resting on the half-plane `Re s > 11/12` for `ζ` and every Dirichlet `L`-function, a result formalised in the library that no referee has read ([openai-half-plane.md](openai-half-plane.md)) | `ZetaBalance.ZetaPairBound`, the construction alone: for every `ε₀ > 0` there are `ε ∈ (0, ε₀)` and `A ≥ 1` such that, for every large `Y`, every pair of primes `(q, d)` meeting `ZetaTwist.WinPair ε Y` has a sub-window `[Y′, Y′²]`, with `Y ≤ Y′ ≤ Y^{A/2}`, at every `x` of which a setting `S` with `S.q = q` and `S.d = d` has lattice data (`ZetaBalance.LatticeData S 1 x ε X`) whose thin classes lie beyond `X = (Nx)^{log x}` | `ZetaBalance.riemannHypothesis_of_zetaPairBound` |
 | The Riemann hypothesis, also resting on the half-plane `Re s > 11/12` for `ζ` and every Dirichlet `L`-function, a result formalised in the library that no referee has read ([openai-half-plane.md](openai-half-plane.md)) | `ZetaBalance.ZetaTwistBound`: for every `ε > 0`, on windows `[Y, Y^λ]` with `Y` arbitrarily large, every `x` has a setting `S` with small twists (`ZetaBalance.Setting.Twists S 1`) and lattice data (`ZetaBalance.LatticeData S 1 x ε X`) whose thin classes lie beyond `X = (Nx)^{log x}` | `ZetaBalance.riemannHypothesis_of_zetaTwistBound` |
 | The Riemann hypothesis | `ZetaBalance.ZetaLatticeBound`: for every `ε > 0`, on windows `[Y, Y^λ]` with `Y` arbitrarily large, every `x` has a setting `S` thin at some `X` (`ZetaBalance.Setting.Thin`), with small twists (`ZetaBalance.Setting.Twists S 1`), and lattice data (`ZetaBalance.LatticeData S 1 x ε X`): weights and, at each translate, a frame meeting the hypotheses of the frame inequality, whose gain covers the inert-prime gap (G) with small losses (Z) | `ZetaBalance.riemannHypothesis_of_zetaLatticeBound` |
-| The Riemann hypothesis | `ZetaBalance.ZetaBalanceBound`: for every `ε > 0`, on windows `[Y, Y^λ]` with `Y` arbitrarily large, every `x` has a setting `S` thin at some `X`, with small twists, and balance data (`ZetaBalance.BalanceData S 1 x ε X`). The setting is thin when the errors are at most `θy` for `y ≥ X`, with `8|A|x²θ ≤ 1`, and its twists are small when the three quadratic twists are at most `x^{1/2+ε}` at `x`. The balance data are weights (`ZetaBalance.Weights`) whose inert-prime gap, averaged over translates, is at most `x^{4ε} Σ_t a_t`, with `m ≥ x^{1/2−ε}` words, thick classes of density at least `x^{−ε}`, and `a_t/w ≥ X` on the thin classes | `ZetaBalance.riemannHypothesis_of_zetaBalanceBound` |
+| The Riemann hypothesis | `ZetaBalance.ZetaBalanceBound`: for every `ε > 0`, on windows `[Y, Y^λ]` with `Y` arbitrarily large, every `x` has a setting `S` thin at some `X`, with small twists, and balance data (`ZetaBalance.BalanceData S 1 x ε X`). The setting is thin when the errors are at most `θy` for `y ≥ X`, with `8\|A\|x²θ ≤ 1`, and its twists are small when the three quadratic twists are at most `x^{1/2+ε}` at `x`. The balance data are weights (`ZetaBalance.Weights`) whose inert-prime gap, averaged over translates, is at most `x^{4ε} Σ_t a_t`, with `m ≥ x^{1/2−ε}` words, thick classes of density at least `x^{−ε}`, and `a_t/w ≥ X` on the thin classes | `ZetaBalance.riemannHypothesis_of_zetaBalanceBound` |
 | GRH in the words of L. Alpöge's Lean archive (`LinnikGRH.DirichletRH`), the hypothesis of the library's results under GRH (`LinnikGRH.linnik_two`, `LinnikAlmostAll.almostAll_one`) | `HalfPlaneGRH.RHandGRH`, the Riemann hypothesis for `ζ` and for the `L`-function of every Dirichlet character, which `ZetaBalance.PairBound` gives, conditionally on the half-plane | `LinnikGRH.dirichletRH_of_rhAndGRH` |

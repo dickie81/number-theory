@@ -497,11 +497,6 @@ theorem smul_inv_smul (γ : C.Γ) (L : V → Submodule W (Fin k → Qq)) : C.smu
   rw [← Level.smul_mul, inv_mul_cancel, Level.smul_one]
 
 omit [IsDomain W] [IsDiscreteValuationRing W] [IsDomain O] [IsDiscreteValuationRing O] in
-/-- **`γ·(γ⁻¹·L) = L`.** -/
-theorem smul_smul_inv (γ : C.Γ) (L : V → Submodule W (Fin k → Qq)) : C.smul γ (C.smul γ⁻¹ L) = L := by
-  rw [← Level.smul_mul, mul_inv_cancel, Level.smul_one]
-
-omit [IsDomain W] [IsDiscreteValuationRing W] [IsDomain O] [IsDiscreteValuationRing O] in
 /-- **Translates of lattice tuples are lattice tuples.** -/
 theorem isLattice_smul (γ : C.Γ) {L : V → Submodule W (Fin k → Qq)} (hL : ∀ v, (L v).IsLattice Qq) (v : V) :
     ((C.smul γ L) v).IsLattice Qq :=

@@ -328,10 +328,6 @@ def eps : Bool × Fin n' ≃ Fin (n' * 2) where
     · rw [h]; simp [even_vL]
     · rw [h]; simp [not_even_cL]
 
-/-- **`eps` keeps the position.** -/
-@[simp] theorem pos_eps (b : Bool × Fin n') : pos (eps b) = b.2 := by
-  simp only [eps, Equiv.coe_fn_mk]; split_ifs <;> simp
-
 /-- **The position of `eps⁻¹`.** -/
 @[simp] theorem eps_symm_snd (t : Fin (n' * 2)) : (eps.symm t).2 = pos t := rfl
 

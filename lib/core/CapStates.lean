@@ -112,14 +112,6 @@ theorem app_smul (st : Step) (y : Fin n → Λ) (p : Λ) (S : Finset (Fin n) →
   · simp only [Step.app, wedge, Finset.mul_sum]; exact Finset.sum_congr rfl fun _ _ => by ring
   · simp only [Step.app, contr, Finset.mul_sum]; exact Finset.sum_congr rfl fun _ _ => by ring
 
-/-- **A step is additive in the state.** -/
-theorem app_sum (st : Step) {ι : Type*} (s : Finset ι) (y : Fin n → Λ) (f : ι → Finset (Fin n) → Λ)
-    (J : Finset (Fin n)) : st.app y (fun K => ∑ j ∈ s, f j K) J = ∑ j ∈ s, st.app y (f j) J := by
-  cases st
-  · rfl
-  · exact wedge_sum_st s y f J
-  · exact contr_sum_st s y f J
-
 /-- **A run from a stage commutes with scalars.** -/
 theorem runFrom_smul (y : ℕ → Fin n → Λ) (st : ℕ → Step) (i : ℕ) (p : Λ) (S : Finset (Fin n) → Λ) (k : ℕ)
     (J : Finset (Fin n)) : runFrom y st i (fun K => p * S K) k J = p * runFrom y st i S k J := by

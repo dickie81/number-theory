@@ -177,9 +177,6 @@ theorem run_init_smul (y : ℕ → Fin n → Λ) (st : ℕ → Step) (S0 : Finse
     rw [run_succ, run_succ, show run y st (fun J => p * S0 J) t = fun J => p * run y st S0 t J from funext ih,
       app_smul]
 
-/-- **Swapping twice.** -/
-theorem stepSwap_stepSwap (s : Step) : stepSwap (stepSwap s) = s := by cases s <;> rfl
-
 /-- **The column state is the dual form** (`c ≤ 0`) or its Hodge dual (`c ≥ 1`). -/
 theorem colK_eq_dual (y : ℕ → Fin n → Λ) (μ : ℕ → Fin n → ℤ) (c : ℤ) (t : ℕ) (K : Finset (Fin n)) :
     run y (colStep μ c) st0 t K = (if 1 ≤ c then hsg Kᶜ * hsg (univ : Finset (Fin n)) else 1) *

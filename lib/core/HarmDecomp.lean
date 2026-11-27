@@ -561,10 +561,6 @@ def intP (σ : Type*) : Subring (MvPolynomial σ K) where
 variable {A} {σ : Type*}
 
 omit [CharZero K] in
-/-- **Membership in `intP`**: all coefficients in `A`. -/
-theorem mem_intP {F : MvPolynomial σ K} : F ∈ intP A σ ↔ ∀ μ, F.coeff μ ∈ A := Iff.rfl
-
-omit [CharZero K] in
 /-- **Scalars of `A` keep `intP`.** -/
 theorem smul_mem_intP {c : K} (hc : c ∈ A) {F : MvPolynomial σ K} (hF : F ∈ intP A σ) : c • F ∈ intP A σ :=
   fun μ => by rw [coeff_smul, smul_eq_mul]; exact mul_mem hc (hF μ)

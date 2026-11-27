@@ -272,11 +272,6 @@ theorem gtr_ge_eq (vec : ℕ → Bool) {i u : ℕ} (hu : i ≤ u) :
   funext a
   rw [gtr_X_ge vec hu a]
 
-/-- **Constants are fixed** by the translate. -/
-theorem gtr_C (vec : ℕ → Bool) (S : Set ℕ) (r : R) :
-    gtr (n := n) vec S (MvPolynomial.C r) = MvPolynomial.C (MvPolynomial.C r) := by
-  simp [gtr]
-
 /-- **Constants are fixed** by the translate (any letters). -/
 theorem gtr_C' {ι : Type*} (vec : ι → Bool) (S : Set ι) (r : R) :
     gtr (n := n) vec S (MvPolynomial.C r) = MvPolynomial.C (MvPolynomial.C r) := by

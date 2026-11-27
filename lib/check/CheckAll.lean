@@ -582,6 +582,27 @@ import ProdWeights
 import TileProb
 import TopsSelect
 import DesignG2
+import TwistWeights
+import CapStates
+import CapacityWeights
+import CapacityTop
+import CapacitySpan
+import FlatDimPf
+import FirstCloudBase
+import FirstCloudCount
+import FirstCloudEdge
+import FirstCloudPair
+import FirstCloudDim
+import FirstCloud
+import HarmDecomp
+import TwoLetter
+import HarmSplitPf
+import WeylDimPf
+import HwSatPf
+import JetMinor
+import KernelCount
+import LocalKernels
+import HeckeTheta
 import ZetaThin
 import ZetaPair
 import SixTerm
@@ -3064,6 +3085,60 @@ test functions and the ground state (see docs/weil-positivity-l05.md). -/
 #print axioms ZetaBalance.SharpDesign.G2At
 #print axioms ZetaBalance.exists_le_boxMean
 #print axioms ZetaBalance.Setting.DesignAdm.exists_design
+#print axioms TwistWeights.twistSub_eq_comp
+#print axioms TwistWeights.twistExps_eq
+#print axioms TwistWeights.le_valS_iff
+#print axioms TwistWeights.topS_le_iff
+#print axioms CapacitySpan.valS_pathPoly
+#print axioms CapacitySpan.topS_pathPoly
+#print axioms CapacitySpan.span_subset_capSet
+#print axioms CapacitySpan.finrank_capSpan
+#print axioms CapacitySpan.card_capOK
+#print axioms CapacitySpan.mem_capSet_map_iff
+#print axioms CapacitySpan.gcomp_top_linearIndependent
+#print axioms CapacitySpan.repr_eq_zero_of_mem_capSet
+#print axioms CapacitySpan.capSet_eq_span
+#print axioms CapacitySpan.capSet_image_map
+#print axioms FlatDimPf.flatDim_le
+#print axioms FlatDimPf.flatDim
+#print axioms FlatDimPf.first_local_flat
+#print axioms FirstCloud.cloud_count
+#print axioms FirstCloud.exists_retract_targets
+#print axioms FirstCloud.exists_adj_tgt
+#print axioms FirstCloud.goodSys_cloud
+#print axioms FirstCloud.cloud_dims
+#print axioms FirstCloud.cloudStep
+#print axioms FirstCloud.first_local''
+#print axioms HarmDecomp.Pairs.sum_piL
+#print axioms HarmDecomp.piL_mem_intP
+#print axioms HarmDecomp.fj_mem_intP
+#print axioms TwoLetter.eq_zero_of_beta
+#print axioms HarmSplitPf.harmSplit_of
+#print axioms HarmSplitPf.harmSplit
+#print axioms HarmSplitPf.first_local''
+#print axioms WeylDimPf.stdProd_linearIndependent
+#print axioms WeylDimPf.nabla_eq_span
+#print axioms WeylDimPf.finrank_nabla
+#print axioms WeylDimPf.weylDim
+#print axioms HwSatPf.hwSat_blocks
+#print axioms HwSatPf.hwSat
+#print axioms HwSatPf.first_local_cloud
+#print axioms JetMinor.det_add_rankOne
+#print axioms JetMinor.hasseDir_minorProd_eq_zero
+#print axioms JetMinor.hasseDir_minorProd_eq_zero_cols
+#print axioms JetMinor.frameJet
+#print axioms KernelCount.qBinom_add
+#print axioms KernelCount.card_subspace_eq_qBinom
+#print axioms KernelCount.edge_count
+#print axioms KernelCount.hecke_adjoint
+#print axioms LocalContract.LocalChain.chain
+#print axioms LocalContract.LocalChain.vGe
+#print axioms LocalContract.LocalChain.Iprod
+#print axioms LocalContract.Bridge
+#print axioms LocalContract.NormLaw
+#print axioms HeckeTheta.sum_conv
+#print axioms HeckeTheta.hecke_chain
+#print axioms HeckeTheta.iterate_hecke
 #print axioms ZetaBalance.riemannHypothesis_of_zetaLatticeBound
 #print axioms ZetaBalance.rhAndGRH_of_latticeBound
 #print axioms ZetaBalance.riemannHypothesis_of_zetaTwistBound
