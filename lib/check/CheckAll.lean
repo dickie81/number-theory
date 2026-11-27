@@ -384,6 +384,9 @@ import EpsteinFlat
 import XiReflection
 import WengRankTwo
 import PavlovFaddeev
+import ModEisenstein
+import ModContinuation
+import ModFD
 import XiReflectionBand
 import SquaresCongruences
 import RamanujanCongruences
@@ -1972,6 +1975,37 @@ twin-form rates at `11/12`. -/
 #print axioms PavlovFaddeev.pole_iff
 #print axioms PavlovFaddeev.rh_iff_resonances_on_quarter
 #print axioms PavlovFaddeev.rh_iff_poles_on_quarter
+#print axioms ModEisenstein.summable_norm_term
+#print axioms ModEisenstein.term_smul
+#print axioms ModEisenstein.E_smul
+#print axioms ModEisenstein.epstein_smul
+#print axioms ModEisenstein.summable_norm_E
+#print axioms ModEisenstein.zeta_mul_E
+#print axioms ModEisenstein.E_eq_epstein
+#print axioms ModEisenstein.integral_G
+#print axioms ModEisenstein.integral_rpow_sq_add
+#print axioms ModEisenstein.hasSum_integral_mul_add
+#print axioms ModEisenstein.hasSum_integral_term
+#print axioms ModEisenstein.integral_epstein
+#print axioms ModEisenstein.zeta_ratio_beta
+#print axioms ModEisenstein.constTerm_eq
+#print axioms ModContinuation.theta_inv
+#print axioms ModContinuation.Estar_one_sub
+#print axioms ModContinuation.differentiableAt_Estar
+#print axioms ModContinuation.differentiableOn_Estar
+#print axioms ModContinuation.theta_smul
+#print axioms ModContinuation.Estar_smul
+#print axioms ModContinuation.Lambda_eq_epstein
+#print axioms ModContinuation.Estar_eq
+#print axioms ModContinuation.constTerm_Estar
+#print axioms ModFD.volume_fd
+#print axioms ModFD.volume_fd_diff_fdo
+#print axioms ModFD.ae_tsum_indicator_fd
+#print axioms ModFD.lintegral_fd_tsum_SL
+#print axioms ModFD.lintegral_fd_tsum_coprime
+#print axioms ModFD.lintegral_strip_im
+#print axioms ModFD.lintegral_fd_tsum_coprime_im
+#print axioms ModFD.lintegral_fd_tsum_nq
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq
