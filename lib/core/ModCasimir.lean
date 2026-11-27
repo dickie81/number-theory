@@ -202,4 +202,90 @@ theorem exp_neg_deriv_zetaT_zero (z : ℍ) :
   have hη : 0 < ‖ModularForm.eta z‖ := norm_pos_iff.2 (ModularForm.eta_ne_zero z.im_pos)
   rw [logDet_eq, Real.exp_log (by have := z.im_pos; positivity)]
 
+/-! ## Modular invariance -/
+
+/-- **The Kronecker limit function is `SL(2, ℤ)`-invariant**: `kron(γτ) = kron(τ)`, from `E*(γτ, s) = E*(τ, s)` and
+uniqueness of the limit in Kronecker's formula. -/
+theorem kron_smul (γ : SL(2, ℤ)) (z : ℍ) : kron (γ • z : ℍ) = kron z := by
+  have h1 := tendsto_Estar_sub_pole (γ • z)
+  simp_rw [Estar_smul] at h1
+  have := tendsto_nhds_unique h1 (tendsto_Estar_sub_pole z)
+  have h2 := Complex.ofReal_injective this
+  linarith
+
+/-- **The scale-invariant part of the determinant is modular invariant**: `ζ_T'(0) + log(area)` is the same for
+`τ` and `γτ` (the tori `ℂ/(ℤ + ℤτ)` and `ℂ/(ℤ + ℤγτ)` differ by the dilation `w ↦ w/(cτ + d)`, which rescales the
+spectrum; since `ζ_T(0) = −1`, `ζ_T'(0) + log(area)` does not see the dilation). -/
+theorem deriv_zetaT_zero_add_log_smul (γ : SL(2, ℤ)) (z : ℍ) :
+    deriv (zetaT (γ • z)) 0 + Real.log (γ • z).im = deriv (zetaT z) 0 + Real.log z.im := by
+  rw [deriv_zetaT_zero, deriv_zetaT_zero, kron_smul]
+  push_cast
+  ring
+
+/-- **`det'Δ/area = (Im τ)|η(τ)|⁴` is `SL(2, ℤ)`-invariant**: the one-loop partition function
+`Z(τ) = (det'Δ/area)^{−1/2} = 1/(√(Im τ)|η(τ)|²)` of the free boson does not depend on the choice of basis of the
+lattice. -/
+theorem det_div_area_smul (γ : SL(2, ℤ)) (z : ℍ) :
+    (γ • z).im * ‖ModularForm.eta (γ • z : ℍ)‖ ^ 4 = z.im * ‖ModularForm.eta z‖ ^ 4 := by
+  have key : ∀ w : ℍ, w.im * ‖ModularForm.eta w‖ ^ 4 = Real.exp (-2 * kron w) := by
+    intro w
+    have hη : 0 < ‖ModularForm.eta w‖ := norm_pos_iff.2 (ModularForm.eta_ne_zero w.im_pos)
+    rw [kron, UpperHalfPlane.coe_im, show -2 * -Real.log (√w.im * ‖ModularForm.eta w‖ ^ 2) =
+      2 * Real.log (√w.im * ‖ModularForm.eta w‖ ^ 2) by ring, ← Real.log_rpow (by positivity),
+      Real.exp_log (by positivity)]
+    rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast, mul_pow, Real.sq_sqrt w.im_pos.le]
+    ring
+  rw [key, key, kron_smul]
+
+/-! ## The Casimir energy of the torus -/
+
+/-- **The zeta-regularised Casimir (vacuum) energy** `E₀ = ½Σ'_v √λ_v := ½ζ_T(−½)` of a free massless scalar on the
+spatial torus `ℂ/(ℤ + ℤτ)` (units `ħ = c = 1`). -/
+def casimir (z : ℍ) : ℂ := zetaT z (-1 / 2) / 2
+
+lemma Gamma_one_half : Complex.Gamma (1 / 2) = ((√π : ℝ) : ℂ) := by
+  rw [Complex.Gamma_one_half_eq, Real.sqrt_eq_rpow, Complex.ofReal_cpow Real.pi_pos.le]
+  push_cast; ring_nf
+
+/-- **The Casimir energy of the flat torus**: `E₀ = ½ζ_T(−½) = −(1/(4π√y))Σ'_v (y/|v₀τ + v₁|²)^{3/2}
+= −(y/4π)Σ'_ℓ |ℓ|^{−3}`, the sum over the nonzero periods `ℓ = v₀τ + v₁`; it is negative. Via the functional equation
+`Λ_τ(−½) = Λ_τ(3/2)`. -/
+theorem casimir_eq (z : ℍ) : casimir z = -epstein z (3 / 2) / (4 * π * ((√z.im : ℝ) : ℂ)) := by
+  have hy := z.im_pos
+  have hπ := Real.pi_pos
+  have h0 : (-1 / 2 : ℂ) ≠ 0 := by norm_num
+  have hΛ : Lambda z (-1 / 2) = Lambda z (3 / 2) := by
+    have := Estar_one_sub z (3 / 2)
+    rw [show (1 : ℂ) - 3 / 2 = -1 / 2 by norm_num] at this
+    unfold Estar at this
+    linear_combination 2 * this
+  have hG32 : Complex.Gamma (3 / 2) = ((√π : ℝ) : ℂ) / 2 := by
+    rw [show (3 / 2 : ℂ) = 1 / 2 + 1 by norm_num, Complex.Gamma_add_one _ (by norm_num), Gamma_one_half]; ring
+  have hGm : Complex.Gamma (-1 / 2) = -2 * ((√π : ℝ) : ℂ) := by
+    have := Complex.Gamma_add_one (-1 / 2) h0
+    rw [show (-1 / 2 : ℂ) + 1 = 1 / 2 by norm_num, Gamma_one_half] at this
+    linear_combination 2 * this
+  have hre : (1 : ℝ) < (3 / 2 : ℂ).re := by norm_num
+  have ha : (((z.im / (4 * π) : ℝ) : ℂ)) ^ (-1 / 2 : ℂ) = ((2 * √π / √z.im : ℝ) : ℂ) := by
+    rw [show (-1 / 2 : ℂ) = ((-1 / 2 : ℝ) : ℂ) by push_cast; ring, ← Complex.ofReal_cpow (by positivity)]
+    congr 1
+    rw [show (-1 / 2 : ℝ) = -(1 / 2) by norm_num, Real.rpow_neg (by positivity), ← Real.sqrt_eq_rpow,
+      Real.sqrt_div' _ (by positivity), Real.sqrt_mul (by norm_num), show (4 : ℝ) = 2 ^ 2 by norm_num,
+      Real.sqrt_sq (by norm_num)]
+    field_simp
+  have hp : (π : ℂ) ^ (-(3 / 2 : ℂ)) = ((1 / (π * √π) : ℝ) : ℂ) := by
+    rw [show (-(3 / 2) : ℂ) = ((-(3 / 2) : ℝ) : ℂ) by push_cast; ring, ← Complex.ofReal_cpow hπ.le]
+    congr 1
+    rw [Real.rpow_neg hπ.le, show (3 / 2 : ℝ) = 1 + 1 / 2 by norm_num, Real.rpow_add hπ, Real.rpow_one,
+      ← Real.sqrt_eq_rpow, one_div]
+  rw [casimir, zetaT_eq z h0, hΛ, Lambda_eq_epstein z hre, hG32, hGm, ha, hp]
+  have hsπ : (0 : ℝ) < √π := Real.sqrt_pos.2 hπ
+  have hsy : (0 : ℝ) < √z.im := Real.sqrt_pos.2 hy
+  have : ((√π : ℝ) : ℂ) ≠ 0 := by exact_mod_cast hsπ.ne'
+  have : ((√z.im : ℝ) : ℂ) ≠ 0 := by exact_mod_cast hsy.ne'
+  have : (π : ℂ) ≠ 0 := by exact_mod_cast hπ.ne'
+  push_cast
+  field_simp
+  ring
+
 end ModCasimir
