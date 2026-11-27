@@ -23,12 +23,9 @@ read through its column heights (`HPath`, window `[−T, T]`); `Ψ(P, C) = ∏_c
   configurations are lower paths (`conf_mem_lower_of_valid_vec`, `conf_mem_lower_of_valid_cov`), and the cascades
   through the equal columns on both sides (`special_vec`, `special_cov`).
 
-**Not here.** The assembly: the induction `GarStmt P.trunc → GarStmt P` combining the four state lemmas (seven cases;
-the special cases are `special_vec` and `special_cov`, the doubly stepped ones vanish by `wedge_wedge_self` and
-`contr_contr_self`), the straightening of a non-standard filling by `HPath.exch_mem` with `D = col(c+1)_{<t} ∖ col(c)`
-(each exchanged term raises `col(c + 1)` in the colex order), the spanning of the multidegree-`B` polynomials (first-row
-trick), the translation to `PathBasis.pathFam` (heights to weights, column to `I` coordinates), and the basis over every
-commutative ring from `PathBasis.card_pathIdx`.
+**The assembly** is in `PathStraighten`: the induction `GarStmt P.trunc → GarStmt P` (`garnir_step`, `garnir_all`),
+the straightening of a non-standard filling (`straighten`), the spanning of the multidegree-`B` polynomials, the
+translation to `PathBasis.pathFam`, and the basis over every commutative ring (`PathBasis.pathFam_basis`).
 -/
 
 namespace PathSpan

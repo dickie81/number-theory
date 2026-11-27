@@ -46,13 +46,11 @@ heights are the truncated column sizes (`colH_tshape`: the tall truncated column
 interval, `mem_filter_Ioc_iff`), and `κ ≺ λ`; conversely `n` is added where `λ` is taller than `κ` (`grow`), and
 dominant weights are determined by their heights (`eq_of_colH_eq`), so the two are inverse (`gtEquiv`).
 
-**Not here: the basis statement** (T2 (i), (iii): `{Ψ(P, I)}` is an `R`-basis of the multidegree-`B` polynomials over
-every commutative ring). It is true on every case tested (unimodular coefficient matrices, mixed letters, `n ≤ 3`), but
-it is not a leading-term statement: for three vector letters of degree one in two coordinates no monomial order gives
-distinct leading terms (the four single-monomial elements force `X₀₀X₁₁ > X₀₁X₁₀` and `X₀₁X₁₀ > X₀₀X₁₁` after
-cancelling a common factor). The straightening of a non-standard `Ψ(P, J)` produces the same path with standard
-fillings and paths dominated by `P` prefix by prefix with strictly lower end weight, so a proof needs a straightening
-law for mixed column states (a Cauchy-type filtration), which is not done.
+**The basis statement** (T2 (i), (iii): `{Ψ(P, I)}` is an `R`-basis of the multidegree-`B` polynomials over every
+commutative ring) is `PathBasis.pathFam_basis` in `PathStraighten`, by a straightening law for mixed column states
+(`PathSpan`). It is not a leading-term statement: for three vector letters of degree one in two coordinates no monomial
+order gives distinct leading terms (the four single-monomial elements force `X₀₀X₁₁ > X₀₁X₁₀` and `X₀₁X₁₀ > X₀₀X₁₁`
+after cancelling a common factor).
 -/
 
 namespace PathBasis
