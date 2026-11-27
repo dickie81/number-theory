@@ -4,7 +4,7 @@ Written by `scripts/inventory.py` from the sources; do not edit it by hand. `pyt
 rewrites it, and CI checks that it is current (`--check`).
 
 `lib/check/CheckAll.lean`, `lib/check/CheckZeta23.lean`, `lib/check/CheckDH.lean`, `lib/check/Check.lean`
-and `lib/check/CheckLinnik.lean` print the axioms of 2363 theorems: the library's final results (those
+and `lib/check/CheckLinnik.lean` print the axioms of 2451 theorems: the library's final results (those
 of the zeta23 layer in `CheckZeta23`, which `CheckAll` cannot import, and those of `lib/dh` in `CheckDH`)
 and the papers' theorems, with the library's headline Linnik exponent (`Check` and `CheckLinnik`), of
 which there are 219, marked *paper*. The 14 marked *opt-in* rest on the Linnik paper's
@@ -14,7 +14,7 @@ note of `formalisations/` that names it, if one does.
 
 | Layer | Modules with results | Results |
 |---|---|---|
-| `lib/core` | 263 | 1129 |
+| `lib/core` | 270 | 1217 |
 | `lib/pnt` | 375 | 1121 |
 | `lib/dh` | 24 | 76 |
 | `lib/zeta23` | 10 | 37 |
@@ -205,11 +205,42 @@ note of `formalisations/` that names it, if one does.
 - `BallSlice.rh_iff_weil_bound_pair`: The Riemann hypothesis is the upper Weil bound for the divisors of the slice
 - `BallSlice.rh_iff_castelnuovo_severi_pair`: The Riemann hypothesis is Castelnuovo–Severi for the divisors of the slice
 
+#### `BallSlopeLattice`: The orbit lattice as an Arakelov lattice: its slopes, and multiplication by `k`
+
+- `BallSlope.form_pos`: Under RH the orbit form is positive definite
+- `BallSlope.OrbitSpace.covol_ge`: The covolume bound
+- `BallSlope.OrbitSpace.covol_sq_ge`: Hadamard for the orbit lattice
+- `BallSlope.OrbitSpace.covol_top`: `covol Λ_N = √det G_N`.
+- `BallSlope.OrbitSpace.deg_top`: The Arakelov degree of `Λ_N`
+- `BallSlope.OrbitSpace.det_ge`: The Gram determinant
+- `BallSlope.OrbitSpace.inner_mulMap`: Multiplication by `k` is a similitude of ratio `√k`
+- `BallSlope.OrbitSpace.norm_mulMap`: `‖kx‖ = √k·‖x‖`.
+- `BallSlope.OrbitSpace.norm_mulMapL_le`: Multiplication by `k` has height `½·log k`
+- `BallSlope.OrbitSpace.bost_mul`: Bost's inequality for multiplication by `k`
+- `BallSlope.OrbitSpace.rk_img_mul`: Multiplication by `k` keeps ranks
+- `BallSlope.OrbitSpace.deg_img_mul`: The degree shift
+- `BallSlope.OrbitSpace.mul_frame`: The frame inequality for the multiplications
+- `BallSlope.OrbitSpace.maxSlope`: The maximal slope of the orbit lattice
+
 #### `BallTower`: The ball tower from integers and primes (formalised)
 
 - `BallTower.ballVol_lt_five`: The ball volume is largest in dimension 5
 - `BallTower.sphereArea_lt_seven`: The sphere area is largest in dimension 7 (the sphere `S⁶`)
 - `BallTower.completing_factor_unique`: Uniqueness of the completing factor
+
+#### `BallUnitary`: The dilations of the ball orbit are unitary, and have no wandering vector
+
+- `BallUnitary.weights_eq_zero`: A discrete measure on the circle with vanishing Fourier coefficients is zero
+- `BallUnitary.dil_apply`: `U(t)` multiplies the coordinate of `ρ` by `e^{iγt}`.
+- `BallUnitary.dil_add`: `U(s + t) = U(s)U(t)`
+- `BallUnitary.dil_zpow`: `U(t)^k = U(kt)`
+- `BallUnitary.dil_single`: The spectrum of `U(t)` is pure point
+- `BallUnitary.not_wandering_zpow`: `U(t)` has no wandering vector, over `ℤ`
+- `BallUnitary.not_wandering`: `U(t)` has no wandering vector
+- `BallUnitary.Up_not_wandering`: `U_p` has no wandering vector
+- `BallUnitary.Up_eq_phi`: Under RH, `U_p = φ_p/√p`
+- `BallUnitary.Up_orbit`: `U_p(w_r) = w_{pr}/√p`
+- `BallUnitary.inner_orbit`: The orbit's Gram matrix
 
 #### `BallUpper`: The upper bound for the rate: the mean value from above, and the alternating vector
 
@@ -1118,6 +1149,69 @@ note of `formalisations/` that names it, if one does.
 - `PsiOmega.rh_of_liouville_bound`: A one-sided bound `εL(x) ≤ c√x` gives RH ([note](../formalisations/weil-positivity.md))
 - `PsiOmega.rh_of_polya`: Pólya's conjecture implies RH ([note](../formalisations/weil-positivity.md))
 
+#### `ModContinuation`: The completed Eisenstein series of `SL(2, ℤ)`: continuation, functional equation and constant term
+
+- `ModContinuation.theta_inv`: The self-duality of `θ_z`
+- `ModContinuation.Estar_one_sub`: The functional equation
+- `ModContinuation.differentiableAt_Estar`: `E*(z, ·)` is holomorphic off `s = 0, 1`
+- `ModContinuation.differentiableOn_Estar`: `E*(z, ·)` is holomorphic on `ℂ \ {0, 1}`.
+- `ModContinuation.theta_smul`: `θ_{γz} = θ_z`
+- `ModContinuation.Estar_smul`: `SL(2, ℤ)`-invariance
+- `ModContinuation.Lambda_eq_epstein`: On `Re s > 1`, `Λ_z(s) = π^{−s}Γ(s)Σ_v(y/|v₀z + v₁|²)^s`
+- `ModContinuation.Estar_eq`: `E*(z, s) = Λ(2s)E(z, s)`
+- `ModContinuation.constTerm_Estar`: The constant term of `E*`
+
+#### `ModEisenstein`: The non-holomorphic Eisenstein series of `SL(2, ℤ)`: invariance, the Epstein identity and the constant term
+
+- `ModEisenstein.summable_norm_term`: Absolute convergence
+- `ModEisenstein.term_smul`: The summand under `γ`
+- `ModEisenstein.E_smul`: `SL(2, ℤ)`-invariance
+- `ModEisenstein.epstein_smul`: `SL(2, ℤ)`-invariance of the Epstein sum
+- `ModEisenstein.summable_norm_E`: Absolute convergence of `E` for `Re s > 1`.
+- `ModEisenstein.zeta_mul_E`: The Epstein-sum identity
+- `ModEisenstein.E_eq_epstein`: `E = Epstein/(2ζ(2s))` for `Re s > 1`.
+- `ModEisenstein.integral_G`: `∫_ℝ (1 + u²)^{−s} du = B(½, s − ½)`
+- `ModEisenstein.integral_rpow_sq_add`: `∫_ℝ (y/(t² + a²))^s dt = a(y/a²)^s B(½, s − ½)`
+- `ModEisenstein.hasSum_integral_mul_add`: Unfolding a sum of shifts
+- `ModEisenstein.hasSum_integral_term`: Termwise integration
+- `ModEisenstein.integral_epstein`: The integral of the Epstein sum over a period
+- `ModEisenstein.zeta_ratio_beta`: `√π Γ(s − ½)ζ(2s − 1)/(Γ(s)ζ(2s)) = Λ(2s − 1)/Λ(2s)`, written with the Beta integral.
+- `ModEisenstein.constTerm_eq`: The constant term of `E`
+
+#### `ModFD`: The fundamental domain of `SL(2, ℤ)`: its area, and unfolding over `Γ_∞\SL(2, ℤ)`
+
+- `ModFD.volume_fd`: The hyperbolic area of the fundamental domain
+- `ModFD.volume_fd_diff_fdo`: The boundary `𝒟 \ 𝒟ᵒ` is null for the invariant measure.
+- `ModFD.ae_tsum_indicator_fd`: Off a null set, each point has exactly two `SL(2,ℤ)`-translates (`±g`) in `𝒟`.
+- `ModFD.lintegral_fd_tsum_SL`: Unfolding over `SL(2,ℤ)`
+- `ModFD.lintegral_fd_tsum_coprime`: Unfolding over `Γ∞\Γ`
+- `ModFD.lintegral_strip_im`: Integrating a function of `im z` over the strip
+- `ModFD.lintegral_fd_tsum_coprime_im`: Rankin–Selberg unfolding
+- `ModFD.lintegral_fd_tsum_nq`: Rankin–Selberg unfolding, in the coordinates of `E`
+
+#### `ModFourier`: The Fourier expansion of the completed Eisenstein series of `SL(2, ℤ)`
+
+- `ModFourier.theta_le_zero`: The majorant
+- `ModFourier.integral_mul_Λ₀`: Fubini
+- `ModFourier.integral_mul_Lambda`: `∫_0^1 w(x)Λ_{x+iy}(s) dx`
+- `ModFourier.differentiable_mellin_avgF`: The Mellin transform of the average is entire
+- `ModFourier.integral_Estar`: The constant term of `E*` for every `s`
+- `ModFourier.differentiableAt_constTerm`: `s ↦ ∫_0^1 E*(x + iy, s) dx` is holomorphic off `s = 0, 1`
+- `ModFourier.constTerm_Estar_all`: The constant term of `E*` for every `s ≠ 0, ½, 1`
+- `ModFourier.integral_ek_theta`: The `k`-th Fourier coefficient of `θ_{x+iy}(t)`
+- `ModFourier.mellin_term`: One term of the Fourier coefficient
+- `ModFourier.integral_ek_Lambda`: The `k`-th Fourier coefficient of `Λ_{x+iy}(s)`
+- `ModFourier.fourierCoeff_Estar`: The nonzero Fourier coefficients of `E*`
+- `ModFourier.sum_D`: The divisor sum
+- `ModFourier.fourierCoeff_Estar_divisors`: The Fourier coefficients of `E*` with the divisor function
+- `ModFourier.Estar_periodic`: `E*(x + iy, s)` is `1`-periodic in `x`
+- `ModFourier.continuous_Estar_x`: `x ↦ E*(x + iy, s)` is continuous
+- `ModFourier.norm_fourierCoeff_Estar_le`: Exponential decay of the Fourier coefficients
+- `ModFourier.summable_fourierCoeff_Estar`: The Fourier coefficients of `E*` are summable
+- `ModFourier.hasSum_fourier_Estar`: The Fourier series of `E*`
+- `ModFourier.hasSum_cos_Estar`: The Fourier expansion of `E*` as a cosine series
+- `ModFourier.hasSum_fourier_Estar_explicit`: The Fourier expansion of `E*`
+
 #### `OddMargin2`: Odd-sector margin `4·10⁻⁵` at `L = 1/2`
 
 - `OddMargin2.odd_margin2`
@@ -1183,6 +1277,21 @@ note of `formalisations/` that names it, if one does.
 - `PathBasis.isStdFilling_canFill`: The canonical filling is standard ([note](../formalisations/alpoge-rh.md))
 - `PathBasis.pathFam`: The path family ([note](../formalisations/alpoge-rh.md))
 - `PathBasis.card_pathIdx`: The number of pairs (Pieri path, standard filling) ([note](../formalisations/alpoge-rh.md))
+
+#### `PavlovFaddeev`: The scattering matrix of the modular surface: unitarity, and RH as one decay rate for its resonances
+
+- `PavlovFaddeev.scatteringMatrix_mul_one_sub`: `φ(s)φ(1 − s) = 1`
+- `PavlovFaddeev.completed_conj`: `Λ(s̄) = conj Λ(s)`
+- `PavlovFaddeev.scatteringMatrix_conj`: `φ(s̄) = conj φ(s)`
+- `PavlovFaddeev.completed_ne_zero_of_one_le_re`: `Λ` has no zero on `Re s ≥ 1`
+- `PavlovFaddeev.completed_ne_zero_of_re_le_zero`: `Λ` has no zero on `Re s ≤ 0`
+- `PavlovFaddeev.numerator_ne_zero`: The numerator vanishes nowhere on `Re s ≤ ½`
+- `PavlovFaddeev.denominator_zero_strip`: The denominator vanishes only in `0 < Re s < ½`
+- `PavlovFaddeev.norm_scatteringMatrix_line`: `φ` is unitary on the line of the continuous spectrum
+- `PavlovFaddeev.tendsto_norm_scatteringMatrix`: Each zero of the denominator is a pole of `φ`
+- `PavlovFaddeev.pole_iff`: In `0 < Re s < ½` the poles of `φ` are the zeros of `Λ(2s)`
+- `PavlovFaddeev.rh_iff_resonances_on_quarter`: RH is one decay rate for every resonance
+- `PavlovFaddeev.rh_iff_poles_on_quarter`: RH is the poles of `φ` on one line
 
 #### `PeriodTarget`: Branching, periods, the target `C_u` and the sources `N_ω`
 

@@ -29,6 +29,7 @@ import BallUpperEta
 import BallGap
 import BallPivot
 import PivotSharp
+import BallSlopeLattice
 import OrbitWindow
 import BallLoud
 import BallLow
@@ -366,6 +367,7 @@ import BallHadamard
 import BallPsi
 import BallFlat
 import BallWeil
+import BallUnitary
 import PurityRational
 import PurityPsi
 import PurityQuaternion
@@ -382,6 +384,11 @@ import EpsteinSeven
 import EpsteinFlat
 import XiReflection
 import WengRankTwo
+import PavlovFaddeev
+import ModEisenstein
+import ModContinuation
+import ModFD
+import ModFourier
 import XiReflectionBand
 import SquaresCongruences
 import RamanujanCongruences
@@ -728,6 +735,20 @@ if and only if `w_1` is a shortest vector of the orbit lattice, and under RH `±
 #print axioms PivotSharp.shortest_of_rh
 #print axioms PivotSharp.shortest_unique
 #print axioms PivotSharp.rh_iff_shortest
+#print axioms BallSlope.form_pos
+#print axioms BallSlope.OrbitSpace.covol_ge
+#print axioms BallSlope.OrbitSpace.covol_sq_ge
+#print axioms BallSlope.OrbitSpace.maxSlope
+#print axioms BallSlope.OrbitSpace.covol_top
+#print axioms BallSlope.OrbitSpace.deg_top
+#print axioms BallSlope.OrbitSpace.det_ge
+#print axioms BallSlope.OrbitSpace.inner_mulMap
+#print axioms BallSlope.OrbitSpace.norm_mulMap
+#print axioms BallSlope.OrbitSpace.norm_mulMapL_le
+#print axioms BallSlope.OrbitSpace.rk_img_mul
+#print axioms BallSlope.OrbitSpace.deg_img_mul
+#print axioms BallSlope.OrbitSpace.bost_mul
+#print axioms BallSlope.OrbitSpace.mul_frame
 
 /- The orbit form is Weil's form on a window (`formalisations/ball-rate.md`): on `Σ_n x_n = 0`, `Q_N(x)` is Weil's form
 of the step function `u^{1/2}Σ_n x_n 1_{(0, n]}(u)` on `[1, N]`, by the explicit formula for `ĝ(z)ĝ(−z)` at any parity. Under
@@ -1982,6 +2003,69 @@ twin-form rates at `11/12`. -/
 #print axioms WengRankTwo.rh_wengNum
 #print axioms WengRankTwo.rh_weng
 #print axioms WengRankTwo.differenced_real
+#print axioms PavlovFaddeev.scatteringMatrix_mul_one_sub
+#print axioms PavlovFaddeev.completed_conj
+#print axioms PavlovFaddeev.scatteringMatrix_conj
+#print axioms PavlovFaddeev.completed_ne_zero_of_one_le_re
+#print axioms PavlovFaddeev.completed_ne_zero_of_re_le_zero
+#print axioms PavlovFaddeev.numerator_ne_zero
+#print axioms PavlovFaddeev.denominator_zero_strip
+#print axioms PavlovFaddeev.norm_scatteringMatrix_line
+#print axioms PavlovFaddeev.tendsto_norm_scatteringMatrix
+#print axioms PavlovFaddeev.pole_iff
+#print axioms PavlovFaddeev.rh_iff_resonances_on_quarter
+#print axioms PavlovFaddeev.rh_iff_poles_on_quarter
+#print axioms ModEisenstein.summable_norm_term
+#print axioms ModEisenstein.term_smul
+#print axioms ModEisenstein.E_smul
+#print axioms ModEisenstein.epstein_smul
+#print axioms ModEisenstein.summable_norm_E
+#print axioms ModEisenstein.zeta_mul_E
+#print axioms ModEisenstein.E_eq_epstein
+#print axioms ModEisenstein.integral_G
+#print axioms ModEisenstein.integral_rpow_sq_add
+#print axioms ModEisenstein.hasSum_integral_mul_add
+#print axioms ModEisenstein.hasSum_integral_term
+#print axioms ModEisenstein.integral_epstein
+#print axioms ModEisenstein.zeta_ratio_beta
+#print axioms ModEisenstein.constTerm_eq
+#print axioms ModContinuation.theta_inv
+#print axioms ModContinuation.Estar_one_sub
+#print axioms ModContinuation.differentiableAt_Estar
+#print axioms ModContinuation.differentiableOn_Estar
+#print axioms ModContinuation.theta_smul
+#print axioms ModContinuation.Estar_smul
+#print axioms ModContinuation.Lambda_eq_epstein
+#print axioms ModContinuation.Estar_eq
+#print axioms ModContinuation.constTerm_Estar
+#print axioms ModFD.volume_fd
+#print axioms ModFD.volume_fd_diff_fdo
+#print axioms ModFD.ae_tsum_indicator_fd
+#print axioms ModFD.lintegral_fd_tsum_SL
+#print axioms ModFD.lintegral_fd_tsum_coprime
+#print axioms ModFD.lintegral_strip_im
+#print axioms ModFD.lintegral_fd_tsum_coprime_im
+#print axioms ModFD.lintegral_fd_tsum_nq
+#print axioms ModFourier.theta_le_zero
+#print axioms ModFourier.integral_mul_Λ₀
+#print axioms ModFourier.integral_mul_Lambda
+#print axioms ModFourier.differentiable_mellin_avgF
+#print axioms ModFourier.integral_Estar
+#print axioms ModFourier.differentiableAt_constTerm
+#print axioms ModFourier.constTerm_Estar_all
+#print axioms ModFourier.integral_ek_theta
+#print axioms ModFourier.mellin_term
+#print axioms ModFourier.integral_ek_Lambda
+#print axioms ModFourier.fourierCoeff_Estar
+#print axioms ModFourier.sum_D
+#print axioms ModFourier.fourierCoeff_Estar_divisors
+#print axioms ModFourier.Estar_periodic
+#print axioms ModFourier.continuous_Estar_x
+#print axioms ModFourier.norm_fourierCoeff_Estar_le
+#print axioms ModFourier.summable_fourierCoeff_Estar
+#print axioms ModFourier.hasSum_fourier_Estar
+#print axioms ModFourier.hasSum_cos_Estar
+#print axioms ModFourier.hasSum_fourier_Estar_explicit
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq
@@ -2116,6 +2200,17 @@ twin-form rates at `11/12`. -/
 #print axioms BallWeil.weil_bound
 #print axioms BallWeil.rh_iff_weil_bound
 #print axioms BallWeil.rh_of_pivots
+#print axioms BallUnitary.weights_eq_zero
+#print axioms BallUnitary.dil_apply
+#print axioms BallUnitary.dil_add
+#print axioms BallUnitary.dil_zpow
+#print axioms BallUnitary.dil_single
+#print axioms BallUnitary.not_wandering_zpow
+#print axioms BallUnitary.not_wandering
+#print axioms BallUnitary.Up_not_wandering
+#print axioms BallUnitary.Up_eq_phi
+#print axioms BallUnitary.Up_orbit
+#print axioms BallUnitary.inner_orbit
 #print axioms HodgeCounting.hodge_index
 #print axioms HodgeCounting.rh_iff_counting
 #print axioms HodgeCounting.CountingModel.riemannRoch_of_hilbertSamuel
