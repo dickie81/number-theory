@@ -367,6 +367,7 @@ import BallHadamard
 import BallPsi
 import BallFlat
 import BallWeil
+import BallUnitary
 import PurityRational
 import PurityPsi
 import PurityQuaternion
@@ -383,6 +384,7 @@ import EpsteinSeven
 import EpsteinFlat
 import XiReflection
 import WengRankTwo
+import PavlovFaddeev
 import XiReflectionBand
 import SquaresCongruences
 import RamanujanCongruences
@@ -1973,6 +1975,18 @@ twin-form rates at `11/12`. -/
 #print axioms WengRankTwo.rh_wengNum
 #print axioms WengRankTwo.rh_weng
 #print axioms WengRankTwo.differenced_real
+#print axioms PavlovFaddeev.scatteringMatrix_mul_one_sub
+#print axioms PavlovFaddeev.completed_conj
+#print axioms PavlovFaddeev.scatteringMatrix_conj
+#print axioms PavlovFaddeev.completed_ne_zero_of_one_le_re
+#print axioms PavlovFaddeev.completed_ne_zero_of_re_le_zero
+#print axioms PavlovFaddeev.numerator_ne_zero
+#print axioms PavlovFaddeev.denominator_zero_strip
+#print axioms PavlovFaddeev.norm_scatteringMatrix_line
+#print axioms PavlovFaddeev.tendsto_norm_scatteringMatrix
+#print axioms PavlovFaddeev.pole_iff
+#print axioms PavlovFaddeev.rh_iff_resonances_on_quarter
+#print axioms PavlovFaddeev.rh_iff_poles_on_quarter
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq
@@ -2107,6 +2121,17 @@ twin-form rates at `11/12`. -/
 #print axioms BallWeil.weil_bound
 #print axioms BallWeil.rh_iff_weil_bound
 #print axioms BallWeil.rh_of_pivots
+#print axioms BallUnitary.weights_eq_zero
+#print axioms BallUnitary.dil_apply
+#print axioms BallUnitary.dil_add
+#print axioms BallUnitary.dil_zpow
+#print axioms BallUnitary.dil_single
+#print axioms BallUnitary.not_wandering_zpow
+#print axioms BallUnitary.not_wandering
+#print axioms BallUnitary.Up_not_wandering
+#print axioms BallUnitary.Up_eq_phi
+#print axioms BallUnitary.Up_orbit
+#print axioms BallUnitary.inner_orbit
 #print axioms HodgeCounting.hodge_index
 #print axioms HodgeCounting.rh_iff_counting
 #print axioms HodgeCounting.CountingModel.riemannRoch_of_hilbertSamuel
