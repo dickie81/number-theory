@@ -11,11 +11,26 @@ formalisation of known mathematics, not new mathematics.
 eigenvalue is `λ_v = (2π/y)²|v₀τ + v₁|²` (`lam`), with eigenfunction `exp(i⟨k_v, w⟩)`,
 `k_v = (2πi/y)(v₁ + v₀τ)` (`dualVec`, `wave`). The zero mode `v = 0` is excluded in all primed sums.
 
-* **Eigenfunctions** (`wave_add_lattice`, `flatLap_wave`, `normSq_dualVec`): `exp(i⟨k_v, ·⟩)` is `ℤ + ℤτ`-periodic
-  and `Δ` of it is `−λ_v` times it. (Completeness of these eigenfunctions in `L²(T_τ)` is not proved here.)
-* **The spectral zeta function** (`zetaT`, `hasSum_zetaT`, `zetaT_eq`): `ζ_T(s) = Σ'_v λ_v^{−s}` on `Re s > 1`;
-  it is `(y/4π)^s Λ_τ(s)/Γ(s) = (y/4π)^s · 2E*(τ, s)/Γ(s)` off `s = 0`, and `zetaT` is its continuation, holomorphic
-  off `s = 1` (`differentiableAt_zetaT`).
+* **Eigenfunctions** (`wave_add_lattice`, `flatLap_wave`, `normSq_dualVec`, `flatLap_wave_dualVec`):
+  `exp(i⟨k_v, ·⟩)` is `ℤ + ℤτ`-periodic and `Δ` of it is `−λ_v` times it. Completeness of these eigenfunctions in
+  `L²(T_τ)` (that this is the whole spectrum) is not proved here; the spectral zeta function below is defined from
+  this list of eigenvalues.
+* **The spectral zeta function** (`zetaT`, `hasSum_zetaT`, `zetaT_eq`, `zetaT_eq_Estar`, `differentiableAt_zetaT`):
+  `ζ_T(s) = Σ'_v λ_v^{−s}` on `Re s > 1`; it is `(y/4π)^s Λ_τ(s)/Γ(s) = (y/4π)^s · 2E*(τ, s)/Γ(s)` off `s = 0`, and
+  `zetaT` is its continuation, holomorphic off `s = 1`.
+* **The one-loop determinant** (`zetaT_zero`, `Λ₀_one`, `hasDerivAt_zetaT_zero`, `logDet_eq`,
+  `exp_neg_deriv_zetaT_zero`): `ζ_T(0) = −1` and `ζ_T'(0) = 2kron(τ) − log y`, so
+  `log det'Δ := −ζ_T'(0) = log((Im τ)²|η(τ)|⁴)`, the Ray–Singer analytic torsion of the flat torus. The input is
+  Kronecker's first limit formula at `s = 1` (`ModKronecker.tendsto_Lambda_sub_pole`) carried to `s = 0` by the
+  functional equation `Λ₀(1 − s) = Λ₀(s)`.
+* **Modular invariance** (`kron_smul`, `deriv_zetaT_zero_add_log_smul`, `det_div_area_smul`): `kron(γτ) = kron(τ)`,
+  so `det'Δ/area = (Im τ)|η(τ)|⁴`, and with it the free-boson partition function `Z = (det'Δ/area)^{−1/2}`, does not
+  depend on the basis of the lattice. (`det'Δ` itself is not invariant: `ℂ/(ℤ + ℤγτ)` is `ℂ/(ℤ + ℤτ)` dilated by
+  `|cτ + d|^{−1}`.)
+* **Casimir energies** (`casimir`, `casimir_eq`, `circleZeta`, `hasSum_circleZeta`, `circle_casimir`): the
+  zeta-regularised vacuum energy `E₀ = ½Σ'√λ := ½ζ(−½)`; on the torus `E₀ = −(1/(4π√y))Σ'_v (y/|v₀τ + v₁|²)^{3/2}`
+  (from `Λ_τ(−½) = Λ_τ(3/2)`), and on the circle of length `L`, `E₀ = (2π/L)ζ(−1) = −π/(6L)`. Zeta regularisation is a
+  definition here, not derived from a physical cutoff.
 -/
 import Mathlib
 import ModEisenstein
@@ -366,6 +381,58 @@ theorem casimir_eq (z : ℍ) : casimir z = -epstein z (3 / 2) / (4 * π * ((√z
   have : ((√π : ℝ) : ℂ) ≠ 0 := by exact_mod_cast hsπ.ne'
   have : ((√z.im : ℝ) : ℂ) ≠ 0 := by exact_mod_cast hsy.ne'
   have : (π : ℂ) ≠ 0 := by exact_mod_cast hπ.ne'
+  push_cast
+  field_simp
+  ring
+
+/-! ## The circle: `ζ(−1) = −1/12` and the Casimir energy `−π/(6L)` -/
+
+/-- The zeta function of the circle `ℝ/Lℤ`, with frequencies `ω_n = 2π|n|/L` (eigenvalues `ω_n²`), continued to all
+`s`: `ζ_{S¹}(s) = Σ'_n ω_n^{−2s} = 2(2π/L)^{−2s}ζ(2s)`. -/
+def circleZeta (L : ℝ) (s : ℂ) : ℂ := 2 * ((2 * π / L : ℝ) : ℂ) ^ (-(2 * s)) * riemannZeta (2 * s)
+
+/-- **The zeta function of the circle** is `Σ_{n ∈ ℤ} ω_n^{−2s}` on `Re s > ½` (the `n = 0` term is `0`). -/
+theorem hasSum_circleZeta {L : ℝ} (hL : 0 < L) {s : ℂ} (hs : 1 / 2 < s.re) :
+    HasSum (fun n : ℤ => ((2 * π / L * |(n : ℝ)| : ℝ) : ℂ) ^ (-(2 * s))) (circleZeta L s) := by
+  have h2 : 1 < (2 * s).re := by simp; linarith
+  have hc : 0 ≤ 2 * π / L := by positivity
+  have hsplit : ∀ n : ℤ, ((2 * π / L * |(n : ℝ)| : ℝ) : ℂ) ^ (-(2 * s)) =
+      ((2 * π / L : ℝ) : ℂ) ^ (-(2 * s)) * (1 / ((|(n : ℝ)| : ℝ) : ℂ) ^ (2 * s)) := by
+    intro n
+    rw [Complex.ofReal_mul, Complex.mul_cpow_ofReal_nonneg hc (abs_nonneg _), Complex.cpow_neg (((|(n : ℝ)| : ℝ) : ℂ)),
+      one_div]
+  simp_rw [hsplit]
+  have hpos : HasSum (fun n : ℕ => 1 / (n : ℂ) ^ (2 * s)) (riemannZeta (2 * s)) := by
+    rw [zeta_eq_tsum_one_div_nat_cpow h2]
+    exact (Complex.summable_one_div_nat_cpow.2 h2).hasSum
+  have hneg : HasSum (fun n : ℕ => 1 / ((n : ℂ) + 1) ^ (2 * s)) (riemannZeta (2 * s)) := by
+    rw [zeta_eq_tsum_one_div_nat_add_one_cpow h2]
+    refine Summable.hasSum ?_
+    have := (summable_nat_add_iff 1).2 (Complex.summable_one_div_nat_cpow.2 h2)
+    simpa using this
+  set c := ((2 * π / L : ℝ) : ℂ) ^ (-(2 * s))
+  have h := HasSum.of_nat_of_neg_add_one
+    (f := fun n : ℤ => c * (1 / ((|(n : ℝ)| : ℝ) : ℂ) ^ (2 * s))) (m := c * riemannZeta (2 * s))
+    (m' := c * riemannZeta (2 * s)) ?_ ?_
+  · convert h using 1
+    rw [circleZeta]; ring
+  · convert hpos.mul_left c using 2 with n
+    simp only [Int.cast_natCast, Nat.abs_cast, Complex.ofReal_natCast]
+  · convert hneg.mul_left c using 2 with n
+    have e : (((-((n : ℤ) + 1) : ℤ)) : ℝ) = -((n : ℝ) + 1) := by push_cast; ring
+    rw [e, abs_neg, abs_of_pos (by positivity)]
+    push_cast
+    rfl
+
+/-- **The Casimir energy of a massless scalar on a circle of length `L`**: `E₀ = ½ζ_{S¹}(−½) = (2π/L)ζ(−1) = −π/(6L)`,
+from Mathlib's `ζ(−1) = −1/12` (Bernoulli numbers). -/
+theorem circle_casimir (L : ℝ) : circleZeta L (-1 / 2) / 2 = -(π / (6 * L) : ℝ) := by
+  have hz : riemannZeta (-1) = -1 / 12 := by
+    have := riemannZeta_neg_nat_eq_bernoulli 1
+    rw [bernoulli_two] at this
+    rw [show (-1 : ℂ) = -((1 : ℕ) : ℂ) by norm_num, this]
+    norm_num
+  rw [circleZeta, show -(2 * (-1 / 2 : ℂ)) = 1 by ring, show (2 : ℂ) * (-1 / 2) = -1 by ring, Complex.cpow_one, hz]
   push_cast
   field_simp
   ring

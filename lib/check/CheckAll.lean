@@ -2233,6 +2233,8 @@ twin-form rates at `11/12`. -/
 #print axioms ModCasimir.deriv_zetaT_zero_add_log_smul
 #print axioms ModCasimir.det_div_area_smul
 #print axioms ModCasimir.casimir_eq
+#print axioms ModCasimir.hasSum_circleZeta
+#print axioms ModCasimir.circle_casimir
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq
