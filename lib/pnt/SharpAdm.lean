@@ -2,6 +2,7 @@ import DesignPrimes
 import DesignHC
 import DesignScale
 import RelationFree
+import DesignTiles
 
 /-!
 # Admissible designs
@@ -11,20 +12,29 @@ A step of the proof of the sharp frontier (`SharpInputs`): the field `SharpPiece
 design is the archive's, read in the repo's coordinates; `SharpParams` builds one at every `x` of the frontier's
 windows (`sharpParams`).
 
-**The clauses** (`SharpDesign.Adm`, Stage 1 of the design spec: A1–A11). The setting-level ones, which do not read
-the design, are a structure of their own that `Adm` extends (`Setting.DesignAdm`): the growth package `DesignBig ε x`
-(A1), the window `x^{2+8ε} ≤ |A| ≤ 2x^{2+8ε+ε/100}`, `ord κ ≤ x^{ε/100}`, `QS ≤ 4|A|x^{ε/100}` (A2), the pair
+**The clauses** (`SharpDesign.Adm`, Stage 1 of the design spec: A1–A11). The setting-level ones, which do not read the
+design, are a structure of their own that `Adm` extends (`Setting.DesignAdm`): the growth package `DesignBig ε x` (A1),
+the window `x^{2+8ε} ≤ |A| ≤ 2x^{2+8ε+ε/100}`, `ord κ ≤ x^{ε/100}`, `QS ≤ 4|A|x^{ε/100}` (A2), the pair
 (`d ≡ 7 (mod 16)`, `q ≡ 3 (mod 8)`, `log q, log d > x^{ε/10}/2`, `(−d/q) = 1`, `(−d/p) = 1` for `p ≤ x^{ε/10}`,
-`log N ≤ 3x^{ε/5}log² x`, A3) and `|Re L′/L(1, χ_d)| ≤ x^ε` (A4). The design-level ones: `X = (Nx)^{log x}` (A1),
-the ranks `k`, `m`, `t` of `designRanks` (A6), the window and the coset counts of the tops (A7), the margin
-`P > (k − 1)/2 + 3` (A9), the root-of-unity condition (A10) and the split primes (A11). The parameters that
-`SharpDesign` does not record (`DesignPar`: the integer scales `a_t`, the top shifts `b_t`, the generator `a₀` of
-`A₀`, the exponents `T` of the thick set, `s*` and the shifts `σ`) are bound by one existential (`Adm.fam`), with the
-clauses that read them (`SharpDesign.FamAt`): the windows of `a_t` and `b_t` (A7), `a₀` generates `A₀` (A2),
-`T2 = {a₀^s : s ∈ T}` with `T` relation-free at level `L_w`, in range and dense (A8), and the families are the
-formulas of `DesignHC` at the design's integers (`designFam`, A9): `Δ = ⌈x⌉` (`c_D = 1`), `H = w_E⌈x^{402}⌉`,
-`B = ⌈b⌉`, `W = ⌈w″⌉`, `P = ⌊b′/x⌋` and `ρ*(u) = (−1, a₀^{s*}u)`. Each field's docstring names the pieces that read
-it.
+`log N ≤ 3x^{ε/5}log² x`, A3), `|Re L′/L(1, χ_d)| ≤ x^ε` (A4) and the 2-adic structure at some level (`Setting.TwoAdic`,
+A2). The design-level ones: `X = (Nx)^{log x}` (A1), the ranks `k`, `m`, `t` of `designRanks` (A6), the window and the
+coset counts of the tops (A7), the margin `P > (k − 1)/2 + 3` (A9), the root-of-unity condition (A10), the split primes
+(A11) and the Stage-2 clause G1, few tops on bad orbits (`SharpDesign.FewBadTops`, defined in `DesignTiles`). The
+parameters that `SharpDesign` does not record (`DesignPar`: the integer scales `a_t`, the top shifts `b_t`, the
+generator `a₀` of `A₀`, the exponents `T` of the thick set, `s*` and the shifts `σ`) are bound by one existential
+(`Adm.fam`), with the clauses that read them (`SharpDesign.FamAt`): the windows of `a_t` and `b_t` (A7), `a₀` generates
+`A₀` (A2), `T2 = {a₀^s : s ∈ T}` with `T` relation-free at level `L_w`, in range and dense (A8), and the families are
+the formulas of `DesignHC` at the design's integers (`designFam`, A9): `Δ = ⌈x⌉` (`c_D = 1`), `H = w_E⌈x^{402}⌉`,
+`B = ⌈b⌉`, `W = ⌈w″⌉`, `P = ⌊b′/x⌋` and `ρ*(u) = (−1, a₀^{s*}u)`, with **twisted tops**: the top data `(a_t, b_t)` of
+the translate `t ∈ TT` sits at the place `(1, c·t)`, `c = twA κ` (`[−1]_A` for odd `κ`, `1` for even; `c² = 1`,
+`Setting.twA_mul_self`). So the tops of `hcFam` are `c·TT` with the data `t ↦ a_{c·t}`, `b_{c·t}`. Each field's
+docstring names the pieces that read it.
+
+**Why twisted tops.** The gain's orbits at `p` step by `c·[p]_A`, and the frontier's partners of `t` are
+`([p]^e t)`; the orbit of `(1, c·t)` meets them, as `c·t·(c[p])^e = [p]^e t` at odd `e` (`GainAsk`,
+`Setting.pos_twistTop`). With the tops there, the gain's ask of the top of `t` is the frontier's ask of `t` at every
+`κ` (`SharpDesign.askU_eq_askE`). The frontier does not see where the tops are: `Weights` reads `TT`, the scales and
+the thick places, and a top is thin to it (`a_t/w ≥ X′/3`).
 
 **The sizes** (`DesignBig.*`, `Setting.DesignAdm.*`): `x ≥ 4096`, `|A| ≤ x³`, `k ≤ 2x^5`, `m ≤ 2x`, `Δ ≤ 2x`,
 `w_E ≤ 32x^6`, `x^{402} ≤ H ≤ 64x^{408}`, so `η + 1 = 2mH + 1 ≤ x^{410}`; and `X′ ≥ x^{410}`, `b ≥ X′²x^{30}`, so
@@ -38,16 +48,17 @@ the weights. The windows of `DesignHC` then put every `e_j` in `[w″, 2b]`, wit
 * the scales: `|TT|·x·e^{x^ε} ≤ Σ_t a_t`, `[E:ℚ] ≤ Σ_t a_t/x` (as `[E:ℚ] = 4|A| ≤ b`), the weights in `[w″, 2b]`;
 * (T): `16x^ε ≤ log(g₀g₁) ≤ 17x^ε`, `mx^ε/2 ≤ Λ_u ≤ 24mx^ε` (each term `log(w·v_E/π)` of `Λ_u` is in `[0, 2x^ε]`, as
   `v_E ≥ 1/2` and `2v_E ≤ N`), `Λ_u ≤ x/2`, `Λ_u + log 2 ≤ x` and `(log 4dM²)³ ≤ Λ_u` for `M = QS·q·d·(g₀g₁)²`;
-* (F), for the step-0 weights `λ_ρ = wt_0(⌊u − ½⌋, e)` (`Setting.Ranks.wt0`, the archive's step-0 weights) of
-  **every** word family pinned to `u` (`SharpDesign.PinnedTo`, the archive's word families): `λ_ρ` is antitone (`wt0_antitone`, for every Harish-Chandra family), `|ν| = Σ_{ρ,i} ν_{ρ,i} ≤ 2Σ_t a_t`
-  (`sum_natW_le`) and `(Σ_{ρ,i} λ_{ρ,i})⁺ ≤ 2Σ_t a_t` (`sum_wt0_le`).
+* (F), for the step-0 weights `λ_ρ = wt_0(⌊u − ½⌋, e)` (`Setting.Ranks.wt0`, the archive's step-0 weights) of **every**
+  word family pinned to `u` (`SharpDesign.PinnedTo`, the archive's word families): `λ_ρ` is antitone (`wt0_antitone`,
+  for every Harish-Chandra family), `|ν| = Σ_{ρ,i} ν_{ρ,i} ≤ 2Σ_t a_t` (`sum_natW_le`) and
+  `(Σ_{ρ,i} λ_{ρ,i})⁺ ≤ 2Σ_t a_t` (`sum_wt0_le`).
 
 **Route of the (F) bounds.** Interlacing gives `u_{i+1} + 1 ≤ u_i` (half-integers around an integer,
 `HC.succ_add_one_le`), so `λ_{ρ,i} = u_i + ½ + i − k/2` is antitone and `ν_{ρ,i} = λ_{ρ,i} − λ_{ρ,k−1} ≤ u_i − u_{k−1}`.
 A pinned family shares `v` and the ends `u_0`, `u_{k−1}` with `hc u`, so `u_i ≤ u_1 < v_0 = 4Δ(k − 2)` for `i ≥ 1`: at
-one place both sums are at most `[ρ top]·a_t + k(8Δk + 2b′ + k + 1)` (`place_le`), from `u_0 = a_t + (k − 1)/2`,
-`u_{k−1} = −b_t − (k − 1)/2` at a top and `u_0 ≤ 8Δk`, `u_{k−1} = −½` elsewhere. Summed over `Φ` the tops give
-`Σ_t a_t` (`sum_top`) and the rest `2|A|·k(8Δk + 2b′ + k + 1) ≤ a ≤ Σ_t a_t` (`places_le`).
+one place both sums are at most `[ρ top]·a_{c·ρ.2} + k(8Δk + 2b′ + k + 1)` (`place_le`), from `u_0 = a_t + (k − 1)/2`,
+`u_{k−1} = −b_t − (k − 1)/2` at the top `(1, c·t)` and `u_0 ≤ 8Δk`, `u_{k−1} = −½` elsewhere. Summed over `Φ` the tops
+give `Σ_t a_t` (`sum_top`) and the rest `2|A|·k(8Δk + 2b′ + k + 1) ≤ a ≤ Σ_t a_t` (`places_le`).
 
 **What is the construction's.** The objects' step-0 data (`SharpObj.n0`, `lam0`), their `ST`, `T` and `c_F` are
 not the design's: the API bounds the step-0 weights of every family pinned to `u` on `Fin n` with
@@ -60,8 +71,9 @@ not the design's: the API bounds the step-0 weights of every family pinned to `u
   put `q` and `d` beyond every polynomial size of the design (`4tr + 1 < q, d`).
 * A6 pins `k`, `m`, `t` to `designRanks`' values; their windows are lemmas.
 * A9 states the families as `hcFam` at the design's integers (`designFam`), which carries every formula of the spec;
-  the windows and the cloud are lemmas of `DesignHC`.
-* The Stage-2 clauses G1, G2 (the gain's random choices) are not here.
+  the windows and the cloud are lemmas of `DesignHC`. The tops are placed at `(1, c·t)` (above), not at `(1, t)`.
+* Of the Stage-2 clauses (the gain's random choices) G1 is here; G2 and the narrow window of the top shifts read the
+  local theory's data at a prime, and are added downstream of it.
 -/
 
 open NumberField
@@ -91,6 +103,31 @@ abbrev DesignHyp (S : Setting) (x ε : ℝ) (R : S.Ranks) (TT : Finset S.A) (aZ 
 noncomputable abbrev designFam (S : Setting) (x ε : ℝ) (R : S.Ranks) (TT T2 : Finset S.A) (aZ bT : S.A → ℤ)
     (ρstar : S.A → Φ S.A) (σ : S.A → ℕ) (hyp : DesignHyp S x ε R TT aZ bT) : S.A → R.HCFamily :=
   hcFam R TT T2 aZ bT (designΔ x) (designH S x) ⌈scB x ε⌉ ⌈scW'' S x ε⌉ ⌊scB' x ε / x⌋ ρstar σ hyp
+
+/-! ## The twist -/
+
+section Twist
+
+variable (S)
+
+/-- **`c² = 1`** for the twist `c = twA κ` (`[−1]_A² = [1]_A`). -/
+theorem Setting.twA_mul_self (κ : S.A →* ℂˣ) : S.twA κ * S.twA κ = 1 := by
+  unfold Setting.twA
+  split_ifs
+  · exact mul_one 1
+  · rw [← map_mul, neg_one_mul, neg_neg, map_one]
+
+/-- `c·(c·y) = y` for the twist `c = twA κ`. -/
+theorem Setting.twA_mul_twA_mul (κ : S.A →* ℂˣ) (y : S.A) : S.twA κ * (S.twA κ * y) = y := by
+  rw [← mul_assoc, S.twA_mul_self κ, one_mul]
+
+/-- **The data at a twisted top**: `y ∈ c·TT` has `c·y ∈ TT`, `c = twA κ`. -/
+theorem Setting.twA_mul_mem_of_mem_image (κ : S.A →* ℂˣ) {TT : Finset S.A} {y : S.A}
+    (hy : y ∈ TT.image (S.twA κ * ·)) : S.twA κ * y ∈ TT := by
+  obtain ⟨t, ht, rfl⟩ := Finset.mem_image.1 hy
+  rwa [S.twA_mul_twA_mul κ]
+
+end Twist
 
 /-! ## The clauses -/
 
@@ -122,6 +159,8 @@ structure Setting.DesignAdm (S : Setting) (κ : S.A →* ℂˣ) (x ε : ℝ) : P
   log_N_le : Real.log S.N ≤ 3 * x ^ (ε / 5) * Real.log x ^ 2
   /-- (A4) `|Re L′/L(1, χ_d)| ≤ x^ε`, the term of `MAIN`. (G↑). -/
   logDeriv_le : |(logDeriv (DirichletCharacter.LFunction (legChar S.d)) 1).re| ≤ x ^ ε
+  /-- (A2) The 2-adic structure at some level (`Setting.TwoAdic`): small and odd orders are sparse. The gain. -/
+  twoAdic : ∃ e, S.TwoAdic κ e
 
 /-- **The parameters of a design that `SharpDesign` does not record**: the integer scales `a_t` and top shifts `b_t`,
 the generator `a₀` of `A₀`, the exponents `T` of the thick set, the place index `s*` and the root-of-unity shifts
@@ -168,12 +207,16 @@ structure FamAt (pr : DesignPar S) : Prop where
   sstar_mem : pr.sstar ∈ pr.T
   /-- (A9) `σ(u) < w_E`. The pins, the gain. -/
   σ_lt : ∀ u, pr.σ u < Units.torsionOrder S.E
-  /-- (A9) The inequalities of the families. The gain, (G↑), (F), the pins. -/
-  hyp : DesignHyp S x ε Dg.R Dg.TT pr.aZ pr.bT
-  /-- (A9) **The families are the design's formulas** (`hcFam`). The gain, (G↑), (F), the pins. -/
-  hc_eq : ∀ u, Dg.hc u = designFam S x ε Dg.R Dg.TT Dg.T2 pr.aZ pr.bT (designStar pr.a₀ pr.sstar) pr.σ hyp u
+  /-- (A9) The inequalities of the families, with the tops at `c·TT` and the data of `t` at `c·t` (`hc_eq`). The
+  gain, (G↑), (F), the pins. -/
+  hyp : DesignHyp S x ε Dg.R (Dg.TT.image (S.twA κ * ·)) (pr.aZ ∘ (S.twA κ * ·)) (pr.bT ∘ (S.twA κ * ·))
+  /-- (A9) **The families are the design's formulas** (`hcFam`), with **twisted tops**: the top data `(a_t, b_t)` of
+  the translate `t` sits at the place `(1, c·t)`, `c = twA κ` (`c = 1` for even `κ`). The gain, (G↑), (F), the
+  pins. -/
+  hc_eq : ∀ u, Dg.hc u = designFam S x ε Dg.R (Dg.TT.image (S.twA κ * ·)) Dg.T2 (pr.aZ ∘ (S.twA κ * ·))
+    (pr.bT ∘ (S.twA κ * ·)) (designStar pr.a₀ pr.sstar) pr.σ hyp u
 
-/-- **An admissible design** (the field `adm` of `SharpPieces`): the clauses A1–A11 of the design spec. -/
+/-- **An admissible design** (the field `adm` of `SharpPieces`): the clauses A1–A11 of the design spec and G1. -/
 structure Adm : Prop extends S.DesignAdm κ x ε where
   /-- (A1) `X = (Nx)^{log x}`. (Z), the gain. -/
   X_eq : X = ((S.N : ℝ) * x) ^ Real.log x
@@ -203,6 +246,8 @@ structure Adm : Prop extends S.DesignAdm κ x ε where
     ∃ α β : ℤ, 4 * (g : ℤ) = α ^ 2 + S.d * β ^ 2 ∧ (S.N : ℤ) ∣ β ∧ α ≡ β + 2 [ZMOD 2 * S.N]
   /-- (A11) `Exc_r(g₀) ∩ Exc_r(g₁) = ∅`. The gain. -/
   exc : Disjoint (ExcSet Dg.R.r Dg.g₀) (ExcSet Dg.R.r Dg.g₁)
+  /-- (G1) Few tops on bad orbits. The gain, the local theory. -/
+  G1 : Dg.FewBadTops
 
 end SharpDesign
 
@@ -537,16 +582,21 @@ def PinnedTo (Dg : SharpDesign S κ x ε X) (u : S.A) (hw : Dg.R.HCFamily) : Pro
   ∀ ρ, (hw ρ).v = (Dg.hc u ρ).v ∧ (hw ρ).b = (Dg.hc u ρ).b ∧ (hw ρ).e = (Dg.hc u ρ).e ∧
     ∀ i : Fin Dg.R.k, ((i : ℕ) = 0 ∨ (i : ℕ) = Dg.R.k - 1) → (hw ρ).u i = (Dg.hc u ρ).u i
 
-/-- `Σ_ρ [ρ top at u]·a_{ρ.2} = Σ_{t ∈ TT} a_t`: the tops are the places `(1, t)`, `t ∈ TT`. -/
+/-- `Σ_ρ [ρ top at u]·a_{c·ρ.2} = Σ_{t ∈ TT} a_t`, `c = twA κ`: the tops are the places `(1, c·t)`, `t ∈ TT`, and
+the top `(1, c·t)` carries `a_t` (twisted tops, `FamAt.hc_eq`). -/
 theorem sum_top (Dg : SharpDesign S κ x ε X) (u : S.A) :
-    ∑ ρ : Φ S.A, (if placeKind Dg.TT Dg.T2 u ρ = .top then Dg.a ρ.2 else 0) = ∑ t ∈ Dg.TT, Dg.a t := by
+    ∑ ρ : Φ S.A, (if placeKind (Dg.TT.image (S.twA κ * ·)) Dg.T2 u ρ = .top then Dg.a (S.twA κ * ρ.2) else 0) =
+      ∑ t ∈ Dg.TT, Dg.a t := by
+  have hinj : Function.Injective (S.twA κ * · : S.A → S.A) := mul_right_injective _
   simp only [placeKind_eq_top]
   rw [Fintype.sum_prod_type]
-  have e : ∀ s : ℤˣ, ∑ t : S.A, (if s = 1 ∧ t ∈ Dg.TT then Dg.a t else 0) =
+  have e : ∀ s : ℤˣ, ∑ t : S.A, (if s = 1 ∧ t ∈ Dg.TT.image (S.twA κ * ·) then Dg.a (S.twA κ * t) else 0) =
       if s = 1 then ∑ t ∈ Dg.TT, Dg.a t else 0 := by
     intro s
     by_cases hs : s = 1
-    · simp [hs, Finset.sum_ite_mem]
+    · simp only [hs, true_and, ite_true]
+      rw [Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_image fun a _ b _ h => hinj h]
+      simp only [S.twA_mul_twA_mul κ]
     · simp [hs]
   rw [Finset.sum_congr rfl fun s _ => e s]
   simp
@@ -578,13 +628,19 @@ theorem bT_le {pr : DesignPar S} (hF : Dg.FamAt pr) :
     ∀ t ∈ Dg.TT, scB' x ε ≤ pr.bT t ∧ (pr.bT t : ℝ) ≤ 2 * scB' x ε := fun t ht =>
   ⟨(hF.bT_mem t ht).1, hA.big.le_two_mul_scB' (hF.bT_mem t ht).2⟩
 
+/-- `b′ ≤ b_{c·y} ≤ 2b′` at the twisted tops `y ∈ c·TT`, `c = twA κ`. -/
+theorem bT_le_tw {pr : DesignPar S} (hF : Dg.FamAt pr) :
+    ∀ y ∈ Dg.TT.image (S.twA κ * ·), scB' x ε ≤ pr.bT (S.twA κ * y) ∧
+      (pr.bT (S.twA κ * y) : ℝ) ≤ 2 * scB' x ε := fun _ hy =>
+  hA.bT_le hF _ (S.twA_mul_mem_of_mem_image κ hy)
+
 /-- **The windows**: every `e_j` of every `hc u` lies in `[w″, 2b]` (`e_window`). -/
 theorem e_mem (u : S.A) (ρ : Φ S.A) (j : Fin Dg.R.m) :
     scW'' S x ε ≤ ((Dg.hc u ρ).e j : ℝ) ∧ ((Dg.hc u ρ).e j : ℝ) ≤ 2 * scB x ε := by
   obtain ⟨pr, hF⟩ := hA.fam
   have hm : (Dg.R.m : ℝ) ≤ 2 * x := by rw [hA.m_eq]; exact hA.big.designM_le
   rw [hF.hc_eq u]
-  exact (hA.toDesignAdm.e_window hm hF.σ_lt (hA.bT_le hF) hF.hyp u ρ j).2.2
+  exact (hA.toDesignAdm.e_window hm hF.σ_lt (hA.bT_le_tw hF) hF.hyp u ρ j).2.2
 
 /-- **The weights** `w_{u,j}(ρ) = e_j(ρ)` lie in `[w″, 2b]`. -/
 theorem w_mem (u : S.A) (j : Fin Dg.m) (ρ : Φ S.A) : scW'' S x ε ≤ Dg.w u j ρ ∧ Dg.w u j ρ ≤ 2 * scB x ε := by
@@ -818,16 +874,17 @@ theorem logM_cube_le (u : S.A) :
     _ ≤ _ := hA.lam_ge u
 
 /-- **One place of a pinned family**: `Σ_i ν_{ρ,i}` and `Σ_i λ_{ρ,i}` are at most
-`[ρ top]·a_t + k(8Δk + 2b′ + k + 1)`. Interlacing gives `u_i ≤ u_1 < v_0 ≤ 4Δk` for `i ≥ 1`, and the pin gives the
-ends `u_0`, `u_{k−1}` of `hc u` (`hcFam_u_top`, `hcFam_u_ntop`); then `ν_{ρ,i} = λ_{ρ,i} − λ_{ρ,k−1} ≤ u_i − u_{k−1}`
-and `λ_{ρ,i} ≤ u_i + k/2` (`wt0_eq`). -/
+`[ρ top]·a_{c·ρ.2} + k(8Δk + 2b′ + k + 1)`, `c = twA κ` (the top `(1, c·t)` carries `a_t`). Interlacing gives
+`u_i ≤ u_1 < v_0 ≤ 4Δk` for `i ≥ 1`, and the pin gives the ends `u_0`, `u_{k−1}` of `hc u` (`hcFam_u_top`,
+`hcFam_u_ntop`); then `ν_{ρ,i} = λ_{ρ,i} − λ_{ρ,k−1} ≤ u_i − u_{k−1}` and `λ_{ρ,i} ≤ u_i + k/2` (`wt0_eq`). -/
 theorem place_le {u : S.A} {hw : Dg.R.HCFamily} (hp : Dg.PinnedTo u hw) {n : ℕ}
     (h : n = Dg.R.k + 0 * (Dg.R.t + 1)) (ρ : Φ S.A) :
     ((∑ i, WeylFock.natW (Dg.R.wt0 hw h ρ) i : ℕ) : ℝ) ≤
-        (if placeKind Dg.TT Dg.T2 u ρ = .top then Dg.a ρ.2 else 0) +
+        (if placeKind (Dg.TT.image (S.twA κ * ·)) Dg.T2 u ρ = .top then Dg.a (S.twA κ * ρ.2) else 0) +
           Dg.R.k * (8 * designΔ x * Dg.R.k + 2 * scB' x ε + Dg.R.k + 1) ∧
-      ∑ i, (Dg.R.wt0 hw h ρ i : ℝ) ≤ (if placeKind Dg.TT Dg.T2 u ρ = .top then Dg.a ρ.2 else 0) +
-        Dg.R.k * (8 * designΔ x * Dg.R.k + 2 * scB' x ε + Dg.R.k + 1) := by
+      ∑ i, (Dg.R.wt0 hw h ρ i : ℝ) ≤
+        (if placeKind (Dg.TT.image (S.twA κ * ·)) Dg.T2 u ρ = .top then Dg.a (S.twA κ * ρ.2) else 0) +
+          Dg.R.k * (8 * designΔ x * Dg.R.k + 2 * scB' x ε + Dg.R.k + 1) := by
   obtain ⟨pr, hF⟩ := hA.fam
   have hk5 : 5 ≤ Dg.R.k := by have := Dg.R.m_add_three_le; have := Dg.R.two_le_m; omega
   have hn : n = Dg.R.k := by rw [h, zero_mul, add_zero]
@@ -936,15 +993,16 @@ theorem place_le {u : S.A} {hw : Dg.R.HCFamily} (hp : Dg.PinnedTo u hw) {n : ℕ
   have hu0 := hu ⟨0, by omega⟩ (Or.inl rfl)
   have huk := hu ⟨Dg.R.k - 1, by omega⟩ (Or.inr rfl)
   have hΔK : (0 : ℝ) ≤ designΔ x * Dg.R.k * Dg.R.k := by positivity
-  by_cases hpk : placeKind Dg.TT Dg.T2 u ρ = .top
-  · have e0 : (Dg.hc u ρ).u ⟨0, by omega⟩ = pr.aZ ρ.2 + ((Dg.R.k : ℚ) - 1) / 2 := by
+  by_cases hpk : placeKind (Dg.TT.image (S.twA κ * ·)) Dg.T2 u ρ = .top
+  · have e0 : (Dg.hc u ρ).u ⟨0, by omega⟩ = pr.aZ (S.twA κ * ρ.2) + ((Dg.R.k : ℚ) - 1) / 2 := by
       rw [hF.hc_eq u]; exact (hcFam_u_top hF.hyp hpk).1
-    have ek : (Dg.hc u ρ).u ⟨Dg.R.k - 1, by omega⟩ = -pr.bT ρ.2 - ((Dg.R.k : ℚ) - 1) / 2 := by
+    have ek : (Dg.hc u ρ).u ⟨Dg.R.k - 1, by omega⟩ = -pr.bT (S.twA κ * ρ.2) - ((Dg.R.k : ℚ) - 1) / 2 := by
       rw [hF.hc_eq u]; exact (hcFam_u_top hF.hyp hpk).2
-    have hU0' : U0 = pr.aZ ρ.2 + ((Dg.R.k : ℝ) - 1) / 2 := by rw [hU0, hu0, e0]; push_cast; ring
-    have hUk' : Uk = -pr.bT ρ.2 - ((Dg.R.k : ℝ) - 1) / 2 := by rw [hUk, huk, ek]; push_cast; ring
-    obtain ⟨b1, b2⟩ := hA.bT_le hF ρ.2 (placeKind_eq_top.1 hpk).2
-    have hkb : (Dg.R.k : ℝ) * pr.bT ρ.2 ≤ Dg.R.k * (2 * scB' x ε) := mul_le_mul_of_nonneg_left b2 (by linarith)
+    have hU0' : U0 = pr.aZ (S.twA κ * ρ.2) + ((Dg.R.k : ℝ) - 1) / 2 := by rw [hU0, hu0, e0]; push_cast; ring
+    have hUk' : Uk = -pr.bT (S.twA κ * ρ.2) - ((Dg.R.k : ℝ) - 1) / 2 := by rw [hUk, huk, ek]; push_cast; ring
+    obtain ⟨b1, b2⟩ := hA.bT_le_tw hF ρ.2 (placeKind_eq_top.1 hpk).2
+    have hkb : (Dg.R.k : ℝ) * pr.bT (S.twA κ * ρ.2) ≤ Dg.R.k * (2 * scB' x ε) :=
+      mul_le_mul_of_nonneg_left b2 (by linarith)
     rw [ite_eq_left hpk, hF.a_eq]
     constructor <;> nlinarith
   · have e0 : (Dg.hc u ρ).u ⟨0, by omega⟩ = 4 * designΔ x * (2 * (Dg.R.k : ℚ) - 2) + 1 / 2 := by
@@ -1012,14 +1070,16 @@ theorem places_le :
   unfold scA
   linarith
 
-/-- **Summing over the places**: a function bounded by `[ρ top]·a_{ρ.2} + k(8Δk + 2b′ + k + 1)` at every place
+/-- **Summing over the places**: a function bounded by `[ρ top]·a_{c·ρ.2} + k(8Δk + 2b′ + k + 1)` at every place
 sums to at most `2Σ_t a_t` (`sum_top`, `places_le`, `|Φ| = 2|A|`). -/
 theorem sum_places_le (u : S.A) (c : Φ S.A → ℝ)
-    (hc : ∀ ρ, c ρ ≤ (if placeKind Dg.TT Dg.T2 u ρ = .top then Dg.a ρ.2 else 0) +
-      Dg.R.k * (8 * designΔ x * Dg.R.k + 2 * scB' x ε + Dg.R.k + 1)) :
+    (hc : ∀ ρ, c ρ ≤
+      (if placeKind (Dg.TT.image (S.twA κ * ·)) Dg.T2 u ρ = .top then Dg.a (S.twA κ * ρ.2) else 0) +
+        Dg.R.k * (8 * designΔ x * Dg.R.k + 2 * scB' x ε + Dg.R.k + 1)) :
     ∑ ρ, c ρ ≤ 2 * ∑ t ∈ Dg.TT, Dg.a t := by
-  calc ∑ ρ, c ρ ≤ ∑ ρ : Φ S.A, ((if placeKind Dg.TT Dg.T2 u ρ = .top then Dg.a ρ.2 else 0) +
-        Dg.R.k * (8 * designΔ x * Dg.R.k + 2 * scB' x ε + Dg.R.k + 1)) := Finset.sum_le_sum fun ρ _ => hc ρ
+  calc ∑ ρ, c ρ ≤ ∑ ρ : Φ S.A,
+        ((if placeKind (Dg.TT.image (S.twA κ * ·)) Dg.T2 u ρ = .top then Dg.a (S.twA κ * ρ.2) else 0) +
+          Dg.R.k * (8 * designΔ x * Dg.R.k + 2 * scB' x ε + Dg.R.k + 1)) := Finset.sum_le_sum fun ρ _ => hc ρ
     _ = ∑ t ∈ Dg.TT, Dg.a t +
         2 * (Fintype.card S.A : ℝ) * (Dg.R.k * (8 * designΔ x * Dg.R.k + 2 * scB' x ε + Dg.R.k + 1)) := by
       rw [Finset.sum_add_distrib, sum_top Dg u, Finset.sum_const, Finset.card_univ, card_Φ, nsmul_eq_mul]

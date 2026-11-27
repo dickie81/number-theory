@@ -122,10 +122,10 @@ def SharpNI : Prop :=
 
 /-- **(R′), the range of the sources**, eventually in the design: at every admissible design with `ε` small and `x`
 large, at every translate `u ∈ A₀`, some `U` with `0 ≤ U ≤ x^{4ε}Σ_t a_t/4` bounds the range of the construction's
-sources in every realising frame, `μ_max(N_ω) ≤ μ(N_ω) + U` (`SharpObj.RangeLe`). Not proved in the library yet, it
-is a hypothesis of the frame loss (`frameLoss_of_sharpNI`). It will come from the gain's certificate when the gain is
-built, with `U = μ̂_max(M_ω) + c_F + colength`: the bound on `μ_max(M_ω)`, the slack `c_F` of (F) and the
-certificate's colength. -/
+sources in every realising frame, `μ_max(N_ω) ≤ μ(N_ω) + U` (`SharpObj.RangeLe`). It is a hypothesis of the frame
+loss (`frameLoss_of_sharpNI`), with `U = μ̂_max(M_ω) + c_F + colength`: the bound on `μ_max(M_ω)` (proved,
+`sharpMuMax`), the slack `c_F` of (F) and the colength of the gain's certificates (`SharpCertSmall`); so it follows
+from `SharpCertSmall` alone (`sharpRange_of_certSmall`). -/
 def SharpRange : Prop :=
   EventuallyAdm (fun Dg => Dg.Adm) fun {S κ x ε X} (Dg : SharpDesign S κ x ε X) => ∀ u ∈ A₀ κ,
     ∃ U, 0 ≤ U ∧ U ≤ x ^ (4 * ε) * (∑ s ∈ Dg.TT, Dg.a s) / 4 ∧ ((sharpCons Dg).obj u).RangeLe U
