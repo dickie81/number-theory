@@ -2231,6 +2231,9 @@ twin-form rates at `11/12`. -/
 #print axioms ModEpsteinBox.hasSum_theta
 #print axioms ModEpsteinBox.summable_qa
 #print axioms ModEpsteinBox.hasSum_Lambda
+#print axioms ModEpsteinBox.hasSum_boxZeta
+#print axioms ModEpsteinBox.casimirBox_eq
+#print axioms ModEpsteinBox.hasSum_casimirBox
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq

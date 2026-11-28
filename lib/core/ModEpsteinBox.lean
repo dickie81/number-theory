@@ -18,6 +18,11 @@ dimension; the general (non-rectangular) lattice needs `d`-dimensional Poisson s
 * **The lattice sum** (`hasSum_theta`, `summable_qa`, `hasSum_Lambda`): `θ_a(t) = Σ_{v ∈ ℤ^d}e^{−πt|v|_a²}`;
   `Σ'_v |v|_a^{−2σ}` converges for `σ > d/2` (by `|v|_a^{−2σ} ≤ C∏ᵢ(1 + vᵢ²)^{−σ/d}`); and on `Re s > d/2`,
   `Λ_a(s) = π^{−s}Γ(s)Σ'_v |v|_a^{−2s}` (Mathlib's `hasSum_mellin_pi_mul₀`).
+* **The torus `ℝ^d/L_a` and its Casimir energy** (`boxZeta`, `hasSum_boxZeta`, `casimirBox`, `casimirBox_eq`,
+  `hasSum_casimirBox`): with Laplace eigenvalues `4π²|k|²`, `k ∈ L_{a⁻¹}` (taken as the spectrum; completeness of the
+  plane waves is not proved), `ζ_a(s) = Σ'(4π²|k|²)^{−s} = (4π)^{−s}Λ_{a⁻¹}(s)/Γ(s)` on `Re s > d/2`, and the
+  zeta-regularised vacuum energy `E₀ = ½ζ_a(−½) = −(covol/2)Λ_a((d + 1)/2)
+  = −(covol·Γ((d + 1)/2)/(2π^{(d+1)/2}))Σ'_{ℓ ∈ L_a}|ℓ|^{−(d+1)}`, a negative sum over the periods.
 -/
 import Mathlib
 import EpsteinFlat
@@ -297,5 +302,90 @@ theorem hasSum_Lambda {a : Fin d → ℝ} (ha : ∀ i, 0 < a i) (hd : 0 < d) {s 
     simpa using summable_qa ha hd hs
   have h := hasSum_mellin_pi_mul₀ (fun v => qa_nonneg a v) hs0 hF hsum
   rwa [(hasMellin_theta ha hd hs).2] at h
+
+/-! ## The flat torus `ℝ^d/L_a` and its Casimir energy -/
+
+lemma Lambda_congr {a b : Fin d → ℝ} (h : a = b) (ha : ∀ i, 0 < a i) (hb : ∀ i, 0 < b i) (hd : 0 < d) :
+    Lambda a ha hd = Lambda b hb hd := by
+  subst h; rfl
+
+/-- **The spectral zeta function of the flat torus `ℝ^d/L_a`**, continued to all `s`:
+`ζ_a(s) = (4π)^{−s}Λ_{a⁻¹}(s)/Γ(s)`. The Laplace eigenvalues are `4π²|k|²`, `k ∈ L_a* = L_{a⁻¹}` (eigenfunctions
+`e^{2πi⟨k, x⟩}`; that these are all of them is not proved here), so on `Re s > d/2` this is `Σ'_k (4π²|k|²)^{−s}`
+(`hasSum_boxZeta`). -/
+def boxZeta (a : Fin d → ℝ) (ha : ∀ i, 0 < a i) (hd : 0 < d) (s : ℂ) : ℂ :=
+  ((4 * π : ℝ) : ℂ) ^ (-s) * Lambda (fun i => (a i)⁻¹) (fun i => inv_pos.2 (ha i)) hd s / Complex.Gamma s
+
+/-- **The spectral zeta function as an eigenvalue sum**: on `Re s > d/2`,
+`Σ'_{v ∈ ℤ^d} (4π²|v|_{a⁻¹}²)^{−s} = ζ_a(s)`. -/
+theorem hasSum_boxZeta {a : Fin d → ℝ} (ha : ∀ i, 0 < a i) (hd : 0 < d) {s : ℂ} (hs : (d : ℝ) / 2 < s.re) :
+    HasSum (fun v : Fin d → ℤ => ((4 * π ^ 2 * qa (fun i => (a i)⁻¹) v : ℝ) : ℂ) ^ (-s)) (boxZeta a ha hd s) := by
+  have hs0 : 0 < s.re := lt_of_le_of_lt (by positivity) hs
+  have hΓ : Complex.Gamma s ≠ 0 := Complex.Gamma_ne_zero_of_re_pos hs0
+  have h0 : s ≠ 0 := fun h => by simp [h] at hs0
+  have hπ : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
+  have hπs : (π : ℂ) ^ s ≠ 0 := (Complex.cpow_ne_zero_iff_of_exponent_ne_zero h0).2 hπ
+  have hπs' : (π : ℂ) ^ (-s) ≠ 0 := (Complex.cpow_ne_zero_iff_of_exponent_ne_zero (neg_ne_zero.2 h0)).2 hπ
+  set C : ℂ := ((4 * π ^ 2 : ℝ) : ℂ) ^ (-s) * (π : ℂ) ^ s / Complex.Gamma s
+  have h := (hasSum_Lambda (fun i => inv_pos.2 (ha i)) hd hs).mul_left C
+  convert h using 1
+  · funext v
+    rw [Complex.ofReal_mul, Complex.mul_cpow_ofReal_nonneg (by positivity) (qa_nonneg _ v),
+      Complex.cpow_neg (((qa (fun i => (a i)⁻¹) v : ℝ) : ℂ))]
+    simp only [C]
+    rw [Complex.cpow_neg (π : ℂ)]
+    field_simp
+  · have h4 : ((4 * π ^ 2 : ℝ) : ℂ) ^ (-s) * (π : ℂ) ^ s = ((4 * π : ℝ) : ℂ) ^ (-s) := by
+      have e : (4 * π ^ 2 : ℝ) = 4 * π * π := by ring
+      rw [e, Complex.ofReal_mul, Complex.mul_cpow_ofReal_nonneg (by positivity) Real.pi_pos.le,
+        Complex.cpow_neg (π : ℂ), mul_assoc, inv_mul_cancel₀ hπs, mul_one]
+    simp only [C, boxZeta]
+    rw [h4]
+    ring
+
+lemma Gamma_one_half' : Complex.Gamma (1 / 2) = ((√π : ℝ) : ℂ) := by
+  rw [Complex.Gamma_one_half_eq, Real.sqrt_eq_rpow, Complex.ofReal_cpow Real.pi_pos.le]
+  push_cast; ring_nf
+
+/-- **The zeta-regularised Casimir energy** `E₀ = ½Σ'√λ := ½ζ_a(−½)` of a free massless scalar on the spatial
+torus `ℝ^d/L_a` (`ħ = c = 1`). -/
+def casimirBox (a : Fin d → ℝ) (ha : ∀ i, 0 < a i) (hd : 0 < d) : ℂ := boxZeta a ha hd (-1 / 2) / 2
+
+/-- **The Casimir energy via the functional equation**: `E₀ = −(covol/2)·Λ_a((d + 1)/2)`. -/
+theorem casimirBox_eq {a : Fin d → ℝ} (ha : ∀ i, 0 < a i) (hd : 0 < d) :
+    casimirBox a ha hd = -((covol a : ℝ) : ℂ) / 2 * Lambda a ha hd (((d : ℂ) + 1) / 2) := by
+  have hπ := Real.pi_pos
+  have hai : ∀ i, 0 < (a i)⁻¹ := fun i => inv_pos.2 (ha i)
+  have hFE := Lambda_functional_equation hai hd (((d : ℂ) + 1) / 2)
+  rw [show (d : ℂ) / 2 - ((d : ℂ) + 1) / 2 = -1 / 2 by ring,
+    Lambda_congr (b := a) (funext fun i => inv_inv (a i)) _ ha hd] at hFE
+  have hcov : (covol fun i => (a i)⁻¹)⁻¹ = covol a := by
+    simp only [covol, Finset.prod_inv_distrib, inv_inv]
+  rw [hcov] at hFE
+  have hGm : Complex.Gamma (-1 / 2) = -2 * ((√π : ℝ) : ℂ) := by
+    have := Complex.Gamma_add_one (-1 / 2) (by norm_num)
+    rw [show (-1 / 2 : ℂ) + 1 = 1 / 2 by norm_num, Gamma_one_half'] at this
+    linear_combination 2 * this
+  have h4 : ((4 * π : ℝ) : ℂ) ^ (-(-1 / 2) : ℂ) = 2 * ((√π : ℝ) : ℂ) := by
+    rw [show (-(-1 / 2) : ℂ) = ((1 / 2 : ℝ) : ℂ) by push_cast; ring, ← Complex.ofReal_cpow (by positivity),
+      ← Real.sqrt_eq_rpow, Real.sqrt_mul (by norm_num), show (4 : ℝ) = 2 ^ 2 by norm_num,
+      Real.sqrt_sq (by norm_num)]
+    push_cast; ring
+  have hsπ : ((√π : ℝ) : ℂ) ≠ 0 := by exact_mod_cast (Real.sqrt_pos.2 hπ).ne'
+  rw [casimirBox, boxZeta, h4, hGm, hFE]
+  field_simp
+
+/-- **The Casimir energy as a negative period sum**:
+`E₀ = −(covol·Γ((d + 1)/2)/(2π^{(d+1)/2}))·Σ'_{v ∈ ℤ^d}|v|_a^{−(d+1)}`, the sum over the nonzero periods
+`ℓ = (aᵢvᵢ)ᵢ` of `|ℓ|^{−(d+1)}`. -/
+theorem hasSum_casimirBox {a : Fin d → ℝ} (ha : ∀ i, 0 < a i) (hd : 0 < d) :
+    HasSum (fun v : Fin d → ℤ => -((covol a : ℝ) : ℂ) / 2 * ((π : ℂ) ^ (-(((d : ℂ) + 1) / 2)) *
+      Complex.Gamma (((d : ℂ) + 1) / 2) * 1 / (qa a v : ℂ) ^ (((d : ℂ) + 1) / 2))) (casimirBox a ha hd) := by
+  rw [casimirBox_eq]
+  refine (hasSum_Lambda ha hd ?_).mul_left _
+  simp only [Complex.div_re, Complex.add_re, Complex.natCast_re, Complex.one_re, Complex.normSq_ofNat,
+    Complex.re_ofNat]
+  norm_num
+  linarith
 
 end ModEpsteinBox
