@@ -2228,6 +2228,9 @@ twin-form rates at `11/12`. -/
 #print axioms ModEpsteinBox.Lambda_functional_equation
 #print axioms ModEpsteinBox.Lambda_residue_zero
 #print axioms ModEpsteinBox.Lambda_residue_half_dim
+#print axioms ModEpsteinBox.hasSum_theta
+#print axioms ModEpsteinBox.summable_qa
+#print axioms ModEpsteinBox.hasSum_Lambda
 #print axioms XiReflectionBand.reflect_band
 #print axioms XiReflectionBand.reflect_xi_band
 #print axioms SquaresCongruences.hex_modEq
